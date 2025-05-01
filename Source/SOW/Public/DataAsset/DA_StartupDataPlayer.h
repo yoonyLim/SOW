@@ -17,4 +17,7 @@ class SOW_API UDA_StartupDataPlayer : public UDA_StartupDataBase
 	
 	UPROPERTY(EditDefaultsOnly, Category = "StartUpData")
 	TArray< TSubclassOf<USOWPlayerGameplayAbility> > PlayerCombatAbilities;
+
+public:
+	virtual void GiveToAbilitySystemComponent(USOWAbilitySystemComponent* InASCToGive, int32 ApplyLevel = 1) override;
 };

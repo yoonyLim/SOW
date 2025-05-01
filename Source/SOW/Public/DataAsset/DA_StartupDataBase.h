@@ -8,6 +8,7 @@
 
 class USOWGameplayAbilityBase;
 class UGameplayEffect;
+class USOWAbilitySystemComponent;
 /**
  * 
  */
@@ -16,6 +17,10 @@ class SOW_API UDA_StartupDataBase : public UDataAsset
 {
 	GENERATED_BODY()
 	
+public:
+	virtual void GiveToAbilitySystemComponent(USOWAbilitySystemComponent* InASCToGive, int32 ApplyLevel = 1);
+
+protected:
 	UPROPERTY(EditDefaultsOnly, Category = "StartUpData")
 	TArray< TSubclassOf<USOWGameplayAbilityBase> > ActivateOnGivenAbilities;
 
@@ -24,4 +29,6 @@ class SOW_API UDA_StartupDataBase : public UDataAsset
 
 	UPROPERTY(EditDefaultsOnly, Category = "StartUpData")
 	TArray< TSubclassOf< UGameplayEffect>> StartupGameplayEffects;
+
+	void GrantAbility(const TArray<TSubclassOf<USOWGameplayAbilityBase>>& InAbilitiesToGive, USOWAbilitySystemComponent* InASCToGive, int32 ApplyLevel = 1);
 };
