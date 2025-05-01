@@ -24,6 +24,8 @@ public:
 
 
 protected:
+	virtual void PossessedBy(AController* NewController) override;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,  Category = "AbilitySystem")
 	USOWAbilitySystemComponent* AbilitySystemComponent;
 
