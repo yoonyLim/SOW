@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Characters/SOWCharacter.h"
 #include "GameFramework/Character.h"
-#include "SOW/SOWCharacter.h"
 #include "SOWCharacterEnemyBase.generated.h"
 
 UCLASS()
