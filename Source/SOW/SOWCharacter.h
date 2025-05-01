@@ -12,6 +12,9 @@ class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
+class USOWAbilitySystemComponent;
+class USOWAttributeSet;
+class USOWPlayerGameplayAbility;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -56,7 +59,6 @@ protected:
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
 			
-
 protected:
 
 	virtual void NotifyControllerChanged() override;
