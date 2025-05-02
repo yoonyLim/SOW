@@ -14,6 +14,7 @@ struct FInputActionValue;
 class USOWAbilitySystemComponent;
 class USOWAttributeSet;
 class USOWPlayerGameplayAbility;
+class UDA_InputData;
 
 UCLASS()
 class SOW_API ASOWCharacterPlayer : public ASOWCharacter
@@ -43,6 +44,10 @@ class SOW_API ASOWCharacterPlayer : public ASOWCharacter
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
+
+	/* 인풋 태그와 함께 바인딩 해야할 모든 액션 - 태그 쌍이 정의된 데이터 에셋 */ 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CharacterData", meta = (AllowPrivateAccess = "true"))
+	UDA_InputData* InputData;
 
 public:
 	// Sets default values for this character's properties

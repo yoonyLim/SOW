@@ -14,4 +14,10 @@ class SOW_API USOWAbilitySystemComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()
 	
+public:
+	UFUNCTION(BlueprintCallable, Category = "SOW|GameplayAbility")
+	bool TryActivateAbilityWithTag(FGameplayTag InAbilityTag);
+
+	void OnAbilityInputPressed(FGameplayTag InInputTag);
+	void OnAbilityInputReleased(FGameplayTag InInputTag);
 };

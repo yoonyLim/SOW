@@ -16,8 +16,8 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 ASOWCharacter::ASOWCharacter()
 {
-	AbilitySystemComponent = CreateDefaultSubobject<USOWAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
-	AttributeSet = CreateDefaultSubobject<USOWAttributeSet>(TEXT("AttributeSet"));
+	AbilitySystemComponent = CreateDefaultSubobject<USOWAbilitySystemComponent>(TEXT("SOWAbilitySystemComponent"));
+	AttributeSet = CreateDefaultSubobject<USOWAttributeSet>(TEXT("SOWAttributeSet"));
 }
 
 void ASOWCharacter::PossessedBy(AController* NewController)

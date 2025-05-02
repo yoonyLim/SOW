@@ -24,6 +24,8 @@ class SOW_API USOWAttributeSet : public UAttributeSet
 public :
 	USOWAttributeSet();
 
+	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
+
 	UPROPERTY(BlueprintReadOnly, Category = "Health")
 	FGameplayAttributeData MaxHealth;
 	ATTRIBUTE_ACCESSORS(USOWAttributeSet, MaxHealth)
@@ -43,4 +45,6 @@ public :
 	UPROPERTY(BlueprintReadOnly, Category = "Damage")
 	FGameplayAttributeData DamageTaken;
 	ATTRIBUTE_ACCESSORS(USOWAttributeSet, DamageTaken)
+
+
 };
