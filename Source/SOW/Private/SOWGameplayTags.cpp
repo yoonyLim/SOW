@@ -2,7 +2,8 @@
 namespace WarriorGameplayTags
 {
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Move, "InputTag.Move");
-	UE_DEFINE_GAMEPLAY_TAG(InputTag_Roll, "InputTag.Roll");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Roll, "InputTag.Roll"); 
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_UseAbility, "InputTag.UseAbility");
 
 	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Attack_Debug, "Player.Ability.Attack.Debug");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Roll, "Player.Ability.Roll");

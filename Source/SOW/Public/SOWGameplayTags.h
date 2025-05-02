@@ -9,6 +9,7 @@ namespace SOWGameplayTags {
 	/* Input Tags */
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Move);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Roll);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_UseAbility);
 
 	/* Player Tags */
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Attack_Debug);

@@ -8,8 +8,20 @@
 
 void UDA_StartupDataBase::GiveToAbilitySystemComponent(USOWAbilitySystemComponent* InASCToGive, int32 ApplyLevel)
 {
+	check(InASCToGive);
+
 	GrantAbility(ActivateOnGivenAbilities, InASCToGive, ApplyLevel);
 	GrantAbility(ReactiveAbilities, InASCToGive, ApplyLevel);
+
+	if (!StartupGameplayEffects.IsEmpty()) {
+		for (const TSubclassOf<UGameplayEffect>& GameplayEffect : StartupGameplayEffects) {
+			UGameplayEffect* Effect = GameplayEffect->GetDefaultObject<UGameplayEffect>();
+
+			InASCToGive->ApplyGameplayEffectToSelf(
+				Effect, ApplyLevel, InASCToGive->MakeEffectContext()
+			);
+		}
+	}
 }
 
 void UDA_StartupDataBase::GrantAbility(const TArray<TSubclassOf<USOWGameplayAbilityBase>>& InAbilitiesToGive, USOWAbilitySystemComponent* InASCToGive, int32 ApplyLevel)
