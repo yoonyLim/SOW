@@ -2,9 +2,15 @@
 
 
 #include "AbilitySystem/SOWAttributeSet.h"
+#include "GameplayEffectExtension.h"
+#include "AbilitySystemBlueprintLibrary.h"
+#include "SOWGameplayTags.h"
 
 USOWAttributeSet::USOWAttributeSet()
 {
+    InitCurrentHealth(1.f);
+
+    InitMaxHealth(1.f);
 }
 
 void USOWAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
@@ -19,4 +25,11 @@ void USOWAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbac
 
     UE_LOG(LogTemp, Warning, TEXT("GameplayEffect applied successfully."), GetCurrentHealth());
     UE_LOG(LogTemp, Warning, TEXT("Current Health : %f"), GetCurrentHealth());
+
+    if (GetCurrentHealth() == 0.f) {
+        USOWAbilitySystemComponent* ASC = CastChecked<USOWAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Data.Target.GetAvatarActor()));
+
+        UE_LOG(LogTemp, Warning, TEXT("Actor has Dead : %f"), GetCurrentHealth());
+        ASC->AddLooseGameplayTag(SOWGameplayTags::Shared_Status_Dead);
+    }
 }

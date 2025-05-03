@@ -1,5 +1,5 @@
 #include "SOWGameplayTags.h"
-namespace WarriorGameplayTags
+namespace SOWGameplayTags
 {
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Move, "InputTag.Move");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Roll, "InputTag.Roll"); 
