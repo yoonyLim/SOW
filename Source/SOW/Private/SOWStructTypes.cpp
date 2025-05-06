@@ -7,3 +7,4 @@ bool FPlayerAbilitySet::IsValid() const
 {
 	return InputTag.IsValid() && AbilityToGrant;
 }
+
