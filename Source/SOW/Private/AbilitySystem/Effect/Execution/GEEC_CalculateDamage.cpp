@@ -55,7 +55,7 @@ float UGEEC_CalculateDamage::GetElementalResistanceCost(const FGameplayEffectCus
 	if (TargetAttributes)
 	{
 		for (const FGameplayTag& ElementTag : MatchedElementTags) {
-			ElementalResistance += TargetAttributes->GetResistanceForElement(ElementTag);
+			ElementalResistance += TargetAttributes->GetResistanceForElementWithElementTag(ElementTag);
 		}
 
 	}

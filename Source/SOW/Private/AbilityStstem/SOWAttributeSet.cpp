@@ -15,12 +15,13 @@ USOWAttributeSet::USOWAttributeSet()
     InitDefensePowerBase(1.f);
     InitDamageTaken(0.f);
     InitDamageOverTime(0.f);
+    InitDetectionRange(50.f);
+    InitAttackSpeed(1.f);
 }
 
 void USOWAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
-   
-        // 잊지 말고 부모 구현을 호출하세요.
+
     Super::PostGameplayEffectExecute(Data);
 
     // 게임플레이 이펙트가 적용되었다면 디버깅 메시지가 출력됨.
@@ -38,7 +39,7 @@ void USOWAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbac
     }
 }
 
-float USOWAttributeSet::GetResistanceForElement(FGameplayTag ElementTag) const
+float USOWAttributeSet::GetResistanceForElementWithElementTag(FGameplayTag ElementTag) const
 {
     FGameplayTag TargetTag;
     // ElementTag -> Shared.Element.Nature.Major

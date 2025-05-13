@@ -5,7 +5,7 @@
 
 bool USOWAbilitySystemComponent::TryActivateAbilityWithTag(FGameplayTag InAbilityTag)
 {
-	check(InAbilityTag.IsValid());
+	checkf(InAbilityTag.IsValid(), TEXT("Ability Tag has not been assgined or the tag is invailid."));
 
 
 	TArray<FGameplayAbilitySpec*> FoundAbilitySpecs;

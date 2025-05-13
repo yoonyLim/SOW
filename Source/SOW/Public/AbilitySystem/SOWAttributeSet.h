@@ -117,6 +117,6 @@ public :
 
 	/** 특정 태그에 대한 저항값을 반환하는 함수 */
 	UFUNCTION(BlueprintCallable, Category = "Resistance")
-	float GetResistanceForElement(FGameplayTag ElementTag) const;
+	float GetResistanceForElementWithElementTag(FGameplayTag ElementTag) const;
 
 };
