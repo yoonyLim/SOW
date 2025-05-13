@@ -17,7 +17,9 @@ public class SOW : ModuleRules
 			"EnhancedInput",
 			"GamePlayAbilities",
 			"GameplayTags",
-			"GameplayTasks"
+			"GameplayTasks", 
+			"AIModule",
+			"NavigationSystem"
 		});
 	}
 }
