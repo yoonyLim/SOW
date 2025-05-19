@@ -3,6 +3,7 @@
 
 #include "Characters/Turrets/SOWCharacterTurretBase.h"
 #include "Characters/Player/SOWCharacterPlayer.h"
+#include "Characters/Enemies/SOWCharacterEnemyBase.h"
 #include "AbilitySystem/SOWAttributeSet.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -13,6 +14,14 @@ ASOWCharacterTurretBase::ASOWCharacterTurretBase()
 {
 	check(AttributeSet);
 	//
+	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bStartWithTickEnabled = true;
+
+	GetMesh()->bReceivesDecals = false;
+	GetMesh()->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
+
+	GetMesh()->PrimaryComponentTick.bCanEverTick = true;
+	GetMesh()->PrimaryComponentTick.bStartWithTickEnabled = true;
 
 	DetectionRange = CreateDefaultSubobject<UCapsuleComponent>(TEXT("DetectionRange"));
 	DetectionRange->SetupAttachment(RootComponent);
@@ -32,13 +41,21 @@ void ASOWCharacterTurretBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	M_CachedDetectionRadius = AttributeSet->GetDetectionRange();
-	SetDetectionRangeWithCurrentStatus();
+	if (AttributeSet) {
+		M_CachedDetectionRadius = AttributeSet->GetDetectionRange();
+		SetDetectionRangeWithCurrentStatus();
+	}
 }
 
+
+void ASOWCharacterTurretBase::Tick(float DeltaTime) {
+	Super::Tick(DeltaTime);
+
+	UE_LOG(LogTemp, Warning, TEXT("Ticking"));
+}
 float ASOWCharacterTurretBase::GetAttackCooldownTime() const
 {
-	check(AttributeSet);
+	checkf(AttributeSet, TEXT("AttributeSet not Found / Check point : SOWCharacterTurretBase.cpp"));
 
 	return 1.0f / AttributeSet->GetAttackSpeed();
 }
@@ -66,6 +83,7 @@ void ASOWCharacterTurretBase::OnTargetRangeEndOverlap(AActor* InTargetActor)
 
 bool ASOWCharacterTurretBase::FindAttackTargetFromAllTargetAvailable()
 {
+	TArray<AActor*> L_DetectableActors;
 	DetectedTargetActors.Empty();
 	AttackTarget = nullptr;
 
@@ -79,21 +97,40 @@ bool ASOWCharacterTurretBase::FindAttackTargetFromAllTargetAvailable()
 		ObjectTypes,
 		nullptr,
 		TArray<AActor*>(),
-		DetectedTargetActors
+		L_DetectableActors
 	);
 
-	UE_LOG(LogTemp, Warning, TEXT("%s Detected %s Actors."), *GetActorNameOrLabel(), *FString::FromInt(DetectedTargetActors.Num()));
+	UE_LOG(LogTemp, Warning, TEXT("Detected Actors Count : %s"), *FString::FromInt(L_DetectableActors.Num()));
 
-	for (AActor* CurrentTarget : DetectedTargetActors) {
+	for (AActor* CurrentTarget : L_DetectableActors) {
+		if (TurretTargetSelectionPolicy == ETurretTargetSelectionPolicy::Uncertain || CurrentTarget == this) continue;
 
+		if (TurretTargetSelectionPolicy == ETurretTargetSelectionPolicy::OnPlayer) {
+			if (Cast<ASOWCharacterPlayer>(CurrentTarget)) {
+				DetectedTargetActors.AddUnique(CurrentTarget);
+			}
+		}
+
+		if (TurretTargetSelectionPolicy == ETurretTargetSelectionPolicy::OnTurret) {
+			if (Cast<ASOWCharacterTurretBase>(CurrentTarget)) {
+				DetectedTargetActors.AddUnique(CurrentTarget);
+			}
+		}
+
+		if (TurretTargetSelectionPolicy == ETurretTargetSelectionPolicy::OnEnemy) {
+			if (Cast<ASOWCharacterEnemyBase>(CurrentTarget)) {
+				DetectedTargetActors.AddUnique(CurrentTarget);
+			}
+		}
 		// TO-DO 
 		// 타겟 지정 정책에 따라 액터의 스텟 정보를 호출해
 		// 정책과 맞는 스텟을 가진 액터를 타겟 액터로 지정
 
 		// Below Codes are for debugging : can a turret detects Player Character and activates its ability
-		if (Cast<ASOWCharacterPlayer>(CurrentTarget)) {
-			AttackTarget = CurrentTarget;
-		}
+		UE_LOG(LogTemp, Warning, TEXT("Selectable Actors Count : %s"), *FString::FromInt(DetectedTargetActors.Num()));
+		AttackTarget = (DetectedTargetActors.Num() >= 1) ? DetectedTargetActors[0] : nullptr;
+		
+		
 	}
 
 

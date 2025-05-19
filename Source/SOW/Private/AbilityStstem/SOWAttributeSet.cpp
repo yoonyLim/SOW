@@ -33,15 +33,22 @@ void USOWAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbac
 
     if (GetCurrentHealth() == 0.f) {
         USOWAbilitySystemComponent* ASC = CastChecked<USOWAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Data.Target.GetAvatarActor()));
+        if (!ASC) return;
 
-        UE_LOG(LogTemp, Warning, TEXT("Actor has Dead : %f"), GetCurrentHealth());
-        ASC->AddLooseGameplayTag(SOWGameplayTags::Shared_Status_Dead);
+
+        if (!ASC->HasMatchingGameplayTag(SOWGameplayTags::Shared_Status_Dead)) {
+            UE_LOG(LogTemp, Warning, TEXT("Actor has Dead : %f"), GetCurrentHealth());
+            ASC->AddLooseGameplayTag(SOWGameplayTags::Shared_Status_Dead);
+        }
     }
 }
 
 float USOWAttributeSet::GetResistanceForElementWithElementTag(FGameplayTag ElementTag) const
 {
+    if (!ElementTag.IsValid()) return 0.f;
+    
     FGameplayTag TargetTag;
+
     // ElementTag -> Shared.Element.Nature.Major
     TargetTag = FGameplayTag::RequestGameplayTag(FName("Shared.Element.Nature"));
     if (ElementTag.MatchesTag(TargetTag)) return GetNatureResistance();

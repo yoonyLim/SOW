@@ -5,12 +5,13 @@
 #include "CoreMinimal.h"
 #include "Characters/SOWCharacter.h"
 #include "SOWGameplayTags.h"
+#include "SOWEnumTypes.h"
 #include "SOWCharacterTurretBase.generated.h"
 
 class UCapsuleComponent;
 
 UENUM(BlueprintType)
-enum class ETurretTargetSelectionPolicy : uint8 {
+enum class ETurretTargetSelectionPriority : uint8 {
 	HighHealth,
 	LowHealth,
 	HighAttack,
@@ -19,13 +20,6 @@ enum class ETurretTargetSelectionPolicy : uint8 {
 	Custom
 };
 
-UENUM(BlueprintType)
-enum class ETurretRarity : uint8 {
-	Common,
-	Uncommon,
-	Rare,
-	Epic
-};
 /**
  * 
  */
@@ -38,18 +32,20 @@ public:
 	ASOWCharacterTurretBase();
 
 	virtual void BeginPlay();
+	virtual void Tick(float DeltaTime);
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AbilitySystem")
-	ETurretTargetSelectionPolicy TurretTargetSelectionPolicy = ETurretTargetSelectionPolicy::Nearest;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Turret|Property")
+	ETurretTargetSelectionPriority TurretTargetSelectionPriority = ETurretTargetSelectionPriority::Nearest;
 	// Attack Target Selection Policy - Nearest Target Base
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Turret|Status")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Turret|Property")
 	ETurretRarity TurretRarity = ETurretRarity::Common;
 
-	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Turret|Property")
+	ETurretTargetSelectionPolicy TurretTargetSelectionPolicy = ETurretTargetSelectionPolicy::Uncertain;
 
 protected:
-	UFUNCTION(BlueprintCallable, Category = "Turret|Ability")
+	UFUNCTION(BlueprintCallable, Category = "Turret|TargetDetection")
 	float GetAttackCooldownTime() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Turret|TargetDetection")
@@ -61,10 +57,10 @@ protected:
 	UFUNCTION(BlueprintPure, Category = "Turret|TargetDetection")
 	TArray<AActor*> GetAllAttackTarget() const;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AbilitySystem")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	UCapsuleComponent* DetectionRange;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AbilitySystem")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Turret|Property")
 	FGameplayTag AbilityTagToActivation;
 
 private:

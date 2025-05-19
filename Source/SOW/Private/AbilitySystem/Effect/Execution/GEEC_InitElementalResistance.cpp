@@ -32,6 +32,7 @@ static const FAttributeCapturesElement& GetCapturedProperties() {
 	static FAttributeCapturesElement AttributeCaptures;
 	return AttributeCaptures;
 }
+
 TArray<FGameplayTag> UGEEC_InitElementalResistance::GetMatchedElementTags(const FGameplayTagContainer* SourceTags) const
 {
 	// Find All Tags matched with RootTag : Shared.Element in SourTags.
@@ -43,7 +44,7 @@ TArray<FGameplayTag> UGEEC_InitElementalResistance::GetMatchedElementTags(const 
 	{
 		for (const FGameplayTag& Tag : *SourceTags)
 		{
-			if (Tag.MatchesTag(RootTag)) // "Shared.Element" 하위 태그 포함 필터
+			if (Tag.IsValid() && Tag.MatchesTag(RootTag)) // "Shared.Element" 하위 태그 포함 필터
 			{
 				MatchedElementTags.Add(Tag);
 			}
@@ -59,10 +60,16 @@ FElementResistanceData* UGEEC_InitElementalResistance::GetResistanceDataRow(cons
 	FElementResistanceData* ResistanceDataRow = nullptr;
 	for (const FGameplayTag& ElementTag : MatchedElementTags)
 	{
+		if (!ElementTag.IsValid()) continue;
+
 		FString TagString = ElementTag.ToString();
 
 		TArray<FString> TagParts;
 		TagString.ParseIntoArray(TagParts, TEXT("."));
+
+
+		checkf((TagParts.Num() > 2), TEXT("Element Tag Length is not valid."));
+
 
 		FString ExtractedTag = TagParts[2];
 		FName NameValue(*ExtractedTag);
@@ -71,6 +78,7 @@ FElementResistanceData* UGEEC_InitElementalResistance::GetResistanceDataRow(cons
 
 		ResistanceDataRow = ResistanceData->FindRow<FElementResistanceData>(NameValue, TEXT(""));
 	}
+
 	if (!ResistanceDataRow) {
 		UE_LOG(LogTemp, Warning, TEXT("No Active Element Tag Found."));
 	}
@@ -98,7 +106,7 @@ UGEEC_InitElementalResistance::UGEEC_InitElementalResistance()
 
 void UGEEC_InitElementalResistance::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
 {
-	check(ResistanceData);
+	if(!ResistanceData) return;
 
 	const FGameplayEffectSpec& EffectSpec = ExecutionParams.GetOwningSpec();
 	const FGameplayTagContainer* SourceTags = EffectSpec.CapturedSourceTags.GetAggregatedTags();
