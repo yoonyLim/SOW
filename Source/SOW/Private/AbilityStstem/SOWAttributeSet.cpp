@@ -53,8 +53,8 @@ float USOWAttributeSet::GetResistanceForElementWithElementTag(FGameplayTag Eleme
     TargetTag = FGameplayTag::RequestGameplayTag(FName("Shared.Element.Nature"));
     if (ElementTag.MatchesTag(TargetTag)) return GetNatureResistance();
 
-    TargetTag = FGameplayTag::RequestGameplayTag(FName("Shared.Element.Flame"));
-    if (ElementTag.MatchesTag(TargetTag)) return GetFlameResistance();
+    TargetTag = FGameplayTag::RequestGameplayTag(FName("Shared.Element.Electro"));
+    if (ElementTag.MatchesTag(TargetTag)) return GetElectroResistance();
 
     TargetTag = FGameplayTag::RequestGameplayTag(FName("Shared.Element.Ice"));
     if (ElementTag.MatchesTag(TargetTag)) return GetIceResistance();
@@ -70,6 +70,9 @@ float USOWAttributeSet::GetResistanceForElementWithElementTag(FGameplayTag Eleme
 
     TargetTag = FGameplayTag::RequestGameplayTag(FName("Shared.Element.Madness"));
     if (ElementTag.MatchesTag(TargetTag)) return GetMadnessResistance();
+
+    TargetTag = FGameplayTag::RequestGameplayTag(FName("Shared.Element.Flame"));
+    if (ElementTag.MatchesTag(TargetTag)) return GetFlameResistance();
 
     return 0.f;
 }

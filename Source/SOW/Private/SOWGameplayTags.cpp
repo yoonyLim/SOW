@@ -15,6 +15,9 @@ namespace SOWGameplayTags
 
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_Attack_Melee, "Turret.Ability.Attack.Melee");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_Attack_Ranged, "Turret.Ability.Attack.Ranged");
+
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_Attack_Basic, "Turret.Event.Attack.Basic");
+	
 	
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Ability_Death, "Shared.Ability.Death");
 
@@ -26,8 +29,8 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Element_Nature_Major, "Shared.Element.Nature.Major");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Element_Nature_Minor, "Shared.Element.Nature.Minor");
 
-	UE_DEFINE_GAMEPLAY_TAG(Shared_Element_Flame_Major, "Shared.Element.Flame.Major");
-	UE_DEFINE_GAMEPLAY_TAG(Shared_Element_Flame_Minor, "Shared.Element.Flame.Minor");
+	UE_DEFINE_GAMEPLAY_TAG(Shared_Element_Electro_Major, "Shared.Element.Electro.Major");
+	UE_DEFINE_GAMEPLAY_TAG(Shared_Element_Electro_Minor, "Shared.Element.Electro.Minor");
 
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Element_Death_Major, "Shared.Element.Death.Major");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Element_Death_Minor, "Shared.Element.Death.Minor");
@@ -44,4 +47,6 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Element_Madness_Major, "Shared.Element.Madness.Major");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Element_Madness_Minor, "Shared.Element.Madness.Minor");
 
+	UE_DEFINE_GAMEPLAY_TAG(Shared_Element_Flame_Major, "Shared.Element.Flame.Major");
+	UE_DEFINE_GAMEPLAY_TAG(Shared_Element_Flame_Minor, "Shared.Element.Flame.Minor");
 }

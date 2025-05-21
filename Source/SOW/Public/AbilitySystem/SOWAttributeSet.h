@@ -88,8 +88,8 @@ public :
 	ATTRIBUTE_ACCESSORS(USOWAttributeSet, NatureResistance)
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resistance")
-	FGameplayAttributeData FlameResistance;
-	ATTRIBUTE_ACCESSORS(USOWAttributeSet, FlameResistance)
+	FGameplayAttributeData ElectroResistance;
+	ATTRIBUTE_ACCESSORS(USOWAttributeSet, ElectroResistance)
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resistance")
 	FGameplayAttributeData DeathResistance;
@@ -110,6 +110,10 @@ public :
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resistance")
 	FGameplayAttributeData MadnessResistance;
 	ATTRIBUTE_ACCESSORS(USOWAttributeSet, MadnessResistance)
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resistance")
+	FGameplayAttributeData FlameResistance;
+	ATTRIBUTE_ACCESSORS(USOWAttributeSet, FlameResistance)
 
 	
 

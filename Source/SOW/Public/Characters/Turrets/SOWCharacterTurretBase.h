@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Characters/SOWCharacter.h"
 #include "SOWGameplayTags.h"
-#include "SOWEnumTypes.h"
 #include "SOWCharacterTurretBase.generated.h"
 
 class UCapsuleComponent;
@@ -32,7 +31,6 @@ public:
 	ASOWCharacterTurretBase();
 
 	virtual void BeginPlay();
-	virtual void Tick(float DeltaTime);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Turret|Property")
 	ETurretTargetSelectionPriority TurretTargetSelectionPriority = ETurretTargetSelectionPriority::Nearest;
@@ -77,6 +75,8 @@ private:
 	void OnTargetRangeEndOverlap(AActor* InTargetActor);
 	// Need to Change Parameters to Bind it.
 
+
+
 	/* Target Detection / Attack Properties Begin */
 	UPROPERTY()
 	TArray<AActor*> DetectedTargetActors;
@@ -89,6 +89,7 @@ private:
 
 	void AttackAbilityActivation();
 	void SetDetectionRangeWithCurrentStatus();
+	bool IsActorValidTarget(AActor* InActor);
 
 	float M_CachedDetectionRadius = 0.f;
 	/* Target Detection / Attack Properties End */

@@ -8,27 +8,28 @@
 
 struct FAttributeCapturesElement {
 	DECLARE_ATTRIBUTE_CAPTUREDEF(NatureResistance);
-	DECLARE_ATTRIBUTE_CAPTUREDEF(FlameResistance);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(ElectroResistance);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(DeathResistance);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(IceResistance);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(WaveResistance);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(DivinityResistance);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(MadnessResistance);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(FlameResistance);
 
 	FAttributeCapturesElement() {
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, NatureResistance, Target, false);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, FlameResistance, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, ElectroResistance, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, DeathResistance, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, IceResistance, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, WaveResistance, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, DivinityResistance, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, MadnessResistance, Target, false);
-
+		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, FlameResistance, Target, false);
 	}
 };
 
 
-static const FAttributeCapturesElement& GetCapturedProperties() {
+static const FAttributeCapturesElement& GetCapturedElement() {
 	static FAttributeCapturesElement AttributeCaptures;
 	return AttributeCaptures;
 }
@@ -95,13 +96,14 @@ UGEEC_InitElementalResistance::UGEEC_InitElementalResistance()
 		ResistanceData = nullptr;
 	}
 
-	RelevantAttributesToCapture.Add(GetCapturedProperties().NatureResistanceDef);
-	RelevantAttributesToCapture.Add(GetCapturedProperties().FlameResistanceDef);
-	RelevantAttributesToCapture.Add(GetCapturedProperties().DeathResistanceDef);
-	RelevantAttributesToCapture.Add(GetCapturedProperties().IceResistanceDef);
-	RelevantAttributesToCapture.Add(GetCapturedProperties().WaveResistanceDef);
-	RelevantAttributesToCapture.Add(GetCapturedProperties().DivinityResistanceDef);
-	RelevantAttributesToCapture.Add(GetCapturedProperties().MadnessResistanceDef);
+	RelevantAttributesToCapture.Add(GetCapturedElement().NatureResistanceDef);
+	RelevantAttributesToCapture.Add(GetCapturedElement().ElectroResistanceDef);
+	RelevantAttributesToCapture.Add(GetCapturedElement().DeathResistanceDef);
+	RelevantAttributesToCapture.Add(GetCapturedElement().IceResistanceDef);
+	RelevantAttributesToCapture.Add(GetCapturedElement().WaveResistanceDef);
+	RelevantAttributesToCapture.Add(GetCapturedElement().DivinityResistanceDef);
+	RelevantAttributesToCapture.Add(GetCapturedElement().MadnessResistanceDef);
+	RelevantAttributesToCapture.Add(GetCapturedElement().FlameResistanceDef);
 }
 
 void UGEEC_InitElementalResistance::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
@@ -119,49 +121,56 @@ void UGEEC_InitElementalResistance::Execute_Implementation(const FGameplayEffect
 
 	OutExecutionOutput.AddOutputModifier(
 		FGameplayModifierEvaluatedData(
-			GetCapturedProperties().NatureResistanceDef.AttributeToCapture,
+			GetCapturedElement().NatureResistanceDef.AttributeToCapture,
 			EGameplayModOp::Override,
 			ResistanceDataRow->Nature)
 	);
 
 	OutExecutionOutput.AddOutputModifier(
 		FGameplayModifierEvaluatedData(
-			GetCapturedProperties().FlameResistanceDef.AttributeToCapture,
+			GetCapturedElement().ElectroResistanceDef.AttributeToCapture,
 			EGameplayModOp::Override,
-			ResistanceDataRow->Flame)
+			ResistanceDataRow->Electro)
 	);
-
 	OutExecutionOutput.AddOutputModifier(
 		FGameplayModifierEvaluatedData(
-			GetCapturedProperties().WaveResistanceDef.AttributeToCapture,
-			EGameplayModOp::Override,
-			ResistanceDataRow->Wave)
-	);
-
-	OutExecutionOutput.AddOutputModifier(
-		FGameplayModifierEvaluatedData(
-			GetCapturedProperties().IceResistanceDef.AttributeToCapture,
-			EGameplayModOp::Override,
-			ResistanceDataRow->Ice)
-	);
-
-	OutExecutionOutput.AddOutputModifier(
-		FGameplayModifierEvaluatedData(
-			GetCapturedProperties().DeathResistanceDef.AttributeToCapture,
+			GetCapturedElement().DeathResistanceDef.AttributeToCapture,
 			EGameplayModOp::Override,
 			ResistanceDataRow->Death)
 	);
 
 	OutExecutionOutput.AddOutputModifier(
 		FGameplayModifierEvaluatedData(
-			GetCapturedProperties().DivinityResistanceDef.AttributeToCapture,
+			GetCapturedElement().WaveResistanceDef.AttributeToCapture,
+			EGameplayModOp::Override,
+			ResistanceDataRow->Wave)
+	);
+
+	OutExecutionOutput.AddOutputModifier(
+		FGameplayModifierEvaluatedData(
+			GetCapturedElement().IceResistanceDef.AttributeToCapture,
+			EGameplayModOp::Override,
+			ResistanceDataRow->Ice)
+	);
+
+	
+
+	OutExecutionOutput.AddOutputModifier(
+		FGameplayModifierEvaluatedData(
+			GetCapturedElement().DivinityResistanceDef.AttributeToCapture,
 			EGameplayModOp::Override,
 			ResistanceDataRow->Divinity)
 	);
 	OutExecutionOutput.AddOutputModifier(
 		FGameplayModifierEvaluatedData(
-			GetCapturedProperties().MadnessResistanceDef.AttributeToCapture,
+			GetCapturedElement().MadnessResistanceDef.AttributeToCapture,
 			EGameplayModOp::Override,
 			ResistanceDataRow->Madness)
+	);
+	OutExecutionOutput.AddOutputModifier(
+		FGameplayModifierEvaluatedData(
+			GetCapturedElement().FlameResistanceDef.AttributeToCapture,
+			EGameplayModOp::Override,
+			ResistanceDataRow->Flame)
 	);
 }

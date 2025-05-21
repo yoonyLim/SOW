@@ -7,7 +7,11 @@
 #include "AbilitySystem/SOWAttributeSet.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "SOWBlueprintFunctionLibrary.h"
 #include "AbilitySystemBlueprintLibrary.h"
+
+#include "Interface/SOWCharacterTypeInterface.h"
+#include "SOWEnumTypes.h"
 
 
 ASOWCharacterTurretBase::ASOWCharacterTurretBase()
@@ -33,7 +37,7 @@ ASOWCharacterTurretBase::ASOWCharacterTurretBase()
 	// 콜리션 높이 설정. 하드코딩된 상태이므로 추후 변수화 작업 필요.
 
 	DetectionRange->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnTargetRangeBeginOverlap);
-
+	CharacterType = ESOWCharacterType::Turret;
 	AttackTarget = nullptr;
 }
 
@@ -48,11 +52,11 @@ void ASOWCharacterTurretBase::BeginPlay()
 }
 
 
-void ASOWCharacterTurretBase::Tick(float DeltaTime) {
-	Super::Tick(DeltaTime);
-
-	UE_LOG(LogTemp, Warning, TEXT("Ticking"));
-}
+//void ASOWCharacterTurretBase::Tick(float DeltaTime) {
+//	Super::Tick(DeltaTime);
+//
+//	UE_LOG(LogTemp, Warning, TEXT("Ticking"));
+//}
 float ASOWCharacterTurretBase::GetAttackCooldownTime() const
 {
 	checkf(AttributeSet, TEXT("AttributeSet not Found / Check point : SOWCharacterTurretBase.cpp"));
@@ -103,7 +107,12 @@ bool ASOWCharacterTurretBase::FindAttackTargetFromAllTargetAvailable()
 	UE_LOG(LogTemp, Warning, TEXT("Detected Actors Count : %s"), *FString::FromInt(L_DetectableActors.Num()));
 
 	for (AActor* CurrentTarget : L_DetectableActors) {
-		if (TurretTargetSelectionPolicy == ETurretTargetSelectionPolicy::Uncertain || CurrentTarget == this) continue;
+
+		if (!IsActorValidTarget(CurrentTarget)) continue;
+		// if target actor is equal to self or selection policy is uncertain, otherwise the actor has dead state, 
+		// then it can not be a target for the turret
+		ISOWCharacterTypeInterface* SOWCharacter = Cast<ISOWCharacterTypeInterface>(CurrentTarget);
+		ESOWCharacterType TargetType = SOWCharacter->GetSOWCharacterType();
 
 		if (TurretTargetSelectionPolicy == ETurretTargetSelectionPolicy::OnPlayer) {
 			if (Cast<ASOWCharacterPlayer>(CurrentTarget)) {
@@ -112,7 +121,10 @@ bool ASOWCharacterTurretBase::FindAttackTargetFromAllTargetAvailable()
 		}
 
 		if (TurretTargetSelectionPolicy == ETurretTargetSelectionPolicy::OnTurret) {
-			if (Cast<ASOWCharacterTurretBase>(CurrentTarget)) {
+			/*if (Cast<ASOWCharacterTurretBase>(CurrentTarget)) {
+				DetectedTargetActors.AddUnique(CurrentTarget);
+			}*/
+			if (TargetType == ESOWCharacterType::Turret) {
 				DetectedTargetActors.AddUnique(CurrentTarget);
 			}
 		}
@@ -140,7 +152,8 @@ bool ASOWCharacterTurretBase::FindAttackTargetFromAllTargetAvailable()
 			this,
 			&ASOWCharacterTurretBase::AttackAbilityActivation,
 			GetAttackCooldownTime(),
-			true
+			true,
+			0.1f
 		);
 	}
 	
@@ -163,6 +176,16 @@ void ASOWCharacterTurretBase::SetDetectionRangeWithCurrentStatus()
 	UE_LOG(LogTemp, Warning, TEXT("Range : %f"), M_CachedDetectionRadius);
 	DetectionRange->SetCapsuleRadius(M_CachedDetectionRadius);
 
+}
+
+bool ASOWCharacterTurretBase::IsActorValidTarget(AActor* InActor)
+{
+	if (TurretTargetSelectionPolicy == ETurretTargetSelectionPolicy::Uncertain) return false;
+
+	if (InActor == this) return false;
+
+	if (USOWBlueprintFunctionLibrary::NativeDoesActorHasTag(InActor, SOWGameplayTags::Shared_Status_Dead)) return false;
+	return true;
 }
 
 void ASOWCharacterTurretBase::AttackAbilityActivation() {

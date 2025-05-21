@@ -9,6 +9,14 @@
  */
 
 UENUM(BlueprintType)
+enum class ESOWCharacterType : uint8 {
+	Uncertain,
+	Player,
+	Turret,
+	Enemy
+};
+
+UENUM(BlueprintType)
 enum class ETurretTargetSelectionPolicy : uint8 {
 	Uncertain,
 	OnPlayer,
