@@ -18,15 +18,8 @@ void ASOWCharacterEnemyBase::BeginPlay()
 	
 }
 
-// Called every frame
-void ASOWCharacterEnemyBase::Tick(float DeltaTime)
+void ASOWCharacterEnemyBase::SetAIController(AEnemyBaseAIController* const AIController)
 {
-	Super::Tick(DeltaTime);
-}
-
-// Called to bind functionality to input
-void ASOWCharacterEnemyBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	MAIController = AIController;
 }
 
