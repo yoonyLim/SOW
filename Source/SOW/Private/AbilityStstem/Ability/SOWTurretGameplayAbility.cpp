@@ -2,4 +2,9 @@
 
 
 #include "AbilitySystem/Ability/SOWTurretGameplayAbility.h"
+#include "Characters/Turrets/SOWCharacterTurretBase.h"
 
+ASOWCharacterTurretBase* USOWTurretGameplayAbility::GetSOWTurretCharacterFromActorInfo() const
+{
+	return Cast<ASOWCharacterTurretBase>(CurrentActorInfo->AvatarActor);
+}
