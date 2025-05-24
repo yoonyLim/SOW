@@ -11,13 +11,10 @@
 #include "InputActionValue.h"
 #include "SOWGameplayTags.h"
 
-
 #include "AbilitySystem/Ability/SOWPlayerGameplayAbility.h"
 
 #include "AbilitySystem/SOWAbilitySystemComponent.h"
 #include "AbilitySystem/SOWAttributeSet.h"
-
-
 
 // Sets default values
 ASOWCharacterPlayer::ASOWCharacterPlayer()
@@ -36,7 +33,6 @@ ASOWCharacterPlayer::ASOWCharacterPlayer()
 
 	// Note: For faster iteration times these variables, and many more, can be tweaked in the Character Blueprint
 	// instead of recompiling to adjust them
-	GetCharacterMovement()->JumpZVelocity = 700.f;
 	GetCharacterMovement()->AirControl = 0.35f;
 	GetCharacterMovement()->MaxWalkSpeed = 500.f;
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
@@ -46,8 +42,8 @@ ASOWCharacterPlayer::ASOWCharacterPlayer()
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->TargetArmLength = 400.0f; // The camera follows at this distance behind the character	
-	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
+	CameraBoom->TargetArmLength = 1200.0f; // The camera follows at this distance behind the character	
+	CameraBoom->bUsePawnControlRotation = false; // Rotate the arm based on the controller
 
 	// Create a follow camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
@@ -89,17 +85,15 @@ void ASOWCharacterPlayer::Move(const FInputActionValue& Value)
 	}
 }
 
-void ASOWCharacterPlayer::Look(const FInputActionValue& Value)
+void ASOWCharacterPlayer::Roll(const FInputActionValue& Value)
 {
-	// input is a Vector2D
-	FVector2D LookAxisVector = Value.Get<FVector2D>();
+	UE_LOG(LogTemp, Log, TEXT("Roll triggered"));
+}
 
-	if (Controller != nullptr)
-	{
-		// add yaw and pitch input to controller
-		AddControllerYawInput(LookAxisVector.X);
-		AddControllerPitchInput(LookAxisVector.Y);
-	}
+void ASOWCharacterPlayer::UseSkill(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Log, TEXT("Roll triggered"));
+	AbilitySystemComponent->OnAbilityInputPressed(CurrentSkillTag);
 }
 
 void ASOWCharacterPlayer::NotifyControllerChanged()
@@ -124,19 +118,17 @@ void ASOWCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
 		
-		// Jumping
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
-
 		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ASOWCharacterPlayer::Move);
 
-		// Looking
-		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ASOWCharacterPlayer::Look);
+		// Rolling
+		EnhancedInputComponent->BindAction(RollAction, ETriggerEvent::Triggered, this, &ASOWCharacterPlayer::Roll);
+
+		// Rolling
+		EnhancedInputComponent->BindAction(UseSkillAction, ETriggerEvent::Triggered, this, &ASOWCharacterPlayer::UseSkill);
 	}
 	else
 	{
 		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
 }
-
