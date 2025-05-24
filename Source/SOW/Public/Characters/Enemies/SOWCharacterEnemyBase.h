@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Characters/SOWCharacter.h"
-#include "GameFramework/Character.h"
 #include "SOWCharacterEnemyBase.generated.h"
+
+class AEnemyBaseAIController;
+class UBehaviorTree;
 
 UCLASS()
 class SOW_API ASOWCharacterEnemyBase : public ASOWCharacter
@@ -20,10 +22,17 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI", meta = (AllowPrivateAccess = "true"))
+	AEnemyBaseAIController* MAIController;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
+	UBehaviorTree* MBehaviorTree;
+
+public:
+	// GETTERS
+	FORCEINLINE AEnemyBaseAIController* GetAIController() const { return MAIController; };
+	UBehaviorTree* GetBehaviorTree() const { return MBehaviorTree; };
+
+	// SETTERS
+	void SetAIController(AEnemyBaseAIController* const AIController);
 };
