@@ -22,3 +22,35 @@ struct FPlayerAbilitySet {
 
 	bool IsValid() const;
 };
+
+USTRUCT(BlueprintType)
+struct FElementResistanceData : public FTableRowBase {
+	GENERATED_BODY()
+
+public:
+	FElementResistanceData();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Resistance Value"))
+	float Nature;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Resistance Value"))
+	float Electro;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Resistance Value"))
+	float Death;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Resistance Value"))
+	float Ice;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Resistance Value"))
+	float Wave;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Resistance Value"))
+	float Divinity;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Resistance Value"))
+	float Madness;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Resistance Value"))
+	float Flame;
+};

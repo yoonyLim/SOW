@@ -8,7 +8,7 @@
 
 void UDA_StartupDataBase::GiveToAbilitySystemComponent(USOWAbilitySystemComponent* InASCToGive, int32 ApplyLevel)
 {
-	check(InASCToGive);
+	checkf(InASCToGive, TEXT("ASC was not assigned."));
 
 	GrantAbility(ActivateOnGivenAbilities, InASCToGive, ApplyLevel);
 	GrantAbility(ReactiveAbilities, InASCToGive, ApplyLevel);
@@ -26,7 +26,7 @@ void UDA_StartupDataBase::GiveToAbilitySystemComponent(USOWAbilitySystemComponen
 
 void UDA_StartupDataBase::GrantAbility(const TArray<TSubclassOf<USOWGameplayAbilityBase>>& InAbilitiesToGive, USOWAbilitySystemComponent* InASCToGive, int32 ApplyLevel)
 {
-	check(InASCToGive);
+	checkf(InASCToGive, TEXT("ASC was not assigned."));
 
 	for (const TSubclassOf<USOWGameplayAbilityBase>& AbilityToGive : InAbilitiesToGive) {
 		if (!AbilityToGive) continue;

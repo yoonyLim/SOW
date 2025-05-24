@@ -20,6 +20,11 @@ ASOWCharacter::ASOWCharacter()
 	AttributeSet = CreateDefaultSubobject<USOWAttributeSet>(TEXT("SOWAttributeSet"));
 }
 
+ESOWCharacterType ASOWCharacter::GetSOWCharacterType() const
+{
+	return CharacterType;
+}
+
 void ASOWCharacter::PossessedBy(AController* NewController)
 {
 	

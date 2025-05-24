@@ -6,6 +6,7 @@
 #include "AbilitySystem/Ability/SOWGameplayAbilityBase.h"
 #include "SOWTurretGameplayAbility.generated.h"
 
+class ASOWCharacterTurretBase;
 /**
  * 
  */
@@ -14,4 +15,8 @@ class SOW_API USOWTurretGameplayAbility : public USOWGameplayAbilityBase
 {
 	GENERATED_BODY()
 	
+protected:
+
+	UFUNCTION(BlueprintPure)
+	ASOWCharacterTurretBase* GetSOWTurretCharacterFromActorInfo() const;
 };
