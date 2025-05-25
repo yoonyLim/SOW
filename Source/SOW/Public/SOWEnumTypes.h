@@ -31,3 +31,21 @@ enum class ETurretRarity : uint8 {
 	Rare,
 	Epic
 };
+
+
+UENUM(BlueprintType)
+enum class ETurretTargetSelectionType : uint8 {
+	Single,
+	Double,
+	All,
+};
+
+UENUM(BlueprintType)
+enum class ETurretTargetSelectionPriority : uint8 {
+	HighHealth,
+	LowHealth,
+	HighAttack,
+	Nearest,
+	Farthest,
+	Custom
+};

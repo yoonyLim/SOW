@@ -24,6 +24,9 @@ void USOWAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbac
 
     Super::PostGameplayEffectExecute(Data);
 
+    USOWAbilitySystemComponent* ASC = CastChecked<USOWAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Data.Target.GetAvatarActor()));
+    if (!ASC) return;
+
     // 게임플레이 이펙트가 적용되었다면 디버깅 메시지가 출력됨.
     float NewCurrentHealth = FMath::Clamp(GetCurrentHealth(), 0.f, GetMaxHealth());
     SetCurrentHealth(NewCurrentHealth);
@@ -31,11 +34,20 @@ void USOWAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbac
     UE_LOG(LogTemp, Warning, TEXT("GameplayEffect applied successfully."), GetCurrentHealth());
     UE_LOG(LogTemp, Warning, TEXT("Current Health : %f"), GetCurrentHealth());
 
+   /* if (GetDamageOverTime() > 0.f) {
+        if (!ASC->HasMatchingGameplayTag(SOWGameplayTags::Shared_Status_DamagedOverTime)) {
+            UE_LOG(LogTemp, Warning, TEXT("Actor is damaged : %f"), GetDamageOverTime());
+            ASC->AddLooseGameplayTag(SOWGameplayTags::Shared_Status_DamagedOverTime);
+        }
+    }
+    else {
+        if (ASC->HasMatchingGameplayTag(SOWGameplayTags::Shared_Status_DamagedOverTime)) {
+            ASC->RemoveLooseGameplayTag(SOWGameplayTags::Shared_Status_DamagedOverTime);
+        }
+    }*/
+
     if (GetCurrentHealth() == 0.f) {
-        USOWAbilitySystemComponent* ASC = CastChecked<USOWAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Data.Target.GetAvatarActor()));
-        if (!ASC) return;
-
-
+        
         if (!ASC->HasMatchingGameplayTag(SOWGameplayTags::Shared_Status_Dead)) {
             UE_LOG(LogTemp, Warning, TEXT("Actor has Dead : %f"), GetCurrentHealth());
             ASC->AddLooseGameplayTag(SOWGameplayTags::Shared_Status_Dead);
