@@ -16,6 +16,8 @@
 #include "AbilitySystem/SOWAbilitySystemComponent.h"
 #include "AbilitySystem/SOWAttributeSet.h"
 
+#include "UI/PlayerHUD.h"
+
 // Sets default values
 ASOWCharacterPlayer::ASOWCharacterPlayer()
 {
@@ -60,6 +62,31 @@ void ASOWCharacterPlayer::BeginPlay()
 	Super::BeginPlay();
 	
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Hello World!"));
+
+	MyHUDWidgetClass = LoadClass<UPlayerHUD>(nullptr, TEXT("/Game/01Blueprints/UI/Player/WB_HUD.WB_HUD_C"));
+
+	if (MyHUDWidgetClass)
+	{
+		MyHUD = Cast<UPlayerHUD>(CreateWidget(GetWorld(), MyHUDWidgetClass));
+
+		if (MyHUD)
+		{
+			MyHUD->AddToViewport();
+			MyHUD->Init(AbilitySystemComponent);
+			MyHUD->SetVisibility(ESlateVisibility::Visible);
+			UE_LOG(LogTemp, Warning, TEXT("HUD : Create HUD"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("HUD : Fail to create HUD"));
+			return;
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HUD : Can't find UHUDWidget class"));
+		return;
+	}
 }
 
 void ASOWCharacterPlayer::Move(const FInputActionValue& Value)

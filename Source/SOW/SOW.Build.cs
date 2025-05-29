@@ -19,7 +19,8 @@ public class SOW : ModuleRules
 			"GameplayTags",
 			"GameplayTasks", 
 			"AIModule",
-			"NavigationSystem"
+			"NavigationSystem",
+			"UMG"
 		});
 	}
 }

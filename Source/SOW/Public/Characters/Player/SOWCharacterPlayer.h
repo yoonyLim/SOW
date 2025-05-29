@@ -53,6 +53,15 @@ class SOW_API ASOWCharacterPlayer : public ASOWCharacter
 	/* 현재 할당된 스킬의 태그를 가르킵니다. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CharacterData", meta = (AllowPrivateAccess = "true"))
 	FGameplayTag CurrentSkillTag;
+
+	/* HUD */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "HUD", meta = (AllowPrivateAccess = "true"))
+	class UPlayerHUD* MyHUD;
+
+	UPROPERTY(EditAnywhere, Category = "HUD", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<class UPlayerHUD> MyHUDWidgetClass;
+
+
 public:
 	// Sets default values for this character's properties
 	ASOWCharacterPlayer();
