@@ -19,16 +19,8 @@ ASOWCharacterTurretBase::ASOWCharacterTurretBase()
 {
 	check(AttributeSet);
 
-	//DetectionRange = CreateDefaultSubobject<UCapsuleComponent>(TEXT("DetectionRange"));
-	//DetectionRange->SetupAttachment(RootComponent);
-	//// 해당 범위는 콜리션 뿐만 아니라 공격 직전 수행해야 할 RayTracing 과정에도 사용
-	//DetectionRange->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	//// 활성화될 경우 콜리션을 QueryOnly로 설정하여 오버랩된 대상을 체크하는 용도로 활용.
-
-	//DetectionRange->SetCapsuleHalfHeight(300.f);
-	//// 콜리션 높이 설정. 하드코딩된 상태이므로 추후 변수화 작업 필요.
-
-	//DetectionRange->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnTargetRangeBeginOverlap);
+	//PrimaryActorTick.bCanEverTick = true;
+	//PrimaryActorTick.bStartWithTickEnabled = true;
 
 	TurretCombatComponent = CreateDefaultSubobject<USOWTurretCombatComponent>(TEXT("TurretCombatComponent"));
 
@@ -39,11 +31,16 @@ ASOWCharacterTurretBase::ASOWCharacterTurretBase()
 void ASOWCharacterTurretBase::BeginPlay()
 {
 	Super::BeginPlay();
+}
 
-	//if (AttributeSet) {
-	//	M_CachedDetectionRadius = AttributeSet->GetDetectionRange();
-	//	//SetDetectionRangeWithCurrentStatus();
-	//}
+void ASOWCharacterTurretBase::Tick(float DeltaTime) {
+	Super::Tick(DeltaTime);
+	if (!bIsActivated) {
+		FollowMouseLocationWhileDeactive(DeltaTime);
+	}
+	else {
+		;
+	}
 }
 
 void ASOWCharacterTurretBase::TryActivateAbilityWithTagOnASC(const FGameplayTag& InAbilityTagToActivation)
@@ -63,30 +60,46 @@ float ASOWCharacterTurretBase::GetAttackCooldownTime() const
 {
 	checkf(AttributeSet, TEXT("AttributeSet not Found / Check point : SOWCharacterTurretBase.cpp"));
 
-	return 1.0f / AttributeSet->GetAttackSpeed();
+	return 1.0f / AttributeSet->GetAttackSpeedBase();
 }
 
-//void ASOWCharacterTurretBase::OnTargetRangeBeginOverlap(UPrimitiveComponent* OverlappedComponent,
-//	AActor* OtherActor,
-//	UPrimitiveComponent* OtherComp,
-//	int32 OtherBodyIndex,
-//	bool bFromSweep,
-//	const FHitResult& SweepResult)
-//{
-//
-//	//check(TurretCombatComponent);
-//	//TurretCombatComponent->FindAttackTargetFromAllTargetAvailable();
-//	//FindAttackTargetFromAllTargetAvailable();
-//}
-//
-//void ASOWCharacterTurretBase::OnTargetRangeEndOverlap(AActor* InTargetActor)
-//{
-//}
-//
-//void ASOWCharacterTurretBase::SetDetectionRangeWithCurrentStatus()
-//{
-//	UE_LOG(LogTemp, Warning, TEXT("Range : %f"), M_CachedDetectionRadius);
-//	DetectionRange->SetCapsuleRadius(M_CachedDetectionRadius);
-//}
+FName ASOWCharacterTurretBase::GetTurretName() const
+{
+	checkf(TurretCombatComponent, TEXT("Invalid Component : TurretCombatComponent"));
+	return TurretCombatComponent->TurretName;
+}
+
+float ASOWCharacterTurretBase::GetHealthRatio() const
+{
+	checkf(AttributeSet, TEXT("AttributeSet not Found / Check point : SOWCharacterTurretBase.cpp"));
+
+	return AttributeSet->GetCurrentHealth() / AttributeSet->GetMaxHealthBase();
+}
+
+
+void ASOWCharacterTurretBase::ActivateTurret()
+{
+	// Callback Function for turret activation  
+	bIsActivated = true;
+	TurretCombatComponent->ActivateTurretCombatSystem();
+}
+
+void ASOWCharacterTurretBase::FollowMouseLocationWhileDeactive(float DeltaTime)
+{
+	// 보간을 이용해 매 틱마다 터렛이 마우스 위치로 옮겨져야 함.
+	FVector HitMousePos;
+	bool bHitGround = USOWBlueprintFunctionLibrary::GetMouseWorldLocation(this, HitMousePos);
+	
+	if (bHitGround)
+    {
+        float HalfHeight = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+        FVector TargetLocation = HitMousePos + FVector(0, 0, HalfHeight);
+
+        FVector NewLocation = FMath::VInterpTo(GetActorLocation(), TargetLocation, DeltaTime, 10.f);
+        SetActorLocation(NewLocation);
+
+    }
+}
+
 
 	

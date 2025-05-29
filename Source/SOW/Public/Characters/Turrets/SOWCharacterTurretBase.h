@@ -11,7 +11,6 @@ class UCapsuleComponent;
 class USOWTurretCombatComponent;
 
 
-
 /**
  * 
  */
@@ -23,8 +22,7 @@ class SOW_API ASOWCharacterTurretBase : public ASOWCharacter
 public:
 	ASOWCharacterTurretBase();
 
-	virtual void BeginPlay();
-
+	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Turret|Properties")
 	ETurretRarity TurretRarity = ETurretRarity::Common;
@@ -34,28 +32,26 @@ public:
 	float GetDetectionRangeRadius() const;
 
 	float GetAttackCooldownTime() const;
+
+	FName GetTurretName() const;
+
+	UFUNCTION(BlueprintPure, Category = "UI")
+	float GetHealthRatio() const;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Turret|Properties")
+	bool bIsActivated = false;
+
 protected:
-
-
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
-	//UCapsuleComponent* DetectionRange;
+	virtual void BeginPlay() override;
+	
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	USOWTurretCombatComponent* TurretCombatComponent;
 
 
-private:
-	///* Callback Function for Collision Overlap */
-	//UFUNCTION()
-	//void OnTargetRangeBeginOverlap(UPrimitiveComponent* OverlappedComponent,
-	//	AActor* OtherActor,
-	//	UPrimitiveComponent* OtherComp,
-	//	int32 OtherBodyIndex,
-	//	bool bFromSweep,
-	//	const FHitResult& SweepResult);
+	UFUNCTION(BlueprintCallable)
+	void ActivateTurret();
 
-	//UFUNCTION()
-	//void OnTargetRangeEndOverlap(AActor* InTargetActor);
-	//// Need to Change Parameters to Bind it.
 
+	void FollowMouseLocationWhileDeactive(float DeltaTime);
 };

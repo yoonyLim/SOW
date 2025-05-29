@@ -54,3 +54,38 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Resistance Value"))
 	float Flame;
 };
+
+USTRUCT(BlueprintType)
+struct FTurretAttributeData : public FTableRowBase {
+	GENERATED_BODY()
+
+public:
+	FTurretAttributeData();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Attribute Value"))
+	float MaxHealthBase;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Attribute Value"))
+	float MaxHealthRatio;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Attribute Value"))
+	float DefensePowerBase;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Attribute Value"))
+	float DefensePowerRatio;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Attribute Value"))
+	float AttackPowerBase;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Attribute Value"))
+	float AttackPowerRatio;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Attribute Value"))
+	float AttackSpeedBase;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Attribute Value"))
+	float AttackSpeedRatio;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Attribute Value"))
+	float DetectionRange;
+};

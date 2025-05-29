@@ -32,7 +32,7 @@ public:
 	ETurretTargetSelectionType TurretTargetSelectionType = ETurretTargetSelectionType::Single;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Turret|Properties")
-	bool IsActivated = true;
+	FName TurretName = TEXT("Uncertain");
 
 	UFUNCTION(BlueprintCallable, Category = "Turret|TargetDetection")
 	bool FindAttackTargetFromAllTargetAvailable();
@@ -45,6 +45,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Turret|TargetDetection")
 	float GetAttackCooldownTimeFromOwner() const;
+
+	int32 GetCircleCount() const;
+
+	void ActivateTurretCombatSystem();
 
 protected:
 	// Called when the game starts
@@ -61,6 +65,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Turret|Properties")
 	FGameplayTag AbilityTagToActivation;
+
+	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = "Turret|Properties", meta = (ExposeOnSpawn = true))
+	int32 CircleCount;
 
 private:
 	UPROPERTY()

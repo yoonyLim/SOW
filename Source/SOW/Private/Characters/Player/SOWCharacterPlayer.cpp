@@ -16,6 +16,7 @@
 #include "AbilitySystem/SOWAbilitySystemComponent.h"
 #include "AbilitySystem/SOWAttributeSet.h"
 
+#include "DataAsset/DA_StartupDataBase.h"
 // Sets default values
 ASOWCharacterPlayer::ASOWCharacterPlayer()
 {

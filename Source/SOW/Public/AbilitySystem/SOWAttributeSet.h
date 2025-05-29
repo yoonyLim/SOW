@@ -70,13 +70,16 @@ public :
 	ATTRIBUTE_ACCESSORS(USOWAttributeSet, DetectionRange)
 
 	UPROPERTY(BlueprintReadOnly, Category = "Speed")
-	FGameplayAttributeData AttackSpeed;
-	ATTRIBUTE_ACCESSORS(USOWAttributeSet, AttackSpeed)
+	FGameplayAttributeData AttackSpeedBase;
+	ATTRIBUTE_ACCESSORS(USOWAttributeSet, AttackSpeedBase)
 
-		/* Status Damage */
-	UPROPERTY(BlueprintReadOnly, Category = "Damage")
-	FGameplayAttributeData DamageTaken;
-	ATTRIBUTE_ACCESSORS(USOWAttributeSet, DamageTaken)
+	UPROPERTY(BlueprintReadOnly, Category = "Speed")
+	FGameplayAttributeData AttackSpeedRatio;
+	ATTRIBUTE_ACCESSORS(USOWAttributeSet, AttackSpeedRatio)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Speed")
+	FGameplayAttributeData WalkSpeed;
+	ATTRIBUTE_ACCESSORS(USOWAttributeSet, WalkSpeed)
 
 	UPROPERTY(BlueprintReadOnly, Category = "Damage")
 	FGameplayAttributeData DamageOverTime;

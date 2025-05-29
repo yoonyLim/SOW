@@ -40,13 +40,27 @@ void USOWTurretCombatComponent::BeginPlay()
 	);
 }
 
+
+
 float USOWTurretCombatComponent::GetAttackCooldownTimeFromOwner() const
 {
 	return CachedOwnerCharacter->GetAttackCooldownTime();
 }
 
+int32 USOWTurretCombatComponent::GetCircleCount() const
+{
+	return CircleCount;
+}
+
+
+void USOWTurretCombatComponent::ActivateTurretCombatSystem()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Combat System was activated"));
+}
+
 bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 {
+	// Check all characters within detection range and designate them as attack targets if they are valid targets.
 
 	TArray<AActor*> L_DetectableActors;
 	DetectedTargetActors.Empty();
@@ -55,9 +69,8 @@ bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn));
 
-	UE_LOG(LogTemp, Warning, TEXT("Try to detect near actors"));
-
 	if (!CachedOwnerCharacter) return false;
+
 
 	UKismetSystemLibrary::SphereOverlapActors(
 		GetWorld(),
@@ -116,11 +129,32 @@ bool USOWTurretCombatComponent::SelectNextAttackTarget()
 
 AActor* USOWTurretCombatComponent::GetSingleAttackTarget() const
 {
-	return (DetectedTargetActors.Num() >= 1) ? DetectedTargetActors[0] : nullptr;
+	AActor* TargetActor = nullptr;
+	if (DetectedTargetActors.IsEmpty()) {
+		return nullptr;
+	} 
+
+	FVector TurretLocation = CachedOwnerCharacter->GetActorLocation();
+
+	if (TurretTargetSelectionPriority == ETurretTargetSelectionPriority::Nearest) {
+		double DistanceMax = CachedOwnerCharacter->GetDetectionRangeRadius() * 2.f;
+
+		for (AActor* ATarget : DetectedTargetActors) {
+			double Distance = FVector::Dist(TurretLocation, ATarget->GetActorLocation());
+
+			if (DistanceMax > Distance) {
+				TargetActor = ATarget;
+				DistanceMax = Distance;
+			}
+		}
+	}
+
+	return TargetActor;
 }
 
 AActor* USOWTurretCombatComponent::GetNextSingleAttackTarget() const
 {
+	// unusing function
 	return (DetectedTargetActors.Num() >= 2) ? DetectedTargetActors[1] : nullptr;
 }
 
@@ -132,24 +166,30 @@ TArray<AActor*> USOWTurretCombatComponent::GetAllAttackTarget() const
 
 void USOWTurretCombatComponent::AttackAbilityActivation()
 {
-	if (!IsActivated) return;
+	if (!CachedOwnerCharacter) return;
+
+	if (!CachedOwnerCharacter->bIsActivated) return;
 
 	if(!FindAttackTargetFromAllTargetAvailable()) return;
-
-	if (!CachedOwnerCharacter) return;
 
 	CachedOwnerCharacter->TryActivateAbilityWithTagOnASC(AbilityTagToActivation);
 }
 
 bool USOWTurretCombatComponent::IsActorValidTarget(AActor* InActor)
 {
-	if (TurretTargetSelectionPolicy == ETurretTargetSelectionPolicy::Uncertain) return false;
+	if (TurretTargetSelectionPolicy == ETurretTargetSelectionPolicy::Uncertain) {
+		return false;
+	} 
 	// Case 1. Policy was not selected
 
-	if (InActor == GetOwner()) return false;
+	if (InActor == GetOwner()) {
+		return false;
+	} 
 	// Case 2. Detected target is itself
 
-	if (USOWBlueprintFunctionLibrary::NativeDoesActorHasTag(InActor, SOWGameplayTags::Shared_Status_Dead)) return false;
+	if (USOWBlueprintFunctionLibrary::NativeDoesActorHasTag(InActor, SOWGameplayTags::Shared_Status_Dead)) {
+		return false;
+	}
 	// Case 3. Target actor has dead
 
 	return true;
@@ -157,6 +197,9 @@ bool USOWTurretCombatComponent::IsActorValidTarget(AActor* InActor)
 
 void USOWTurretCombatComponent::UpdateAttackTimer()
 {
+	// if attack cooldown has changed from GE or something, apply that time to attack timer
+	// -> clear old timer and recreate timer with new cooldown
+
 	bool bIsFixedCooldown = (AbilityTagToActivation == SOWGameplayTags::Turret_Ability_Attack);
 
 	const float NewCooldownTime = bIsFixedCooldown ? GetAttackCooldownTimeFromOwner() : 3.f;
@@ -179,6 +222,10 @@ void USOWTurretCombatComponent::UpdateAttackTimer()
 }
 
 void USOWTurretCombatComponent::AddActorMatchesTargetingPolicy(AActor* CurrentActor, ESOWCharacterType Type) {
+
+	// check target type that matches to target selection policy.
+	// if matched, insert the target to DetectedTargetActors
+
 	if (TurretTargetSelectionPolicy == ETurretTargetSelectionPolicy::OnPlayer) {
 		if (Type == ESOWCharacterType::Player) {
 			DetectedTargetActors.AddUnique(CurrentActor);

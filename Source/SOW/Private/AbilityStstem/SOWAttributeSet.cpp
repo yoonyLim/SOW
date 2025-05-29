@@ -8,15 +8,16 @@
 
 
 USOWAttributeSet::USOWAttributeSet()
+
 {
-    InitMaxHealth(1.f);
-    InitCurrentHealth(1.f);
+    InitWalkSpeed(400.f);
+    InitMaxHealthBase(100.f);
+    InitCurrentHealth(100.f);
     InitAttackPowerBase(1.f);
     InitDefensePowerBase(1.f);
-    InitDamageTaken(0.f);
     InitDamageOverTime(0.f);
     InitDetectionRange(50.f);
-    InitAttackSpeed(1.f);
+    InitAttackSpeedBase(1.f);
 }
 
 void USOWAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
@@ -28,23 +29,12 @@ void USOWAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbac
     if (!ASC) return;
 
     // 게임플레이 이펙트가 적용되었다면 디버깅 메시지가 출력됨.
-    float NewCurrentHealth = FMath::Clamp(GetCurrentHealth(), 0.f, GetMaxHealth());
+    float NewCurrentHealth = FMath::Clamp(GetCurrentHealth(), 0.f, GetMaxHealthBase());
     SetCurrentHealth(NewCurrentHealth);
 
-    UE_LOG(LogTemp, Warning, TEXT("GameplayEffect applied successfully."), GetCurrentHealth());
-    UE_LOG(LogTemp, Warning, TEXT("Current Health : %f"), GetCurrentHealth());
+    //UE_LOG(LogTemp, Warning, TEXT("GameplayEffect applied successfully."), GetCurrentHealth());
+    //UE_LOG(LogTemp, Warning, TEXT("Current Health : %f"), GetCurrentHealth());
 
-   /* if (GetDamageOverTime() > 0.f) {
-        if (!ASC->HasMatchingGameplayTag(SOWGameplayTags::Shared_Status_DamagedOverTime)) {
-            UE_LOG(LogTemp, Warning, TEXT("Actor is damaged : %f"), GetDamageOverTime());
-            ASC->AddLooseGameplayTag(SOWGameplayTags::Shared_Status_DamagedOverTime);
-        }
-    }
-    else {
-        if (ASC->HasMatchingGameplayTag(SOWGameplayTags::Shared_Status_DamagedOverTime)) {
-            ASC->RemoveLooseGameplayTag(SOWGameplayTags::Shared_Status_DamagedOverTime);
-        }
-    }*/
 
     if (GetCurrentHealth() == 0.f) {
         
