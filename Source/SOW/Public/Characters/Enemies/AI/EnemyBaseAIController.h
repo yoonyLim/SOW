@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Runtime/AIModule/Classes/AIController.h"
 #include "Perception/AIPerceptionTypes.h"
-#include "Enumerations/Enemies/EEnemyState.h"
+#include "Enumerations/Enemies/EnemyEnums.h"
 
 #include "EnemyBaseAIController.generated.h"
 
@@ -22,7 +22,7 @@ class SOW_API AEnemyBaseAIController : public AAIController
 	UFUNCTION()
 	void OnTargetSighted(AActor* SeenTarget, FAIStimulus const Stimulus);
 
-	EEnemyState MCurrentState;
+	EEnemyStates MCurrentState;
 
 protected:
 	virtual void OnPossess(APawn* PossessedPawn) override;
@@ -30,9 +30,9 @@ protected:
 public:
 	AEnemyBaseAIController(FObjectInitializer const& ObjectInitializer);
 
-	void InitializeBlackBoard(float StrafeRadius, float AttackRadius, float AttackRate);
+	void InitializeBlackBoard(float AttackRadius, float AttackRate);
 
-	FORCEINLINE EEnemyState GetCurrentState() const { return MCurrentState; }
+	FORCEINLINE EEnemyStates GetCurrentState() const { return MCurrentState; }
 
-	void UpdateCurrentState(EEnemyState NewState);
+	void UpdateCurrentState(EEnemyStates NewState);
 };

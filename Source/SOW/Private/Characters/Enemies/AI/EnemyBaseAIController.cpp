@@ -7,9 +7,10 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Characters/Enemies/SOWCharacterEnemyBase.h"
 #include "Characters/Player/SOWCharacterPlayer.h"
-#include "Enumerations/Enemies/EEnemyState.h"
+#include "Enumerations/Enemies/EnemyEnums.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
+#include "Structures/Enemies/EnemyStructs.h"
 
 AEnemyBaseAIController::AEnemyBaseAIController(FObjectInitializer const& ObjectInitializer)
 {
@@ -44,7 +45,7 @@ void AEnemyBaseAIController::OnTargetSighted(AActor* SeenTarget, FAIStimulus con
 	if (ASOWCharacterPlayer* const Player = Cast<ASOWCharacterPlayer>(SeenTarget))
 	{
 		GetBlackboardComponent()->SetValueAsObject("AttackTarget", Player);
-		UpdateCurrentState(EEnemyState::Attacking);
+		UpdateCurrentState(EEnemyStates::Attacking);
 	}
 }
 
@@ -60,22 +61,25 @@ void AEnemyBaseAIController::OnPossess(APawn* PossessedPawn)
 			UseBlackboard(BehaviorTree->BlackboardAsset, Bboard);
 			Blackboard = Bboard; // "Blackboard" is an already existing variable name in AAIController class
 
-			/*if (const auto EnemyAttributesData = Enemy->EnemyAttributesDT.DataTable->FindRow<FEnemyAttributesData>(Enemy->GetEnemyType(), ""))
+			if (const auto EnemyAttributesData = Enemy->EnemyAttributesDT.DataTable->FindRow<FEnemyAttributeData>(Enemy->GetEnemyTypeStr(), ""))
 			{
-				InitializeBlackBoard(EnemyAttributesData->StrafeRadius, EnemyAttributesData->AttackRadius, EnemyAttributesData->AttackRate);
-			}*/
+				InitializeBlackBoard(EnemyAttributesData->AttackRadius, EnemyAttributesData->AttackRate);
+			}
 
 			RunBehaviorTree(BehaviorTree);
 		}
 	}
+
+	UpdateCurrentState(EEnemyStates::Passive);
 }
 
-void AEnemyBaseAIController::InitializeBlackBoard(float StrafeRadius, float AttackRadius, float AttackRate)
+void AEnemyBaseAIController::InitializeBlackBoard(float AttackRadius, float AttackRate)
 {
-	return;
+	GetBlackboardComponent()->SetValueAsFloat("AttackRadius", AttackRadius);
+	GetBlackboardComponent()->SetValueAsFloat("AttackRate", AttackRate);
 }
 
-void AEnemyBaseAIController::UpdateCurrentState(EEnemyState NewState)
+void AEnemyBaseAIController::UpdateCurrentState(EEnemyStates NewState)
 {
 	MCurrentState = NewState;
 	GetBlackboardComponent()->SetValueAsEnum("State", static_cast<uint8>(MCurrentState));

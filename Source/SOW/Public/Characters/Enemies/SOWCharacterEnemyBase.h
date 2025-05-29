@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Characters/SOWCharacter.h"
+#include "Enumerations/Enemies/EnemyEnums.h"
 #include "SOWCharacterEnemyBase.generated.h"
 
 class AEnemyBaseAIController;
@@ -14,25 +15,46 @@ class SOW_API ASOWCharacterEnemyBase : public ASOWCharacter
 {
 	GENERATED_BODY()
 
+	float AttackDamageAmount;
+
+	FName EnemyTypeStr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
+	EEnemyTypes EnemyType;
+
 public:
 	// Sets default values for this character's properties
 	ASOWCharacterEnemyBase();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (RowType = "EnemyAttributeData"))
+	FDataTableRowHandle EnemyAttributesDT;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations")
+	UAnimMontage* HitAnimation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations")
+	UAnimMontage* DeathAnimation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations")
+	UAnimMontage* AttackAnimation;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI", meta = (AllowPrivateAccess = "true"))
-	AEnemyBaseAIController* MAIController;
+	AEnemyBaseAIController* AIController;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
-	UBehaviorTree* MBehaviorTree;
+	UBehaviorTree* BehaviorTree;
 
 public:
 	// GETTERS
-	FORCEINLINE AEnemyBaseAIController* GetAIController() const { return MAIController; };
-	UBehaviorTree* GetBehaviorTree() const { return MBehaviorTree; };
+	FORCEINLINE AEnemyBaseAIController* GetAIController() const { return AIController; };
+	UBehaviorTree* GetBehaviorTree() const { return BehaviorTree; };
+	FORCEINLINE EEnemyTypes GetEnemyType() const { return EnemyType; };
+	FORCEINLINE FName GetEnemyTypeStr() const { return EnemyTypeStr; };
 
 	// SETTERS
-	void SetAIController(AEnemyBaseAIController* const AIController);
+	void SetAIController(AEnemyBaseAIController* const NewAIController);
 };
