@@ -61,22 +61,18 @@ void AEnemyBaseAIController::OnPossess(APawn* PossessedPawn)
 			UseBlackboard(BehaviorTree->BlackboardAsset, Bboard);
 			Blackboard = Bboard; // "Blackboard" is an already existing variable name in AAIController class
 
-			if (const auto EnemyAttributesData = Enemy->EnemyAttributesDT.DataTable->FindRow<FEnemyAttributeData>(Enemy->GetEnemyTypeStr(), ""))
-			{
-				InitializeBlackBoard(EnemyAttributesData->AttackRadius, EnemyAttributesData->AttackRate);
-			}
-
+			UpdateCurrentState(EEnemyStates::Passive);
+			
 			RunBehaviorTree(BehaviorTree);
 		}
 	}
-
-	UpdateCurrentState(EEnemyStates::Passive);
 }
 
 void AEnemyBaseAIController::InitializeBlackBoard(float AttackRadius, float AttackRate)
 {
 	GetBlackboardComponent()->SetValueAsFloat("AttackRadius", AttackRadius);
 	GetBlackboardComponent()->SetValueAsFloat("AttackRate", AttackRate);
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,  FString::Printf(TEXT("Example text that prints a float: %f"), AttackRadius));
 }
 
 void AEnemyBaseAIController::UpdateCurrentState(EEnemyStates NewState)

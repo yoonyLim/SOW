@@ -3,6 +3,7 @@
 
 #include "Characters/Enemies/SOWCharacterEnemyBase.h"
 
+#include "Characters/Enemies/AI/EnemyBaseAIController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Structures/Enemies/EnemyStructs.h"
 
@@ -24,7 +25,7 @@ void ASOWCharacterEnemyBase::BeginPlay()
 
 	if (const auto EnemyAttributesData = EnemyAttributesDT.DataTable->FindRow<FEnemyAttributeData>(EnemyTypeStr, ""))
 	{
-		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Success!"));
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, EnemyTypeStr.ToString());
 
 		GetCharacterMovement()->MaxWalkSpeed = EnemyAttributesData->MaxWalkSpeed;
 		
@@ -33,11 +34,23 @@ void ASOWCharacterEnemyBase::BeginPlay()
 		HitAnimation = EnemyAttributesData->HitAnimation;
 		DeathAnimation = EnemyAttributesData->DeathAnimation;
 		AttackAnimation = EnemyAttributesData->AttackAnimation;
+		AttackRadius = EnemyAttributesData->AttackRadius;
+		AttackRate = EnemyAttributesData->AttackRate;
+
+		AIController = Cast<AEnemyBaseAIController>(GetController());
+		
+		if (AIController)
+			AIController->InitializeBlackBoard(AttackRadius, AttackRate);
 	}
 }
 
-void ASOWCharacterEnemyBase::SetAIController(AEnemyBaseAIController* const NewAIController)
+void ASOWCharacterEnemyBase::Attack(const ASOWCharacterPlayer* Player)
 {
-	AIController = NewAIController;
+	if (AttackAnimation)
+	{
+		UAnimInstance* const EnemyAnimInstance = GetMesh()->GetAnimInstance();
+		EnemyAnimInstance->Montage_Play(AttackAnimation);
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Attack Animation Played!"));
+	}
 }
 

@@ -5,17 +5,20 @@
 #include "CoreMinimal.h"
 #include "Characters/SOWCharacter.h"
 #include "Enumerations/Enemies/EnemyEnums.h"
+#include "Interface/EnemyActionsInterface.h"
 #include "SOWCharacterEnemyBase.generated.h"
 
 class AEnemyBaseAIController;
 class UBehaviorTree;
 
 UCLASS()
-class SOW_API ASOWCharacterEnemyBase : public ASOWCharacter
+class SOW_API ASOWCharacterEnemyBase : public ASOWCharacter, public IEnemyActionsInterface
 {
 	GENERATED_BODY()
 
 	float AttackDamageAmount;
+	float AttackRadius;
+	float AttackRate;
 
 	FName EnemyTypeStr;
 
@@ -52,9 +55,8 @@ public:
 	// GETTERS
 	FORCEINLINE AEnemyBaseAIController* GetAIController() const { return AIController; };
 	UBehaviorTree* GetBehaviorTree() const { return BehaviorTree; };
-	FORCEINLINE EEnemyTypes GetEnemyType() const { return EnemyType; };
-	FORCEINLINE FName GetEnemyTypeStr() const { return EnemyTypeStr; };
+	EEnemyTypes GetEnemyType() const { return EnemyType; };
+	FName GetEnemyTypeStr() const { return EnemyTypeStr; };
 
-	// SETTERS
-	void SetAIController(AEnemyBaseAIController* const NewAIController);
+	virtual void Attack(const ASOWCharacterPlayer* Player) override;
 };

@@ -27,5 +27,4 @@ void USOWEnemyAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 
 		Direction = UKismetAnimationLibrary::CalculateDirection(Velocity, Enemy->GetActorRotation());
 	}
-	
 }
