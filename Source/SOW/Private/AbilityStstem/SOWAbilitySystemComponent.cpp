@@ -5,7 +5,7 @@
 
 bool USOWAbilitySystemComponent::TryActivateAbilityWithTag(FGameplayTag InAbilityTag)
 {
-	check(InAbilityTag.IsValid());
+	checkf(InAbilityTag.IsValid(), TEXT("Ability Tag has not been assgined or the tag is invailid."));
 
 
 	TArray<FGameplayAbilitySpec*> FoundAbilitySpecs;
@@ -34,7 +34,7 @@ void USOWAbilitySystemComponent::OnAbilityInputPressed(FGameplayTag InInputTag)
 	if (!InInputTag.IsValid()) return;
 
 	for (const FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities()) {
-		if (!AbilitySpec.DynamicAbilityTags.HasTagExact(InInputTag)) continue;
+		if (!AbilitySpec.GetDynamicSpecSourceTags().HasTagExact(InInputTag)) continue;
 
 		TryActivateAbility(AbilitySpec.Handle);
 	}

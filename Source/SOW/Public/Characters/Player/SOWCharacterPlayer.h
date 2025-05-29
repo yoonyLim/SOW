@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Characters/SOWCharacter.h"
+#include "GameplayTagContainer.h"
 #include "SOWCharacterPlayer.generated.h"
 
 class USpringArmComponent;
@@ -33,22 +34,25 @@ class SOW_API ASOWCharacterPlayer : public ASOWCharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputMappingContext* DefaultMappingContext;
 
-	/** Jump Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* JumpAction;
-
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* MoveAction;
 
-	/** Look Input Action */
+	/** Roll Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* LookAction;
+	UInputAction* RollAction;
+
+	/** UseSkill Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* UseSkillAction;
 
 	/* 인풋 태그와 함께 바인딩 해야할 모든 액션 - 태그 쌍이 정의된 데이터 에셋 */ 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CharacterData", meta = (AllowPrivateAccess = "true"))
 	UDA_InputData* InputData;
 
+	/* 현재 할당된 스킬의 태그를 가르킵니다. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CharacterData", meta = (AllowPrivateAccess = "true"))
+	FGameplayTag CurrentSkillTag;
 public:
 	// Sets default values for this character's properties
 	ASOWCharacterPlayer();
@@ -59,12 +63,12 @@ protected:
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
+		
+	/** Called for rolling input */
+	void Roll(const FInputActionValue& Value);
 
-	/** Called for looking input */
-	void Look(const FInputActionValue& Value);
-			
-
-
+	/** Called for "use skill" input */
+	void UseSkill(const FInputActionValue& Value); 
 
 	virtual void NotifyControllerChanged() override;
 
