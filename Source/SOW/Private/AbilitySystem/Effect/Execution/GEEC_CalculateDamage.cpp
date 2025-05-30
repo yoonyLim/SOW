@@ -14,21 +14,21 @@
 
 */
 
-struct FAttributeCaptures {
+struct FAttributeCapturesDamage {
 	DECLARE_ATTRIBUTE_CAPTUREDEF(AttackPowerBase);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(DefensePowerBase);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(CurrentHealth);
 
 
-	FAttributeCaptures() {
+	FAttributeCapturesDamage() {
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, AttackPowerBase, Source, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, DefensePowerBase, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, CurrentHealth, Target, false);
 	}
 };
 
-static const FAttributeCaptures& GetCapturedProperties() {
-	static FAttributeCaptures AttributeCaptures;
+static const FAttributeCapturesDamage& GetCapturedPropertiesDamage() {
+	static FAttributeCapturesDamage AttributeCaptures;
 	return AttributeCaptures;
 }
 
@@ -66,9 +66,9 @@ float UGEEC_CalculateDamage::GetElementalResistanceCost(const FGameplayEffectCus
 
 UGEEC_CalculateDamage::UGEEC_CalculateDamage()
 {
-	RelevantAttributesToCapture.Add(GetCapturedProperties().AttackPowerBaseDef);
-	RelevantAttributesToCapture.Add(GetCapturedProperties().DefensePowerBaseDef);
-	RelevantAttributesToCapture.Add(GetCapturedProperties().CurrentHealthDef);
+	RelevantAttributesToCapture.Add(GetCapturedPropertiesDamage().AttackPowerBaseDef);
+	RelevantAttributesToCapture.Add(GetCapturedPropertiesDamage().DefensePowerBaseDef);
+	RelevantAttributesToCapture.Add(GetCapturedPropertiesDamage().CurrentHealthDef);
 }
 
 void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
@@ -86,7 +86,7 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 	float L_AttackPower = 0.f;
 
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
-		GetCapturedProperties().AttackPowerBaseDef,
+		GetCapturedPropertiesDamage().AttackPowerBaseDef,
 		EvalParams,
 		L_AttackPower
 	);
@@ -94,7 +94,7 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 	float L_DefensePower = 0.f;
 
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
-		GetCapturedProperties().DefensePowerBaseDef,
+		GetCapturedPropertiesDamage().DefensePowerBaseDef,
 		EvalParams,
 		L_DefensePower
 	);
@@ -103,7 +103,7 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 
 	OutExecutionOutput.AddOutputModifier(
 		FGameplayModifierEvaluatedData(
-			GetCapturedProperties().CurrentHealthDef.AttributeToCapture, 
+			GetCapturedPropertiesDamage().CurrentHealthDef.AttributeToCapture,
 			EGameplayModOp::Additive, 
 			-L_FinalDamage)
 	);
