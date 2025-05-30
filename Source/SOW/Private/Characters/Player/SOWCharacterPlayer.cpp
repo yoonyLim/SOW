@@ -11,12 +11,15 @@
 #include "InputActionValue.h"
 #include "SOWGameplayTags.h"
 
+#include "Core/SOWPlayerController.h"
+
 #include "AbilitySystem/Ability/SOWPlayerGameplayAbility.h"
 
 #include "AbilitySystem/SOWAbilitySystemComponent.h"
 #include "AbilitySystem/SOWAttributeSet.h"
 
-#include "DataAsset/DA_StartupDataBase.h"
+#include "UI/PlayerHUD.h"
+
 // Sets default values
 ASOWCharacterPlayer::ASOWCharacterPlayer()
 {
@@ -61,6 +64,31 @@ void ASOWCharacterPlayer::BeginPlay()
 	Super::BeginPlay();
 	
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Hello World!"));
+
+	MyHUDWidgetClass = LoadClass<UPlayerHUD>(nullptr, TEXT("/Game/01Blueprints/UI/Player/WB_HUD.WB_HUD_C"));
+
+	if (MyHUDWidgetClass)
+	{
+		MyHUD = Cast<UPlayerHUD>(CreateWidget(GetWorld(), MyHUDWidgetClass));
+
+		if (MyHUD)
+		{
+			MyHUD->AddToViewport();
+			MyHUD->Init(AbilitySystemComponent);
+			MyHUD->SetVisibility(ESlateVisibility::Visible);
+			UE_LOG(LogTemp, Warning, TEXT("HUD : Create HUD"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("HUD : Fail to create HUD"));
+			return;
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HUD : Can't find UHUDWidget class"));
+		return;
+	}
 }
 
 void ASOWCharacterPlayer::Move(const FInputActionValue& Value)
@@ -111,6 +139,19 @@ void ASOWCharacterPlayer::NotifyControllerChanged()
 	}
 }
 
+void ASOWCharacterPlayer::InstallTurret(const FInputActionValue& Value)
+{
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	if (!PC) return;
+
+	ASOWPlayerController* SOWPC = Cast<ASOWPlayerController>(PC);
+	if (SOWPC)
+	{
+		SOWPC->ConfirmTurretPlacement();
+		UE_LOG(LogTemp, Warning, TEXT(""));
+	}
+}
+
 // Called to bind functionality to input
 void ASOWCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -127,6 +168,8 @@ void ASOWCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInput
 
 		// Rolling
 		EnhancedInputComponent->BindAction(UseSkillAction, ETriggerEvent::Triggered, this, &ASOWCharacterPlayer::UseSkill);
+
+		EnhancedInputComponent->BindAction(InstallTurretAction, ETriggerEvent::Triggered, this, &ASOWCharacterPlayer::InstallTurret);
 	}
 	else
 	{

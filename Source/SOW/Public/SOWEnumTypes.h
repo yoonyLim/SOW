@@ -48,4 +48,9 @@ enum class ETurretTargetSelectionPriority : uint8 {
 	Nearest,
 	Farthest,
 	Custom
+UENUM(BlueprintType)
+enum class EStat : uint8 {
+	HP,
+	MP,
+	Stamina
 };
