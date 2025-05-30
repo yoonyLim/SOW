@@ -18,9 +18,9 @@ public class SOW : ModuleRules
 			"GamePlayAbilities",
 			"GameplayTags",
 			"GameplayTasks", 
-			"AIModule",
-			"NavigationSystem",
-			"UMG"
+			"AnimGraphRuntime", // Added by Yoony for Enemy AnimInstance
+			"AIModule", // Added by Yoony for Enemy AI
+			"NavigationSystem" // Added by Yoony for Enemy AI
 		});
 	}
 }
