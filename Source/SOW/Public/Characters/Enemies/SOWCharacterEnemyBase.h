@@ -16,10 +16,6 @@ class SOW_API ASOWCharacterEnemyBase : public ASOWCharacter, public IEnemyAction
 {
 	GENERATED_BODY()
 
-	float AttackDamageAmount;
-	float AttackRadius;
-	float AttackRate;
-
 	FName EnemyTypeStr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
@@ -58,5 +54,5 @@ public:
 	EEnemyTypes GetEnemyType() const { return EnemyType; };
 	FName GetEnemyTypeStr() const { return EnemyTypeStr; };
 
-	virtual void Attack(const ASOWCharacterPlayer* Player) override;
+	virtual void Attack(const ASOWCharacter* TargetActor) override;
 };

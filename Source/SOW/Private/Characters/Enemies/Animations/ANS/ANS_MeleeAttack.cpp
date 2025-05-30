@@ -3,8 +3,11 @@
 
 #include "Characters/Enemies/Animations/ANS/ANS_MeleeAttack.h"
 
+#include "AbilitySystem/SOWAbilitySystemComponent.h"
 #include "Characters/Enemies/SOWCharacterEnemyBase.h"
 #include "Components/CapsuleComponent.h"
+#include "SOWBlueprintFunctionLibrary.h"
+#include "Characters/SOWCharacter.h"
 
 void UANS_MeleeAttack::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration,
                                    const FAnimNotifyEventReference& EvetnRef)
@@ -43,16 +46,20 @@ void UANS_MeleeAttack::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenc
 		{
 			// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("poyo"));
 
-			if (ASOWCharacterPlayer* const Player = Cast<ASOWCharacterPlayer>(Hit.GetActor()))
+			FGameplayEffectContextHandle EffectContext = USOWBlueprintFunctionLibrary::NativeGetSOWAbilitySystemComponentFromActorInfo(Enemy)->MakeEffectContext();
+			EffectContext.AddSourceObject(this);
+
+			ISOWCharacterTypeInterface* SOWCharacter = Cast<ISOWCharacterTypeInterface>(Hit.GetActor());
+			if (!SOWCharacter) return;
+	
+			ESOWCharacterType TargetType = SOWCharacter->GetSOWCharacterType();
+	
+			if (TargetType == ESOWCharacterType::Player || TargetType == ESOWCharacterType::Turret)
 			{
-
-				/*FDamageData DamageData;
-				DamageData.DamageAmount = Enemy->GetAttackDamageAmount() + AdditionalDamageAmount;
-				DamageData.DamageType = EDamageType::Melee;
-
-				Player->TakeDamage(DamageData, GetEnemyChar());*/
-
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("poyo"));
+				USOWBlueprintFunctionLibrary::NativeGetSOWAbilitySystemComponentFromActorInfo(Enemy)->ApplyGameplayEffectSpecToTarget(
+					*USOWBlueprintFunctionLibrary::NativeGetSOWAbilitySystemComponentFromActorInfo(Enemy)->MakeOutgoingSpec(DamageEffect, 1.f, EffectContext).Data.Get(), // GameEffectSpec
+					USOWBlueprintFunctionLibrary::NativeGetSOWAbilitySystemComponentFromActorInfo(Hit.GetActor()) // Target
+				);
 
 				bCanInflictDamage = false;
 			}
@@ -63,8 +70,7 @@ void UANS_MeleeAttack::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenc
 	}
 }
 
-void UANS_MeleeAttack::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation,
-	const FAnimNotifyEventReference& EvetnRef)
+void UANS_MeleeAttack::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EvetnRef)
 {
 	Super::NotifyEnd(MeshComp, Animation, EvetnRef);
 

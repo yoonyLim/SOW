@@ -6,6 +6,7 @@
 #include "Animation/AnimNotifies/AnimNotifyState.h"
 #include "ANS_MeleeAttack.generated.h"
 
+class UGameplayEffect;
 class ASOWCharacterEnemyBase;
 /**
  * 
@@ -23,6 +24,9 @@ class SOW_API UANS_MeleeAttack : public UAnimNotifyState
 	bool bCanInflictDamage = true;
 
 public:
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UGameplayEffect> DamageEffect;
+	
 	UPROPERTY(EditAnywhere)
 	float AdditionalDamageAmount;
 

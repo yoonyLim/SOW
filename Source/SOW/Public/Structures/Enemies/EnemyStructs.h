@@ -23,10 +23,13 @@ struct SOW_API FEnemyAttributeData : public FTableRowBase
 	float AttackRadius;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float AttackRate;
+	float AttackSpeed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float AttackDamageAmount;
+	float AttackPowerBase;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float DefensePowerBase;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UAnimMontage* HitAnimation;

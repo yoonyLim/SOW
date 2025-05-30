@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "Characters/Player/SOWCharacterPlayer.h"
+#include "Characters/SOWCharacter.h"
 #include "EnemyActionsInterface.generated.h"
 
 // This class does not need to be modified.
@@ -23,5 +23,5 @@ class SOW_API IEnemyActionsInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void Attack(const ASOWCharacterPlayer* Player) = 0;
+	virtual void Attack(const ASOWCharacter* TargetActor) = 0;
 };
