@@ -46,6 +46,9 @@ class SOW_API ASOWCharacterPlayer : public ASOWCharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* UseSkillAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* InstallTurretAction;
+
 	/* 인풋 태그와 함께 바인딩 해야할 모든 액션 - 태그 쌍이 정의된 데이터 에셋 */ 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CharacterData", meta = (AllowPrivateAccess = "true"))
 	UDA_InputData* InputData;
@@ -78,6 +81,8 @@ protected:
 
 	/** Called for "use skill" input */
 	void UseSkill(const FInputActionValue& Value); 
+
+	void InstallTurret(const FInputActionValue& Value);
 
 	virtual void NotifyControllerChanged() override;
 

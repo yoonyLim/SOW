@@ -11,6 +11,8 @@
 #include "InputActionValue.h"
 #include "SOWGameplayTags.h"
 
+#include "Core/SOWPlayerController.h"
+
 #include "AbilitySystem/Ability/SOWPlayerGameplayAbility.h"
 
 #include "AbilitySystem/SOWAbilitySystemComponent.h"
@@ -137,6 +139,19 @@ void ASOWCharacterPlayer::NotifyControllerChanged()
 	}
 }
 
+void ASOWCharacterPlayer::InstallTurret(const FInputActionValue& Value)
+{
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	if (!PC) return;
+
+	ASOWPlayerController* SOWPC = Cast<ASOWPlayerController>(PC);
+	if (SOWPC)
+	{
+		SOWPC->ConfirmTurretPlacement();
+		UE_LOG(LogTemp, Warning, TEXT(""));
+	}
+}
+
 // Called to bind functionality to input
 void ASOWCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -153,6 +168,8 @@ void ASOWCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInput
 
 		// Rolling
 		EnhancedInputComponent->BindAction(UseSkillAction, ETriggerEvent::Triggered, this, &ASOWCharacterPlayer::UseSkill);
+
+		EnhancedInputComponent->BindAction(InstallTurretAction, ETriggerEvent::Triggered, this, &ASOWCharacterPlayer::InstallTurret);
 	}
 	else
 	{

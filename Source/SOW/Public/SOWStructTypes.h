@@ -4,6 +4,7 @@
 
 #include "GameplayTagContainer.h"
 #include "AbilitySystem/Ability/SOWPlayerGameplayAbility.h"
+#include "Characters/Turrets/SOWCharacterTurretBase.h"
 #include "SOWStructTypes.generated.h"
 
 /**
@@ -53,4 +54,19 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Resistance Value"))
 	float Flame;
+};
+
+USTRUCT(BlueprintType)
+struct FTurretData : public FTableRowBase {
+
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName TurretName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USkeletalMesh* Mesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<ASOWCharacterTurretBase> TurretClass;
 };
