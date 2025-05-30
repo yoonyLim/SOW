@@ -6,6 +6,9 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "SOWGameplayTags.h"
 
+#include "Components/SOWCharacterUIComponent.h"
+#include "Interface/SOWCharacterUIInterface.h"
+
 
 USOWAttributeSet::USOWAttributeSet()
 
@@ -25,15 +28,27 @@ void USOWAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbac
 
     Super::PostGameplayEffectExecute(Data);
 
+    if (!CachedCharacterUIInterface.IsValid()) {
+        CachedCharacterUIInterface = TWeakInterfacePtr<ISOWCharacterUIInterface>(Data.Target.GetAvatarActor());
+    }
+    checkf(CachedCharacterUIInterface.IsValid(), TEXT("CachedCharacterUIInterface has not implemented for %s"), *Data.Target.GetAvatarActor()->GetActorNameOrLabel());
+
+    USOWCharacterUIComponent* CharacterUIComponent = CachedCharacterUIInterface->GetCharacterUIComponent();
+
+
+
     USOWAbilitySystemComponent* ASC = CastChecked<USOWAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Data.Target.GetAvatarActor()));
     if (!ASC) return;
 
-    // 게임플레이 이펙트가 적용되었다면 디버깅 메시지가 출력됨.
-    float NewCurrentHealth = FMath::Clamp(GetCurrentHealth(), 0.f, GetMaxHealthBase());
-    SetCurrentHealth(NewCurrentHealth);
+    if (Data.EvaluatedData.Attribute == GetCurrentHealthAttribute()) {
+        float NewCurrentHealth = FMath::Clamp(GetCurrentHealth(), 0.f, GetMaxHealthBase());
+        SetCurrentHealth(NewCurrentHealth);
 
-    //UE_LOG(LogTemp, Warning, TEXT("GameplayEffect applied successfully."), GetCurrentHealth());
-    //UE_LOG(LogTemp, Warning, TEXT("Current Health : %f"), GetCurrentHealth());
+        UE_LOG(LogTemp, Warning, TEXT("New Health : %f"), GetCurrentHealth());
+
+        CharacterUIComponent->OnCurrentHealthChanged.Broadcast(GetCurrentHealth() / GetMaxHealthBase());
+
+    }
 
 
     if (GetCurrentHealth() == 0.f) {

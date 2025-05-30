@@ -89,6 +89,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Attribute Value"))
 	float DetectionRange;
+};
+
+
+USTRUCT(BlueprintType)
 struct FTurretData : public FTableRowBase {
 
 	GENERATED_BODY()

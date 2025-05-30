@@ -6,6 +6,7 @@
 #include "SOWGameplayTags.h"
 #include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
+#include "Characters/Turrets/SOWCharacterTurretBase.h"
 #include "AbilitySystem/SOWAbilitySystemComponent.h"
 
 USOWAbilitySystemComponent* USOWBlueprintFunctionLibrary::NativeGetSOWAbilitySystemComponentFromActorInfo(AActor* InActor)
@@ -50,6 +51,30 @@ bool USOWBlueprintFunctionLibrary::GetMouseWorldLocation(UObject* WorldContextOb
     if (PC->GetHitResultUnderCursor(ECC_Visibility, false, HitResult))
     {
         OutWorldLocation = HitResult.ImpactPoint;
+        return true;
+    }
+
+    return false;
+}
+
+bool USOWBlueprintFunctionLibrary::SpawnTurretWithCircleCount(UObject* WorldContextObject, const TSubclassOf<ASOWCharacterTurretBase>& InTurretClass, const FVector& InTargetLoc, const FRotator& InTargetRot, const int32 InCircleCount)
+{
+    FTransform SpawnTransform;
+    SpawnTransform.SetLocation(InTargetLoc);
+    SpawnTransform.SetRotation(InTargetRot.Quaternion());
+
+    ASOWCharacterTurretBase* SpawnedTurret = Cast<ASOWCharacterTurretBase>(
+        UGameplayStatics::BeginDeferredActorSpawnFromClass(
+            WorldContextObject, InTurretClass, SpawnTransform, ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn
+        )
+    );
+
+    if (SpawnedTurret)
+    {
+        SpawnedTurret->CircleCount = InCircleCount;
+
+        UGameplayStatics::FinishSpawningActor(SpawnedTurret, SpawnTransform);
+
         return true;
     }
 

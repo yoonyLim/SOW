@@ -9,6 +9,7 @@
 
 class UCapsuleComponent;
 class USOWTurretCombatComponent;
+class UWidgetComponent;
 
 
 /**
@@ -38,9 +39,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "UI")
 	float GetHealthRatio() const;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Turret|Properties")
-	bool bIsActivated = false;
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Turret|Properties", meta = (ExposeOnSpawn = true))
+	int32 CircleCount;
 
+	int32 GetCircleCount() const { return CircleCount; };
 protected:
 	virtual void BeginPlay() override;
 	
@@ -48,10 +50,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	USOWTurretCombatComponent* TurretCombatComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
+	UWidgetComponent* HealthWidgetComponent;
 
-	UFUNCTION(BlueprintCallable)
-	void ActivateTurret();
-
-
-	void FollowMouseLocationWhileDeactive(float DeltaTime);
 };

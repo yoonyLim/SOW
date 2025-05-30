@@ -12,6 +12,7 @@
 class ASOWCharacterTurretBase;
 
 
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SOW_API USOWTurretCombatComponent : public UActorComponent
 {
@@ -34,6 +35,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Turret|Properties")
 	FName TurretName = TEXT("Uncertain");
 
+	
+
 	UFUNCTION(BlueprintCallable, Category = "Turret|TargetDetection")
 	bool FindAttackTargetFromAllTargetAvailable();
 
@@ -46,9 +49,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Turret|TargetDetection")
 	float GetAttackCooldownTimeFromOwner() const;
 
-	int32 GetCircleCount() const;
-
-	void ActivateTurretCombatSystem();
+	UFUNCTION(BlueprintCallable, Category = "Turret|TargetDetection")
+	void ClearTargetDetectionAsDead();
 
 protected:
 	// Called when the game starts
@@ -66,8 +68,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Turret|Properties")
 	FGameplayTag AbilityTagToActivation;
 
-	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = "Turret|Properties", meta = (ExposeOnSpawn = true))
-	int32 CircleCount;
 
 private:
 	UPROPERTY()

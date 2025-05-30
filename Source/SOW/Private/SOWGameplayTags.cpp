@@ -8,7 +8,6 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Attack_Debug, "Player.Ability.Attack.Debug");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Roll, "Player.Ability.Roll"); 
 	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Debug1, "Player.Ability.Debug1");
-	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Roll, "Player.Ability.Roll");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Summon, "Player.Ability.Summon");
 
 	UE_DEFINE_GAMEPLAY_TAG(Player_Status_Rolling, "Player.Status.Rolling");

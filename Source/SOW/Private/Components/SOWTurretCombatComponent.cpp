@@ -40,23 +40,16 @@ void USOWTurretCombatComponent::BeginPlay()
 	);
 }
 
-
-
 float USOWTurretCombatComponent::GetAttackCooldownTimeFromOwner() const
 {
 	return CachedOwnerCharacter->GetAttackCooldownTime();
 }
 
-int32 USOWTurretCombatComponent::GetCircleCount() const
+void USOWTurretCombatComponent::ClearTargetDetectionAsDead()
 {
-	return CircleCount;
+	GetWorld()->GetTimerManager().ClearTimer(AttackTimerHandle);
 }
 
-
-void USOWTurretCombatComponent::ActivateTurretCombatSystem()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Combat System was activated"));
-}
 
 bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 {
@@ -168,7 +161,7 @@ void USOWTurretCombatComponent::AttackAbilityActivation()
 {
 	if (!CachedOwnerCharacter) return;
 
-	if (!CachedOwnerCharacter->bIsActivated) return;
+	//if (!CachedOwnerCharacter->bIsActivated) return;
 
 	if(!FindAttackTargetFromAllTargetAvailable()) return;
 

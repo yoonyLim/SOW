@@ -9,6 +9,7 @@
 #include "AbilitySystem/SOWAbilitySystemComponent.h"
 #include "AbilitySystem/SOWAttributeSet.h"
 
+#include "Components/SOWCharacterUIComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -23,6 +24,8 @@ ASOWCharacter::ASOWCharacter()
 
 	AbilitySystemComponent = CreateDefaultSubobject<USOWAbilitySystemComponent>(TEXT("SOWAbilitySystemComponent"));
 	AttributeSet = CreateDefaultSubobject<USOWAttributeSet>(TEXT("SOWAttributeSet"));
+
+	CharacterUIComponent = CreateDefaultSubobject<USOWCharacterUIComponent>(TEXT("CharacterUIComponent"));
 }
 
 ESOWCharacterType ASOWCharacter::GetSOWCharacterType() const
@@ -60,6 +63,16 @@ void ASOWCharacter::PossessedBy(AController* NewController)
 void ASOWCharacter::BeginPlay() {
 
 	Super::BeginPlay();
+}
+
+USOWCharacterUIComponent* ASOWCharacter::GetCharacterUIComponent() const
+{
+	return CharacterUIComponent;
+}
+
+ESOWCharacterType ASOWCharacter::BP_GetSOWCharacterType() const
+{
+	return GetSOWCharacterType();
 }
 
 void ASOWCharacter::Tick(float DeltaTime) {

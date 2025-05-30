@@ -11,6 +11,8 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Components/SOWTurretCombatComponent.h"
 
+#include "Components/WidgetComponent.h"
+#include "Widget/SOWWidgetBase.h"
 #include "Interface/SOWCharacterTypeInterface.h"
 #include "SOWEnumTypes.h"
 
@@ -24,6 +26,9 @@ ASOWCharacterTurretBase::ASOWCharacterTurretBase()
 
 	TurretCombatComponent = CreateDefaultSubobject<USOWTurretCombatComponent>(TEXT("TurretCombatComponent"));
 
+	HealthWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthWidgetComponent"));
+	HealthWidgetComponent->SetupAttachment(GetMesh());
+
 	CharacterType = ESOWCharacterType::Turret;
 	//AttackTarget = nullptr;
 }
@@ -31,16 +36,14 @@ ASOWCharacterTurretBase::ASOWCharacterTurretBase()
 void ASOWCharacterTurretBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (USOWWidgetBase* HealthWidget = Cast<USOWWidgetBase>(HealthWidgetComponent->GetUserWidgetObject())) {
+		HealthWidget->InitCreatedWidget(this);
+	}
 }
 
 void ASOWCharacterTurretBase::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
-	if (!bIsActivated) {
-		FollowMouseLocationWhileDeactive(DeltaTime);
-	}
-	else {
-		;
-	}
 }
 
 void ASOWCharacterTurretBase::TryActivateAbilityWithTagOnASC(const FGameplayTag& InAbilityTagToActivation)
@@ -77,29 +80,13 @@ float ASOWCharacterTurretBase::GetHealthRatio() const
 }
 
 
-void ASOWCharacterTurretBase::ActivateTurret()
-{
-	// Callback Function for turret activation  
-	bIsActivated = true;
-	TurretCombatComponent->ActivateTurretCombatSystem();
-}
+//void ASOWCharacterTurretBase::ActivateTurret()
+//{
+//	// Callback Function for turret activation  
+//	bIsActivated = true;
+//	TurretCombatComponent->ActivateTurretCombatSystem();
+//}
 
-void ASOWCharacterTurretBase::FollowMouseLocationWhileDeactive(float DeltaTime)
-{
-	// 보간을 이용해 매 틱마다 터렛이 마우스 위치로 옮겨져야 함.
-	FVector HitMousePos;
-	bool bHitGround = USOWBlueprintFunctionLibrary::GetMouseWorldLocation(this, HitMousePos);
-	
-	if (bHitGround)
-    {
-        float HalfHeight = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
-        FVector TargetLocation = HitMousePos + FVector(0, 0, HalfHeight);
-
-        FVector NewLocation = FMath::VInterpTo(GetActorLocation(), TargetLocation, DeltaTime, 10.f);
-        SetActorLocation(NewLocation);
-
-    }
-}
 
 
 	

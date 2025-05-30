@@ -74,7 +74,7 @@ void UGEEC_AttRefreshWithCircle::Execute_Implementation(const FGameplayEffectCus
 	USOWTurretCombatComponent* SourceTurretComp = SourceTurret->FindComponentByClass<USOWTurretCombatComponent>();
 	if (!SourceTurretComp) return;
 	
-	int32 TargetCircleCount = SourceTurretComp->GetCircleCount();
+	int32 TargetCircleCount = SourceTurret->GetCircleCount();
 
 
 	float L_GetRatio = 0.f;

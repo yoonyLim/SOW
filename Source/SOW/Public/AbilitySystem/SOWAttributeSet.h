@@ -17,7 +17,7 @@
 	GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
-
+class ISOWCharacterUIInterface;
 
 UCLASS()
 class SOW_API USOWAttributeSet : public UAttributeSet
@@ -125,5 +125,8 @@ public :
 	/** 특정 태그에 대한 저항값을 반환하는 함수 */
 	UFUNCTION(BlueprintCallable, Category = "Resistance")
 	float GetResistanceForElementWithElementTag(FGameplayTag ElementTag) const;
+
+private:
+	TWeakInterfacePtr<ISOWCharacterUIInterface> CachedCharacterUIInterface;
 
 };
