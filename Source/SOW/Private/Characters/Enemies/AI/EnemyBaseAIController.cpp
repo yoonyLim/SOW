@@ -6,11 +6,10 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Characters/Enemies/SOWCharacterEnemyBase.h"
-#include "Characters/Player/SOWCharacterPlayer.h"
+#include "Characters/SOWCharacter.h"
 #include "Enumerations/Enemies/EnemyEnums.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
-#include "Structures/Enemies/EnemyStructs.h"
 
 AEnemyBaseAIController::AEnemyBaseAIController(FObjectInitializer const& ObjectInitializer)
 {
@@ -42,9 +41,14 @@ void AEnemyBaseAIController::SetupPerceptionSystem()
 
 void AEnemyBaseAIController::OnTargetSighted(AActor* SeenTarget, FAIStimulus const Stimulus)
 {
-	if (ASOWCharacterPlayer* const Player = Cast<ASOWCharacterPlayer>(SeenTarget))
+	ISOWCharacterTypeInterface* SOWCharacter = Cast<ISOWCharacterTypeInterface>(SeenTarget);
+	if (!SOWCharacter) return;
+	
+	ESOWCharacterType TargetType = SOWCharacter->GetSOWCharacterType();
+	
+	if (TargetType == ESOWCharacterType::Player || TargetType == ESOWCharacterType::Turret)
 	{
-		GetBlackboardComponent()->SetValueAsObject("AttackTarget", Player);
+		GetBlackboardComponent()->SetValueAsObject("AttackTarget", SeenTarget);
 		UpdateCurrentState(EEnemyStates::Attacking);
 	}
 }
@@ -68,10 +72,10 @@ void AEnemyBaseAIController::OnPossess(APawn* PossessedPawn)
 	}
 }
 
-void AEnemyBaseAIController::InitializeBlackBoard(float AttackRadius, float AttackRate)
+void AEnemyBaseAIController::InitializeBlackBoard(float AttackRadius, float AttackSpeed)
 {
 	GetBlackboardComponent()->SetValueAsFloat("AttackRadius", AttackRadius);
-	GetBlackboardComponent()->SetValueAsFloat("AttackRate", AttackRate);
+	GetBlackboardComponent()->SetValueAsFloat("AttackSpeed", AttackSpeed);
 	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,  FString::Printf(TEXT("Example text that prints a float: %f"), AttackRadius));
 }
 

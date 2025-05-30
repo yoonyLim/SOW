@@ -56,6 +56,7 @@ ASOWCharacterPlayer::ASOWCharacterPlayer()
 	
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+	CharacterType = ESOWCharacterType::Player; // for player type recognition - by PGH
 }
 
 // Called when the game starts or when spawned
