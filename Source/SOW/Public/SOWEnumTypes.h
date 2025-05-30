@@ -31,3 +31,10 @@ enum class ETurretRarity : uint8 {
 	Rare,
 	Epic
 };
+
+UENUM(BlueprintType)
+enum class EStat : uint8 {
+	HP,
+	MP,
+	Stamina
+};

@@ -31,12 +31,18 @@ void USOWAbilitySystemComponent::OnAbilityInputPressed(FGameplayTag InInputTag)
 	// SOWCharacterPlayer에서 키 바인딩의 콜백 함수에서 해당 함수를 실행하고, 적절한 InputTag를 전달하면 매핑된 어빌리티가 실행됩니다.
 	// 현재 일회성 능력만 처리할 수 있습니다.
 	
-	if (!InInputTag.IsValid()) return;
+	if (!InInputTag.IsValid())
+	{
+		UE_LOG(LogTemp, Log, TEXT("ASC: Fail to use skill"));
+		return;
+	}
 
 	for (const FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities()) {
 		if (!AbilitySpec.GetDynamicSpecSourceTags().HasTagExact(InInputTag)) continue;
 
 		TryActivateAbility(AbilitySpec.Handle);
+
+		UE_LOG(LogTemp, Log, TEXT("ASC: use skill"));
 	}
 }
 
