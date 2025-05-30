@@ -3,6 +3,8 @@
 
 #include "Characters/Enemies/SOWCharacterEnemyBase.h"
 
+#include "SOWGameplayTags.h"
+#include "AbilitySystem/SOWAbilitySystemComponent.h"
 #include "Characters/Enemies/AI/EnemyBaseAIController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Structures/Enemies/EnemyStructs.h"
@@ -13,6 +15,8 @@ ASOWCharacterEnemyBase::ASOWCharacterEnemyBase()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	CharacterType = ESOWCharacterType::Enemy;
 }
 
 // Called when the game starts or when spawned
@@ -25,26 +29,25 @@ void ASOWCharacterEnemyBase::BeginPlay()
 
 	if (const auto EnemyAttributesData = EnemyAttributesDT.DataTable->FindRow<FEnemyAttributeData>(EnemyTypeStr, ""))
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, EnemyTypeStr.ToString());
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, EnemyTypeStr.ToString());
 
 		GetCharacterMovement()->MaxWalkSpeed = EnemyAttributesData->MaxWalkSpeed;
-		
-		AttackDamageAmount = EnemyAttributesData->AttackDamageAmount;
 
 		HitAnimation = EnemyAttributesData->HitAnimation;
 		DeathAnimation = EnemyAttributesData->DeathAnimation;
 		AttackAnimation = EnemyAttributesData->AttackAnimation;
-		AttackRadius = EnemyAttributesData->AttackRadius;
-		AttackRate = EnemyAttributesData->AttackRate;
 
 		AIController = Cast<AEnemyBaseAIController>(GetController());
 		
 		if (AIController)
-			AIController->InitializeBlackBoard(AttackRadius, AttackRate);
+			AIController->InitializeBlackBoard(EnemyAttributesData->AttackRadius, EnemyAttributesData->AttackSpeed);
 	}
+
+	// To initialize Game Ability Attribute
+	AbilitySystemComponent->AddLooseGameplayTag(SOWGameplayTags::Enemy_Ability_Initialize);
 }
 
-void ASOWCharacterEnemyBase::Attack(const ASOWCharacterPlayer* Player)
+void ASOWCharacterEnemyBase::Attack(const ASOWCharacter* TargetActor)
 {
 	if (AttackAnimation)
 	{

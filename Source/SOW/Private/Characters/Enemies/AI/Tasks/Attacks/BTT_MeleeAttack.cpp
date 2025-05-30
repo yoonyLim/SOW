@@ -17,12 +17,20 @@ EBTNodeResult::Type UBTT_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
 {
 	if (ASOWCharacterEnemyBase* const Enemy = Cast<ASOWCharacterEnemyBase>(OwnerComp.GetAIOwner()->GetCharacter()))
 	{
-		if (ASOWCharacterPlayer* const Player = Cast<ASOWCharacterPlayer>(OwnerComp.GetBlackboardComponent()->GetValueAsObject("AttackTarget")))
+		ISOWCharacterTypeInterface* SOWCharacter = Cast<ISOWCharacterTypeInterface>(OwnerComp.GetBlackboardComponent()->GetValueAsObject("AttackTarget"));
+		if (!SOWCharacter) return EBTNodeResult::Failed;
+	
+		ESOWCharacterType TargetType = SOWCharacter->GetSOWCharacterType();
+	
+		if (TargetType == ESOWCharacterType::Player || TargetType == ESOWCharacterType::Turret)
 		{
 			OnAttackMontageEnded.BindUObject(this, &UBTT_MeleeAttack::OnAttackEnded);
 
-			bIsAttacking = true;
-			Enemy->Attack(Player);
+			if (ASOWCharacter* const TargetActor = Cast<ASOWCharacter>(OwnerComp.GetBlackboardComponent()->GetValueAsObject("AttackTarget")))
+			{
+				bIsAttacking = true;
+				Enemy->Attack(TargetActor);
+			}
 
 			Enemy->GetMesh()->GetAnimInstance()->Montage_SetBlendingOutDelegate(OnAttackMontageEnded); // montage interrupted
 			Enemy->GetMesh()->GetAnimInstance()->Montage_SetEndDelegate(OnAttackMontageEnded); // montage ended

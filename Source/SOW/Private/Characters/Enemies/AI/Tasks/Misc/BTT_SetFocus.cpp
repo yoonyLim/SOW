@@ -5,7 +5,7 @@
 
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Characters/Enemies/AI/EnemyBaseAIController.h"
-#include "Characters/Player/SOWCharacterPlayer.h"
+#include "Characters/SOWCharacter.h"
 
 UBTT_SetFocus::UBTT_SetFocus(FObjectInitializer const& ObjectInitializer)
 {
@@ -16,9 +16,15 @@ EBTNodeResult::Type UBTT_SetFocus::ExecuteTask(UBehaviorTreeComponent& OwnerComp
 {
 	if (AEnemyBaseAIController* const EnemyController = Cast<AEnemyBaseAIController>(OwnerComp.GetAIOwner()))
 	{
-		if (ASOWCharacterPlayer* const Player = Cast<ASOWCharacterPlayer>(OwnerComp.GetBlackboardComponent()->GetValueAsObject("AttackTarget")))
+		ISOWCharacterTypeInterface* SOWCharacter = Cast<ISOWCharacterTypeInterface>(OwnerComp.GetBlackboardComponent()->GetValueAsObject("AttackTarget"));
+		if (!SOWCharacter) return EBTNodeResult::Failed;
+	
+		ESOWCharacterType TargetType = SOWCharacter->GetSOWCharacterType();
+	
+		if (TargetType == ESOWCharacterType::Player || TargetType == ESOWCharacterType::Turret)
 		{
-			EnemyController->SetFocus(Player, EAIFocusPriority::Gameplay);
+			if (ASOWCharacter* TargetActor = Cast<ASOWCharacter>(OwnerComp.GetBlackboardComponent()->GetValueAsObject("AttackTarget")))
+				EnemyController->SetFocus(TargetActor, EAIFocusPriority::Gameplay);
 
 			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 			return EBTNodeResult::Succeeded;
