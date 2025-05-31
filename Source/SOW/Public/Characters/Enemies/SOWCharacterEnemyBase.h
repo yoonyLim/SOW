@@ -10,6 +10,7 @@
 
 class AEnemyBaseAIController;
 class UBehaviorTree;
+class USOWEnemyCombatComponent;
 
 UCLASS()
 class SOW_API ASOWCharacterEnemyBase : public ASOWCharacter, public IEnemyActionsInterface
@@ -47,12 +48,18 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
 	UBehaviorTree* BehaviorTree;
 
+	//CombatComponent ¿¬°á - added by song
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	USOWEnemyCombatComponent* EnemyCombatComponent;
+
 public:
 	// GETTERS
 	FORCEINLINE AEnemyBaseAIController* GetAIController() const { return AIController; };
 	UBehaviorTree* GetBehaviorTree() const { return BehaviorTree; };
 	EEnemyTypes GetEnemyType() const { return EnemyType; };
 	FName GetEnemyTypeStr() const { return EnemyTypeStr; };
+	// GETTERS - added by song
+	USOWEnemyCombatComponent* GetEnemyCombatComponent() const { return EnemyCombatComponent; };
 
 	virtual void Attack(const ASOWCharacter* TargetActor) override;
 };
