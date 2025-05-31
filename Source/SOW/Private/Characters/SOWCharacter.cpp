@@ -3,11 +3,14 @@
 #include "Characters/SOWCharacter.h"
 #include "Engine/LocalPlayer.h"
 #include "GameFramework/Controller.h"
+#include "GameplayEffectTypes.h"
 
 #include "DataAsset/DA_StartupDataBase.h"
 #include "AbilitySystem/SOWAbilitySystemComponent.h"
 #include "AbilitySystem/SOWAttributeSet.h"
 
+#include "Components/SOWCharacterUIComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -16,8 +19,13 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 ASOWCharacter::ASOWCharacter()
 {
+	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bStartWithTickEnabled = true;
+
 	AbilitySystemComponent = CreateDefaultSubobject<USOWAbilitySystemComponent>(TEXT("SOWAbilitySystemComponent"));
 	AttributeSet = CreateDefaultSubobject<USOWAttributeSet>(TEXT("SOWAttributeSet"));
+
+	CharacterUIComponent = CreateDefaultSubobject<USOWCharacterUIComponent>(TEXT("CharacterUIComponent"));
 }
 
 ESOWCharacterType ASOWCharacter::GetSOWCharacterType() const
@@ -32,6 +40,9 @@ void ASOWCharacter::PossessedBy(AController* NewController)
 
 	if (AbilitySystemComponent) {
 		AbilitySystemComponent->InitAbilityActorInfo(this, this);
+		AbilitySystemComponent->AddAttributeSetSubobject(AttributeSet);
+
+
 
 		ensureMsgf(!StartupData.IsNull(), TEXT("Forgot to assign start up data for %s"), *GetName());
 
@@ -40,5 +51,43 @@ void ASOWCharacter::PossessedBy(AController* NewController)
 				Startup->GiveToAbilitySystemComponent(AbilitySystemComponent);
 			}
 		}
+
+		if (!AbilitySystemComponent || !AttributeSet) return;
+
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
+			AttributeSet->GetWalkSpeedAttribute())
+			.AddUObject(this, &ASOWCharacter::OnWalkSpeedChanged);
+	}
+}
+
+void ASOWCharacter::BeginPlay() {
+
+	Super::BeginPlay();
+}
+
+USOWCharacterUIComponent* ASOWCharacter::GetCharacterUIComponent() const
+{
+	return CharacterUIComponent;
+}
+
+ESOWCharacterType ASOWCharacter::BP_GetSOWCharacterType() const
+{
+	return GetSOWCharacterType();
+}
+
+void ASOWCharacter::Tick(float DeltaTime) {
+	Super::Tick(DeltaTime);
+}
+
+void ASOWCharacter::OnWalkSpeedChanged(const FOnAttributeChangeData& Data)
+{
+	float NewSpeed = Data.NewValue;
+
+	if (GetCharacterMovement()) {
+	
+		UCharacterMovementComponent* MoveComp = Cast<UCharacterMovementComponent>(GetCharacterMovement());
+
+		MoveComp->MaxWalkSpeed = NewSpeed;
+
 	}
 }

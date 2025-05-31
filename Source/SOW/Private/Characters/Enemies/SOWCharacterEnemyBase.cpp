@@ -8,6 +8,7 @@
 #include "Characters/Enemies/AI/EnemyBaseAIController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Structures/Enemies/EnemyStructs.h"
+#include "Characters/Enemies/SOWEnemyCombatComponent.h"
 
 
 // Sets default values
@@ -17,6 +18,10 @@ ASOWCharacterEnemyBase::ASOWCharacterEnemyBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	CharacterType = ESOWCharacterType::Enemy;
+
+
+	// EnemyCombatComponent ¿¬°á
+	EnemyCombatComponent = CreateDefaultSubobject<USOWEnemyCombatComponent>(TEXT("EnemyCombatComponent"));
 }
 
 // Called when the game starts or when spawned

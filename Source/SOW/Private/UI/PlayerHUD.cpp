@@ -17,11 +17,12 @@ void UPlayerHUD::NativeConstruct()
 
 void UPlayerHUD::Init(USOWAbilitySystemComponent* InASC)
 {
+    checkf(InASC, TEXT("Ability System Component is Invalid in PlayerHUD"));
     BindToASC(InASC);
 
     if (AttributeSetRef)
     {
-        float MaxHealth = AttributeSetRef->GetMaxHealth();
+        float MaxHealth = AttributeSetRef->GetMaxHealthBase();
         float CurrentHealth = AttributeSetRef->GetCurrentHealth();
         SetProgressBar(EStat::HP, MaxHealth, CurrentHealth);
     }
@@ -57,7 +58,7 @@ void UPlayerHUD::OnHealthChanged(const FOnAttributeChangeData& Data)
 {
     if (!AttributeSetRef) return;
 
-    float MaxHealth = AttributeSetRef->GetMaxHealth();
+    float MaxHealth = AttributeSetRef->GetMaxHealthBase();
     float NewHealth = Data.NewValue;
 
     SetProgressBar(EStat::HP, MaxHealth, NewHealth);

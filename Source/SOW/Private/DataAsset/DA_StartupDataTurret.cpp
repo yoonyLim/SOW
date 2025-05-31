@@ -10,7 +10,7 @@ void UDA_StartupDataTurret::GiveToAbilitySystemComponent(USOWAbilitySystemCompon
 	Super::GiveToAbilitySystemComponent(InASCToGive, ApplyLevel);
 
 	for (const TSubclassOf<USOWTurretGameplayAbility>& AbilityToGive : TurretCombatAbilities) {
-		if (!AbilityToGive) continue;
+		checkf(AbilityToGive, TEXT("GameplayAbility is invalid. Please Check Data Asset for abilities."));
 
 		FGameplayAbilitySpec AbilitySpec(AbilityToGive);
 		AbilitySpec.SourceObject = InASCToGive->GetAvatarActor();

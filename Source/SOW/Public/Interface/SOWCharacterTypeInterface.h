@@ -7,7 +7,12 @@
 #include "SOWEnumTypes.h"
 #include "SOWCharacterTypeInterface.generated.h"
 
-// This class does not need to be modified.
+// added by PGH
+// mix-in target -> SOWCharacter
+// purpose : check character type : player / turret / enemy
+
+// every character needs to initialize Character type variable (enum)
+
 UINTERFACE(MinimalAPI)
 class USOWCharacterTypeInterface : public UInterface
 {
@@ -21,7 +26,8 @@ class SOW_API ISOWCharacterTypeInterface
 {
 	GENERATED_BODY()
 
-	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
+
 public:
+
 	virtual ESOWCharacterType GetSOWCharacterType() const = 0;
 };
