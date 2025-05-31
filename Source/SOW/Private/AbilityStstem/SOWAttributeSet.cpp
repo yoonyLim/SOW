@@ -6,17 +6,21 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "SOWGameplayTags.h"
 
+#include "Components/SOWCharacterUIComponent.h"
+#include "Interface/SOWCharacterUIInterface.h"
+
 
 USOWAttributeSet::USOWAttributeSet()
+
 {
-    InitMaxHealth(1.f);
-    InitCurrentHealth(1.f);
+    InitWalkSpeed(400.f);
+    InitMaxHealthBase(100.f);
+    InitCurrentHealth(100.f);
     InitAttackPowerBase(1.f);
     InitDefensePowerBase(1.f);
-    InitDamageTaken(0.f);
     InitDamageOverTime(0.f);
     InitDetectionRange(50.f);
-    InitAttackSpeed(1.f);
+    InitAttackSpeedBase(1.f);
 }
 
 void USOWAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
@@ -24,18 +28,31 @@ void USOWAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbac
 
     Super::PostGameplayEffectExecute(Data);
 
-    // 게임플레이 이펙트가 적용되었다면 디버깅 메시지가 출력됨.
-    float NewCurrentHealth = FMath::Clamp(GetCurrentHealth(), 0.f, GetMaxHealth());
-    SetCurrentHealth(NewCurrentHealth);
+    if (!CachedCharacterUIInterface.IsValid()) {
+        CachedCharacterUIInterface = TWeakInterfacePtr<ISOWCharacterUIInterface>(Data.Target.GetAvatarActor());
+    }
+    checkf(CachedCharacterUIInterface.IsValid(), TEXT("CachedCharacterUIInterface has not implemented for %s"), *Data.Target.GetAvatarActor()->GetActorNameOrLabel());
 
-    UE_LOG(LogTemp, Warning, TEXT("GameplayEffect applied successfully."), GetCurrentHealth());
-    UE_LOG(LogTemp, Warning, TEXT("Current Health : %f"), GetCurrentHealth());
+    USOWCharacterUIComponent* CharacterUIComponent = CachedCharacterUIInterface->GetCharacterUIComponent();
+
+
+
+    USOWAbilitySystemComponent* ASC = CastChecked<USOWAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Data.Target.GetAvatarActor()));
+    if (!ASC) return;
+
+    if (Data.EvaluatedData.Attribute == GetCurrentHealthAttribute()) {
+        float NewCurrentHealth = FMath::Clamp(GetCurrentHealth(), 0.f, GetMaxHealthBase());
+        SetCurrentHealth(NewCurrentHealth);
+
+        UE_LOG(LogTemp, Warning, TEXT("New Health : %f"), GetCurrentHealth());
+
+        CharacterUIComponent->OnCurrentHealthChanged.Broadcast(GetCurrentHealth() / GetMaxHealthBase());
+
+    }
+
 
     if (GetCurrentHealth() == 0.f) {
-        USOWAbilitySystemComponent* ASC = CastChecked<USOWAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Data.Target.GetAvatarActor()));
-        if (!ASC) return;
-
-
+        
         if (!ASC->HasMatchingGameplayTag(SOWGameplayTags::Shared_Status_Dead)) {
             UE_LOG(LogTemp, Warning, TEXT("Actor has Dead : %f"), GetCurrentHealth());
             ASC->AddLooseGameplayTag(SOWGameplayTags::Shared_Status_Dead);

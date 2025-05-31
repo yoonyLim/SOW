@@ -85,6 +85,7 @@ FElementResistanceData* UGEEC_InitElementalResistance::GetResistanceDataRow(cons
 	}
 	return ResistanceDataRow;
 }
+
 UGEEC_InitElementalResistance::UGEEC_InitElementalResistance()
 {
 	FString CharacterDataPath = TEXT("DataTable'/Game/01Blueprints/DataTable/ElementalResistanceData.ElementalResistanceData'");

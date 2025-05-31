@@ -15,6 +15,8 @@ void UDA_StartupDataBase::GiveToAbilitySystemComponent(USOWAbilitySystemComponen
 
 	if (!StartupGameplayEffects.IsEmpty()) {
 		for (const TSubclassOf<UGameplayEffect>& GameplayEffect : StartupGameplayEffects) {
+			checkf(GameplayEffect, TEXT("GameplayEffect is invalid. Please Check Data Asset for effects"));
+
 			UGameplayEffect* Effect = GameplayEffect->GetDefaultObject<UGameplayEffect>();
 
 			InASCToGive->ApplyGameplayEffectToSelf(
@@ -29,7 +31,7 @@ void UDA_StartupDataBase::GrantAbility(const TArray<TSubclassOf<USOWGameplayAbil
 	checkf(InASCToGive, TEXT("ASC was not assigned."));
 
 	for (const TSubclassOf<USOWGameplayAbilityBase>& AbilityToGive : InAbilitiesToGive) {
-		if (!AbilityToGive) continue;
+		checkf(AbilityToGive, TEXT("GameplayAbility is invalid. Please Check Data Asset for abilities."));
 
 		FGameplayAbilitySpec AbilitySpec(AbilityToGive);
 		AbilitySpec.SourceObject = InASCToGive->GetAvatarActor();

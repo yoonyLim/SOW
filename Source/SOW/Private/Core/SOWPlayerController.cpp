@@ -7,6 +7,8 @@
 #include "UObject/ConstructorHelpers.h"
 #include "SOWStructTypes.h"
 
+#include "SOWBlueprintFunctionLibrary.h"
+
 ASOWPlayerController::ASOWPlayerController()
 {
     static ConstructorHelpers::FObjectFinder<UDataTable> DT_Turrets(TEXT("DataTable'/Game/01Blueprints/DataTable/Turrets/DT_TurretData.DT_TurretData'"));
@@ -92,7 +94,8 @@ void ASOWPlayerController::ConfirmTurretPlacement()
 
             if (Row && Row->TurretClass)
             {
-                GetWorld()->SpawnActor<AActor>(Row->TurretClass, TargetLocation, FRotator::ZeroRotator);
+                //GetWorld()->SpawnActor<AActor>(Row->TurretClass, TargetLocation, FRotator::ZeroRotator);
+                USOWBlueprintFunctionLibrary::SpawnTurretWithCircleCount(this, Row->TurretClass, TargetLocation, FRotator::ZeroRotator, 2);
 
                 PreviewTurret->Destroy();
                 PreviewTurret = nullptr;

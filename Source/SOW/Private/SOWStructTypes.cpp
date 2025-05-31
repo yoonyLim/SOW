@@ -11,3 +11,7 @@ bool FPlayerAbilitySet::IsValid() const
 FElementResistanceData::FElementResistanceData()
 {
 }
+
+FTurretAttributeData::FTurretAttributeData()
+{
+}
