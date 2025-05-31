@@ -14,21 +14,21 @@
 
 */
 
-struct FAttributeCaptures {
+struct FDamageAttributeCaptures {
 	DECLARE_ATTRIBUTE_CAPTUREDEF(AttackPowerBase);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(DefensePowerBase);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(CurrentHealth);
 
 
-	FAttributeCaptures() {
+	FDamageAttributeCaptures() {
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, AttackPowerBase, Source, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, DefensePowerBase, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, CurrentHealth, Target, false);
 	}
 };
 
-static const FAttributeCaptures& GetCapturedProperties() {
-	static FAttributeCaptures AttributeCaptures;
+static const FDamageAttributeCaptures& GetCapturedProperties() {
+	static FDamageAttributeCaptures AttributeCaptures;
 	return AttributeCaptures;
 }
 
