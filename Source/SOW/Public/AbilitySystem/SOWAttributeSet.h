@@ -17,7 +17,7 @@
 	GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
-
+class ISOWCharacterUIInterface;
 
 UCLASS()
 class SOW_API USOWAttributeSet : public UAttributeSet
@@ -70,13 +70,16 @@ public :
 	ATTRIBUTE_ACCESSORS(USOWAttributeSet, DetectionRange)
 
 	UPROPERTY(BlueprintReadOnly, Category = "Speed")
-	FGameplayAttributeData AttackSpeed;
-	ATTRIBUTE_ACCESSORS(USOWAttributeSet, AttackSpeed)
+	FGameplayAttributeData AttackSpeedBase;
+	ATTRIBUTE_ACCESSORS(USOWAttributeSet, AttackSpeedBase)
 
-		/* Status Damage */
-	UPROPERTY(BlueprintReadOnly, Category = "Damage")
-	FGameplayAttributeData DamageTaken;
-	ATTRIBUTE_ACCESSORS(USOWAttributeSet, DamageTaken)
+	UPROPERTY(BlueprintReadOnly, Category = "Speed")
+	FGameplayAttributeData AttackSpeedRatio;
+	ATTRIBUTE_ACCESSORS(USOWAttributeSet, AttackSpeedRatio)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Speed")
+	FGameplayAttributeData WalkSpeed;
+	ATTRIBUTE_ACCESSORS(USOWAttributeSet, WalkSpeed)
 
 	UPROPERTY(BlueprintReadOnly, Category = "Damage")
 	FGameplayAttributeData DamageOverTime;
@@ -122,5 +125,8 @@ public :
 	/** 특정 태그에 대한 저항값을 반환하는 함수 */
 	UFUNCTION(BlueprintCallable, Category = "Resistance")
 	float GetResistanceForElementWithElementTag(FGameplayTag ElementTag) const;
+
+private:
+	TWeakInterfacePtr<ISOWCharacterUIInterface> CachedCharacterUIInterface;
 
 };

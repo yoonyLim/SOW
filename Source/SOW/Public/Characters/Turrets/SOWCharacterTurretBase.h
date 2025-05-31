@@ -8,16 +8,9 @@
 #include "SOWCharacterTurretBase.generated.h"
 
 class UCapsuleComponent;
+class USOWTurretCombatComponent;
+class UWidgetComponent;
 
-UENUM(BlueprintType)
-enum class ETurretTargetSelectionPriority : uint8 {
-	HighHealth,
-	LowHealth,
-	HighAttack,
-	Nearest,
-	Farthest,
-	Custom
-};
 
 /**
  * 
@@ -30,67 +23,34 @@ class SOW_API ASOWCharacterTurretBase : public ASOWCharacter
 public:
 	ASOWCharacterTurretBase();
 
-	virtual void BeginPlay();
+	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Turret|Property")
-	ETurretTargetSelectionPriority TurretTargetSelectionPriority = ETurretTargetSelectionPriority::Nearest;
-	// Attack Target Selection Policy - Nearest Target Base
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Turret|Property")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Turret|Properties")
 	ETurretRarity TurretRarity = ETurretRarity::Common;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Turret|Property")
-	ETurretTargetSelectionPolicy TurretTargetSelectionPolicy = ETurretTargetSelectionPolicy::Uncertain;
+	void TryActivateAbilityWithTagOnASC(const FGameplayTag& InAbilityTagToActivation);
 
-protected:
-	UFUNCTION(BlueprintCallable, Category = "Turret|TargetDetection")
+	float GetDetectionRangeRadius() const;
+
 	float GetAttackCooldownTime() const;
 
-	UFUNCTION(BlueprintCallable, Category = "Turret|TargetDetection")
-	bool FindAttackTargetFromAllTargetAvailable();
+	FName GetTurretName() const;
 
-	UFUNCTION(BlueprintPure, Category = "Turret|TargetDetection")
-	AActor* GetSingleAttackTarget() const;
+	UFUNCTION(BlueprintPure, Category = "UI")
+	float GetHealthRatio() const;
 
-	UFUNCTION(BlueprintPure, Category = "Turret|TargetDetection")
-	TArray<AActor*> GetAllAttackTarget() const;
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Turret|Properties", meta = (ExposeOnSpawn = true))
+	int32 CircleCount;
+
+	int32 GetCircleCount() const { return CircleCount; };
+protected:
+	virtual void BeginPlay() override;
+	
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
-	UCapsuleComponent* DetectionRange;
+	USOWTurretCombatComponent* TurretCombatComponent;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Turret|Property")
-	FGameplayTag AbilityTagToActivation;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
+	UWidgetComponent* HealthWidgetComponent;
 
-private:
-	/* Callback Function for Collision Overlap */
-	UFUNCTION()
-	void OnTargetRangeBeginOverlap(UPrimitiveComponent* OverlappedComponent,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex,
-		bool bFromSweep,
-		const FHitResult& SweepResult);
-
-	UFUNCTION()
-	void OnTargetRangeEndOverlap(AActor* InTargetActor);
-	// Need to Change Parameters to Bind it.
-
-
-
-	/* Target Detection / Attack Properties Begin */
-	UPROPERTY()
-	TArray<AActor*> DetectedTargetActors;
-
-	UPROPERTY()
-	AActor* AttackTarget;
-
-	UPROPERTY()
-	FTimerHandle AttackTimerHandle;
-
-	void AttackAbilityActivation();
-	void SetDetectionRangeWithCurrentStatus();
-	bool IsActorValidTarget(AActor* InActor);
-
-	float M_CachedDetectionRadius = 0.f;
-	/* Target Detection / Attack Properties End */
 };

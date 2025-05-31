@@ -7,6 +7,7 @@
 #include "SOWBlueprintFunctionLibrary.generated.h"
 
 class USOWAbilitySystemComponent;
+class ASOWCharacterTurretBase;
 struct FGameplayTag;
 /**
  * 
@@ -26,4 +27,10 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "AbilitySystem")
 	static bool DoesActorHasTag(AActor* InActor, FGameplayTag InActorTag);
+
+	UFUNCTION(BlueprintCallable, Category = "Utility")
+	static bool GetMouseWorldLocation(UObject* WorldContextObject, FVector& OutWorldLocation);
+
+	static bool SpawnTurretWithCircleCount(UObject* WorldContextObject, const TSubclassOf<ASOWCharacterTurretBase>& InTurretClass, const FVector& InTargetLoc, const FRotator& InTargetRot, const int32 InCircleCount);
+
 };

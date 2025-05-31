@@ -10,6 +10,6 @@ ASOWGameMode::ASOWGameMode()
 	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/01Blueprints/Player/BP_Player"));
 	if (PlayerPawnBPClass.Class != NULL)
 	{
-		DefaultPawnClass = BP_Player.Class;
+		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
 }

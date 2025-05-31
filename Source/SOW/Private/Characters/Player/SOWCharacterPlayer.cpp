@@ -75,6 +75,8 @@ void ASOWCharacterPlayer::BeginPlay()
 		if (MyHUD)
 		{
 			MyHUD->AddToViewport();
+			checkf(AbilitySystemComponent, TEXT("ASC is not valid in HUD"));
+
 			MyHUD->Init(AbilitySystemComponent);
 			MyHUD->SetVisibility(ESlateVisibility::Visible);
 			UE_LOG(LogTemp, Warning, TEXT("HUD : Create HUD"));
@@ -91,6 +93,7 @@ void ASOWCharacterPlayer::BeginPlay()
 		return;
 	}
 }
+
 
 void ASOWCharacterPlayer::Move(const FInputActionValue& Value)
 {

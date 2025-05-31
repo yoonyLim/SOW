@@ -11,7 +11,7 @@ void UDA_StartupDataEnemy::GiveToAbilitySystemComponent(USOWAbilitySystemCompone
 	Super::GiveToAbilitySystemComponent(InASCToGive, ApplyLevel);
 
 	for (const TSubclassOf<USOWEnemyGameplayAbility>& AbilityToGive : EnemyCombatAbilities) {
-		if (!AbilityToGive) continue;
+		checkf(AbilityToGive, TEXT("GameplayAbility is invalid. Please Check Data Asset for abilities."));
 
 		FGameplayAbilitySpec AbilitySpec(AbilityToGive);
 		AbilitySpec.SourceObject = InASCToGive->GetAvatarActor();
