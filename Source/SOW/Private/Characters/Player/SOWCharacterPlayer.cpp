@@ -4,6 +4,9 @@
 #include "Characters/Player/SOWCharacterPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/DecalComponent.h"
+#include "Materials/MaterialInterface.h"
+#include "UObject/ConstructorHelpers.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
@@ -57,6 +60,26 @@ ASOWCharacterPlayer::ASOWCharacterPlayer()
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 	CharacterType = ESOWCharacterType::Player; // for player type recognition - by PGH
+
+	static ConstructorHelpers::FClassFinder<UPlayerHUD> HUDClassFinder(TEXT("/Game/01Blueprints/UI/Player/WB_HUD"));
+	if (HUDClassFinder.Succeeded())
+	{
+		MyHUDWidgetClass = HUDClassFinder.Class;
+	}
+
+	/* Turret Install Material */
+	InstallationRangeDecal = CreateDefaultSubobject<UDecalComponent>(TEXT("InstallationRangeDecal"));
+	InstallationRangeDecal->SetupAttachment(RootComponent);
+	InstallationRangeDecal->SetRelativeRotation(FRotator(-90.f, 0.f, 0.f));
+	InstallationRangeDecal->DecalSize = FVector(200.f, 200.f, 200.f);
+
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> DecalMat(TEXT("/Game/03Materials/M_Range_Decal.M_Range_Decal"));
+	if (DecalMat.Succeeded())
+	{
+		InstallationRangeDecal->SetDecalMaterial(DecalMat.Object);
+	}
+
+	InstallationRangeDecal->SetVisibility(false);
 }
 
 // Called when the game starts or when spawned
@@ -66,31 +89,15 @@ void ASOWCharacterPlayer::BeginPlay()
 	
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Hello World!"));
 
-	MyHUDWidgetClass = LoadClass<UPlayerHUD>(nullptr, TEXT("/Game/01Blueprints/UI/Player/WB_HUD.WB_HUD_C"));
-
 	if (MyHUDWidgetClass)
 	{
-		MyHUD = Cast<UPlayerHUD>(CreateWidget(GetWorld(), MyHUDWidgetClass));
-
-		if (MyHUD)
-		{
-			MyHUD->AddToViewport();
-			checkf(AbilitySystemComponent, TEXT("ASC is not valid in HUD"));
-
-			MyHUD->Init(AbilitySystemComponent);
-			MyHUD->SetVisibility(ESlateVisibility::Visible);
-			UE_LOG(LogTemp, Warning, TEXT("HUD : Create HUD"));
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("HUD : Fail to create HUD"));
-			return;
-		}
+		MyHUD = CreateWidget<UPlayerHUD>(GetWorld(), MyHUDWidgetClass);
+		MyHUD->AddToViewport();
+		MyHUD->Init(AbilitySystemComponent);
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("HUD : Can't find UHUDWidget class"));
-		return;
+		UE_LOG(LogTemp, Error, TEXT("HUDClass is NULL."));
 	}
 }
 
@@ -178,5 +185,13 @@ void ASOWCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	else
 	{
 		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
+	}
+}
+
+void ASOWCharacterPlayer::ShowInstallationRange(bool bShow)
+{
+	if (InstallationRangeDecal)
+	{
+		InstallationRangeDecal->SetVisibility(bShow);
 	}
 }
