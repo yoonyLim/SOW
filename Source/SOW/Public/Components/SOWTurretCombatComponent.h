@@ -53,8 +53,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Turret|TargetDetection")
 	void ClearTargetDetectionAsDead();
 
-
-
+	UFUNCTION(BlueprintCallable, Category = "Turret|TargetDetection")
+	ETurretTargetSelectionPolicy GetTargetPolicy() const { return TurretTargetSelectionPolicy; }
 
 
 #pragma region AboutHitCollision

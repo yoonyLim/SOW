@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SOWEnumTypes.h"
 #include "GameFramework/Actor.h"
 #include "TurretMeleeHitCollision.generated.h"
 
@@ -27,6 +28,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Turret|Combat")
 	UBoxComponent* MeleeHitCollision;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Turret|Combat", meta = (ExposeOnSpawn = true))
+	ETurretTargetSelectionPolicy OwnerPolicy;
+
 private:
 
 	UFUNCTION()
@@ -35,4 +39,6 @@ private:
 	ASOWCharacterTurretBase* CachedInstigator;
 
 	TArray<AActor*> OverlappedActors;
+
+	bool IsTarget(ESOWCharacterType TargetType);
 };

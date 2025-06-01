@@ -3,6 +3,7 @@
 
 #include "Characters/Turrets/Actors/TurretMeleeHitCollision.h"
 #include "Characters/Turrets/SOWCharacterTurretBase.h"
+#include "Interface/SOWCharacterTypeInterface.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Components/BoxComponent.h"
 #include "SOWGameplayTags.h"
@@ -55,6 +56,9 @@ void ATurretMeleeHitCollision::MeleeHit(UPrimitiveComponent* OverlappedComponent
 
 	if (GetInstigator() == OtherActor || OverlappedActors.Contains(OtherActor)) return;
 
+	ESOWCharacterType TargetType = Cast<ISOWCharacterTypeInterface>(OtherActor)->GetSOWCharacterType();
+	if (!IsTarget(TargetType)) return;
+
 	UE_LOG(LogTemp, Warning, TEXT("Hit Actor : %s"), *OtherActor->GetActorNameOrLabel());
 
 	OverlappedActors.AddUnique(OtherActor);
@@ -69,6 +73,25 @@ void ATurretMeleeHitCollision::MeleeHit(UPrimitiveComponent* OverlappedComponent
 		Data
 	);
 
+}
+
+bool ATurretMeleeHitCollision::IsTarget(ESOWCharacterType TargetType)
+{
+	if (OwnerPolicy == ETurretTargetSelectionPolicy::OnEnemy) {
+		return TargetType == ESOWCharacterType::Enemy;
+	}
+
+	else if (OwnerPolicy == ETurretTargetSelectionPolicy::OnTurret) {
+		return TargetType == ESOWCharacterType::Turret;
+	}
+
+	else if (OwnerPolicy == ETurretTargetSelectionPolicy::OnPlayer) {
+		return TargetType == ESOWCharacterType::Player;
+	}
+
+	else {
+		return false;
+	}
 }
 
 
