@@ -3,8 +3,10 @@
 
 #include "Components/SOWTurretCombatComponent.h"
 #include "Characters/Turrets/SOWCharacterTurretBase.h"
+#include "Characters/Turrets/Actors/TurretMeleeHitCollision.h"
 #include "Characters/Enemies/SOWCharacterEnemyBase.h"
 #include "Characters/Player/SOWCharacterPlayer.h"
+
 #include "SOWBlueprintFunctionLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "SOWEnumTypes.h"
@@ -49,6 +51,22 @@ void USOWTurretCombatComponent::ClearTargetDetectionAsDead()
 {
 	GetWorld()->GetTimerManager().ClearTimer(AttackTimerHandle);
 }
+
+void USOWTurretCombatComponent::SetHitCollision(ATurretMeleeHitCollision* HitCollsion)
+{
+	if (!HitCollsion) {
+		UE_LOG(LogTemp, Warning, TEXT("Hit Collision is Invalid"));
+		return;
+	}
+
+	CreatedHitCollision = HitCollsion;
+}
+
+ATurretMeleeHitCollision* USOWTurretCombatComponent::GetHitCollision() const
+{
+	return CreatedHitCollision;
+}
+
 
 
 bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
@@ -103,7 +121,7 @@ bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 			}
 		}
 	}
-
+	UE_LOG(LogTemp, Warning, TEXT("Attack Count : %s"), *FString::FromInt(DetectedTargetActors.Num()));
 	UpdateAttackTimer();
 	return (DetectedTargetActors.Num() >= 1) ? true : false;
 }

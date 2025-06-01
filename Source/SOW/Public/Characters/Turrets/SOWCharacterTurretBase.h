@@ -43,6 +43,9 @@ public:
 	int32 CircleCount;
 
 	int32 GetCircleCount() const { return CircleCount; };
+
+	UFUNCTION(BlueprintPure)
+	USOWTurretCombatComponent* GetTurretCombatComponent() const{ return TurretCombatComponent; };
 protected:
 	virtual void BeginPlay() override;
 	

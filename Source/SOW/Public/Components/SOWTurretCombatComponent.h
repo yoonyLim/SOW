@@ -10,6 +10,7 @@
 
 
 class ASOWCharacterTurretBase;
+class ATurretMeleeHitCollision;
 
 
 
@@ -52,6 +53,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Turret|TargetDetection")
 	void ClearTargetDetectionAsDead();
 
+
+
+
+
+#pragma region AboutHitCollision
+	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
+	void SetHitCollision(ATurretMeleeHitCollision* HitCollsion);
+
+	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
+	ATurretMeleeHitCollision* GetHitCollision() const;
+#pragma endregion
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -80,6 +93,9 @@ private:
 	FTimerHandle AttackTimerHandle;
 
 	ASOWCharacterTurretBase* CachedOwnerCharacter;
+
+	UPROPERTY(VisibleAnywhere, Category = "Turret|Combat")
+	ATurretMeleeHitCollision* CreatedHitCollision;
 
 	void AttackAbilityActivation();
 	bool IsActorValidTarget(AActor* InActor);

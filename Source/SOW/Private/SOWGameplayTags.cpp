@@ -39,6 +39,8 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Status_Dead, "Shared.Status.Dead"); 
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Status_DamagedOverTime, "Shared.Status.DamagedOverTime");
 
+
+	UE_DEFINE_GAMEPLAY_TAG(Shared_Event_MeleeHit, "Shared.Event.MeleeHit");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Event_HitReact, "Shared.Event.HitReact");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Event_TargetDead, "Shared.Event.TargetDead");
 
