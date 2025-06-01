@@ -93,7 +93,7 @@ public:
 
 
 USTRUCT(BlueprintType)
-struct FTurretData : public FTableRowBase {
+struct FTurretSummonData : public FTableRowBase {
 
 	GENERATED_BODY()
 
@@ -105,4 +105,31 @@ struct FTurretData : public FTableRowBase {
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<ASOWCharacterTurretBase> TurretClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float AttackRange;
+};
+
+USTRUCT(BlueprintType)
+struct FCircleWeight
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 CircleLevel;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 Weight;
+};
+
+USTRUCT(BlueprintType)
+struct FCircleWeightByLevelRow : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 Level;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FCircleWeight> CircleWeights;
 };

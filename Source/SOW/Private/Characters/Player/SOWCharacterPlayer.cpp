@@ -28,6 +28,8 @@ ASOWCharacterPlayer::ASOWCharacterPlayer()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
+
+	CharacterType = ESOWCharacterType::Player;
 		
 	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
