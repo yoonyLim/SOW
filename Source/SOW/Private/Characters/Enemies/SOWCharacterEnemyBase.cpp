@@ -20,7 +20,7 @@ ASOWCharacterEnemyBase::ASOWCharacterEnemyBase()
 	CharacterType = ESOWCharacterType::Enemy;
 
 
-	// EnemyCombatComponent ¿¬°á
+	// EnemyCombatComponent ï¿½ï¿½ï¿½ï¿½
 	EnemyCombatComponent = CreateDefaultSubobject<USOWEnemyCombatComponent>(TEXT("EnemyCombatComponent"));
 }
 
@@ -60,5 +60,10 @@ void ASOWCharacterEnemyBase::Attack(const ASOWCharacter* TargetActor)
 		EnemyAnimInstance->Montage_Play(AttackAnimation);
 		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Attack Animation Played!"));
 	}
+}
+
+void ASOWCharacterEnemyBase::BroadcastEnemyDeath(int GoldAmount)
+{
+	OnEnemyDeath.Broadcast(GoldAmount);
 }
 
