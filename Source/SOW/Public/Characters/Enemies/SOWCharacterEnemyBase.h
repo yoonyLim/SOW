@@ -12,6 +12,8 @@ class AEnemyBaseAIController;
 class UBehaviorTree;
 class USOWEnemyCombatComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyDeath, int, GoldAmount);
+
 UCLASS()
 class SOW_API ASOWCharacterEnemyBase : public ASOWCharacter, public IEnemyActionsInterface
 {
@@ -38,6 +40,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations")
 	UAnimMontage* AttackAnimation;
 
+	UPROPERTY(BlueprintAssignable, Category = "Event Dispatcher")
+	FOnEnemyDeath OnEnemyDeath;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -48,7 +53,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
 	UBehaviorTree* BehaviorTree;
 
-	//CombatComponent ¿¬°á - added by song
+	//CombatComponent ï¿½ï¿½ï¿½ï¿½ - added by song
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	USOWEnemyCombatComponent* EnemyCombatComponent;
 
@@ -60,6 +65,9 @@ public:
 	FName GetEnemyTypeStr() const { return EnemyTypeStr; };
 	// GETTERS - added by song
 	USOWEnemyCombatComponent* GetEnemyCombatComponent() const { return EnemyCombatComponent; };
-
+	
 	virtual void Attack(const ASOWCharacter* TargetActor) override;
+
+	UFUNCTION(BlueprintCallable, Category = "Enemy Event")
+	void BroadcastEnemyDeath(int GoldAmount);
 };
