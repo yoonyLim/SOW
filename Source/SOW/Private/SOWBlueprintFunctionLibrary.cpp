@@ -80,3 +80,37 @@ bool USOWBlueprintFunctionLibrary::SpawnTurretWithCircleCount(UObject* WorldCont
 
     return false;
 }
+
+FName USOWBlueprintFunctionLibrary::EnumToFName(const ETurretName EnumValue)
+{
+    UEnum* EnumPtr = StaticEnum<ETurretName>();
+    if (!EnumPtr) return NAME_None;
+
+    // Enum 이름을 FName으로 반환
+
+    FString EnumNameStr = EnumPtr->GetNameStringByValue(static_cast<int64>(EnumValue));
+    // 예: "Walking"
+
+    FName CleanFName(*EnumNameStr);
+
+    return CleanFName;
+}
+
+bool USOWBlueprintFunctionLibrary::IsTarget(ETurretTargetSelectionPolicy OwnerPolicy, ESOWCharacterType TargetType)
+{
+    if (OwnerPolicy == ETurretTargetSelectionPolicy::OnEnemy) {
+        return TargetType == ESOWCharacterType::Enemy;
+    }
+
+    else if (OwnerPolicy == ETurretTargetSelectionPolicy::OnTurret) {
+        return TargetType == ESOWCharacterType::Turret;
+    }
+
+    else if (OwnerPolicy == ETurretTargetSelectionPolicy::OnPlayer) {
+        return TargetType == ESOWCharacterType::Player;
+    }
+
+    else {
+        return false;
+    }
+}

@@ -91,6 +91,24 @@ public:
 	float DetectionRange;
 };
 
+USTRUCT(BlueprintType)
+struct FTurretPropertyData : public FTableRowBase {
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ETurretRarity TurretRarity;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<ETurretTargetSelectionPriority> TurretSettablePriority;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ETurretTargetSelectionPolicy TurretTargetSelectionPolicy;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ETurretTargetSelectionType TurretTargetSelectionType;
+};
+
 
 USTRUCT(BlueprintType)
 struct FTurretData : public FTableRowBase {

@@ -6,6 +6,7 @@
 #include "Interface/SOWCharacterTypeInterface.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Components/BoxComponent.h"
+#include "SOWBlueprintFunctionLibrary.h"
 #include "SOWGameplayTags.h"
 
 // Sets default values
@@ -44,20 +45,20 @@ void ATurretMeleeHitCollision::BeginPlay()
 
 void ATurretMeleeHitCollision::MeleeHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (!CachedInstigator) {
+	if (!CachedInstigator.Get()) {
 		if (!GetInstigator()) return;
 
 
 		CachedInstigator = Cast<ASOWCharacterTurretBase>(GetInstigator());
-		if (!CachedInstigator) {
+		if (!CachedInstigator.Get()) {
 			return;
 		}
 	}
 
-	if (GetInstigator() == OtherActor || OverlappedActors.Contains(OtherActor)) return;
+	if (CachedInstigator.Get() == OtherActor || OverlappedActors.Contains(OtherActor)) return;
 
 	ESOWCharacterType TargetType = Cast<ISOWCharacterTypeInterface>(OtherActor)->GetSOWCharacterType();
-	if (!IsTarget(TargetType)) return;
+	if (!USOWBlueprintFunctionLibrary::IsTarget(OwnerPolicy, TargetType)) return;
 
 	UE_LOG(LogTemp, Warning, TEXT("Hit Actor : %s"), *OtherActor->GetActorNameOrLabel());
 
@@ -68,30 +69,10 @@ void ATurretMeleeHitCollision::MeleeHit(UPrimitiveComponent* OverlappedComponent
 	//Data.Instigator = CachedInstigator;
 
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
-		CachedInstigator,
+		CachedInstigator.Get(),
 		SOWGameplayTags::Shared_Event_MeleeHit,
 		Data
 	);
 
 }
-
-bool ATurretMeleeHitCollision::IsTarget(ESOWCharacterType TargetType)
-{
-	if (OwnerPolicy == ETurretTargetSelectionPolicy::OnEnemy) {
-		return TargetType == ESOWCharacterType::Enemy;
-	}
-
-	else if (OwnerPolicy == ETurretTargetSelectionPolicy::OnTurret) {
-		return TargetType == ESOWCharacterType::Turret;
-	}
-
-	else if (OwnerPolicy == ETurretTargetSelectionPolicy::OnPlayer) {
-		return TargetType == ESOWCharacterType::Player;
-	}
-
-	else {
-		return false;
-	}
-}
-
 

@@ -91,6 +91,9 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 		L_AttackPower
 	);
 
+	L_AttackPower += Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_AdditiveDamage, false, 0.0f);
+	L_AttackPower *= Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_MultipleDamage, false, 1.0f);
+
 	float L_DefensePower = 0.f;
 
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(

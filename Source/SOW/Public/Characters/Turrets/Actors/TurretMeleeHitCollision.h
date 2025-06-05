@@ -16,29 +16,28 @@ class SOW_API ATurretMeleeHitCollision : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
+
 	ATurretMeleeHitCollision();
 
-	void ToggleCollision(bool bShouldEnable);
+	void ToggleCollision(bool bShouldEnable);							// Set Collsion based on ANS beginning or ending
 
 protected:
-	// Called when the game starts or when spawned
+
 	virtual void BeginPlay() override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Turret|Combat")
-	UBoxComponent* MeleeHitCollision;
+	UBoxComponent* MeleeHitCollision;									// Hit Detection Component
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Turret|Combat", meta = (ExposeOnSpawn = true))
-	ETurretTargetSelectionPolicy OwnerPolicy;
-
+	ETurretTargetSelectionPolicy OwnerPolicy;							// What the turret should target
+			
 private:
 
 	UFUNCTION()
-	void MeleeHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	void MeleeHit														// Callback Function to handle enemies that collide with the collision
+	(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	ASOWCharacterTurretBase* CachedInstigator;
+	TWeakObjectPtr<ASOWCharacterTurretBase> CachedInstigator;			// if projectile needs to check instigator several time, it must call GetInstigator() too.
 
-	TArray<AActor*> OverlappedActors;
-
-	bool IsTarget(ESOWCharacterType TargetType);
+	TArray<AActor*> OverlappedActors;									// Once a target has been damaged, it must be ignored.
 };

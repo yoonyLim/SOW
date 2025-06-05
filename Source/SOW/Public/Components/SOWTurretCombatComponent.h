@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "SOWEnumTypes.h"
+#include "SOWStructTypes.h"
 #include "SOWGameplayTags.h"
 #include "SOWTurretCombatComponent.generated.h"
 
@@ -23,18 +24,29 @@ public:
 	// Sets default values for this component's properties
 	USOWTurretCombatComponent();
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Turret|Properties")
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Turret|Properties|Information")
+	ETurretName TurretName;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Turret|Properties|Information")
+	ETurretRarity TurretRarity = ETurretRarity::Common;
+
+	
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Turret|Properties|Priority")
 	ETurretTargetSelectionPriority TurretTargetSelectionPriority = ETurretTargetSelectionPriority::Nearest;
 	// Attack Target Selection Policy - Nearest Target Base
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Turret|Properties")
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Turret|Properties|Priority")
+	TArray<ETurretTargetSelectionPriority> TurretSettablePriority;
+	// This is not modifiable by default, but can be modified for debugging purposes.
+
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Turret|Properties")
 	ETurretTargetSelectionPolicy TurretTargetSelectionPolicy = ETurretTargetSelectionPolicy::Uncertain;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Turret|Properties")
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Turret|Properties")
 	ETurretTargetSelectionType TurretTargetSelectionType = ETurretTargetSelectionType::Single;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Turret|Properties")
-	FName TurretName = TEXT("Uncertain");
 
 	
 
@@ -56,6 +68,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Turret|TargetDetection")
 	ETurretTargetSelectionPolicy GetTargetPolicy() const { return TurretTargetSelectionPolicy; }
 
+	UFUNCTION(BlueprintCallable, Category = "Turret|InitProperties")
+	void InitTurretProperties(const FTurretPropertyData& Data);
+
 
 #pragma region AboutHitCollision
 	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
@@ -70,7 +85,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION(BlueprintPure, Category = "Turret|TargetDetection")
-	AActor* GetSingleAttackTarget() const;
+	AActor* GetSingleAttackTarget();
 
 	UFUNCTION(BlueprintPure, Category = "Turret|TargetDetection")
 	AActor* GetNextSingleAttackTarget() const;

@@ -25,27 +25,38 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Turret|Properties")
-	ETurretRarity TurretRarity = ETurretRarity::Common;
-
 	void TryActivateAbilityWithTagOnASC(const FGameplayTag& InAbilityTagToActivation);
 
-	float GetDetectionRangeRadius() const;
 
-	float GetAttackCooldownTime() const;
+#pragma region NativeGetter
 
-	FName GetTurretName() const;
+	float GetDetectionRangeRadius() const;										// Get Attack Radius From Attribute Set in Turret Base 
+	float GetAttackCooldownTime() const;										// Get Attack Delay From Attribute Set in Turret Base
+	int32 GetCircleCount() const { return CircleCount; };						// Get Circle Count when Turret Spawning Time
+	FName GetTurretName() const;												// Get Turret Name (enum) to FName
+
+#pragma endregion
+
+
+#pragma region BPGetter
+
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Turret Name"))
+	FName BP_GetTurretName() const;												// Get Turret Name in FName at Blueprint
 
 	UFUNCTION(BlueprintPure, Category = "UI")
-	float GetHealthRatio() const;
-
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Turret|Properties", meta = (ExposeOnSpawn = true))
-	int32 CircleCount;
-
-	int32 GetCircleCount() const { return CircleCount; };
+	float GetHealthRatio() const;												// Get Health Ratio From Attribute Set in Turret Base for setting UI
 
 	UFUNCTION(BlueprintPure)
-	USOWTurretCombatComponent* GetTurretCombatComponent() const{ return TurretCombatComponent; };
+	USOWTurretCombatComponent* GetTurretCombatComponent() const;				// Get Combat Component at other classes
+	
+#pragma endregion
+
+
+	
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Turret|Properties", meta = (ExposeOnSpawn = true))
+	int32 CircleCount;															// Determine additional Attribute. multiply with attribute - ratio and add in base
+
+	
 protected:
 	virtual void BeginPlay() override;
 	
@@ -56,4 +67,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
 	UWidgetComponent* HealthWidgetComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
+	UWidgetComponent* SettingWidgetComponent;
 };

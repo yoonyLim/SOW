@@ -29,6 +29,9 @@ ASOWCharacterTurretBase::ASOWCharacterTurretBase()
 	HealthWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthWidgetComponent"));
 	HealthWidgetComponent->SetupAttachment(GetMesh());
 
+	SettingWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("SettingWidgetComponent"));
+	SettingWidgetComponent->SetupAttachment(GetMesh());
+
 	CharacterType = ESOWCharacterType::Turret;
 	//AttackTarget = nullptr;
 }
@@ -39,6 +42,10 @@ void ASOWCharacterTurretBase::BeginPlay()
 
 	if (USOWWidgetBase* HealthWidget = Cast<USOWWidgetBase>(HealthWidgetComponent->GetUserWidgetObject())) {
 		HealthWidget->InitCreatedWidget(this);
+	}
+
+	if (USOWWidgetBase* SettingWidget = Cast<USOWWidgetBase>(SettingWidgetComponent->GetUserWidgetObject())) {
+		SettingWidget->InitCreatedWidget(this);
 	}
 }
 
@@ -69,7 +76,14 @@ float ASOWCharacterTurretBase::GetAttackCooldownTime() const
 FName ASOWCharacterTurretBase::GetTurretName() const
 {
 	checkf(TurretCombatComponent, TEXT("Invalid Component : TurretCombatComponent"));
-	return TurretCombatComponent->TurretName;
+
+	
+	return USOWBlueprintFunctionLibrary::EnumToFName(TurretCombatComponent->TurretName);
+}
+
+FName ASOWCharacterTurretBase::BP_GetTurretName() const
+{
+	return GetTurretName();
 }
 
 float ASOWCharacterTurretBase::GetHealthRatio() const
@@ -79,13 +93,12 @@ float ASOWCharacterTurretBase::GetHealthRatio() const
 	return AttributeSet->GetCurrentHealth() / AttributeSet->GetMaxHealthBase();
 }
 
+USOWTurretCombatComponent* ASOWCharacterTurretBase::GetTurretCombatComponent() const
+{
+	checkf(TurretCombatComponent, TEXT("TurretCombatComponent not Found / Check point : SOWCharacterTurretBase.cpp"));
 
-//void ASOWCharacterTurretBase::ActivateTurret()
-//{
-//	// Callback Function for turret activation  
-//	bIsActivated = true;
-//	TurretCombatComponent->ActivateTurretCombatSystem();
-//}
+	return TurretCombatComponent;
+};
 
 
 

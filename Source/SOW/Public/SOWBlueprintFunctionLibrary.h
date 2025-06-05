@@ -4,11 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "SOWEnumTypes.h"
 #include "SOWBlueprintFunctionLibrary.generated.h"
 
 class USOWAbilitySystemComponent;
 class ASOWCharacterTurretBase;
 struct FGameplayTag;
+
 /**
  * 
  */
@@ -33,4 +35,7 @@ public:
 
 	static bool SpawnTurretWithCircleCount(UObject* WorldContextObject, const TSubclassOf<ASOWCharacterTurretBase>& InTurretClass, const FVector& InTargetLoc, const FRotator& InTargetRot, const int32 InCircleCount);
 
+	static FName EnumToFName(const ETurretName EnumValue);
+
+	static bool IsTarget(ETurretTargetSelectionPolicy OwnerPolicy, ESOWCharacterType TargetType);
 };
