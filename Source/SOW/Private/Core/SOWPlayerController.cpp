@@ -62,6 +62,9 @@ void ASOWPlayerController::StartPlacingTurret(FName TurretRowName)
         UE_LOG(LogTemp, Warning, TEXT("Controller : PreviewTurret already exists"));
     }
 
+    ASOWCharacterPlayer* PlayerCharacter = Cast<ASOWCharacterPlayer>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+    PlayerCharacter->bCanMove = false;
+
     PreviewTurret->SetPreviewActor(Row->Mesh, Row->AttackRange);
 }
 
@@ -73,7 +76,7 @@ void ASOWPlayerController::UpdateTurretPreview()
         FVector HitLocation = Hit.ImpactPoint;
         PreviewTurret->SetActorLocation(HitLocation);
 
-        bool bCanPlace = FVector::Dist(GetPawn()->GetActorLocation(), HitLocation) <= 200.f;
+        bool bCanPlace = FVector::Dist(GetPawn()->GetActorLocation(), HitLocation) <= 300.f;
         PreviewTurret->SetCanPlace(bCanPlace);
     }
 }
@@ -108,6 +111,7 @@ void ASOWPlayerController::ConfirmTurretPlacement()
                 APawn* ControlledPawn = GetPawn();
                 if (ASOWCharacterPlayer* SOWPlayer = Cast<ASOWCharacterPlayer>(ControlledPawn))
                 {
+                    SOWPlayer->bCanMove = true;
                     SOWPlayer->ShowInstallationRange(false);
                 }
             }

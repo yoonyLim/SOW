@@ -73,7 +73,7 @@ ASOWCharacterPlayer::ASOWCharacterPlayer()
 	InstallationRangeDecal = CreateDefaultSubobject<UDecalComponent>(TEXT("InstallationRangeDecal"));
 	InstallationRangeDecal->SetupAttachment(RootComponent);
 	InstallationRangeDecal->SetRelativeRotation(FRotator(-90.f, 0.f, 0.f));
-	InstallationRangeDecal->DecalSize = FVector(200.f, 200.f, 200.f);
+	InstallationRangeDecal->DecalSize = FVector(300.f, 300.f, 300.f);
 
 	static ConstructorHelpers::FObjectFinder<UMaterialInterface> DecalMat(TEXT("/Game/03Materials/M_Range_Decal.M_Range_Decal"));
 	if (DecalMat.Succeeded())
@@ -109,7 +109,7 @@ void ASOWCharacterPlayer::Move(const FInputActionValue& Value)
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
-	if (Controller != nullptr)
+	if (Controller != nullptr && bCanMove)
 	{
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();

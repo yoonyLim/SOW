@@ -67,6 +67,8 @@ class SOW_API ASOWCharacterPlayer : public ASOWCharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Decal")
 	class UDecalComponent* InstallationRangeDecal;
 
+public:
+	bool bCanMove = true;
 
 public:
 	// Sets default values for this character's properties
