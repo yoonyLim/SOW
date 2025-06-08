@@ -5,6 +5,7 @@
 #include "GameplayTagContainer.h"
 #include "AbilitySystem/Ability/SOWPlayerGameplayAbility.h"
 #include "Characters/Turrets/SOWCharacterTurretBase.h"
+#include "SOWEnumTypes.h"
 #include "SOWStructTypes.generated.h"
 
 /**
@@ -98,6 +99,15 @@ struct FTurretSummonData : public FTableRowBase {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EMagicSpell FirstSpell;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EMagicSpell SecondSpell;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EMagicSpell ThirdSpell;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName TurretName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -132,4 +142,23 @@ struct FCircleWeightByLevelRow : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FCircleWeight> CircleWeights;
+};
+
+
+USTRUCT(BlueprintType)
+struct FMagicSpell : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	EMagicSpell MagicSpell; 
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	uint8 Step;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UTexture2D* SanskritImage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FText DisplayName; 
 };
