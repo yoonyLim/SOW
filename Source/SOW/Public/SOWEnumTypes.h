@@ -68,6 +68,13 @@ enum class ETurretName : uint8 {
 	Mushroom	UMETA(DisplayName = "Mushroom")
 };
 
+UENUM(BlueprintType)
+enum class EEvolutionType : uint8 {
+	EVO_NONE	UMETA(DisplayName = "None"),
+	EVO_ALPHA	UMETA(DisplayName = "Alpha"),
+	EVO_BETA	UMETA(DisplayName = "Beta")
+};
+
 
 UENUM(BlueprintType)
 enum class EStat : uint8 {
@@ -75,3 +82,4 @@ enum class EStat : uint8 {
 	MP,
 	Stamina
 };
+

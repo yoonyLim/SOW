@@ -6,6 +6,8 @@
 #include "Characters/Turrets/Actors/TurretMeleeHitCollision.h"
 #include "Characters/Enemies/SOWCharacterEnemyBase.h"
 #include "Characters/Player/SOWCharacterPlayer.h"
+#include "Components/SOWCharacterUIComponent.h"
+#include "Projectile/Turret/TurretProjectileBase.h"
 
 #include "SOWBlueprintFunctionLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -34,7 +36,7 @@ void USOWTurretCombatComponent::BeginPlay()
 	bool L_bHasCooldown = (AbilityTagToActivation == SOWGameplayTags::Turret_Ability_Attack);
 
 	if (!TurretSettablePriority.IsEmpty()) {
-		TurretTargetSelectionPriority = TurretSettablePriority[0];
+		PriorityChange();
 	}
 
 	GetWorld()->GetTimerManager().SetTimer(
@@ -45,6 +47,9 @@ void USOWTurretCombatComponent::BeginPlay()
 		true,
 		0.1f
 	);
+
+	USOWCharacterUIComponent* UIComponent = CachedOwnerCharacter->GetCharacterUIComponent();
+	UIComponent->PriorityChanged.AddDynamic(this, &USOWTurretCombatComponent::ChangePriorityCircular);
 }
 
 float USOWTurretCombatComponent::GetAttackCooldownTimeFromOwner() const
@@ -67,8 +72,10 @@ void USOWTurretCombatComponent::InitTurretProperties(const FTurretPropertyData& 
 	TurretTargetSelectionType = Data.TurretTargetSelectionType;
 
 	if (!TurretSettablePriority.IsEmpty()) {
-		TurretTargetSelectionPriority = TurretSettablePriority[0];
+		PriorityChange();
 	}
+
+
 }
 
 void USOWTurretCombatComponent::SetHitCollision(ATurretMeleeHitCollision* HitCollsion)
@@ -81,10 +88,6 @@ void USOWTurretCombatComponent::SetHitCollision(ATurretMeleeHitCollision* HitCol
 	CreatedHitCollision = HitCollsion;
 }
 
-ATurretMeleeHitCollision* USOWTurretCombatComponent::GetHitCollision() const
-{
-	return CreatedHitCollision;
-}
 
 
 
@@ -213,12 +216,6 @@ AActor* USOWTurretCombatComponent::GetSingleAttackTarget()
 	return AttackTarget;
 }
 
-AActor* USOWTurretCombatComponent::GetNextSingleAttackTarget() const
-{
-	// unusing function
-	return (DetectedTargetActors.Num() >= 2) ? DetectedTargetActors[1] : nullptr;
-}
-
 TArray<AActor*> USOWTurretCombatComponent::GetAllAttackTarget() const
 {
 	return DetectedTargetActors;
@@ -228,8 +225,6 @@ TArray<AActor*> USOWTurretCombatComponent::GetAllAttackTarget() const
 void USOWTurretCombatComponent::AttackAbilityActivation()
 {
 	if (!CachedOwnerCharacter) return;
-
-	//if (!CachedOwnerCharacter->bIsActivated) return;
 
 	if(!FindAttackTargetFromAllTargetAvailable()) return;
 
@@ -304,4 +299,40 @@ void USOWTurretCombatComponent::AddActorMatchesTargetingPolicy(AActor* CurrentAc
 			DetectedTargetActors.AddUnique(CurrentActor);
 		}
 	}
+}
+
+void USOWTurretCombatComponent::ChangePriorityCircular(bool ToLeft)
+{
+	int32 PriorityCount = TurretSettablePriority.Num();
+	if (PriorityCount <= 0) return;
+	UE_LOG(LogTemp, Warning, TEXT("Try To Change Priority"));
+
+	if (ToLeft) {
+		
+		if (CurrentPriorityNumber < 1) {
+			CurrentPriorityNumber = PriorityCount;
+		}
+		CurrentPriorityNumber--;
+	}
+	else {
+		if (CurrentPriorityNumber == PriorityCount - 1) {
+			CurrentPriorityNumber -= PriorityCount;
+		}
+		CurrentPriorityNumber++;
+	}
+
+	PriorityChange();
+}
+
+void USOWTurretCombatComponent::PriorityChange()
+{
+	
+	TurretTargetSelectionPriority = TurretSettablePriority[CurrentPriorityNumber];
+	if (!CachedOwnerCharacter) return;
+
+	USOWCharacterUIComponent* UIComponent = CachedOwnerCharacter->GetCharacterUIComponent();
+	if (!UIComponent) return;
+		
+	UIComponent->OnPriorityChangedInTurret.Broadcast(TurretTargetSelectionPriority);
+	
 }

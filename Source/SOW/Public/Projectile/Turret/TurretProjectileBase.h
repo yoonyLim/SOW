@@ -65,10 +65,13 @@ protected:
 	float Speed;												// Projectile Movement Speed. 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile|Properties", meta = (ExposeOnSpawn = true))
-	float MaxRange;												// turret's detection range must be passed. if reaching this Range actor will be destroyed.
+	float MaxRange;												// turret's detection range must be passed. if reaching this Range actor will be destroyed.										// Actors can stay in the scene for this amount of time
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile|Properties", meta = (ExposeOnSpawn = true))
-	float Duration;												// Actors can stay in the scene for this amount of time
+	bool HasMovement;											// if projectile is movable, it must be true
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile|Properties", meta = (ExposeOnSpawn = true))
+	float Duration;												// if projetile has movement, speed and range determine the duration. if not, must be assigned. 
 #pragma endregion
 
 private:

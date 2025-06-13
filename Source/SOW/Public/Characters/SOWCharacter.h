@@ -42,6 +42,7 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	USOWAbilitySystemComponent* GetSOWAbilitySystemComponent() const { return AbilitySystemComponent; }
 
 protected:
 	virtual void PossessedBy(AController* NewController) override;

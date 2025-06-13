@@ -2,6 +2,10 @@
 
 
 #include "Components/SOWTurretEvolutionComponent.h"
+#include "Characters/Turrets/SOWCharacterTurretBase.h"
+#include "Components/SOWCharacterUIComponent.h"
+#include "AbilitySystem/SOWAbilitySystemComponent.h"
+#include "Engine/DataTable.h"
 
 // Sets default values for this component's properties
 USOWTurretEvolutionComponent::USOWTurretEvolutionComponent()
@@ -19,16 +23,74 @@ void USOWTurretEvolutionComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	CachedOwnerCharacter = Cast<ASOWCharacterTurretBase>(GetOwner());
 	// ...
 	
+
+	
+	if (UDataTable* EvolutionData = LoadObject<UDataTable>(nullptr, TEXT("/Game/01Blueprints/DataTable/TurretEvolutionData.TurretEvolutionData"))) {
+		FName TurretName = CachedOwnerCharacter->GetTurretName();
+		EvolutionDataRow = EvolutionData->FindRow<FTurretEvolutionData>(TurretName, TEXT(""));
+		InitEvolutionItems();
+	}
+	USOWCharacterUIComponent* UIComponent = CachedOwnerCharacter->GetCharacterUIComponent();
+	UIComponent->OnTryToEvolveWith.AddDynamic(this, &USOWTurretEvolutionComponent::TryEvolution);
 }
 
-
-// Called every frame
-void USOWTurretEvolutionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void USOWTurretEvolutionComponent::TryEvolution(EEvolutionType Type)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if (USOWAbilitySystemComponent* ASC = CachedOwnerCharacter->GetSOWAbilitySystemComponent()) {
+		
 
-	// ...
+
+		if (!EvolutionDataRow || EvolutionLevel >= 4) {
+			return;
+		}
+
+		if (EvolutionState == EEvolutionType::EVO_NONE) {
+			EvolutionState = Type;
+		}
+
+		TSoftObjectPtr<UDA_TurretEvolutionData> Data;
+		
+		switch (Type)
+		{
+			case EEvolutionType::EVO_ALPHA:
+				Data = Alpha.EvolutionDataAsset;
+				break;
+			case EEvolutionType::EVO_BETA:
+				Data = Beta.EvolutionDataAsset;
+				break;
+			default:
+				UE_LOG(LogTemp, Warning, TEXT("Type is invalid"));
+				break;
+		}
+
+		if (UDA_TurretEvolutionData* LoadData = Data.LoadSynchronous()) {
+			LoadData->GiveToAbilitySystemComponent(ASC);
+			EvolutionLevel++;
+			InitEvolutionItems();
+		}
+	}
 }
 
+void USOWTurretEvolutionComponent::GetTurretEvolutionDescriptions(FString& AlphaDesc, FString& BetaDesc) {
+	AlphaDesc = Alpha.EvolutionDescription;
+	BetaDesc = Beta.EvolutionDescription;
+}
+
+void USOWTurretEvolutionComponent::InitEvolutionItems()
+{
+	if (EvolutionLevel >= EvolutionDataRow->EvolutionAlpha.Num()) {
+		Alpha.EvolutionDataAsset = nullptr;
+		Alpha.EvolutionDescription = "Evolution Complete";
+
+		Beta.EvolutionDataAsset = nullptr;
+		Beta.EvolutionDescription = "Evolution Complete";
+	}
+	else {
+		Alpha = EvolutionDataRow->EvolutionAlpha[EvolutionLevel];
+		Beta = EvolutionDataRow->EvolutionBeta[EvolutionLevel];
+	}
+	
+}

@@ -10,6 +10,7 @@
 #include "SOWBlueprintFunctionLibrary.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Components/SOWTurretCombatComponent.h"
+#include "Components/SOWTurretEvolutionComponent.h"
 
 #include "Components/WidgetComponent.h"
 #include "Widget/SOWWidgetBase.h"
@@ -25,6 +26,8 @@ ASOWCharacterTurretBase::ASOWCharacterTurretBase()
 	//PrimaryActorTick.bStartWithTickEnabled = true;
 
 	TurretCombatComponent = CreateDefaultSubobject<USOWTurretCombatComponent>(TEXT("TurretCombatComponent"));
+
+	TurretEvolutionComponent = CreateDefaultSubobject<USOWTurretEvolutionComponent>(TEXT("TurretEvolutionComponent"));
 
 	HealthWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthWidgetComponent"));
 	HealthWidgetComponent->SetupAttachment(GetMesh());
@@ -78,7 +81,7 @@ FName ASOWCharacterTurretBase::GetTurretName() const
 	checkf(TurretCombatComponent, TEXT("Invalid Component : TurretCombatComponent"));
 
 	
-	return USOWBlueprintFunctionLibrary::EnumToFName(TurretCombatComponent->TurretName);
+	return USOWBlueprintFunctionLibrary::EnumToFName<ETurretName>(TurretCombatComponent->GetTurretNameByEnum());
 }
 
 FName ASOWCharacterTurretBase::BP_GetTurretName() const

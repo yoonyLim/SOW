@@ -17,6 +17,11 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthPercentChangedDelegate, flo
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetSelectionPriorityChangedDelegate, ETurretTargetSelectionPriority, NewPriority);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClickSildeButton, bool, ToLeft);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClickEvolutionButton, EEvolutionType, Type);
+
+class ASOWCharacterTurretBase;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SOW_API USOWCharacterUIComponent : public UActorComponent
@@ -32,6 +37,12 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnTargetSelectionPriorityChangedDelegate OnPriorityChangedInTurret;
 
-	UPROPERTY(BlueprintAssignable)
-	FOnTargetSelectionPriorityChangedDelegate OnPriorityChangedInUI;
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnClickSildeButton PriorityChanged;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnClickEvolutionButton OnTryToEvolveWith;
+
+	UFUNCTION(BlueprintPure)
+	ASOWCharacterTurretBase* GetOwnerTurret() const;
 };

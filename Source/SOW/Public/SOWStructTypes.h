@@ -4,7 +4,9 @@
 
 #include "GameplayTagContainer.h"
 #include "AbilitySystem/Ability/SOWPlayerGameplayAbility.h"
+#include "AbilitySystem/Ability/SOWTurretGameplayAbility.h"
 #include "Characters/Turrets/SOWCharacterTurretBase.h"
+#include "DataAsset/DA_TurretEvolutionData.h"
 #include "SOWStructTypes.generated.h"
 
 /**
@@ -123,4 +125,28 @@ struct FTurretData : public FTableRowBase {
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<ASOWCharacterTurretBase> TurretClass;
+};
+
+USTRUCT(BlueprintType)
+struct FTurretEvolutionItem : public FTableRowBase {
+
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSoftObjectPtr<UDA_TurretEvolutionData> EvolutionDataAsset;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString EvolutionDescription;
+};
+
+USTRUCT(BlueprintType)
+struct FTurretEvolutionData : public FTableRowBase {
+
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FTurretEvolutionItem> EvolutionAlpha;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FTurretEvolutionItem> EvolutionBeta;
 };

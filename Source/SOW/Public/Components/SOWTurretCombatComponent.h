@@ -12,6 +12,7 @@
 
 class ASOWCharacterTurretBase;
 class ATurretMeleeHitCollision;
+class ATurretProjectileBase;
 
 
 
@@ -24,32 +25,14 @@ public:
 	// Sets default values for this component's properties
 	USOWTurretCombatComponent();
 
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Turret|Properties|Information")
-	ETurretName TurretName;
-
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Turret|Properties|Information")
-	ETurretRarity TurretRarity = ETurretRarity::Common;
-
+#pragma region TurretProperties
 	
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Turret|Properties|Priority")
-	ETurretTargetSelectionPriority TurretTargetSelectionPriority = ETurretTargetSelectionPriority::Nearest;
-	// Attack Target Selection Policy - Nearest Target Base
+	UFUNCTION(BlueprintCallable, Category = "Turret|InitProperties")
+	void InitTurretProperties(const FTurretPropertyData& Data);
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Turret|Properties|Priority")
-	TArray<ETurretTargetSelectionPriority> TurretSettablePriority;
-	// This is not modifiable by default, but can be modified for debugging purposes.
+#pragma endregion
 
-
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Turret|Properties")
-	ETurretTargetSelectionPolicy TurretTargetSelectionPolicy = ETurretTargetSelectionPolicy::Uncertain;
-
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Turret|Properties")
-	ETurretTargetSelectionType TurretTargetSelectionType = ETurretTargetSelectionType::Single;
-
-
-	
-
+#pragma region DetectingFunction
 	UFUNCTION(BlueprintCallable, Category = "Turret|TargetDetection")
 	bool FindAttackTargetFromAllTargetAvailable();
 
@@ -60,35 +43,67 @@ public:
 	bool SelectNextAttackTarget();
 
 	UFUNCTION(BlueprintCallable, Category = "Turret|TargetDetection")
-	float GetAttackCooldownTimeFromOwner() const;
-
-	UFUNCTION(BlueprintCallable, Category = "Turret|TargetDetection")
 	void ClearTargetDetectionAsDead();
+#pragma endregion
 
+
+
+#pragma region GETTER
 	UFUNCTION(BlueprintCallable, Category = "Turret|TargetDetection")
 	ETurretTargetSelectionPolicy GetTargetPolicy() const { return TurretTargetSelectionPolicy; }
 
-	UFUNCTION(BlueprintCallable, Category = "Turret|InitProperties")
-	void InitTurretProperties(const FTurretPropertyData& Data);
+	UFUNCTION(BlueprintCallable, Category = "Turret|TargetDetection")
+	float GetAttackCooldownTimeFromOwner() const;
 
+	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
+	ATurretMeleeHitCollision* GetHitCollision() const { return CreatedHitCollision; }
 
-#pragma region AboutHitCollision
+	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
+	ATurretProjectileBase* GetProjectileToSpawn() const { return ProjectileToSpawn; }
+
+	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
+	ETurretName GetTurretNameByEnum() const { return TurretName; }
+
+	FGameplayTag GetAbilityTagToActivation() const { return AbilityTagToActivation; }
+#pragma endregion
+
+	
+
+#pragma region SETTER
 	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
 	void SetHitCollision(ATurretMeleeHitCollision* HitCollsion);
 
-	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
-	ATurretMeleeHitCollision* GetHitCollision() const;
+	
 #pragma endregion
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-	UFUNCTION(BlueprintPure, Category = "Turret|TargetDetection")
-	AActor* GetSingleAttackTarget();
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Turret|Properties|Information")
+	ETurretName TurretName;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Turret|Properties|Information")
+	ETurretRarity TurretRarity = ETurretRarity::Common;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Turret|Properties|Priority")
+	ETurretTargetSelectionPriority TurretTargetSelectionPriority = ETurretTargetSelectionPriority::Uncertain;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Turret|Properties|Priority")
+	TArray<ETurretTargetSelectionPriority> TurretSettablePriority;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Turret|Properties|Combat")
+	ETurretTargetSelectionPolicy TurretTargetSelectionPolicy = ETurretTargetSelectionPolicy::Uncertain;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Turret|Properties|Combat")
+	ETurretTargetSelectionType TurretTargetSelectionType = ETurretTargetSelectionType::Single;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Turret|Properties|Combat")
+	ATurretProjectileBase* ProjectileToSpawn;
 
 	UFUNCTION(BlueprintPure, Category = "Turret|TargetDetection")
-	AActor* GetNextSingleAttackTarget() const;
+	AActor* GetSingleAttackTarget();
 
 	UFUNCTION(BlueprintPure, Category = "Turret|TargetDetection")
 	TArray<AActor*> GetAllAttackTarget() const;
@@ -96,29 +111,45 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Turret|Properties")
 	FGameplayTag AbilityTagToActivation;
 
-
-private:
-	UPROPERTY()
-	TArray<AActor*> DetectedTargetActors;
-
 	UPROPERTY()
 	AActor* AttackTarget;
+
+	int32 CurrentPriorityNumber = 0;
+private:
+
+#pragma region InClassOnlyFields
+	UPROPERTY()
+	TArray<AActor*> DetectedTargetActors;
 
 	UPROPERTY()
 	FTimerHandle AttackTimerHandle;
 
 	ASOWCharacterTurretBase* CachedOwnerCharacter;
 
+
+	float M_CachedCooldownTime;
+	float M_CachedDetectionRadius;
+
 	UPROPERTY(VisibleAnywhere, Category = "Turret|Combat")
 	ATurretMeleeHitCollision* CreatedHitCollision;
+#pragma endregion
 
+
+#pragma region InClassOnlyMethods
 	void AttackAbilityActivation();
 	bool IsActorValidTarget(AActor* InActor);
 
 	void UpdateAttackTimer();
 	void AddActorMatchesTargetingPolicy(AActor* CurrentActor, ESOWCharacterType Type);
 
-	float M_CachedCooldownTime;
-	float M_CachedDetectionRadius;
-		
+
+
+	UFUNCTION()
+	void ChangePriorityCircular(bool ToLeft);
+	void PriorityChange();
+#pragma endregion
+
+
+
+	
 };

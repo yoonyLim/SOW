@@ -9,6 +9,7 @@
 
 class UCapsuleComponent;
 class USOWTurretCombatComponent;
+class USOWTurretEvolutionComponent;
 class UWidgetComponent;
 
 
@@ -63,6 +64,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	USOWTurretCombatComponent* TurretCombatComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	USOWTurretEvolutionComponent* TurretEvolutionComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
 	UWidgetComponent* HealthWidgetComponent;
