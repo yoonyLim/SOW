@@ -62,16 +62,16 @@ protected:
 	FGameplayEffectSpecHandle OwnerDamageEffectSpecHandle;		// Apply the owner turret's damage specs
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile|Properties", meta = (ExposeOnSpawn = true))
-	float Speed;												// Projectile Movement Speed. 
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile|Properties", meta = (ExposeOnSpawn = true))
-	float MaxRange;												// turret's detection range must be passed. if reaching this Range actor will be destroyed.										// Actors can stay in the scene for this amount of time
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile|Properties", meta = (ExposeOnSpawn = true))
 	bool HasMovement;											// if projectile is movable, it must be true
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile|Properties", meta = (ExposeOnSpawn = true, EditCondition = "HasMovement", EditConditionHides))
+	float Speed;												// Projectile Movement Speed. 																			// Actors can stay in the scene for this amount of time
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile|Properties", meta = (ExposeOnSpawn = true))
 	float Duration;												// if projetile has movement, speed and range determine the duration. if not, must be assigned. 
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile|Properties", meta = (ExposeOnSpawn = true))
+	float ScaleRatio = 1.f;										// Collision Scale
 #pragma endregion
 
 private:

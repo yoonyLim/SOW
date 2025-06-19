@@ -10,6 +10,7 @@
 
 #include "CoreMinimal.h"
 #include "SOWEnumTypes.h"
+#include "SOWStructTypes.h"
 #include "Components/ActorComponent.h"
 #include "SOWCharacterUIComponent.generated.h"
 
@@ -20,6 +21,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetSelectionPriorityChangedDel
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClickSildeButton, bool, ToLeft);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClickEvolutionButton, EEvolutionType, Type);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEffectAppliedDelegate, FEffectOrientedTurretAttribute, EffectData);
 
 class ASOWCharacterTurretBase;
 
@@ -42,6 +45,12 @@ public:
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnClickEvolutionButton OnTryToEvolveWith;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnEffectAppliedDelegate OnEffectApplied;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnEffectAppliedDelegate OnEffectRemoved;
 
 	UFUNCTION(BlueprintPure)
 	ASOWCharacterTurretBase* GetOwnerTurret() const;

@@ -11,6 +11,7 @@ class UCapsuleComponent;
 class USOWTurretCombatComponent;
 class USOWTurretEvolutionComponent;
 class UWidgetComponent;
+struct FEffectOrientedTurretAttribute;
 
 
 /**
@@ -73,4 +74,17 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
 	UWidgetComponent* SettingWidgetComponent;
+
+private:
+	UFUNCTION()
+	void OnGameplayEffectAdded(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& SpecApplied, FActiveGameplayEffectHandle ActiveHandle);
+	
+
+	UFUNCTION()
+	void OnGameplayEffectRemoved(const FActiveGameplayEffect& Effect);
+
+	UFUNCTION(BlueprintCallable)
+	void GetModifiedAttributesByGameplayEffects(FEffectOrientedTurretAttribute& BuffData, FEffectOrientedTurretAttribute& DebuffData);
+
+	void AddBuffData(const FGameplayAttribute& ModifiedAttr, FEffectOrientedTurretAttribute& Data, float Value);
 };

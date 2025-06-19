@@ -13,19 +13,12 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "SOWEnumTypes.h"
 
-// Sets default values for this component's properties
+
 USOWTurretCombatComponent::USOWTurretCombatComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
-	
-	// ...
 }
 
-
-// Called when the game starts
 void USOWTurretCombatComponent::BeginPlay()
 {
 	Super::BeginPlay();
@@ -54,7 +47,13 @@ void USOWTurretCombatComponent::BeginPlay()
 
 float USOWTurretCombatComponent::GetAttackCooldownTimeFromOwner() const
 {
-	return CachedOwnerCharacter->GetAttackCooldownTime();
+	float CooldownBase = CachedOwnerCharacter->GetAttackCooldownTime();
+
+	if (HasDependencyOnProjectile) {
+		CooldownBase += ProjectileLivingTime;
+	}
+
+	return CooldownBase;
 }
 
 void USOWTurretCombatComponent::ClearTargetDetectionAsDead()
@@ -66,16 +65,39 @@ void USOWTurretCombatComponent::InitTurretProperties(const FTurretPropertyData& 
 {
 	// Need To Data Table
 
+	// Settable in Widget
 	TurretRarity = Data.TurretRarity;
 	TurretSettablePriority = Data.TurretSettablePriority;
 	TurretTargetSelectionPolicy = Data.TurretTargetSelectionPolicy;
 	TurretTargetSelectionType = Data.TurretTargetSelectionType;
+
+	// Settable from Ability
+	ProjectileToSpawn = Data.ProjectileToSpawn;
+	HasDependencyOnProjectile = Data.HasDependencyOnProjectile;
+	HasProjectileMovement = Data.HasProjectileMovement;
+	ProjectileLivingTime = Data.ProjectileLivingTime;
+
+	ProjectileMoveSpeed = Data.ProjectileMoveSpeed;
 
 	if (!TurretSettablePriority.IsEmpty()) {
 		PriorityChange();
 	}
 
 
+}
+
+float USOWTurretCombatComponent::GetProjectileLivingTime() const
+{
+	float Duration;
+
+	if (HasProjectileMovement) {
+		Duration = ProjectileMoveSpeed / CachedOwnerCharacter->GetDetectionRangeRadius();
+	}
+	else {
+		Duration = ProjectileLivingTime;
+	}
+
+	return Duration;
 }
 
 void USOWTurretCombatComponent::SetHitCollision(ATurretMeleeHitCollision* HitCollsion)
@@ -88,8 +110,24 @@ void USOWTurretCombatComponent::SetHitCollision(ATurretMeleeHitCollision* HitCol
 	CreatedHitCollision = HitCollsion;
 }
 
+void USOWTurretCombatComponent::SetNewProjectile(TSubclassOf<ATurretProjectileBase> NewProjectile)
+{
+	checkf(NewProjectile, TEXT("New Projectile is invalid. Check your Property Setter Asset."));
 
+	ProjectileToSpawn = NewProjectile;
+}
 
+void USOWTurretCombatComponent::SetWidgetDecriptableAttributes(const FWidgetDesciptableTurretAttribute& InAttribute)
+{
+	// this struct must be constant values. once the attributes were initialized, base and ratio value will be fixed based on attribute set value.
+	// this struct was assigned for describe some attributes on widget and process for variable properties due to gameplay effects
+	WidgetDescriptableAttritutes = InAttribute;
+}
+
+void USOWTurretCombatComponent::SetNewCollisionScale(float NewScale)
+{
+	ProjectileScaleRatio = NewScale;
+}
 
 bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 {
@@ -97,13 +135,11 @@ bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 
 	TArray<AActor*> L_DetectableActors;
 	DetectedTargetActors.Empty();
-	AttackTarget = nullptr;
 
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn));
 
 	if (!CachedOwnerCharacter) return false;
-
 
 	UKismetSystemLibrary::SphereOverlapActors(
 		GetWorld(),
@@ -123,29 +159,10 @@ bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 		ISOWCharacterTypeInterface* SOWCharacter = Cast<ISOWCharacterTypeInterface>(CurrentTarget);
 		ESOWCharacterType TargetType = SOWCharacter->GetSOWCharacterType();
 
-
-		//AddActorMatchesTargetingPolicy(CurrentTarget, TargetType);
-		if (TurretTargetSelectionPolicy == ETurretTargetSelectionPolicy::OnPlayer) {
-			if (Cast<ASOWCharacterPlayer>(CurrentTarget)) {
-				DetectedTargetActors.AddUnique(CurrentTarget);
-			}
-		}
-
-		if (TurretTargetSelectionPolicy == ETurretTargetSelectionPolicy::OnTurret) {
-			if (TargetType == ESOWCharacterType::Turret) {
-				DetectedTargetActors.AddUnique(CurrentTarget);
-			}
-		}
-
-		if (TurretTargetSelectionPolicy == ETurretTargetSelectionPolicy::OnEnemy) {
-			if (Cast<ASOWCharacterEnemyBase>(CurrentTarget)) {
-				DetectedTargetActors.AddUnique(CurrentTarget);
-			}
-		}
+		AddActorMatchesTargetingPolicy(CurrentTarget, TargetType);
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Attack Count : %s"), *FString::FromInt(DetectedTargetActors.Num()));
 	UpdateAttackTimer();
-	return (DetectedTargetActors.Num() >= 1) ? true : false;
+	return !DetectedTargetActors.IsEmpty();
 }
 
 bool USOWTurretCombatComponent::SelectAttackTarget()
@@ -162,7 +179,6 @@ bool USOWTurretCombatComponent::SelectNextAttackTarget()
 
 AActor* USOWTurretCombatComponent::GetSingleAttackTarget()
 {
-	//AActor* TargetActor = nullptr;
 	if (AttackTarget && DetectedTargetActors.Contains(AttackTarget)) {
 		return AttackTarget;
 	} 
@@ -220,8 +236,6 @@ TArray<AActor*> USOWTurretCombatComponent::GetAllAttackTarget() const
 {
 	return DetectedTargetActors;
 }
-
-
 void USOWTurretCombatComponent::AttackAbilityActivation()
 {
 	if (!CachedOwnerCharacter) return;
@@ -305,10 +319,8 @@ void USOWTurretCombatComponent::ChangePriorityCircular(bool ToLeft)
 {
 	int32 PriorityCount = TurretSettablePriority.Num();
 	if (PriorityCount <= 0) return;
-	UE_LOG(LogTemp, Warning, TEXT("Try To Change Priority"));
 
 	if (ToLeft) {
-		
 		if (CurrentPriorityNumber < 1) {
 			CurrentPriorityNumber = PriorityCount;
 		}
@@ -336,3 +348,4 @@ void USOWTurretCombatComponent::PriorityChange()
 	UIComponent->OnPriorityChangedInTurret.Broadcast(TurretTargetSelectionPriority);
 	
 }
+/

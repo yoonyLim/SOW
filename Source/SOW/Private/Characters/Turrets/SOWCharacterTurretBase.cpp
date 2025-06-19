@@ -5,6 +5,7 @@
 #include "Characters/Player/SOWCharacterPlayer.h"
 #include "Characters/Enemies/SOWCharacterEnemyBase.h"
 #include "AbilitySystem/SOWAttributeSet.h"
+#include "GameplayEffectTypes.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "SOWBlueprintFunctionLibrary.h"
@@ -15,7 +16,10 @@
 #include "Components/WidgetComponent.h"
 #include "Widget/SOWWidgetBase.h"
 #include "Interface/SOWCharacterTypeInterface.h"
+#include "Components/SOWCharacterUIComponent.h"
 #include "SOWEnumTypes.h"
+#include "SOWStructTypes.h"
+
 
 
 ASOWCharacterTurretBase::ASOWCharacterTurretBase()
@@ -49,6 +53,138 @@ void ASOWCharacterTurretBase::BeginPlay()
 
 	if (USOWWidgetBase* SettingWidget = Cast<USOWWidgetBase>(SettingWidgetComponent->GetUserWidgetObject())) {
 		SettingWidget->InitCreatedWidget(this);
+	}
+
+	if (USOWAbilitySystemComponent* ASC = GetSOWAbilitySystemComponent()) {
+		ASC->OnActiveGameplayEffectAddedDelegateToSelf.AddUObject(this, &ASOWCharacterTurretBase::OnGameplayEffectAdded);
+		ASC->OnAnyGameplayEffectRemovedDelegate().AddUObject(this, &ASOWCharacterTurretBase::OnGameplayEffectRemoved);
+	}
+}
+
+void ASOWCharacterTurretBase::OnGameplayEffectAdded(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& SpecApplied, FActiveGameplayEffectHandle ActiveHandle)
+{
+	FEffectOrientedTurretAttribute Data;
+
+	for (const FGameplayModifierInfo& Modifier : SpecApplied.Def->Modifiers)
+	{
+		const FGameplayAttribute& ModifiedAttr = Modifier.Attribute;
+
+		// Modifier의 Magnitude를 계산
+		float Magnitude = 0.f;
+		if(!Modifier.ModifierMagnitude.AttemptCalculateMagnitude(SpecApplied, Magnitude)) continue;
+
+		if (ModifiedAttr == USOWAttributeSet::GetAttackPowerBaseAttribute())
+		{
+			Data.AttackPowerBaseValue = Magnitude;
+		}
+		else if (ModifiedAttr == USOWAttributeSet::GetAttackSpeedBaseAttribute())
+		{
+			Data.AttackSpeedBaseValue = Magnitude;
+		}
+		else if (ModifiedAttr == USOWAttributeSet::GetMaxHealthBaseAttribute())
+		{
+			Data.MaxHealthBaseValue = Magnitude;
+		}
+		else if (ModifiedAttr == USOWAttributeSet::GetDefensePowerBaseAttribute())
+		{
+			Data.DefensePowerBaseValue = Magnitude;
+		}
+	}
+
+	GetCharacterUIComponent()->OnEffectApplied.Broadcast(Data);
+}
+
+void ASOWCharacterTurretBase::OnGameplayEffectRemoved(const FActiveGameplayEffect& Effect)
+{
+	FEffectOrientedTurretAttribute Data;
+
+	FGameplayEffectSpec RemovedSpec = Effect.Spec;
+
+	for (const FGameplayModifierInfo& Modifier : RemovedSpec.Def->Modifiers)
+	{
+		const FGameplayAttribute& ModifiedAttr = Modifier.Attribute;
+
+		// Modifier의 Magnitude를 계산
+		float Magnitude = 0.f;
+		if (!Modifier.ModifierMagnitude.AttemptCalculateMagnitude(RemovedSpec, Magnitude)) continue;
+
+		if (ModifiedAttr == USOWAttributeSet::GetAttackPowerBaseAttribute())
+		{
+			Data.AttackPowerBaseValue = Magnitude;
+		}
+		else if (ModifiedAttr == USOWAttributeSet::GetAttackSpeedBaseAttribute())
+		{
+			Data.AttackSpeedBaseValue = Magnitude;
+		}
+		else if (ModifiedAttr == USOWAttributeSet::GetMaxHealthBaseAttribute())
+		{
+			Data.MaxHealthBaseValue = Magnitude;
+		}
+		else if (ModifiedAttr == USOWAttributeSet::GetDefensePowerBaseAttribute())
+		{
+			Data.DefensePowerBaseValue = Magnitude;
+		}
+	}
+
+	GetCharacterUIComponent()->OnEffectRemoved.Broadcast(Data);
+}
+
+void ASOWCharacterTurretBase::GetModifiedAttributesByGameplayEffects(FEffectOrientedTurretAttribute& BuffData, FEffectOrientedTurretAttribute& DebuffData)
+{
+	FGameplayEffectQuery Query;
+	FEffectOrientedTurretAttribute L_Buff, L_Debuff;
+
+	TArray<FActiveGameplayEffectHandle> ActiveEffectHandles = AbilitySystemComponent->GetActiveEffects(Query);
+
+	for (const FActiveGameplayEffectHandle& Handle : ActiveEffectHandles)
+	{
+		const FActiveGameplayEffect* ActiveEffect = AbilitySystemComponent->GetActiveGameplayEffect(Handle);
+		if (ActiveEffect)
+		{
+			const FGameplayEffectSpec& Spec = ActiveEffect->Spec;
+
+			// 여기서 Spec.Def 또는 SourceTags 등 접근 가능
+			//UE_LOG(LogTemp, Log, TEXT("Active Effect: %s"), *GetNameSafe(Spec.Def));
+
+			for (const FGameplayModifierInfo& Modifier : Spec.Def->Modifiers)
+			{
+				const FGameplayAttribute& ModifiedAttr = Modifier.Attribute;
+
+				// Modifier의 Magnitude를 계산
+				float Magnitude = 0.f;
+				if (!Modifier.ModifierMagnitude.AttemptCalculateMagnitude(Spec, Magnitude)) continue;
+
+				if (Magnitude > 0) {
+					AddBuffData(ModifiedAttr, L_Buff, Magnitude);
+				}
+				else {
+					AddBuffData(ModifiedAttr, L_Debuff, Magnitude);
+				}
+			}
+		}
+	}
+
+	BuffData = L_Buff;
+	DebuffData = L_Debuff;
+}
+
+void ASOWCharacterTurretBase::AddBuffData(const FGameplayAttribute& ModifiedAttr, FEffectOrientedTurretAttribute& Data, float Value)
+{
+	if (ModifiedAttr == USOWAttributeSet::GetAttackPowerBaseAttribute())
+	{
+		Data.AttackPowerBaseValue += Value;
+	}
+	else if (ModifiedAttr == USOWAttributeSet::GetAttackSpeedBaseAttribute())
+	{
+		Data.AttackSpeedBaseValue += Value;
+	}
+	else if (ModifiedAttr == USOWAttributeSet::GetMaxHealthBaseAttribute())
+	{
+		Data.MaxHealthBaseValue += Value;
+	}
+	else if (ModifiedAttr == USOWAttributeSet::GetDefensePowerBaseAttribute())
+	{
+		Data.DefensePowerBaseValue += Value;
 	}
 }
 

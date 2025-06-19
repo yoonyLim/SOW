@@ -26,12 +26,20 @@ ATurretProjectileBase::ATurretProjectileBase()
 	ProjectileMeshComp->SetupAttachment(GetRootComponent());
 
 	ProjectileMoveComp = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile Movement"));
+	
 }
 
 void ATurretProjectileBase::BeginPlay()
 {
 	Super::BeginPlay();
 	ProjectileHitCollisionComp->OnComponentBeginOverlap.AddDynamic(this, &ATurretProjectileBase::OnCollisionHit);
+	FVector ScaledExtent = ProjectileHitCollisionComp->GetUnscaledBoxExtent() * ScaleRatio;
+	ProjectileHitCollisionComp->SetBoxExtent(ScaledExtent);
+	//ProjectileMoveComp->SetVelocityInLocalSpace(GetActorForwardVector() * Speed);
+	ProjectileMoveComp->InitialSpeed = Speed;
+	ProjectileMoveComp->MaxSpeed = Speed;
+	ProjectileMoveComp->Velocity = GetActorForwardVector() * Speed;
+	// Terminated Time is needed to set with Duration
 }
 
 void ATurretProjectileBase::OnCollisionHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -47,13 +55,13 @@ void ATurretProjectileBase::OnCollisionHit(UPrimitiveComponent* OverlappedCompon
 			return;
 		}
 	}
-
+	if (!OtherActor) return;
 	if (CachedInstigator.Get() == OtherActor || OverlappedActors.Contains(OtherActor)) return;
+
+	if (!OtherActor->Implements<USOWCharacterTypeInterface>()) return;
 
 	ESOWCharacterType TargetType = Cast<ISOWCharacterTypeInterface>(OtherActor)->GetSOWCharacterType();
 	if (!USOWBlueprintFunctionLibrary::IsTarget(OwnerPolicy, TargetType)) return;
-
-	UE_LOG(LogTemp, Warning, TEXT("Hit Actor : %s"), *OtherActor->GetActorNameOrLabel());
 
 	OverlappedActors.AddUnique(OtherActor);
 

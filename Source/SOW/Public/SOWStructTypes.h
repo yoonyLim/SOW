@@ -5,10 +5,13 @@
 #include "GameplayTagContainer.h"
 #include "AbilitySystem/Ability/SOWPlayerGameplayAbility.h"
 #include "AbilitySystem/Ability/SOWTurretGameplayAbility.h"
-#include "Characters/Turrets/SOWCharacterTurretBase.h"
 #include "DataAsset/DA_TurretEvolutionData.h"
+
+#include "SOWEnumTypes.h"
 #include "SOWStructTypes.generated.h"
 
+class ASOWCharacterTurretBase;
+class ATurretProjectileBase;
 /**
  * 
  */
@@ -99,16 +102,34 @@ struct FTurretPropertyData : public FTableRowBase {
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ETurretRarity TurretRarity;
+	ETurretRarity TurretRarity;												// Determine Turret Rarity
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<ETurretTargetSelectionPriority> TurretSettablePriority;
+	TArray<ETurretTargetSelectionPriority> TurretSettablePriority;			// Determine What Target should be Selected
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ETurretTargetSelectionPolicy TurretTargetSelectionPolicy;
+	ETurretTargetSelectionPolicy TurretTargetSelectionPolicy;				// Determine What Policy Turret Can Select.
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ETurretTargetSelectionType TurretTargetSelectionType;
+	ETurretTargetSelectionType TurretTargetSelectionType;					// Determine How many Target selectable
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<ATurretProjectileBase> ProjectileToSpawn;					// Determine What To Spawn While Attack
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool HasDependencyOnProjectile;											// Decide whether to pause the ability until the summoned projectile disappears.
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool HasProjectileMovement;												// Decide the projectile has movement
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ProjectileLivingTime;												// Determine the projectile lining time
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "HasProjectileMovement", EditConditionHides))
+	float ProjectileMoveSpeed;												// Determine the projectile move speed
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ProjectileScaleRatio;												// Determine the projectile Collision Scale : Default - 1.0
 };
 
 
@@ -137,6 +158,51 @@ struct FTurretEvolutionItem : public FTableRowBase {
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString EvolutionDescription;
+};
+
+USTRUCT(BlueprintType)
+struct FWidgetDesciptableTurretAttribute {
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float MaxHeatlhBaseValue;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float MaxHealthRatioValue;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float DefensePowerBaseValue;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float DefensePowerRatioValue;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float AttackPowerBaseValue;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float AttackPowerRatioValue;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float AttackSpeedBaseValue;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float AttackSpeedRatioValue;
+};
+
+USTRUCT(BlueprintType)
+struct FEffectOrientedTurretAttribute {
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float MaxHealthBaseValue;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float DefensePowerBaseValue;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float AttackPowerBaseValue;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float AttackSpeedBaseValue;
+
 };
 
 USTRUCT(BlueprintType)

@@ -82,12 +82,17 @@ void ASOWCharacter::Tick(float DeltaTime) {
 void ASOWCharacter::OnWalkSpeedChanged(const FOnAttributeChangeData& Data)
 {
 	float NewSpeed = Data.NewValue;
-
+	UE_LOG(LogTemp, Warning, TEXT("Move Speed Must be Changed"));
 	if (GetCharacterMovement()) {
 	
+		UE_LOG(LogTemp, Warning, TEXT("Move Speed Must be Changed"));
+
 		UCharacterMovementComponent* MoveComp = Cast<UCharacterMovementComponent>(GetCharacterMovement());
 
 		MoveComp->MaxWalkSpeed = NewSpeed;
 
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("No CharacterMoveComp Found"));
 	}
 }

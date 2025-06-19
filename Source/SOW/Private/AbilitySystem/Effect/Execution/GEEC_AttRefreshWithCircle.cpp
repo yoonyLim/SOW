@@ -9,6 +9,8 @@
 #include "Characters/Turrets/SOWCharacterTurretBase.h"
 #include "Interface/SOWCharacterTypeInterface.h"
 
+#include "SOWStructTypes.h"
+
 struct FRefreshAttributeCaptures {
 	DECLARE_ATTRIBUTE_CAPTUREDEF(AttackPowerBase);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(DefensePowerBase);
@@ -76,65 +78,90 @@ void UGEEC_AttRefreshWithCircle::Execute_Implementation(const FGameplayEffectCus
 	
 	int32 TargetCircleCount = SourceTurret->GetCircleCount();
 
-
-	float L_GetRatio = 0.f;
-
+	FWidgetDesciptableTurretAttribute Data;
+	
 	/* For MaxHealth Refresh */
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
+		GetCapturedCircleData().MaxHealthBaseDef,
+		EvalParams,
+		Data.MaxHeatlhBaseValue
+	);
+
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
 		GetCapturedCircleData().MaxHealthRatioDef,
 		EvalParams,
-		L_GetRatio
+		Data.MaxHealthRatioValue
 	);
 
 	OutExecutionOutput.AddOutputModifier(
 		FGameplayModifierEvaluatedData(
 			GetCapturedCircleData().MaxHealthBaseDef.AttributeToCapture,
-			EGameplayModOp::Additive,
-			L_GetRatio * TargetCircleCount)
+			EGameplayModOp::Override,
+			Data.MaxHeatlhBaseValue + Data.MaxHealthRatioValue * TargetCircleCount)
 	);
 
 
 	/* For AttackPower Refresh */
+
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
+		GetCapturedCircleData().AttackPowerBaseDef,
+		EvalParams,
+		Data.AttackPowerBaseValue
+	);
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
 		GetCapturedCircleData().AttackPowerRatioDef,
 		EvalParams,
-		L_GetRatio
+		Data.AttackPowerRatioValue
 	);
 
 	OutExecutionOutput.AddOutputModifier(
 		FGameplayModifierEvaluatedData(
 			GetCapturedCircleData().AttackPowerBaseDef.AttributeToCapture,
-			EGameplayModOp::Additive,
-			L_GetRatio * TargetCircleCount)
+			EGameplayModOp::Override,
+			Data.AttackPowerBaseValue + Data.AttackPowerRatioValue * TargetCircleCount)
 	);
 
 
 	/* For DefencePower Refresh */
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
+		GetCapturedCircleData().DefensePowerBaseDef,
+		EvalParams,
+		Data.DefensePowerBaseValue
+	);
+
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
 		GetCapturedCircleData().DefensePowerRatioDef,
 		EvalParams,
-		L_GetRatio
+		Data.DefensePowerRatioValue
 	);
 
 	OutExecutionOutput.AddOutputModifier(
 		FGameplayModifierEvaluatedData(
 			GetCapturedCircleData().DefensePowerBaseDef.AttributeToCapture,
-			EGameplayModOp::Additive,
-			L_GetRatio * TargetCircleCount)
+			EGameplayModOp::Override,
+			Data.DefensePowerBaseValue + Data.DefensePowerRatioValue * TargetCircleCount)
 	);
 
 
 	/* For AttackSpeed Refresh */
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
+		GetCapturedCircleData().AttackSpeedBaseDef,
+		EvalParams,
+		Data.AttackSpeedBaseValue
+	);
+
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
 		GetCapturedCircleData().AttackSpeedRatioDef,
 		EvalParams,
-		L_GetRatio
+		Data.AttackSpeedRatioValue
 	);
 
 	OutExecutionOutput.AddOutputModifier(
 		FGameplayModifierEvaluatedData(
 			GetCapturedCircleData().AttackSpeedBaseDef.AttributeToCapture,
-			EGameplayModOp::Additive,
-			L_GetRatio * TargetCircleCount)
+			EGameplayModOp::Override,
+			Data.AttackSpeedBaseValue + Data.AttackSpeedRatioValue * TargetCircleCount)
 	);
+
+	SourceTurretComp->SetWidgetDecriptableAttributes(Data);
 }

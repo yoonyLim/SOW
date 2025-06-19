@@ -59,12 +59,18 @@ public:
 	ATurretMeleeHitCollision* GetHitCollision() const { return CreatedHitCollision; }
 
 	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
-	ATurretProjectileBase* GetProjectileToSpawn() const { return ProjectileToSpawn; }
+	TSubclassOf<ATurretProjectileBase> GetProjectileToSpawn() const { return ProjectileToSpawn; }
 
 	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
 	ETurretName GetTurretNameByEnum() const { return TurretName; }
 
 	FGameplayTag GetAbilityTagToActivation() const { return AbilityTagToActivation; }
+
+	UFUNCTION(BlueprintPure, Category = "Turret|Combat")
+	FWidgetDesciptableTurretAttribute GetWidgetDesciptableTurretAttribute() const { return WidgetDescriptableAttritutes; }
+
+	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
+	float GetProjectileLivingTime() const;
 #pragma endregion
 
 	
@@ -73,7 +79,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
 	void SetHitCollision(ATurretMeleeHitCollision* HitCollsion);
 
-	
+	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
+	void SetNewProjectile(TSubclassOf<ATurretProjectileBase> NewProjectile);
+
+	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
+	void SetWidgetDecriptableAttributes(const FWidgetDesciptableTurretAttribute& InAttribute);
+
+	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
+	void SetNewCollisionScale(float NewScale);
 #pragma endregion
 
 protected:
@@ -100,7 +113,16 @@ protected:
 	ETurretTargetSelectionType TurretTargetSelectionType = ETurretTargetSelectionType::Single;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Turret|Properties|Combat")
-	ATurretProjectileBase* ProjectileToSpawn;
+	TSubclassOf<ATurretProjectileBase> ProjectileToSpawn;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Turret|Properties|Combat")
+	float ProjectileLivingTime;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Turret|Properties|Combat")
+	float ProjectileMoveSpeed;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Turret|Properties|Combat")
+	float ProjectileScaleRatio;
 
 	UFUNCTION(BlueprintPure, Category = "Turret|TargetDetection")
 	AActor* GetSingleAttackTarget();
@@ -115,6 +137,8 @@ protected:
 	AActor* AttackTarget;
 
 	int32 CurrentPriorityNumber = 0;
+
+	FWidgetDesciptableTurretAttribute WidgetDescriptableAttritutes;
 private:
 
 #pragma region InClassOnlyFields
@@ -129,6 +153,10 @@ private:
 
 	float M_CachedCooldownTime;
 	float M_CachedDetectionRadius;
+
+	bool HasDependencyOnProjectile;
+	bool HasProjectileMovement;
+
 
 	UPROPERTY(VisibleAnywhere, Category = "Turret|Combat")
 	ATurretMeleeHitCollision* CreatedHitCollision;
