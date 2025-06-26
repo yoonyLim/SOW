@@ -84,7 +84,7 @@ void UGEEC_AttRefreshWithCircle::Execute_Implementation(const FGameplayEffectCus
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
 		GetCapturedCircleData().MaxHealthBaseDef,
 		EvalParams,
-		Data.MaxHeatlhBaseValue
+		Data.MaxHealthBaseValue
 	);
 
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
@@ -92,12 +92,13 @@ void UGEEC_AttRefreshWithCircle::Execute_Implementation(const FGameplayEffectCus
 		EvalParams,
 		Data.MaxHealthRatioValue
 	);
+	Data.MaxHealthRatioValue *= TargetCircleCount;
 
 	OutExecutionOutput.AddOutputModifier(
 		FGameplayModifierEvaluatedData(
 			GetCapturedCircleData().MaxHealthBaseDef.AttributeToCapture,
 			EGameplayModOp::Override,
-			Data.MaxHeatlhBaseValue + Data.MaxHealthRatioValue * TargetCircleCount)
+			Data.MaxHealthBaseValue + Data.MaxHealthRatioValue)
 	);
 
 
@@ -113,12 +114,12 @@ void UGEEC_AttRefreshWithCircle::Execute_Implementation(const FGameplayEffectCus
 		EvalParams,
 		Data.AttackPowerRatioValue
 	);
-
+	Data.AttackPowerRatioValue *= TargetCircleCount;
 	OutExecutionOutput.AddOutputModifier(
 		FGameplayModifierEvaluatedData(
 			GetCapturedCircleData().AttackPowerBaseDef.AttributeToCapture,
 			EGameplayModOp::Override,
-			Data.AttackPowerBaseValue + Data.AttackPowerRatioValue * TargetCircleCount)
+			Data.AttackPowerBaseValue + Data.AttackPowerRatioValue)
 	);
 
 
@@ -134,12 +135,12 @@ void UGEEC_AttRefreshWithCircle::Execute_Implementation(const FGameplayEffectCus
 		EvalParams,
 		Data.DefensePowerRatioValue
 	);
-
+	Data.DefensePowerRatioValue *= TargetCircleCount;
 	OutExecutionOutput.AddOutputModifier(
 		FGameplayModifierEvaluatedData(
 			GetCapturedCircleData().DefensePowerBaseDef.AttributeToCapture,
 			EGameplayModOp::Override,
-			Data.DefensePowerBaseValue + Data.DefensePowerRatioValue * TargetCircleCount)
+			Data.DefensePowerBaseValue + Data.DefensePowerRatioValue)
 	);
 
 
@@ -155,12 +156,12 @@ void UGEEC_AttRefreshWithCircle::Execute_Implementation(const FGameplayEffectCus
 		EvalParams,
 		Data.AttackSpeedRatioValue
 	);
-
+	Data.AttackSpeedRatioValue *= TargetCircleCount;
 	OutExecutionOutput.AddOutputModifier(
 		FGameplayModifierEvaluatedData(
 			GetCapturedCircleData().AttackSpeedBaseDef.AttributeToCapture,
 			EGameplayModOp::Override,
-			Data.AttackSpeedBaseValue + Data.AttackSpeedRatioValue * TargetCircleCount)
+			Data.AttackSpeedBaseValue + Data.AttackSpeedRatioValue)
 	);
 
 	SourceTurretComp->SetWidgetDecriptableAttributes(Data);

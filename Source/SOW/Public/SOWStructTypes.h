@@ -166,24 +166,24 @@ struct FWidgetDesciptableTurretAttribute {
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	float MaxHeatlhBaseValue;
+	float MaxHealthBaseValue = 0.f;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	float MaxHealthRatioValue;
+	float MaxHealthRatioValue = 0.f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	float DefensePowerBaseValue;
+	float DefensePowerBaseValue = 0.f;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	float DefensePowerRatioValue;
+	float DefensePowerRatioValue = 0.f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	float AttackPowerBaseValue;
+	float AttackPowerBaseValue = 0.f;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	float AttackPowerRatioValue;
+	float AttackPowerRatioValue = 0.f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	float AttackSpeedBaseValue;
+	float AttackSpeedBaseValue = 0.f;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	float AttackSpeedRatioValue;
+	float AttackSpeedRatioValue = 0.f;
 };
 
 USTRUCT(BlueprintType)
@@ -191,6 +191,13 @@ struct FEffectOrientedTurretAttribute {
 	GENERATED_BODY()
 
 public:
+	FEffectOrientedTurretAttribute() {
+		MaxHealthBaseValue = 0.f;
+		DefensePowerBaseValue = 0.f;
+		AttackPowerBaseValue = 0.f;
+		AttackPowerBaseValue = 0.f;
+	};
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	float MaxHealthBaseValue;
 

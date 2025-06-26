@@ -61,6 +61,16 @@ void USOWTurretCombatComponent::ClearTargetDetectionAsDead()
 	GetWorld()->GetTimerManager().ClearTimer(AttackTimerHandle);
 }
 
+FVector USOWTurretCombatComponent::FindActualTargetLocation()
+{
+	if (TurretTargetSelectionPriority == ETurretTargetSelectionPriority::LocationFixed) {
+		return FixedLocation;
+	}
+	else {
+		return GetSingleAttackTarget()->GetActorLocation();
+	}
+}
+
 void USOWTurretCombatComponent::InitTurretProperties(const FTurretPropertyData& Data)
 {
 	// Need To Data Table
@@ -84,6 +94,12 @@ void USOWTurretCombatComponent::InitTurretProperties(const FTurretPropertyData& 
 	}
 
 
+}
+
+void USOWTurretCombatComponent::AddNewTargetPriority(ETurretTargetSelectionPriority NewPriority)
+{
+	TurretSettablePriority.AddUnique(NewPriority);
+	PriorityChange();
 }
 
 float USOWTurretCombatComponent::GetProjectileLivingTime() const
@@ -129,6 +145,26 @@ void USOWTurretCombatComponent::SetNewCollisionScale(float NewScale)
 	ProjectileScaleRatio = NewScale;
 }
 
+bool USOWTurretCombatComponent::SetFixedTarget(AActor* InActor)
+{
+	if (!InActor || !InActor->Implements<USOWCharacterTypeInterface>()) return false;
+	ISOWCharacterTypeInterface* SOWCharacter = Cast<ISOWCharacterTypeInterface>(InActor);
+	ESOWCharacterType TargetType = SOWCharacter->GetSOWCharacterType();
+
+	bool bIsSuccess = USOWBlueprintFunctionLibrary::IsTarget(TurretTargetSelectionPolicy, TargetType);
+	if (bIsSuccess) {
+		FixedTarget = InActor;
+	}
+	return bIsSuccess;
+
+	//FixedTarget = InActor;
+}
+
+void USOWTurretCombatComponent::SetFixedLocation(const FVector InLocation)
+{
+	FixedLocation = InLocation;
+}
+
 bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 {
 	// Check all characters within detection range and designate them as attack targets if they are valid targets.
@@ -151,6 +187,8 @@ bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 		L_DetectableActors
 	);
 
+	UE_LOG(LogTemp, Warning, TEXT("Detect Count : %s"), *FString::FromInt(L_DetectableActors.Num()));
+
 	for (AActor* CurrentTarget : L_DetectableActors) {
 
 		if (!IsActorValidTarget(CurrentTarget)) continue;
@@ -160,7 +198,11 @@ bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 		ESOWCharacterType TargetType = SOWCharacter->GetSOWCharacterType();
 
 		AddActorMatchesTargetingPolicy(CurrentTarget, TargetType);
+
+		UE_LOG(LogTemp, Warning, TEXT("Target Type : %s"), *USOWBlueprintFunctionLibrary::EnumToFName<ESOWCharacterType>(TargetType).ToString());
 	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Target Count : %s"), *FString::FromInt(DetectedTargetActors.Num()));
 	UpdateAttackTimer();
 	return !DetectedTargetActors.IsEmpty();
 }
@@ -190,7 +232,7 @@ AActor* USOWTurretCombatComponent::GetSingleAttackTarget()
 	switch (TurretTargetSelectionPriority)
 	{
 	case ETurretTargetSelectionPriority::Uncertain:
-		AttackTarget = nullptr;
+		AttackTarget = CachedOwnerCharacter;
 		break;
 	case ETurretTargetSelectionPriority::HighHealth:
 		break;
@@ -223,8 +265,10 @@ AActor* USOWTurretCombatComponent::GetSingleAttackTarget()
 		}
 		break;
 	case ETurretTargetSelectionPriority::LocationFixed:
+		AttackTarget = CachedOwnerCharacter;
 		break;
 	case ETurretTargetSelectionPriority::TargetFixed:
+		AttackTarget = FixedTarget;
 		break;
 	default:
 		break;
@@ -313,6 +357,10 @@ void USOWTurretCombatComponent::AddActorMatchesTargetingPolicy(AActor* CurrentAc
 			DetectedTargetActors.AddUnique(CurrentActor);
 		}
 	}
+
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("Something wrong while set target"));
+	}
 }
 
 void USOWTurretCombatComponent::ChangePriorityCircular(bool ToLeft)
@@ -344,8 +392,12 @@ void USOWTurretCombatComponent::PriorityChange()
 
 	USOWCharacterUIComponent* UIComponent = CachedOwnerCharacter->GetCharacterUIComponent();
 	if (!UIComponent) return;
-		
+	
+	UE_LOG(LogTemp, Warning, TEXT("Priority : %s"), *USOWBlueprintFunctionLibrary::EnumToFName(TurretTargetSelectionPriority).ToString());
+
+
+	// 현재 WBP 내에서 해당 델리게이트를 바인드 하는 기능이 작성되지 않았으므로 바인드 과정을 추가하여 
+	// 위 함수를 호출할 경우마다 델리게이트를 호출할 수 있도록 해야 함.
 	UIComponent->OnPriorityChangedInTurret.Broadcast(TurretTargetSelectionPriority);
 	
 }
-/

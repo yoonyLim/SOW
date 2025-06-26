@@ -30,6 +30,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Turret|InitProperties")
 	void InitTurretProperties(const FTurretPropertyData& Data);
 
+	UFUNCTION(BlueprintCallable, Category = "Turret|Properties")
+	void AddNewTargetPriority(ETurretTargetSelectionPriority NewPriority);
+
 #pragma endregion
 
 #pragma region DetectingFunction
@@ -44,6 +47,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Turret|TargetDetection")
 	void ClearTargetDetectionAsDead();
+
+	UFUNCTION(BlueprintPure, Category = "Turret|TargetDetection")
+	FVector FindActualTargetLocation();
 #pragma endregion
 
 
@@ -51,6 +57,9 @@ public:
 #pragma region GETTER
 	UFUNCTION(BlueprintCallable, Category = "Turret|TargetDetection")
 	ETurretTargetSelectionPolicy GetTargetPolicy() const { return TurretTargetSelectionPolicy; }
+
+	UFUNCTION(BlueprintCallable, Category = "Turret|TargetDetection")
+	ETurretTargetSelectionPriority GetTargetPriority() const { return TurretTargetSelectionPriority; }
 
 	UFUNCTION(BlueprintCallable, Category = "Turret|TargetDetection")
 	float GetAttackCooldownTimeFromOwner() const;
@@ -87,6 +96,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
 	void SetNewCollisionScale(float NewScale);
+
+	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
+	bool SetFixedTarget(AActor* InActor);
+
+	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
+	void SetFixedLocation(const FVector InLocation);
 #pragma endregion
 
 protected:
@@ -147,6 +162,13 @@ private:
 
 	UPROPERTY()
 	FTimerHandle AttackTimerHandle;
+
+	UPROPERTY()
+	AActor* FixedTarget;
+
+	UPROPERTY()
+	FVector FixedLocation;
+
 
 	ASOWCharacterTurretBase* CachedOwnerCharacter;
 
