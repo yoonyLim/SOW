@@ -225,6 +225,11 @@ FName ASOWCharacterTurretBase::BP_GetTurretName() const
 	return GetTurretName();
 }
 
+float ASOWCharacterTurretBase::BP_GetDetectionRangeRadius() const
+{
+	return GetDetectionRangeRadius();
+}
+
 float ASOWCharacterTurretBase::GetHealthRatio() const
 {
 	checkf(AttributeSet, TEXT("AttributeSet not Found / Check point : SOWCharacterTurretBase.cpp"));

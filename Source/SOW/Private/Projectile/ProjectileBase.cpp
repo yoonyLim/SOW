@@ -2,8 +2,11 @@
 
 
 #include "Projectile/ProjectileBase.h"
+#include "Characters/SOWCharacter.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
+#include "SOWBlueprintFunctionLibrary.h"
+#include "SOWGameplayTags.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
 // Sets default values
@@ -39,6 +42,14 @@ FGameplayEffectSpecHandle AProjectileBase::GetDamageSpecHandle() const
 	return OwnerDamageEffectSpecHandle;
 }
 
+void AProjectileBase::SendTargetDeadEventToInstigator(AActor* InActor)
+{
+	if (USOWBlueprintFunctionLibrary::DoesActorHasTag(InActor, SOWGameplayTags::Shared_Status_Dead)) {
+		ASOWCharacter* SOWInstigator = Cast<ASOWCharacter>(GetInstigator());
+		SOWInstigator->OnTargetDead.Broadcast(InActor);
+	}
+}
+
 void AProjectileBase::OnCollisionHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) {
-	UE_LOG(LogTemp, Warning, TEXT("Hit Detected"));
+	//UE_LOG(LogTemp, Warning, TEXT("Hit Detected"));
 }

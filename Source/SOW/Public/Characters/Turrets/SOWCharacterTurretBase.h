@@ -14,6 +14,7 @@ class UWidgetComponent;
 struct FEffectOrientedTurretAttribute;
 
 
+
 /**
  * 
  */
@@ -45,11 +46,17 @@ public:
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Turret Name"))
 	FName BP_GetTurretName() const;												// Get Turret Name in FName at Blueprint
 
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Turret Detection Range"))
+	float BP_GetDetectionRangeRadius() const;
+
 	UFUNCTION(BlueprintPure, Category = "UI")
 	float GetHealthRatio() const;												// Get Health Ratio From Attribute Set in Turret Base for setting UI
 
 	UFUNCTION(BlueprintPure)
 	USOWTurretCombatComponent* GetTurretCombatComponent() const;				// Get Combat Component at other classes
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, meta = (DisplayName = "Bind On Target Dead"))
+	void BP_BindOnTargetDead(AActor* Target);
 	
 #pragma endregion
 
@@ -74,6 +81,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
 	UWidgetComponent* SettingWidgetComponent;
+
 
 private:
 	UFUNCTION()

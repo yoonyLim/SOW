@@ -151,18 +151,37 @@ bool USOWTurretCombatComponent::SetFixedTarget(AActor* InActor)
 	ISOWCharacterTypeInterface* SOWCharacter = Cast<ISOWCharacterTypeInterface>(InActor);
 	ESOWCharacterType TargetType = SOWCharacter->GetSOWCharacterType();
 
+	
+
 	bool bIsSuccess = USOWBlueprintFunctionLibrary::IsTarget(TurretTargetSelectionPolicy, TargetType);
 	if (bIsSuccess) {
+		if (ASOWCharacter* PreviousTarget = Cast<ASOWCharacter>(FixedTarget)) {
+			PreviousTarget->OnTargetDead.RemoveAll(CachedOwnerCharacter);
+		}
+
+		if (FixedTarget) {
+			UE_LOG(LogTemp, Warning, TEXT("Cur : %s, Target : %s"), *FixedTarget->GetActorNameOrLabel(), *InActor->GetActorNameOrLabel());
+		}
+		
 		FixedTarget = InActor;
+		AttackTarget = FixedTarget;
+		UE_LOG(LogTemp, Warning, TEXT("Target : %s"), *FixedTarget->GetActorNameOrLabel());
+		CachedOwnerCharacter->BP_BindOnTargetDead(FixedTarget);
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("Target Unmatched with Targeting Policy"));
 	}
 	return bIsSuccess;
-
-	//FixedTarget = InActor;
 }
 
 void USOWTurretCombatComponent::SetFixedLocation(const FVector InLocation)
 {
 	FixedLocation = InLocation;
+}
+
+void USOWTurretCombatComponent::SetNewProjectileLivingTime(float NewDuration)
+{
+	ProjectileLivingTime = NewDuration;
 }
 
 bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
@@ -187,7 +206,7 @@ bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 		L_DetectableActors
 	);
 
-	UE_LOG(LogTemp, Warning, TEXT("Detect Count : %s"), *FString::FromInt(L_DetectableActors.Num()));
+	//UE_LOG(LogTemp, Warning, TEXT("Detect Count : %s"), *FString::FromInt(L_DetectableActors.Num()));
 
 	for (AActor* CurrentTarget : L_DetectableActors) {
 
@@ -199,10 +218,10 @@ bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 
 		AddActorMatchesTargetingPolicy(CurrentTarget, TargetType);
 
-		UE_LOG(LogTemp, Warning, TEXT("Target Type : %s"), *USOWBlueprintFunctionLibrary::EnumToFName<ESOWCharacterType>(TargetType).ToString());
+		//UE_LOG(LogTemp, Warning, TEXT("Target Type : %s"), *USOWBlueprintFunctionLibrary::EnumToFName<ESOWCharacterType>(TargetType).ToString());
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Target Count : %s"), *FString::FromInt(DetectedTargetActors.Num()));
+	//UE_LOG(LogTemp, Warning, TEXT("Target Count : %s"), *FString::FromInt(DetectedTargetActors.Num()));
 	UpdateAttackTimer();
 	return !DetectedTargetActors.IsEmpty();
 }
@@ -393,7 +412,7 @@ void USOWTurretCombatComponent::PriorityChange()
 	USOWCharacterUIComponent* UIComponent = CachedOwnerCharacter->GetCharacterUIComponent();
 	if (!UIComponent) return;
 	
-	UE_LOG(LogTemp, Warning, TEXT("Priority : %s"), *USOWBlueprintFunctionLibrary::EnumToFName(TurretTargetSelectionPriority).ToString());
+	//UE_LOG(LogTemp, Warning, TEXT("Priority : %s"), *USOWBlueprintFunctionLibrary::EnumToFName(TurretTargetSelectionPriority).ToString());
 
 
 	// 현재 WBP 내에서 해당 델리게이트를 바인드 하는 기능이 작성되지 않았으므로 바인드 과정을 추가하여 

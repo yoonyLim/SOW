@@ -102,6 +102,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
 	void SetFixedLocation(const FVector InLocation);
+	
+	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
+	void SetNewProjectileLivingTime(float NewDuration);
 #pragma endregion
 
 protected:
@@ -144,6 +147,8 @@ protected:
 
 	UFUNCTION(BlueprintPure, Category = "Turret|TargetDetection")
 	TArray<AActor*> GetAllAttackTarget() const;
+
+	
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Turret|Properties")
 	FGameplayTag AbilityTagToActivation;

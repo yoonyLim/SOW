@@ -82,4 +82,7 @@ public:
 	FGameplayEffectSpecHandle GetDamageSpecHandle() const;
 #pragma endregion
 
+
+	UFUNCTION(BlueprintCallable)
+	void SendTargetDeadEventToInstigator(AActor* InActor);
 };
