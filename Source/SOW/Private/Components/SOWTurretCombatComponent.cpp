@@ -86,8 +86,11 @@ void USOWTurretCombatComponent::InitTurretProperties(const FTurretPropertyData& 
 	HasDependencyOnProjectile = Data.HasDependencyOnProjectile;
 	HasProjectileMovement = Data.HasProjectileMovement;
 	ProjectileLivingTime = Data.ProjectileLivingTime;
+	ProjectileScaleRatio = Data.ProjectileScaleRatio;
 
 	ProjectileMoveSpeed = Data.ProjectileMoveSpeed;
+
+	TargetSelectCount = Data.TargetSelectCount;
 
 	if (!TurretSettablePriority.IsEmpty()) {
 		PriorityChange();
@@ -184,6 +187,11 @@ void USOWTurretCombatComponent::SetNewProjectileLivingTime(float NewDuration)
 	ProjectileLivingTime = NewDuration;
 }
 
+void USOWTurretCombatComponent::SetNewTargetSelectCount(int32 NewCount)
+{
+	TargetSelectCount = NewCount;
+}
+
 bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 {
 	// Check all characters within detection range and designate them as attack targets if they are valid targets.
@@ -211,8 +219,7 @@ bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 	for (AActor* CurrentTarget : L_DetectableActors) {
 
 		if (!IsActorValidTarget(CurrentTarget)) continue;
-		// if target actor is equal to self or selection policy is uncertain, otherwise the actor has dead state, 
-		// then it can not be a target for the turret
+		
 		ISOWCharacterTypeInterface* SOWCharacter = Cast<ISOWCharacterTypeInterface>(CurrentTarget);
 		ESOWCharacterType TargetType = SOWCharacter->GetSOWCharacterType();
 
@@ -224,18 +231,6 @@ bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 	//UE_LOG(LogTemp, Warning, TEXT("Target Count : %s"), *FString::FromInt(DetectedTargetActors.Num()));
 	UpdateAttackTimer();
 	return !DetectedTargetActors.IsEmpty();
-}
-
-bool USOWTurretCombatComponent::SelectAttackTarget()
-{
-	if (!CachedOwnerCharacter) return false;
-	FVector TurretLocation = CachedOwnerCharacter->GetActorLocation();
-	return AttackTarget ? true : false;
-}
-
-bool USOWTurretCombatComponent::SelectNextAttackTarget()
-{
-	return false;
 }
 
 AActor* USOWTurretCombatComponent::GetSingleAttackTarget()
@@ -295,10 +290,129 @@ AActor* USOWTurretCombatComponent::GetSingleAttackTarget()
 	return AttackTarget;
 }
 
-TArray<AActor*> USOWTurretCombatComponent::GetAllAttackTarget() const
+AActor* USOWTurretCombatComponent::GetSingleAttackTargetOnList(const TArray<AActor*> InTargetList)
 {
-	return DetectedTargetActors;
+	AActor* FinalTarget = CachedOwnerCharacter;
+	double DistanceMin, DistanceMax, Distance;
+	FVector TurretLocation = CachedOwnerCharacter->GetActorLocation();
+
+	switch (TurretTargetSelectionPriority)
+	{
+	case ETurretTargetSelectionPriority::Uncertain:
+		FinalTarget = CachedOwnerCharacter;
+		break;
+	case ETurretTargetSelectionPriority::HighHealth:
+		break;
+	case ETurretTargetSelectionPriority::LowHealth:
+		break;
+	case ETurretTargetSelectionPriority::HighAttack:
+		break;
+	case ETurretTargetSelectionPriority::Nearest:
+		DistanceMax = CachedOwnerCharacter->GetDetectionRangeRadius() * 2.f;
+
+		for (AActor* ATarget : InTargetList) {
+			Distance = FVector::Dist(TurretLocation, ATarget->GetActorLocation());
+
+			if (DistanceMax > Distance) {
+				FinalTarget = ATarget;
+				DistanceMax = Distance;
+			}
+		}
+		break;
+	case ETurretTargetSelectionPriority::Farthest:
+		DistanceMin = 0.f;
+
+		for (AActor* ATarget : InTargetList) {
+			Distance = FVector::Dist(TurretLocation, ATarget->GetActorLocation());
+
+			if (DistanceMin < Distance) {
+				FinalTarget = ATarget;
+				DistanceMin = Distance;
+			}
+		}
+		break;
+	case ETurretTargetSelectionPriority::LocationFixed:
+		FinalTarget = CachedOwnerCharacter;
+		break;
+	case ETurretTargetSelectionPriority::TargetFixed:
+		FinalTarget = FixedTarget;
+		break;
+	default:
+		break;
+	}
+
+	return FinalTarget;
 }
+
+TArray<AActor*> USOWTurretCombatComponent::GetAllAttackTarget()
+{
+	TArray<AActor*> BaseActorList = DetectedTargetActors;
+	TArray<AActor*> FinalTargetList;
+
+	for (int i = 0; i < TargetSelectCount; i++) {
+		if (BaseActorList.Num() <= 0) break;
+
+		AActor* CurrentTarget = GetSingleAttackTargetOnList(BaseActorList);
+		if (!CurrentTarget) break;
+
+		UE_LOG(LogTemp, Warning, TEXT("Actual Target : %s"), *CurrentTarget->GetActorNameOrLabel());
+		FinalTargetList.AddUnique(CurrentTarget);
+
+		BaseActorList.Remove(CurrentTarget); // 더 효율적인 제거 방식
+	}
+
+	return FinalTargetList;
+}
+TArray<FVector> USOWTurretCombatComponent::GetAllAttackLocation()
+{
+	TArray<FVector> FinalLocationList;
+
+	if (TurretTargetSelectionPriority == ETurretTargetSelectionPriority::LocationFixed) {
+		FinalLocationList = FixedLocationList;
+	}
+	else {
+		for (const AActor* CurActor : GetAllAttackTarget()) {
+			FinalLocationList.Add(CurActor->GetActorLocation());
+		}
+	}
+
+	return FinalLocationList;
+}
+void USOWTurretCombatComponent::AddNewFixedLocation(const FVector NewLocation)
+{
+	FixedLocationList.Add(NewLocation);
+}
+void USOWTurretCombatComponent::ClearFixedLocationList()
+{
+	FixedLocationList.Empty();
+}
+
+bool USOWTurretCombatComponent::TryAddNewFixedTarget(AActor* NewTarget)
+{
+	if (!NewTarget || !NewTarget->Implements<USOWCharacterTypeInterface>()) return false;
+	ISOWCharacterTypeInterface* SOWCharacter = Cast<ISOWCharacterTypeInterface>(NewTarget);
+	ESOWCharacterType TargetType = SOWCharacter->GetSOWCharacterType();
+
+
+
+	bool bIsSuccess = USOWBlueprintFunctionLibrary::IsTarget(TurretTargetSelectionPolicy, TargetType);
+	if (bIsSuccess) {
+		FixedTargetList.AddUnique(NewTarget);
+		CachedOwnerCharacter->BP_BindOnTargetDead(NewTarget);
+	}
+	return bIsSuccess;
+}
+
+void USOWTurretCombatComponent::ClearFixedTargetList()
+{
+	for (AActor* PreviousBindTarget : FixedTargetList) {
+		if (ASOWCharacter* PreviousTarget = Cast<ASOWCharacter>(PreviousBindTarget)) {
+			PreviousTarget->OnTargetDead.RemoveAll(CachedOwnerCharacter);
+		}
+	}
+	FixedTargetList.Empty();
+}
+
 void USOWTurretCombatComponent::AttackAbilityActivation()
 {
 	if (!CachedOwnerCharacter) return;
@@ -310,6 +424,9 @@ void USOWTurretCombatComponent::AttackAbilityActivation()
 
 bool USOWTurretCombatComponent::IsActorValidTarget(AActor* InActor)
 {
+	// if target actor is equal to self or selection policy is uncertain, otherwise the actor has dead state, 
+	// then it can not be a target for the turret
+
 	if (TurretTargetSelectionPolicy == ETurretTargetSelectionPolicy::Uncertain) {
 		return false;
 	} 
@@ -378,7 +495,7 @@ void USOWTurretCombatComponent::AddActorMatchesTargetingPolicy(AActor* CurrentAc
 	}
 
 	else {
-		UE_LOG(LogTemp, Warning, TEXT("Something wrong while set target"));
+		UE_LOG(LogTemp, Warning, TEXT("Something wrong while setting target"));
 	}
 }
 
@@ -411,12 +528,7 @@ void USOWTurretCombatComponent::PriorityChange()
 
 	USOWCharacterUIComponent* UIComponent = CachedOwnerCharacter->GetCharacterUIComponent();
 	if (!UIComponent) return;
-	
-	//UE_LOG(LogTemp, Warning, TEXT("Priority : %s"), *USOWBlueprintFunctionLibrary::EnumToFName(TurretTargetSelectionPriority).ToString());
 
-
-	// 현재 WBP 내에서 해당 델리게이트를 바인드 하는 기능이 작성되지 않았으므로 바인드 과정을 추가하여 
-	// 위 함수를 호출할 경우마다 델리게이트를 호출할 수 있도록 해야 함.
 	UIComponent->OnPriorityChangedInTurret.Broadcast(TurretTargetSelectionPriority);
 	
 }

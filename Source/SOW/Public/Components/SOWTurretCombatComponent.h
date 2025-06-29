@@ -40,12 +40,6 @@ public:
 	bool FindAttackTargetFromAllTargetAvailable();
 
 	UFUNCTION(BlueprintCallable, Category = "Turret|TargetDetection")
-	bool SelectAttackTarget();
-
-	UFUNCTION(BlueprintCallable, Category = "Turret|TargetDetection")
-	bool SelectNextAttackTarget();
-
-	UFUNCTION(BlueprintCallable, Category = "Turret|TargetDetection")
 	void ClearTargetDetectionAsDead();
 
 	UFUNCTION(BlueprintPure, Category = "Turret|TargetDetection")
@@ -105,13 +99,17 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
 	void SetNewProjectileLivingTime(float NewDuration);
+
+	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
+	void SetNewTargetSelectCount(int32 NewCount);
 #pragma endregion
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-	
+#pragma region TurretCombatProperties
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Turret|Properties|Information")
 	ETurretName TurretName;
 
@@ -142,23 +140,42 @@ protected:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Turret|Properties|Combat")
 	float ProjectileScaleRatio;
 
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Turret|Properties|Combat")
+	int32 TargetSelectCount;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Turret|Properties")
+	FGameplayTag AbilityTagToActivation;
+#pragma endregion
+
+	
+#pragma region TargetManagement
 	UFUNCTION(BlueprintPure, Category = "Turret|TargetDetection")
 	AActor* GetSingleAttackTarget();
 
 	UFUNCTION(BlueprintPure, Category = "Turret|TargetDetection")
-	TArray<AActor*> GetAllAttackTarget() const;
+	AActor* GetSingleAttackTargetOnList(const TArray<AActor*> InTargetList);
+
+	UFUNCTION(BlueprintPure, Category = "Turret|TargetDetection")
+	TArray<AActor*> GetAllAttackTarget();
+
+	UFUNCTION(BlueprintPure, Category = "Turret|TargetDetection")
+	TArray<FVector> GetAllAttackLocation();
+
+	UFUNCTION(BlueprintCallable)
+	void AddNewFixedLocation(const FVector NewLocation);
+
+	UFUNCTION(BlueprintCallable)
+	void ClearFixedLocationList();
+
+	UFUNCTION(BlueprintCallable)
+	bool TryAddNewFixedTarget(AActor* NewTarget);
+
+	UFUNCTION(BlueprintCallable)
+	void ClearFixedTargetList();
+#pragma endregion
 
 	
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Turret|Properties")
-	FGameplayTag AbilityTagToActivation;
-
-	UPROPERTY()
-	AActor* AttackTarget;
-
-	int32 CurrentPriorityNumber = 0;
-
-	FWidgetDesciptableTurretAttribute WidgetDescriptableAttritutes;
+	
 private:
 
 #pragma region InClassOnlyFields
@@ -174,6 +191,27 @@ private:
 	UPROPERTY()
 	FVector FixedLocation;
 
+	UPROPERTY()
+	AActor* AttackTarget;
+
+#pragma region Test
+	UPROPERTY()
+	TArray<AActor*> AttackTargetList;
+
+	UPROPERTY()
+	TArray<FVector> AttackTargetLocationList;
+
+	UPROPERTY()
+	TArray<AActor*> FixedTargetList;
+
+	UPROPERTY()
+	TArray<FVector> FixedLocationList;
+
+	
+#pragma endregion
+
+
+	int32 CurrentPriorityNumber = 0;
 
 	ASOWCharacterTurretBase* CachedOwnerCharacter;
 
@@ -187,6 +225,8 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Turret|Combat")
 	ATurretMeleeHitCollision* CreatedHitCollision;
+
+	FWidgetDesciptableTurretAttribute WidgetDescriptableAttritutes;
 #pragma endregion
 
 

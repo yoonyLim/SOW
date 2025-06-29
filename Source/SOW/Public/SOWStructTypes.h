@@ -130,6 +130,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float ProjectileScaleRatio;												// Determine the projectile Collision Scale : Default - 1.0
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 TargetSelectCount;												// Determine How many targets must be selected in the turret
 };
 
 
@@ -209,7 +212,6 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	float AttackSpeedBaseValue;
-
 };
 
 USTRUCT(BlueprintType)

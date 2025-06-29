@@ -29,12 +29,15 @@ AProjectileBase::AProjectileBase()
 void AProjectileBase::BeginPlay()
 {
 	Super::BeginPlay();
-	FVector ScaledExtent = ProjectileHitCollisionComp->GetUnscaledBoxExtent() * ScaleRatio;
-	ProjectileHitCollisionComp->SetBoxExtent(ScaledExtent);
+	FVector ScaledCollisionExtent = ProjectileHitCollisionComp->GetUnscaledBoxExtent() * ScaleRatio;
+	ProjectileHitCollisionComp->SetBoxExtent(ScaledCollisionExtent);
 	//ProjectileMoveComp->SetVelocityInLocalSpace(GetActorForwardVector() * Speed);
 	ProjectileMoveComp->InitialSpeed = Speed;
 	ProjectileMoveComp->MaxSpeed = Speed;
 	ProjectileMoveComp->Velocity = GetActorForwardVector() * Speed;
+
+	FVector ScaledMeshExtent = ProjectileMeshComp->GetRelativeScale3D() * ScaleRatio;
+	ProjectileMeshComp->SetWorldScale3D(FVector(ScaledMeshExtent.X, ScaledMeshExtent.Y, ScaledMeshExtent.Z));
 }
 
 FGameplayEffectSpecHandle AProjectileBase::GetDamageSpecHandle() const
