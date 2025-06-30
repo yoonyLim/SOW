@@ -83,3 +83,31 @@ enum class EStat : uint8 {
 	Stamina
 };
 
+UENUM(BlueprintType)
+enum class EMagicSpell : uint8 {
+	Prema,
+	Jnana,
+	Jyoti,
+	Shanti,
+	Satya,
+	Kala,
+	Jivana,
+	Akasha,
+	Pavana,
+	Padma,
+	Prakashaka,
+	Alingaka,
+	Pravahita,
+	Nayaka,
+	Bodhaka,
+	Tara,
+	Marga,
+	Nayana,
+	Mana,
+	Gita,
+	Devi,
+	Yatrika,
+	Agni,
+	Aranya,
+	Swapna
+};

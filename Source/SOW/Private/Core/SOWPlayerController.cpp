@@ -7,11 +7,13 @@
 #include "UObject/ConstructorHelpers.h"
 #include "SOWStructTypes.h"
 
+#include "Characters/Player/SOWCharacterPlayer.h"
+
 #include "SOWBlueprintFunctionLibrary.h"
 
 ASOWPlayerController::ASOWPlayerController()
 {
-    static ConstructorHelpers::FObjectFinder<UDataTable> DT_Turrets(TEXT("DataTable'/Game/01Blueprints/DataTable/Turrets/DT_TurretData.DT_TurretData'"));
+    static ConstructorHelpers::FObjectFinder<UDataTable> DT_Turrets(TEXT("DataTable'/Game/01Blueprints/DataTable/Turrets/DT_TurretSummonData.DT_TurretSummonData'"));
     if (DT_Turrets.Succeeded())
     {
         TurretDataTable = DT_Turrets.Object;
@@ -43,7 +45,7 @@ void ASOWPlayerController::StartPlacingTurret(FName TurretRowName)
     PendingTurretName = TurretRowName;
     bIsPlacingTurret = true;
 
-    const FTurretData* Row = TurretDataTable->FindRow<FTurretData>(PendingTurretName, TEXT(""));
+    const FTurretSummonData* Row = TurretDataTable->FindRow<FTurretSummonData>(PendingTurretName, TEXT(""));
     if (!Row || !Row->Mesh)
     {
         UE_LOG(LogTemp, Error, TEXT("Controller : Invalid turret data for %s"), *TurretRowName.ToString());
@@ -60,7 +62,10 @@ void ASOWPlayerController::StartPlacingTurret(FName TurretRowName)
         UE_LOG(LogTemp, Warning, TEXT("Controller : PreviewTurret already exists"));
     }
 
-    PreviewTurret->SetSkeletalMesh(Row->Mesh);
+    ASOWCharacterPlayer* PlayerCharacter = Cast<ASOWCharacterPlayer>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+    PlayerCharacter->bCanMove = false;
+
+    PreviewTurret->SetPreviewActor(Row->Mesh, Row->AttackRange);
 }
 
 void ASOWPlayerController::UpdateTurretPreview()
@@ -71,7 +76,7 @@ void ASOWPlayerController::UpdateTurretPreview()
         FVector HitLocation = Hit.ImpactPoint;
         PreviewTurret->SetActorLocation(HitLocation);
 
-        bool bCanPlace = FVector::Dist(GetPawn()->GetActorLocation(), HitLocation) <= 200.f;
+        bool bCanPlace = FVector::Dist(GetPawn()->GetActorLocation(), HitLocation) <= 300.f;
         PreviewTurret->SetCanPlace(bCanPlace);
     }
 }
@@ -90,7 +95,7 @@ void ASOWPlayerController::ConfirmTurretPlacement()
 
         if (bCanPlace)
         {
-            const FTurretData* Row = TurretDataTable->FindRow<FTurretData>(PendingTurretName, TEXT(""));
+            const FTurretSummonData* Row = TurretDataTable->FindRow<FTurretSummonData>(PendingTurretName, TEXT(""));
 
             if (Row && Row->TurretClass)
             {
@@ -102,6 +107,13 @@ void ASOWPlayerController::ConfirmTurretPlacement()
 
                 bIsPlacingTurret = false;
                 PendingTurretName = NAME_None;
+
+                APawn* ControlledPawn = GetPawn();
+                if (ASOWCharacterPlayer* SOWPlayer = Cast<ASOWCharacterPlayer>(ControlledPawn))
+                {
+                    SOWPlayer->bCanMove = true;
+                    SOWPlayer->ShowInstallationRange(false);
+                }
             }
         }
     }

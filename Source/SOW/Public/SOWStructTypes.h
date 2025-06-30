@@ -7,6 +7,7 @@
 #include "AbilitySystem/Ability/SOWTurretGameplayAbility.h"
 #include "DataAsset/DA_TurretEvolutionData.h"
 
+#include "Characters/Turrets/SOWCharacterTurretBase.h"
 #include "SOWEnumTypes.h"
 #include "SOWStructTypes.generated.h"
 
@@ -137,9 +138,18 @@ public:
 
 
 USTRUCT(BlueprintType)
-struct FTurretData : public FTableRowBase {
+struct FTurretSummonData : public FTableRowBase {
 
 	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EMagicSpell FirstSpell;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EMagicSpell SecondSpell;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EMagicSpell ThirdSpell;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName TurretName;
@@ -149,6 +159,9 @@ struct FTurretData : public FTableRowBase {
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<ASOWCharacterTurretBase> TurretClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float AttackRange;
 };
 
 USTRUCT(BlueprintType)
@@ -224,4 +237,47 @@ struct FTurretEvolutionData : public FTableRowBase {
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FTurretEvolutionItem> EvolutionBeta;
+};
+
+USTRUCT(BlueprintType)
+struct FCircleWeight
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 CircleLevel;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 Weight;
+};
+
+USTRUCT(BlueprintType)
+struct FCircleWeightByLevelRow : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 Level;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FCircleWeight> CircleWeights;
+};
+
+
+USTRUCT(BlueprintType)
+struct FMagicSpell : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	EMagicSpell MagicSpell; 
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	uint8 Step;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UTexture2D* SanskritImage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FText DisplayName; 
 };
