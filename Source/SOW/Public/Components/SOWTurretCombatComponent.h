@@ -42,8 +42,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Turret|TargetDetection")
 	void ClearTargetDetectionAsDead();
 
-	UFUNCTION(BlueprintPure, Category = "Turret|TargetDetection")
-	FVector FindActualTargetLocation();
+	//UFUNCTION(BlueprintPure, Category = "Turret|TargetDetection")
+	//FVector FindActualTargetLocation();
 #pragma endregion
 
 
@@ -149,8 +149,8 @@ protected:
 
 	
 #pragma region TargetManagement
-	UFUNCTION(BlueprintPure, Category = "Turret|TargetDetection")
-	AActor* GetSingleAttackTarget();
+	/*UFUNCTION(BlueprintPure, Category = "Turret|TargetDetection")
+	AActor* GetSingleAttackTarget();*/
 
 	UFUNCTION(BlueprintPure, Category = "Turret|TargetDetection")
 	AActor* GetSingleAttackTargetOnList(const TArray<AActor*> InTargetList);
@@ -160,6 +160,9 @@ protected:
 
 	UFUNCTION(BlueprintPure, Category = "Turret|TargetDetection")
 	TArray<FVector> GetAllAttackLocation();
+
+	UFUNCTION(BlueprintPure, Category = "Turret|TargetDetection")
+	TArray<AActor*> GetAllDetectedTarget();
 
 	UFUNCTION(BlueprintCallable)
 	void AddNewFixedLocation(const FVector NewLocation);

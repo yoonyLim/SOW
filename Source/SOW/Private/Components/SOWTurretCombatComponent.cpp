@@ -61,15 +61,15 @@ void USOWTurretCombatComponent::ClearTargetDetectionAsDead()
 	GetWorld()->GetTimerManager().ClearTimer(AttackTimerHandle);
 }
 
-FVector USOWTurretCombatComponent::FindActualTargetLocation()
-{
-	if (TurretTargetSelectionPriority == ETurretTargetSelectionPriority::LocationFixed) {
-		return FixedLocation;
-	}
-	else {
-		return GetSingleAttackTarget()->GetActorLocation();
-	}
-}
+//FVector USOWTurretCombatComponent::FindActualTargetLocation()
+//{
+//	if (TurretTargetSelectionPriority == ETurretTargetSelectionPriority::LocationFixed) {
+//		return FixedLocation;
+//	}
+//	else {
+//		return GetSingleAttackTarget()->GetActorLocation();
+//	}
+//}
 
 void USOWTurretCombatComponent::InitTurretProperties(const FTurretPropertyData& Data)
 {
@@ -233,62 +233,62 @@ bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 	return !DetectedTargetActors.IsEmpty();
 }
 
-AActor* USOWTurretCombatComponent::GetSingleAttackTarget()
-{
-	if (AttackTarget && DetectedTargetActors.Contains(AttackTarget)) {
-		return AttackTarget;
-	} 
-
-	FVector TurretLocation = CachedOwnerCharacter->GetActorLocation();
-
-	double DistanceMin, DistanceMax, Distance;
-
-	switch (TurretTargetSelectionPriority)
-	{
-	case ETurretTargetSelectionPriority::Uncertain:
-		AttackTarget = CachedOwnerCharacter;
-		break;
-	case ETurretTargetSelectionPriority::HighHealth:
-		break;
-	case ETurretTargetSelectionPriority::LowHealth:
-		break;
-	case ETurretTargetSelectionPriority::HighAttack:
-		break;
-	case ETurretTargetSelectionPriority::Nearest:
-		DistanceMax = CachedOwnerCharacter->GetDetectionRangeRadius() * 2.f;
-
-		for (AActor* ATarget : DetectedTargetActors) {
-			Distance = FVector::Dist(TurretLocation, ATarget->GetActorLocation());
-
-			if (DistanceMax > Distance) {
-				AttackTarget = ATarget;
-				DistanceMax = Distance;
-			}
-		}
-		break;
-	case ETurretTargetSelectionPriority::Farthest:
-		DistanceMin = 0.f;
-
-		for (AActor* ATarget : DetectedTargetActors) {
-			Distance = FVector::Dist(TurretLocation, ATarget->GetActorLocation());
-
-			if (DistanceMin < Distance) {
-				AttackTarget = ATarget;
-				DistanceMin = Distance;
-			}
-		}
-		break;
-	case ETurretTargetSelectionPriority::LocationFixed:
-		AttackTarget = CachedOwnerCharacter;
-		break;
-	case ETurretTargetSelectionPriority::TargetFixed:
-		AttackTarget = FixedTarget;
-		break;
-	default:
-		break;
-	}
-	return AttackTarget;
-}
+//AActor* USOWTurretCombatComponent::GetSingleAttackTarget()
+//{
+//	if (AttackTarget && DetectedTargetActors.Contains(AttackTarget)) {
+//		return AttackTarget;
+//	} 
+//
+//	FVector TurretLocation = CachedOwnerCharacter->GetActorLocation();
+//
+//	double DistanceMin, DistanceMax, Distance;
+//
+//	switch (TurretTargetSelectionPriority)
+//	{
+//	case ETurretTargetSelectionPriority::Uncertain:
+//		AttackTarget = CachedOwnerCharacter;
+//		break;
+//	case ETurretTargetSelectionPriority::HighHealth:
+//		break;
+//	case ETurretTargetSelectionPriority::LowHealth:
+//		break;
+//	case ETurretTargetSelectionPriority::HighAttack:
+//		break;
+//	case ETurretTargetSelectionPriority::Nearest:
+//		DistanceMax = CachedOwnerCharacter->GetDetectionRangeRadius() * 2.f;
+//
+//		for (AActor* ATarget : DetectedTargetActors) {
+//			Distance = FVector::Dist(TurretLocation, ATarget->GetActorLocation());
+//
+//			if (DistanceMax > Distance) {
+//				AttackTarget = ATarget;
+//				DistanceMax = Distance;
+//			}
+//		}
+//		break;
+//	case ETurretTargetSelectionPriority::Farthest:
+//		DistanceMin = 0.f;
+//
+//		for (AActor* ATarget : DetectedTargetActors) {
+//			Distance = FVector::Dist(TurretLocation, ATarget->GetActorLocation());
+//
+//			if (DistanceMin < Distance) {
+//				AttackTarget = ATarget;
+//				DistanceMin = Distance;
+//			}
+//		}
+//		break;
+//	case ETurretTargetSelectionPriority::LocationFixed:
+//		AttackTarget = CachedOwnerCharacter;
+//		break;
+//	case ETurretTargetSelectionPriority::TargetFixed:
+//		AttackTarget = FixedTarget;
+//		break;
+//	default:
+//		break;
+//	}
+//	return AttackTarget;
+//}
 
 AActor* USOWTurretCombatComponent::GetSingleAttackTargetOnList(const TArray<AActor*> InTargetList)
 {
@@ -349,6 +349,10 @@ TArray<AActor*> USOWTurretCombatComponent::GetAllAttackTarget()
 	TArray<AActor*> BaseActorList = DetectedTargetActors;
 	TArray<AActor*> FinalTargetList;
 
+	if (TurretTargetSelectionPriority == ETurretTargetSelectionPriority::TargetFixed) {
+		return FixedTargetList;
+	}
+
 	for (int i = 0; i < TargetSelectCount; i++) {
 		if (BaseActorList.Num() <= 0) break;
 
@@ -377,6 +381,10 @@ TArray<FVector> USOWTurretCombatComponent::GetAllAttackLocation()
 	}
 
 	return FinalLocationList;
+}
+TArray<AActor*> USOWTurretCombatComponent::GetAllDetectedTarget()
+{
+	return DetectedTargetActors;
 }
 void USOWTurretCombatComponent::AddNewFixedLocation(const FVector NewLocation)
 {
