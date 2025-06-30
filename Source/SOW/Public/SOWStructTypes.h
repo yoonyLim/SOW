@@ -7,7 +7,6 @@
 #include "AbilitySystem/Ability/SOWTurretGameplayAbility.h"
 #include "DataAsset/DA_TurretEvolutionData.h"
 
-#include "Characters/Turrets/SOWCharacterTurretBase.h"
 #include "SOWEnumTypes.h"
 #include "SOWStructTypes.generated.h"
 
