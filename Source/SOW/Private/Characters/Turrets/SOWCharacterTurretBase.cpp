@@ -16,7 +16,7 @@
 #include "Components/WidgetComponent.h"
 #include "Widget/SOWWidgetBase.h"
 #include "Interface/SOWCharacterTypeInterface.h"
-#include "Components/SOWCharacterUIComponent.h"
+#include "Components/UI/SOWTurretUIComponent.h"
 #include "SOWEnumTypes.h"
 #include "SOWStructTypes.h"
 
@@ -40,6 +40,8 @@ ASOWCharacterTurretBase::ASOWCharacterTurretBase()
 	SettingWidgetComponent->SetupAttachment(GetMesh());
 
 	CharacterType = ESOWCharacterType::Turret;
+
+	CharacterUIComponent = CreateDefaultSubobject<USOWTurretUIComponent>(TEXT("TurretUIComponent"));
 	//AttackTarget = nullptr;
 }
 
@@ -90,8 +92,8 @@ void ASOWCharacterTurretBase::OnGameplayEffectAdded(UAbilitySystemComponent* ASC
 			Data.DefensePowerBaseValue = Magnitude;
 		}
 	}
-
-	GetCharacterUIComponent()->OnEffectApplied.Broadcast(Data);
+	USOWTurretUIComponent* TurretUIComp = Cast<USOWTurretUIComponent>(GetCharacterUIComponent());
+	TurretUIComp->OnEffectApplied.Broadcast(Data);
 }
 
 void ASOWCharacterTurretBase::OnGameplayEffectRemoved(const FActiveGameplayEffect& Effect)
@@ -126,7 +128,8 @@ void ASOWCharacterTurretBase::OnGameplayEffectRemoved(const FActiveGameplayEffec
 		}
 	}
 
-	GetCharacterUIComponent()->OnEffectRemoved.Broadcast(Data);
+	USOWTurretUIComponent* TurretUIComp = Cast<USOWTurretUIComponent>(GetCharacterUIComponent());
+	TurretUIComp->OnEffectRemoved.Broadcast(Data);
 }
 
 void ASOWCharacterTurretBase::GetModifiedAttributesByGameplayEffects(FEffectOrientedTurretAttribute& BuffData, FEffectOrientedTurretAttribute& DebuffData)
@@ -242,7 +245,8 @@ USOWTurretCombatComponent* ASOWCharacterTurretBase::GetTurretCombatComponent() c
 	checkf(TurretCombatComponent, TEXT("TurretCombatComponent not Found / Check point : SOWCharacterTurretBase.cpp"));
 
 	return TurretCombatComponent;
-};
+}
+
 
 
 

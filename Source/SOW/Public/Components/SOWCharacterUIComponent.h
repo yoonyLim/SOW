@@ -16,15 +16,9 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthPercentChangedDelegate, float, NewPercent);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetSelectionPriorityChangedDelegate, ETurretTargetSelectionPriority, NewPriority);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClickSildeButton, bool, ToLeft);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClickEvolutionButton, EEvolutionType, Type);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEffectAppliedDelegate, FEffectOrientedTurretAttribute, EffectData);
-
-class ASOWCharacterTurretBase;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SOW_API USOWCharacterUIComponent : public UActorComponent
@@ -37,21 +31,5 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnHealthPercentChangedDelegate OnCurrentHealthChanged;
 
-	UPROPERTY(BlueprintAssignable)
-	FOnTargetSelectionPriorityChangedDelegate OnPriorityChangedInTurret;
 
-	UPROPERTY(BlueprintAssignable, BlueprintCallable)
-	FOnClickSildeButton PriorityChanged;
-
-	UPROPERTY(BlueprintAssignable, BlueprintCallable)
-	FOnClickEvolutionButton OnTryToEvolveWith;
-
-	UPROPERTY(BlueprintAssignable, BlueprintCallable)
-	FOnEffectAppliedDelegate OnEffectApplied;
-
-	UPROPERTY(BlueprintAssignable, BlueprintCallable)
-	FOnEffectAppliedDelegate OnEffectRemoved;
-
-	UFUNCTION(BlueprintPure)
-	ASOWCharacterTurretBase* GetOwnerTurret() const;
 };

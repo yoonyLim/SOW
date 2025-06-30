@@ -6,7 +6,7 @@
 #include "Characters/Turrets/Actors/TurretMeleeHitCollision.h"
 #include "Characters/Enemies/SOWCharacterEnemyBase.h"
 #include "Characters/Player/SOWCharacterPlayer.h"
-#include "Components/SOWCharacterUIComponent.h"
+#include "Components/UI/SOWTurretUIComponent.h"
 #include "Projectile/Turret/TurretProjectileBase.h"
 
 #include "SOWBlueprintFunctionLibrary.h"
@@ -41,7 +41,7 @@ void USOWTurretCombatComponent::BeginPlay()
 		0.1f
 	);
 
-	USOWCharacterUIComponent* UIComponent = CachedOwnerCharacter->GetCharacterUIComponent();
+	USOWTurretUIComponent* UIComponent = Cast< USOWTurretUIComponent>(CachedOwnerCharacter->GetCharacterUIComponent());
 	UIComponent->PriorityChanged.AddDynamic(this, &USOWTurretCombatComponent::ChangePriorityCircular);
 }
 
@@ -534,7 +534,7 @@ void USOWTurretCombatComponent::PriorityChange()
 	TurretTargetSelectionPriority = TurretSettablePriority[CurrentPriorityNumber];
 	if (!CachedOwnerCharacter) return;
 
-	USOWCharacterUIComponent* UIComponent = CachedOwnerCharacter->GetCharacterUIComponent();
+	USOWTurretUIComponent* UIComponent = Cast< USOWTurretUIComponent>(CachedOwnerCharacter->GetCharacterUIComponent());
 	if (!UIComponent) return;
 
 	UIComponent->OnPriorityChangedInTurret.Broadcast(TurretTargetSelectionPriority);

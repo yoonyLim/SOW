@@ -25,7 +25,7 @@ ASOWCharacter::ASOWCharacter()
 	AbilitySystemComponent = CreateDefaultSubobject<USOWAbilitySystemComponent>(TEXT("SOWAbilitySystemComponent"));
 	AttributeSet = CreateDefaultSubobject<USOWAttributeSet>(TEXT("SOWAttributeSet"));
 
-	CharacterUIComponent = CreateDefaultSubobject<USOWCharacterUIComponent>(TEXT("CharacterUIComponent"));
+	//CharacterUIComponent = CreateDefaultSubobject<USOWCharacterUIComponent>(TEXT("CharacterUIComponent"));
 }
 
 ESOWCharacterType ASOWCharacter::GetSOWCharacterType() const

@@ -58,6 +58,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, meta = (DisplayName = "Bind On Target Dead"))
 	void BP_BindOnTargetDead(AActor* Target);
 	
+	
 #pragma endregion
 
 

@@ -3,7 +3,7 @@
 
 #include "Components/SOWTurretEvolutionComponent.h"
 #include "Characters/Turrets/SOWCharacterTurretBase.h"
-#include "Components/SOWCharacterUIComponent.h"
+#include "Components/UI/SOWTurretUIComponent.h"
 #include "AbilitySystem/SOWAbilitySystemComponent.h"
 #include "Engine/DataTable.h"
 
@@ -33,7 +33,7 @@ void USOWTurretEvolutionComponent::BeginPlay()
 		EvolutionDataRow = EvolutionData->FindRow<FTurretEvolutionData>(TurretName, TEXT(""));
 		InitEvolutionItems();
 	}
-	USOWCharacterUIComponent* UIComponent = CachedOwnerCharacter->GetCharacterUIComponent();
+	USOWTurretUIComponent* UIComponent = Cast< USOWTurretUIComponent>(CachedOwnerCharacter->GetCharacterUIComponent());
 	UIComponent->OnTryToEvolveWith.AddDynamic(this, &USOWTurretEvolutionComponent::TryEvolution);
 }
 
