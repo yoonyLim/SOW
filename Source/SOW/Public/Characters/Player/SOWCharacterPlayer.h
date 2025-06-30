@@ -64,10 +64,18 @@ class SOW_API ASOWCharacterPlayer : public ASOWCharacter
 	UPROPERTY(EditAnywhere, Category = "HUD", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class UPlayerHUD> MyHUDWidgetClass;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Decal")
+	class UDecalComponent* InstallationRangeDecal;
+
+public:
+	bool bCanMove = true;
 
 public:
 	// Sets default values for this character's properties
 	ASOWCharacterPlayer();
+
+	UFUNCTION(BlueprintCallable)
+	void ShowInstallationRange(bool bShow);
 
 protected:
 	// Called when the game starts or when spawned
