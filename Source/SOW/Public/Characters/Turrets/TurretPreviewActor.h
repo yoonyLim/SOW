@@ -10,6 +10,9 @@ UCLASS()
 class SOW_API ATurretPreviewActor : public AActor
 {
 	GENERATED_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Decal")
+	class UDecalComponent* InstallationRangeDecal;
 	
 public:	
 	// Sets default values for this actor's properties
@@ -41,6 +44,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void SetSkeletalMesh(USkeletalMesh* NewMesh);
+	void SetPreviewActor(USkeletalMesh* NewMesh, float AttackRange);
 
 };

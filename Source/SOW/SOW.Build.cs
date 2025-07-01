@@ -21,7 +21,9 @@ public class SOW : ModuleRules
 			"AnimGraphRuntime", // Added by Yoony for Enemy AnimInstance
 			"AIModule", // Added by Yoony for Enemy AI
 			"NavigationSystem", // Added by Yoony for Enemy AI
-			"UMG"
+			"UMG",
+			"Slate", // Added by Hjy for UI
+			"SlateCore", // Added by Hjy for UI
 		});
 	}
 }
