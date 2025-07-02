@@ -26,9 +26,6 @@ ASOWCharacterTurretBase::ASOWCharacterTurretBase()
 {
 	check(AttributeSet);
 
-	//PrimaryActorTick.bCanEverTick = true;
-	//PrimaryActorTick.bStartWithTickEnabled = true;
-
 	TurretCombatComponent = CreateDefaultSubobject<USOWTurretCombatComponent>(TEXT("TurretCombatComponent"));
 
 	TurretEvolutionComponent = CreateDefaultSubobject<USOWTurretEvolutionComponent>(TEXT("TurretEvolutionComponent"));
@@ -41,8 +38,8 @@ ASOWCharacterTurretBase::ASOWCharacterTurretBase()
 
 	CharacterType = ESOWCharacterType::Turret;
 
-	CharacterUIComponent = CreateDefaultSubobject<USOWTurretUIComponent>(TEXT("TurretUIComponent"));
-	//AttackTarget = nullptr;
+	TurretUIComponent = CreateDefaultSubobject<USOWTurretUIComponent>(TEXT("TurretUIComponent"));
+
 }
 
 void ASOWCharacterTurretBase::BeginPlay()
@@ -50,12 +47,19 @@ void ASOWCharacterTurretBase::BeginPlay()
 	Super::BeginPlay();
 
 	if (USOWWidgetBase* HealthWidget = Cast<USOWWidgetBase>(HealthWidgetComponent->GetUserWidgetObject())) {
-		HealthWidget->InitCreatedWidget(this);
+		HealthWidget->InitTurretCreatedWidget(this);
 	}
 
 	if (USOWWidgetBase* SettingWidget = Cast<USOWWidgetBase>(SettingWidgetComponent->GetUserWidgetObject())) {
-		SettingWidget->InitCreatedWidget(this);
+		SettingWidget->InitTurretCreatedWidget(this);
 	}
+
+
+}
+
+void ASOWCharacterTurretBase::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
 
 	if (USOWAbilitySystemComponent* ASC = GetSOWAbilitySystemComponent()) {
 		ASC->OnActiveGameplayEffectAddedDelegateToSelf.AddUObject(this, &ASOWCharacterTurretBase::OnGameplayEffectAdded);
@@ -92,8 +96,9 @@ void ASOWCharacterTurretBase::OnGameplayEffectAdded(UAbilitySystemComponent* ASC
 			Data.DefensePowerBaseValue = Magnitude;
 		}
 	}
-	USOWTurretUIComponent* TurretUIComp = Cast<USOWTurretUIComponent>(GetCharacterUIComponent());
-	TurretUIComp->OnEffectApplied.Broadcast(Data);
+	if (TurretUIComponent && TurretUIComponent->OnEffectApplied.IsBound()) {
+		TurretUIComponent->OnEffectApplied.Broadcast(Data);
+	}
 }
 
 void ASOWCharacterTurretBase::OnGameplayEffectRemoved(const FActiveGameplayEffect& Effect)
@@ -127,9 +132,9 @@ void ASOWCharacterTurretBase::OnGameplayEffectRemoved(const FActiveGameplayEffec
 			Data.DefensePowerBaseValue = Magnitude;
 		}
 	}
-
-	USOWTurretUIComponent* TurretUIComp = Cast<USOWTurretUIComponent>(GetCharacterUIComponent());
-	TurretUIComp->OnEffectRemoved.Broadcast(Data);
+	if (TurretUIComponent && TurretUIComponent->OnEffectRemoved.IsBound()) {
+		TurretUIComponent->OnEffectRemoved.Broadcast(Data);
+	}
 }
 
 void ASOWCharacterTurretBase::GetModifiedAttributesByGameplayEffects(FEffectOrientedTurretAttribute& BuffData, FEffectOrientedTurretAttribute& DebuffData)
@@ -199,6 +204,16 @@ void ASOWCharacterTurretBase::TryActivateAbilityWithTagOnASC(const FGameplayTag&
 {
 	check(AbilitySystemComponent);
 	AbilitySystemComponent->TryActivateAbilityWithTag(InAbilityTagToActivation);
+}
+
+USOWCharacterUIComponent* ASOWCharacterTurretBase::GetCharacterUIComponent() const
+{
+	return TurretUIComponent;
+}
+
+USOWTurretUIComponent* ASOWCharacterTurretBase::GetTurretUIComponent() const
+{
+	return TurretUIComponent;
 }
 
 float ASOWCharacterTurretBase::GetDetectionRangeRadius() const

@@ -63,9 +63,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CharacterData")
 	TSoftObjectPtr<UDA_StartupDataBase> StartupData;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
-	USOWCharacterUIComponent* CharacterUIComponent;
-
 	ESOWCharacterType CharacterType;
 
 

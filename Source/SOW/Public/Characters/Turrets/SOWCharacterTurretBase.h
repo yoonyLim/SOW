@@ -30,6 +30,10 @@ public:
 
 	void TryActivateAbilityWithTagOnASC(const FGameplayTag& InAbilityTagToActivation);
 
+	/* Begin ISOWCharacterUIInterface implement */
+	virtual USOWCharacterUIComponent* GetCharacterUIComponent() const override;
+	virtual USOWTurretUIComponent* GetTurretUIComponent() const override;
+	/* End ISOWCharacterUIInterface implement */
 
 #pragma region NativeGetter
 
@@ -69,7 +73,7 @@ public:
 	
 protected:
 	virtual void BeginPlay() override;
-	
+	virtual void PossessedBy(AController* NewController) override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	USOWTurretCombatComponent* TurretCombatComponent;
@@ -83,6 +87,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
 	UWidgetComponent* SettingWidgetComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
+	USOWTurretUIComponent* TurretUIComponent;
 
 private:
 	UFUNCTION()

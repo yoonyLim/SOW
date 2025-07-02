@@ -13,6 +13,7 @@
 class ASOWCharacterTurretBase;
 class ATurretMeleeHitCollision;
 class ATurretProjectileBase;
+class ISOWCharacterUIInterface;
 
 
 
@@ -230,6 +231,8 @@ private:
 	ATurretMeleeHitCollision* CreatedHitCollision;
 
 	FWidgetDesciptableTurretAttribute WidgetDescriptableAttritutes;
+
+	TWeakInterfacePtr<ISOWCharacterUIInterface> CachedUIInterface;
 #pragma endregion
 
 

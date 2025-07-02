@@ -6,6 +6,7 @@
 #include "Characters/Turrets/Actors/TurretMeleeHitCollision.h"
 #include "Characters/Enemies/SOWCharacterEnemyBase.h"
 #include "Characters/Player/SOWCharacterPlayer.h"
+#include "Interface/SOWCharacterUIInterface.h"
 #include "Components/UI/SOWTurretUIComponent.h"
 #include "Projectile/Turret/TurretProjectileBase.h"
 
@@ -25,6 +26,7 @@ void USOWTurretCombatComponent::BeginPlay()
 
 	// ...
 	CachedOwnerCharacter = Cast<ASOWCharacterTurretBase>(GetOwner());
+	CachedUIInterface = TWeakInterfacePtr<ISOWCharacterUIInterface>(CachedOwnerCharacter);
 
 	bool L_bHasCooldown = (AbilityTagToActivation == SOWGameplayTags::Turret_Ability_Attack);
 
@@ -41,8 +43,15 @@ void USOWTurretCombatComponent::BeginPlay()
 		0.1f
 	);
 
-	USOWTurretUIComponent* UIComponent = Cast< USOWTurretUIComponent>(CachedOwnerCharacter->GetCharacterUIComponent());
-	UIComponent->PriorityChanged.AddDynamic(this, &USOWTurretCombatComponent::ChangePriorityCircular);
+	
+	
+
+
+	USOWTurretUIComponent* UIComponent = CachedUIInterface ->GetTurretUIComponent();
+	if (UIComponent) {
+		UIComponent->PriorityChanged.AddDynamic(this, &USOWTurretCombatComponent::ChangePriorityCircular);
+	}
+	
 }
 
 float USOWTurretCombatComponent::GetAttackCooldownTimeFromOwner() const
@@ -141,6 +150,14 @@ void USOWTurretCombatComponent::SetWidgetDecriptableAttributes(const FWidgetDesc
 	// this struct must be constant values. once the attributes were initialized, base and ratio value will be fixed based on attribute set value.
 	// this struct was assigned for describe some attributes on widget and process for variable properties due to gameplay effects
 	WidgetDescriptableAttritutes = InAttribute;
+	UE_LOG(LogTemp, Error, TEXT("APB Data : %s"), *FString::SanitizeFloat(WidgetDescriptableAttritutes.AttackPowerBaseValue));
+	UE_LOG(LogTemp, Error, TEXT("APR Data : %s"), *FString::SanitizeFloat(WidgetDescriptableAttritutes.AttackPowerRatioValue));
+	UE_LOG(LogTemp, Error, TEXT("ASB Data : %s"), *FString::SanitizeFloat(WidgetDescriptableAttritutes.AttackSpeedBaseValue));
+	UE_LOG(LogTemp, Error, TEXT("ASR Data : %s"), *FString::SanitizeFloat(WidgetDescriptableAttritutes.AttackSpeedRatioValue));
+	UE_LOG(LogTemp, Error, TEXT("DPB Data : %s"), *FString::SanitizeFloat(WidgetDescriptableAttritutes.DefensePowerBaseValue));
+	UE_LOG(LogTemp, Error, TEXT("DPR Data : %s"), *FString::SanitizeFloat(WidgetDescriptableAttritutes.DefensePowerRatioValue));
+	UE_LOG(LogTemp, Error, TEXT("MHB Data : %s"), *FString::SanitizeFloat(WidgetDescriptableAttritutes.MaxHealthBaseValue));
+	UE_LOG(LogTemp, Error, TEXT("MHR Data : %s"), *FString::SanitizeFloat(WidgetDescriptableAttritutes.MaxHealthRatioValue));
 }
 
 void USOWTurretCombatComponent::SetNewCollisionScale(float NewScale)
@@ -359,7 +376,7 @@ TArray<AActor*> USOWTurretCombatComponent::GetAllAttackTarget()
 		AActor* CurrentTarget = GetSingleAttackTargetOnList(BaseActorList);
 		if (!CurrentTarget) break;
 
-		UE_LOG(LogTemp, Warning, TEXT("Actual Target : %s"), *CurrentTarget->GetActorNameOrLabel());
+		//UE_LOG(LogTemp, Warning, TEXT("Actual Target : %s"), *CurrentTarget->GetActorNameOrLabel());
 		FinalTargetList.AddUnique(CurrentTarget);
 
 		BaseActorList.Remove(CurrentTarget); // 더 효율적인 제거 방식
@@ -532,9 +549,9 @@ void USOWTurretCombatComponent::PriorityChange()
 {
 	
 	TurretTargetSelectionPriority = TurretSettablePriority[CurrentPriorityNumber];
-	if (!CachedOwnerCharacter) return;
+	if (!CachedUIInterface.Get()) return;
 
-	USOWTurretUIComponent* UIComponent = Cast< USOWTurretUIComponent>(CachedOwnerCharacter->GetCharacterUIComponent());
+	USOWTurretUIComponent* UIComponent = CachedUIInterface->GetTurretUIComponent();
 	if (!UIComponent) return;
 
 	UIComponent->OnPriorityChangedInTurret.Broadcast(TurretTargetSelectionPriority);

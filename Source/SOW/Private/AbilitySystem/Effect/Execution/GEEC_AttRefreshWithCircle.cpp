@@ -165,4 +165,5 @@ void UGEEC_AttRefreshWithCircle::Execute_Implementation(const FGameplayEffectCus
 	);
 
 	SourceTurretComp->SetWidgetDecriptableAttributes(Data);
+	
 }
