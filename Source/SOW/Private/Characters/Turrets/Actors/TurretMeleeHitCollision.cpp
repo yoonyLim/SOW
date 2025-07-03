@@ -18,17 +18,38 @@ ATurretMeleeHitCollision::ATurretMeleeHitCollision()
 	MeleeHitCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("Melee Hit Collision"));
 	MeleeHitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	SetRootComponent(MeleeHitCollision);
+
+	bHasSplashApplied = false;
 	
 }
 
 void ATurretMeleeHitCollision::ToggleCollision(bool bShouldEnable)
 {
+	// External Function -> Used in ANS_ToggleHitCollision
+
 	if (bShouldEnable) {
 		MeleeHitCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	}
 	else {
 		MeleeHitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		OverlappedActors.Empty();
+		bHasSplashApplied = false;
+	}
+}
+
+void ATurretMeleeHitCollision::ApplyDamageToAllHitTargets()
+{
+	// External Function -> Used in ANS_ToggleHitCollision
+
+	for (AActor* TargetActor : OverlappedActors) {
+		FGameplayEventData Data;
+		Data.Target = TargetActor;
+
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+			CachedInstigator.Get(),
+			SOWGameplayTags::Shared_Event_MeleeHit,
+			Data
+		);
 	}
 }
 
@@ -36,8 +57,6 @@ void ATurretMeleeHitCollision::ToggleCollision(bool bShouldEnable)
 void ATurretMeleeHitCollision::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	
 
 	// Set Delegate For Applying Effect to Melee Hit Target
 	MeleeHitCollision->OnComponentBeginOverlap.AddDynamic(this, &ATurretMeleeHitCollision::MeleeHit);
@@ -45,6 +64,7 @@ void ATurretMeleeHitCollision::BeginPlay()
 
 void ATurretMeleeHitCollision::MeleeHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	// No Hit Decision Start
 	if (!CachedInstigator.Get()) {
 		if (!GetInstigator()) return;
 
@@ -57,22 +77,27 @@ void ATurretMeleeHitCollision::MeleeHit(UPrimitiveComponent* OverlappedComponent
 
 	if (CachedInstigator.Get() == OtherActor || OverlappedActors.Contains(OtherActor)) return;
 
-	ESOWCharacterType TargetType = Cast<ISOWCharacterTypeInterface>(OtherActor)->GetSOWCharacterType();
-	if (!USOWBlueprintFunctionLibrary::IsTarget(OwnerPolicy, TargetType)) return;
+	if (!OtherActor->Implements<USOWCharacterTypeInterface>()) return;
 
-	UE_LOG(LogTemp, Warning, TEXT("Hit Actor : %s"), *OtherActor->GetActorNameOrLabel());
+	ESOWCharacterType TargetType = Cast<ISOWCharacterTypeInterface>(OtherActor)->GetSOWCharacterType();
+
+	if (!USOWBlueprintFunctionLibrary::IsTarget(OwnerPolicy, TargetType)) return;
+	// No Hit Decision End
 
 	OverlappedActors.AddUnique(OtherActor);
 
-	FGameplayEventData Data;
-	Data.Target = OtherActor;
-	//Data.Instigator = CachedInstigator;
+	// Apply Splash Damage At First Hit
+	if (!bHasSplashApplied) {
+		bHasSplashApplied = true;
 
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
-		CachedInstigator.Get(),
-		SOWGameplayTags::Shared_Event_MeleeHit,
-		Data
-	);
+		FGameplayEventData Data;
+		Data.Target = this;
 
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+			CachedInstigator.Get(),
+			SOWGameplayTags::Shared_Event_MeleeHitDone,
+			Data
+		);
+	}
 }
 

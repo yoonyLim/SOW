@@ -21,6 +21,9 @@ public:
 
 	void ToggleCollision(bool bShouldEnable);							// Set Collsion based on ANS beginning or ending
 
+	void ApplyDamageToAllHitTargets();
+	void ApplyDamageToFirstHitTargets();
+
 protected:
 
 	virtual void BeginPlay() override;
@@ -40,4 +43,6 @@ private:
 	TWeakObjectPtr<ASOWCharacterTurretBase> CachedInstigator;			// if projectile needs to check instigator several time, it must call GetInstigator() too.
 
 	TArray<AActor*> OverlappedActors;									// Once a target has been damaged, it must be ignored.
+
+	bool bHasSplashApplied;
 };

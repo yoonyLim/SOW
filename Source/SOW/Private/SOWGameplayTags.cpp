@@ -45,9 +45,11 @@ namespace SOWGameplayTags
 
 
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Event_MeleeHit, "Shared.Event.MeleeHit");
+	UE_DEFINE_GAMEPLAY_TAG(Shared_Event_MeleeHitDone, "Shared.Event.MeleeHitDone");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Event_HitReact, "Shared.Event.HitReact");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Event_TargetDead, "Shared.Event.TargetDead");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Event_TauntToTarget, "Shared.Event.TauntToTarget");
+	
 
 	
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Element_Nature_Major, "Shared.Element.Nature.Major");

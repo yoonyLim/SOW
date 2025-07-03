@@ -5,6 +5,7 @@
 #include "Components/SOWTurretCombatComponent.h"
 #include "Characters/Turrets/SOWCharacterTurretBase.h"
 #include "Characters/Turrets/Actors/TurretMeleeHitCollision.h"
+#include "AbilitySystemBlueprintLibrary.h"
 
 void UANS_ToggleHitCollision::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference) {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
@@ -30,6 +31,8 @@ void UANS_ToggleHitCollision::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimS
 
 	USOWTurretCombatComponent* OwnerCombatComp = OwnerTurret->GetTurretCombatComponent();
 	if (!OwnerCombatComp) return;
+
+	OwnerCombatComp->GetHitCollision()->ApplyDamageToAllHitTargets();
 
 	OwnerCombatComp->GetHitCollision()->ToggleCollision(false);
 }
