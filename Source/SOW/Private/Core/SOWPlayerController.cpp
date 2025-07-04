@@ -99,7 +99,7 @@ void ASOWPlayerController::ConfirmTurretPlacement()
 
             if (Row && Row->TurretClass)
             {
-                //GetWorld()->SpawnActor<AActor>(Row->TurretClass, TargetLocation, FRotator::ZeroRotator);
+                GetWorld()->SpawnActor<AActor>(Row->TurretClass, TargetLocation, FRotator::ZeroRotator);
                 USOWBlueprintFunctionLibrary::SpawnTurretWithCircleCount(this, Row->TurretClass, TargetLocation, FRotator::ZeroRotator, 2);
 
                 PreviewTurret->Destroy();
