@@ -9,6 +9,7 @@
 #include "SOWCharacterEnemyBase.generated.h"
 
 class AEnemyBaseAIController;
+class UWidgetComponent;
 class UBehaviorTree;
 class USOWEnemyCombatComponent;
 
@@ -23,6 +24,13 @@ class SOW_API ASOWCharacterEnemyBase : public ASOWCharacter, public IEnemyAction
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
 	EEnemyTypes EnemyType;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widgets", meta = (AllowPrivateAccess = "true"))
+	UWidgetComponent* HealthBarWidget;
+
+	FVector2D HealthBarWidgetSize;
+
+	FTimerHandle HideHealthBarHandle;
 
 public:
 	// Sets default values for this character's properties
@@ -47,6 +55,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	virtual void UpdateHealthBarValue();
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI", meta = (AllowPrivateAccess = "true"))
 	AEnemyBaseAIController* AIController;
 
@@ -60,6 +70,7 @@ protected:
 public:
 	// GETTERS
 	FORCEINLINE AEnemyBaseAIController* GetAIController() const { return AIController; };
+	FORCEINLINE FVector2D GetHealthBarWidgetSize() const { return HealthBarWidgetSize; } // widget size getter
 	UBehaviorTree* GetBehaviorTree() const { return BehaviorTree; };
 	EEnemyTypes GetEnemyType() const { return EnemyType; };
 	FName GetEnemyTypeStr() const { return EnemyTypeStr; };

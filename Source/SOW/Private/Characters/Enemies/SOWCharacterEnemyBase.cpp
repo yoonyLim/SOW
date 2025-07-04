@@ -9,6 +9,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Structures/Enemies/EnemyStructs.h"
 #include "Characters/Enemies/SOWEnemyCombatComponent.h"
+#include "Components/WidgetComponent.h"
 
 
 // Sets default values
@@ -19,9 +20,24 @@ ASOWCharacterEnemyBase::ASOWCharacterEnemyBase()
 
 	CharacterType = ESOWCharacterType::Enemy;
 
-
 	// EnemyCombatComponent ����
 	EnemyCombatComponent = CreateDefaultSubobject<USOWEnemyCombatComponent>(TEXT("EnemyCombatComponent"));
+
+	HealthBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBar"));
+
+	if (HealthBarWidget)
+	{
+		HealthBarWidget->SetupAttachment(RootComponent);
+		HealthBarWidget->SetWidgetSpace(EWidgetSpace::World);
+		HealthBarWidget->SetRelativeLocation(FVector(0.f, 0.f, 1.f));
+
+		static ConstructorHelpers::FClassFinder<UUserWidget> WidgetClass{ TEXT("/Game/01Blueprints/UI/Enemy/WBP_EnemyHealthBar") };
+
+		if (WidgetClass.Succeeded())
+		{
+			HealthBarWidget->SetWidgetClass((WidgetClass.Class));
+		}
+	}
 }
 
 // Called when the game starts or when spawned
@@ -48,8 +64,15 @@ void ASOWCharacterEnemyBase::BeginPlay()
 			AIController->InitializeBlackBoard(EnemyAttributesData->AttackRadius, EnemyAttributesData->AttackSpeed);
 	}
 
+	// Set up HealthBar Widget
+	
+
 	// To initialize Game Ability Attribute
 	AbilitySystemComponent->AddLooseGameplayTag(SOWGameplayTags::Enemy_Ability_Initialize);
+}
+
+void ASOWCharacterEnemyBase::UpdateHealthBarValue()
+{
 }
 
 void ASOWCharacterEnemyBase::Attack(const ASOWCharacter* TargetActor)
