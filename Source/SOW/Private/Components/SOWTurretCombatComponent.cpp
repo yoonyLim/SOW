@@ -150,14 +150,6 @@ void USOWTurretCombatComponent::SetWidgetDecriptableAttributes(const FWidgetDesc
 	// this struct must be constant values. once the attributes were initialized, base and ratio value will be fixed based on attribute set value.
 	// this struct was assigned for describe some attributes on widget and process for variable properties due to gameplay effects
 	WidgetDescriptableAttritutes = InAttribute;
-	UE_LOG(LogTemp, Error, TEXT("APB Data : %s"), *FString::SanitizeFloat(WidgetDescriptableAttritutes.AttackPowerBaseValue));
-	UE_LOG(LogTemp, Error, TEXT("APR Data : %s"), *FString::SanitizeFloat(WidgetDescriptableAttritutes.AttackPowerRatioValue));
-	UE_LOG(LogTemp, Error, TEXT("ASB Data : %s"), *FString::SanitizeFloat(WidgetDescriptableAttritutes.AttackSpeedBaseValue));
-	UE_LOG(LogTemp, Error, TEXT("ASR Data : %s"), *FString::SanitizeFloat(WidgetDescriptableAttritutes.AttackSpeedRatioValue));
-	UE_LOG(LogTemp, Error, TEXT("DPB Data : %s"), *FString::SanitizeFloat(WidgetDescriptableAttritutes.DefensePowerBaseValue));
-	UE_LOG(LogTemp, Error, TEXT("DPR Data : %s"), *FString::SanitizeFloat(WidgetDescriptableAttritutes.DefensePowerRatioValue));
-	UE_LOG(LogTemp, Error, TEXT("MHB Data : %s"), *FString::SanitizeFloat(WidgetDescriptableAttritutes.MaxHealthBaseValue));
-	UE_LOG(LogTemp, Error, TEXT("MHR Data : %s"), *FString::SanitizeFloat(WidgetDescriptableAttritutes.MaxHealthRatioValue));
 }
 
 void USOWTurretCombatComponent::SetNewCollisionScale(float NewScale)
@@ -250,62 +242,6 @@ bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 	return !DetectedTargetActors.IsEmpty();
 }
 
-//AActor* USOWTurretCombatComponent::GetSingleAttackTarget()
-//{
-//	if (AttackTarget && DetectedTargetActors.Contains(AttackTarget)) {
-//		return AttackTarget;
-//	} 
-//
-//	FVector TurretLocation = CachedOwnerCharacter->GetActorLocation();
-//
-//	double DistanceMin, DistanceMax, Distance;
-//
-//	switch (TurretTargetSelectionPriority)
-//	{
-//	case ETurretTargetSelectionPriority::Uncertain:
-//		AttackTarget = CachedOwnerCharacter;
-//		break;
-//	case ETurretTargetSelectionPriority::HighHealth:
-//		break;
-//	case ETurretTargetSelectionPriority::LowHealth:
-//		break;
-//	case ETurretTargetSelectionPriority::HighAttack:
-//		break;
-//	case ETurretTargetSelectionPriority::Nearest:
-//		DistanceMax = CachedOwnerCharacter->GetDetectionRangeRadius() * 2.f;
-//
-//		for (AActor* ATarget : DetectedTargetActors) {
-//			Distance = FVector::Dist(TurretLocation, ATarget->GetActorLocation());
-//
-//			if (DistanceMax > Distance) {
-//				AttackTarget = ATarget;
-//				DistanceMax = Distance;
-//			}
-//		}
-//		break;
-//	case ETurretTargetSelectionPriority::Farthest:
-//		DistanceMin = 0.f;
-//
-//		for (AActor* ATarget : DetectedTargetActors) {
-//			Distance = FVector::Dist(TurretLocation, ATarget->GetActorLocation());
-//
-//			if (DistanceMin < Distance) {
-//				AttackTarget = ATarget;
-//				DistanceMin = Distance;
-//			}
-//		}
-//		break;
-//	case ETurretTargetSelectionPriority::LocationFixed:
-//		AttackTarget = CachedOwnerCharacter;
-//		break;
-//	case ETurretTargetSelectionPriority::TargetFixed:
-//		AttackTarget = FixedTarget;
-//		break;
-//	default:
-//		break;
-//	}
-//	return AttackTarget;
-//}
 
 AActor* USOWTurretCombatComponent::GetSingleAttackTargetOnList(const TArray<AActor*> InTargetList)
 {

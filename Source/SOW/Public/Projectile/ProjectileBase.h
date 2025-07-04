@@ -27,6 +27,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Turret|Hit", meta = (DisplayName = "Post Projectile Hit"))
 	void BP_PostProjectileHit(AActor* Target);								// Process Atfer Effect When Detecting Hit
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "Turret|Hit", meta = (DisplayName = "Post Projectile Out"))
+	void BP_PostProjectileOut(AActor* Target);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -34,7 +37,8 @@ protected:
 	// Hit Callback
 	UFUNCTION()
 	virtual void OnCollisionHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
+	UFUNCTION()
+	virtual void OnCollisionOut(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 #pragma region SetOnConstructor
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile|Component")
 	UStaticMeshComponent* ProjectileMeshComp;					// Visible mesh, no collision

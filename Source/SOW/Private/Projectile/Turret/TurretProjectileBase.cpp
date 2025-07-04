@@ -38,15 +38,25 @@ void ATurretProjectileBase::OnCollisionHit(UPrimitiveComponent* OverlappedCompon
 
 	if (CachedInstigator.Get() == OtherActor || OverlappedActors.Contains(OtherActor)) return;
 
-	if (!OtherActor->Implements<USOWCharacterTypeInterface>()) return;
+	/*if (!OtherActor->Implements<USOWCharacterTypeInterface>()) return;
 
 	ESOWCharacterType TargetType = Cast<ISOWCharacterTypeInterface>(OtherActor)->GetSOWCharacterType();
-	if (!USOWBlueprintFunctionLibrary::IsTarget(OwnerPolicy, TargetType)) return;
+	if (!USOWBlueprintFunctionLibrary::IsTarget(OwnerPolicy, TargetType)) return;*/
 
 	OverlappedActors.AddUnique(OtherActor);
 
 	// Apply Damage or Process After Effect like Gradual reinforcement
 	BP_PostProjectileHit(OtherActor);
+}
+
+void ATurretProjectileBase::OnCollisionOut(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	Super::OnCollisionOut(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex);
+
+
+	if (!OtherActor) return;
+
+	BP_PostProjectileOut(OtherActor);
 }
 
 

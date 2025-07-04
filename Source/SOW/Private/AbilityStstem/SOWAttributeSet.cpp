@@ -44,6 +44,8 @@ void USOWAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbac
         float NewCurrentHealth = FMath::Clamp(GetCurrentHealth(), 0.f, GetMaxHealthBase());
         SetCurrentHealth(NewCurrentHealth);
 
+        UE_LOG(LogTemp, Warning, TEXT("Actor has Current Health : %f"), GetCurrentHealth());
+
         if (CharacterUIComponent && CharacterUIComponent->OnCurrentHealthChanged.IsBound())
         {
             CharacterUIComponent->OnCurrentHealthChanged.Broadcast(GetCurrentHealth() / GetMaxHealthBase());

@@ -17,6 +17,7 @@ AProjectileBase::AProjectileBase()
 	ProjectileHitCollisionComp = CreateDefaultSubobject<UBoxComponent>(TEXT("Projectile Hit Collision"));
 	SetRootComponent(ProjectileHitCollisionComp);
 	ProjectileHitCollisionComp->OnComponentBeginOverlap.AddDynamic(this, &AProjectileBase::OnCollisionHit);
+	ProjectileHitCollisionComp->OnComponentEndOverlap.AddDynamic(this, &AProjectileBase::OnCollisionOut);
 
 	ProjectileMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Projectile Mesh"));
 	ProjectileMeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -54,5 +55,10 @@ void AProjectileBase::SendTargetDeadEventToInstigator(AActor* InActor)
 }
 
 void AProjectileBase::OnCollisionHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) {
+	//UE_LOG(LogTemp, Warning, TEXT("Hit Detected"));
+}
+
+void AProjectileBase::OnCollisionOut(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
 	//UE_LOG(LogTemp, Warning, TEXT("Hit Detected"));
 }
