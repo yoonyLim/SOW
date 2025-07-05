@@ -7,6 +7,7 @@
 #include "SOWTurretGameplayAbility.generated.h"
 
 class ASOWCharacterTurretBase;
+class USOWTurretCombatComponent;
 /**
  * 
  */
@@ -19,4 +20,7 @@ protected:
 
 	UFUNCTION(BlueprintPure)
 	ASOWCharacterTurretBase* GetSOWTurretCharacterFromActorInfo() const;
+
+	UFUNCTION(BlueprintPure)
+	USOWTurretCombatComponent* GetSOWTurretCombatComponentFromActorInfo() const;
 };

@@ -4,11 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "SOWEnumTypes.h"
 #include "SOWBlueprintFunctionLibrary.generated.h"
 
 class USOWAbilitySystemComponent;
 class ASOWCharacterTurretBase;
 struct FGameplayTag;
+
 /**
  * 
  */
@@ -33,4 +35,24 @@ public:
 
 	static bool SpawnTurretWithCircleCount(UObject* WorldContextObject, const TSubclassOf<ASOWCharacterTurretBase>& InTurretClass, const FVector& InTargetLoc, const FRotator& InTargetRot, const int32 InCircleCount);
 
+	template <typename T>
+	static FName EnumToFName(const T EnumValue);
+
+	static bool IsTarget(ETurretTargetSelectionPolicy OwnerPolicy, ESOWCharacterType TargetType);
 };
+
+template <typename T>
+FName USOWBlueprintFunctionLibrary::EnumToFName(const T EnumValue)
+{
+	UEnum* EnumPtr = StaticEnum<T>();
+	if (!EnumPtr) return NAME_None;
+
+	// Enum 이름을 FName으로 반환
+
+	FString EnumNameStr = EnumPtr->GetNameStringByValue(static_cast<int64>(EnumValue));
+	// 예: "Walking"
+
+	FName CleanFName(*EnumNameStr);
+
+	return CleanFName;
+}

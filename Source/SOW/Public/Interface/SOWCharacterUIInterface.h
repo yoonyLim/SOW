@@ -7,6 +7,8 @@
 #include "SOWCharacterUIInterface.generated.h"
 
 class USOWCharacterUIComponent;
+class USOWTurretUIComponent;
+class USOWEnemyUIComponent;
 
 // added by PGH
 // mix-in target -> SOWCharacter
@@ -30,4 +32,6 @@ class SOW_API ISOWCharacterUIInterface
 public:
 
 	virtual USOWCharacterUIComponent* GetCharacterUIComponent() const = 0;
+	virtual USOWTurretUIComponent* GetTurretUIComponent() const;
+	virtual USOWEnemyUIComponent* GetEnemyUIComponent() const;
 };

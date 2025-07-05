@@ -17,6 +17,8 @@ namespace SOWGameplayTags
 
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Ability_Initialize, "Enemy.Ability.Initialize");
 
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Taunted, "Enemy.Status.Taunted");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Poison, "Enemy.Status.Poison");
 	
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_Attack, "Turret.Ability.Attack");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_Attack_Melee, "Turret.Ability.Attack.Melee");
@@ -27,20 +29,30 @@ namespace SOWGameplayTags
 
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Debuff_Slow, "Turret.Status.Debuff.Slow");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Debuff_Root, "Turret.Status.Debuff.Root");
-
+	
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_Attack_Basic, "Turret.Event.Attack.Basic");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_Attack_Double, "Turret.Event.Attack.Double");
 	
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Evolution_Alpha, "Turret.Evolution.Alpha");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Evolution_Beta, "Turret.Evolution.Beta");
 	
-	
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_SetPropByEvo, "Turret.Event.SetPropByEvo"); 
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_TargetCountChanged, "Turret.Event.TargetCountChanged"); 
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_ChangedFixedLocation, "Turret.Event.ChangedFixedLocation");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_ChangedFixedTarget, "Turret.Event.ChangedFixedTarget");
+
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Ability_Death, "Shared.Ability.Death");
 
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Status_Dead, "Shared.Status.Dead"); 
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Status_DamagedOverTime, "Shared.Status.DamagedOverTime");
 
+
+	UE_DEFINE_GAMEPLAY_TAG(Shared_Event_MeleeHit, "Shared.Event.MeleeHit");
+	UE_DEFINE_GAMEPLAY_TAG(Shared_Event_MeleeHitDone, "Shared.Event.MeleeHitDone");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Event_HitReact, "Shared.Event.HitReact");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Event_TargetDead, "Shared.Event.TargetDead");
+	UE_DEFINE_GAMEPLAY_TAG(Shared_Event_TauntToTarget, "Shared.Event.TauntToTarget");
+	
 
 	
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Element_Nature_Major, "Shared.Element.Nature.Major");
@@ -66,4 +78,12 @@ namespace SOWGameplayTags
 
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Element_Flame_Major, "Shared.Element.Flame.Major");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Element_Flame_Minor, "Shared.Element.Flame.Minor");
+
+	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditiveDamage, "Shared.SetByCaller.AdditiveDamage");
+	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_MultipleDamage, "Shared.SetByCaller.MultipleDamage");
+	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditiveBuffValue, "Shared.SetByCaller.AdditiveBuffValue");
+	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_ReductedDamage, "Shared.SetByCaller.ReductedDamage");
+
+	
+	
 }

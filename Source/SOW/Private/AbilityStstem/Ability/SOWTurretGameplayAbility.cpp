@@ -8,3 +8,8 @@ ASOWCharacterTurretBase* USOWTurretGameplayAbility::GetSOWTurretCharacterFromAct
 {
 	return Cast<ASOWCharacterTurretBase>(CurrentActorInfo->AvatarActor);
 }
+
+USOWTurretCombatComponent* USOWTurretGameplayAbility::GetSOWTurretCombatComponentFromActorInfo() const
+{
+	return GetSOWTurretCharacterFromActorInfo()->GetTurretCombatComponent();
+}
