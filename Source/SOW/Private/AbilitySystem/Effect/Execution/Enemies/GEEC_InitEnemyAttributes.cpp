@@ -10,6 +10,7 @@
 struct FAttributeCaptures
 {
 	DECLARE_ATTRIBUTE_CAPTUREDEF(MaxHealthBase);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(CurrentHealth);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(AttackSpeedBase);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(AttackPowerBase);
 	// DECLARE_ATTRIBUTE_CAPTUREDEF(DefensePowerBase);
@@ -17,6 +18,7 @@ struct FAttributeCaptures
 	FAttributeCaptures()
 	{
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, MaxHealthBase, Source, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, CurrentHealth, Source, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, AttackSpeedBase, Source, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, AttackPowerBase, Source, false);
 		// DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, DefensePowerBase, Source, false);
@@ -33,6 +35,7 @@ static const FAttributeCaptures& GetCapturedEnemyAttributes()
 UGEEC_InitEnemyAttributes::UGEEC_InitEnemyAttributes()
 {
 	RelevantAttributesToCapture.Add(GetCapturedEnemyAttributes().MaxHealthBaseDef);
+	RelevantAttributesToCapture.Add(GetCapturedEnemyAttributes().CurrentHealthDef);
 	RelevantAttributesToCapture.Add(GetCapturedEnemyAttributes().AttackSpeedBaseDef);
 	RelevantAttributesToCapture.Add(GetCapturedEnemyAttributes().AttackPowerBaseDef);
 	// RelevantAttributesToCapture.Add(GetCapturedEnemyAttributes().DefensePowerBaseDef);
@@ -52,6 +55,14 @@ void UGEEC_InitEnemyAttributes::Execute_Implementation(const FGameplayEffectCust
 		OutExecutionOutput.AddOutputModifier(
 			FGameplayModifierEvaluatedData(
 				GetCapturedEnemyAttributes().MaxHealthBaseDef.AttributeToCapture,
+				EGameplayModOp::Override,
+				EnemyAttributesData->MaxHealth
+			)
+		);
+
+		OutExecutionOutput.AddOutputModifier(
+			FGameplayModifierEvaluatedData(
+				GetCapturedEnemyAttributes().CurrentHealthDef.AttributeToCapture,
 				EGameplayModOp::Override,
 				EnemyAttributesData->MaxHealth
 			)
