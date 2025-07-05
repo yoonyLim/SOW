@@ -25,8 +25,8 @@ namespace SOWGameplayTags {
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Ability_Attack_Ranged);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Ability_Initialize);
 
-
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Taunted);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Poison);
 
 	/* Turret Tags */
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Ability_Attack);

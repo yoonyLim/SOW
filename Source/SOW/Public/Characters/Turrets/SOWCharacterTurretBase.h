@@ -37,6 +37,8 @@ public:
 
 #pragma region NativeGetter
 
+	float GetAttackPower() const;
+	float GetCurrentHealth() const;
 	float GetDetectionRangeRadius() const;										// Get Attack Radius From Attribute Set in Turret Base 
 	float GetAttackCooldownTime() const;										// Get Attack Delay From Attribute Set in Turret Base
 	int32 GetCircleCount() const { return CircleCount; };						// Get Circle Count when Turret Spawning Time

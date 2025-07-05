@@ -216,6 +216,20 @@ USOWTurretUIComponent* ASOWCharacterTurretBase::GetTurretUIComponent() const
 	return TurretUIComponent;
 }
 
+float ASOWCharacterTurretBase::GetAttackPower() const
+{
+	checkf(AttributeSet, TEXT("AttributeSet not Found / Check point : SOWCharacterTurretBase.cpp"));
+
+	return AttributeSet->GetAttackPowerBase();
+}
+
+float ASOWCharacterTurretBase::GetCurrentHealth() const
+{
+	checkf(AttributeSet, TEXT("AttributeSet not Found / Check point : SOWCharacterTurretBase.cpp"));
+
+	return AttributeSet->GetCurrentHealth();
+}
+
 float ASOWCharacterTurretBase::GetDetectionRangeRadius() const
 {
 	checkf(AttributeSet, TEXT("AttributeSet not Found / Check point : SOWCharacterTurretBase.cpp"));

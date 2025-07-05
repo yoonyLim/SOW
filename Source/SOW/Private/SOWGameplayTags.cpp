@@ -18,6 +18,7 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Ability_Initialize, "Enemy.Ability.Initialize");
 
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Taunted, "Enemy.Status.Taunted");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Poison, "Enemy.Status.Poison");
 	
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_Attack, "Turret.Ability.Attack");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_Attack_Melee, "Turret.Ability.Attack.Melee");

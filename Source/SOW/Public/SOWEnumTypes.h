@@ -65,7 +65,9 @@ enum class ETurretName : uint8 {
 	Evilwood	UMETA(DisplayName = "Evilwood"),
 	Flower		UMETA(DisplayName = "Flower"),
 	Golem		UMETA(DisplayName = "Golem"),
-	Mushroom	UMETA(DisplayName = "Mushroom")
+	Mushroom	UMETA(DisplayName = "Mushroom"),
+	Owl			UMETA(DisplayName = "Owl"),
+	Spider		UMETA(DisplayName = "Spider")
 };
 
 UENUM(BlueprintType)
