@@ -32,6 +32,11 @@ class SOW_API ASOWCharacterEnemyBase : public ASOWCharacter, public IEnemyAction
 
 	FTimerHandle HideHealthBarHandle;
 
+	UPROPERTY()
+	const USOWAttributeSet* ASCAttributes;
+
+	void OnHealthChanged(const FOnAttributeChangeData& Data);
+
 public:
 	// Sets default values for this character's properties
 	ASOWCharacterEnemyBase();
@@ -55,7 +60,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	virtual void UpdateHealthBarValue();
+	virtual void UpdateHealthBarValue(float NewHealth, float MaxHealth);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI", meta = (AllowPrivateAccess = "true"))
 	AEnemyBaseAIController* AIController;
