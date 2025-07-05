@@ -142,6 +142,9 @@ protected:
 	float ProjectileScaleRatio;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Turret|Properties|Combat")
+	float IndependantCooltime;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Turret|Properties|Combat")
 	int32 TargetSelectCount;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Turret|Properties")
@@ -225,6 +228,7 @@ private:
 
 	bool HasDependencyOnProjectile;
 	bool HasProjectileMovement;
+	bool HasIndependantCooltime;
 
 
 	UPROPERTY(VisibleAnywhere, Category = "Turret|Combat")

@@ -58,9 +58,15 @@ float USOWTurretCombatComponent::GetAttackCooldownTimeFromOwner() const
 {
 	float CooldownBase = CachedOwnerCharacter->GetAttackCooldownTime();
 
+	if (HasIndependantCooltime) {
+		CooldownBase = IndependantCooltime;
+	}
+
 	if (HasDependencyOnProjectile) {
 		CooldownBase += ProjectileLivingTime;
 	}
+
+	
 
 	return CooldownBase;
 }
@@ -84,20 +90,23 @@ void USOWTurretCombatComponent::InitTurretProperties(const FTurretPropertyData& 
 {
 	// Need To Data Table
 
-	// Settable in Widget
+	// Enum Type
 	TurretRarity = Data.TurretRarity;
 	TurretSettablePriority = Data.TurretSettablePriority;
 	TurretTargetSelectionPolicy = Data.TurretTargetSelectionPolicy;
 	TurretTargetSelectionType = Data.TurretTargetSelectionType;
 
-	// Settable from Ability
+	// Boolean Type
 	ProjectileToSpawn = Data.ProjectileToSpawn;
 	HasDependencyOnProjectile = Data.HasDependencyOnProjectile;
+	HasIndependantCooltime = Data.HasIndependantCooltime;
 	HasProjectileMovement = Data.HasProjectileMovement;
+
+	// Numeric Type
 	ProjectileLivingTime = Data.ProjectileLivingTime;
 	ProjectileScaleRatio = Data.ProjectileScaleRatio;
-
 	ProjectileMoveSpeed = Data.ProjectileMoveSpeed;
+	IndependantCooltime = Data.IndependantCooltime;
 
 	TargetSelectCount = Data.TargetSelectCount;
 

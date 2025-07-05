@@ -117,16 +117,22 @@ public:
 	TSubclassOf<ATurretProjectileBase> ProjectileToSpawn;					// Determine What To Spawn While Attack
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool HasDependencyOnProjectile;											// Decide whether to pause the ability until the summoned projectile disappears.
+	bool HasDependencyOnProjectile;											// Decide whether to pause the ability until the summonned projectile disappears.
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool HasProjectileMovement;												// Decide the projectile has movement
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool HasIndependantCooltime;											// Decide that Turret Cooltime is not based on attribute
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float ProjectileLivingTime;												// Determine the projectile lining time
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "HasProjectileMovement", EditConditionHides))
 	float ProjectileMoveSpeed;												// Determine the projectile move speed
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "HasIndependantCooltime", EditConditionHides))
+	float IndependantCooltime;												// Determine turret ability cooltime independant on attribute
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float ProjectileScaleRatio;												// Determine the projectile Collision Scale : Default - 1.0

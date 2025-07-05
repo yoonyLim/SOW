@@ -36,7 +36,9 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Evolution_Beta, "Turret.Evolution.Beta");
 	
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_SetPropByEvo, "Turret.Event.SetPropByEvo"); 
-	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_TargetCountChanged, "Turret.Event.TargetCountChanged");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_TargetCountChanged, "Turret.Event.TargetCountChanged"); 
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_ChangedFixedLocation, "Turret.Event.ChangedFixedLocation");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_ChangedFixedTarget, "Turret.Event.ChangedFixedTarget");
 
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Ability_Death, "Shared.Ability.Death");
 
