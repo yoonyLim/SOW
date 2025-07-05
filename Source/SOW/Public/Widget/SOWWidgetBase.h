@@ -6,7 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "SOWWidgetBase.generated.h"
 
-class USOWCharacterUIComponent;
+class USOWTurretUIComponent;
+//class USOWEnemyUIComponent;
 /**
  * 
  */
@@ -19,14 +20,17 @@ protected:
 	// Instigator가 별도로 지정되어 생성되는 UI의 경우
 	virtual void NativeOnInitialized() override;
 
-	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "On Owning UI Component Initialized"))
-	void BP_OnOwningUIComponentInitialized(USOWCharacterUIComponent* UIComponent);
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "On Turret Owning UI Component Initialized"))
+	void BP_OnTurretOwningUIComponentInitialized(USOWTurretUIComponent* UIComponent);
+
+	/*UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "On Enemy Owning UI Component Initialized"))
+	void BP_OnEnemyOwningUIComponentInitialized(USOWEnemyUIComponent* UIComponent);*/
 
 public:
 
 	// Instigator를 별도로 지정하지 않고 생성된 UI의 경우 - 별도 Possess 시점에 처리해야 함.
 	UFUNCTION(BlueprintCallable)
-	void InitCreatedWidget(AActor* OwningActor);
+	void InitTurretCreatedWidget(AActor* OwningActor);
 };
 
 

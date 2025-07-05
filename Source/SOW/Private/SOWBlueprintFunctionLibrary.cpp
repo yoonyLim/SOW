@@ -80,3 +80,24 @@ bool USOWBlueprintFunctionLibrary::SpawnTurretWithCircleCount(UObject* WorldCont
 
     return false;
 }
+
+
+
+bool USOWBlueprintFunctionLibrary::IsTarget(ETurretTargetSelectionPolicy OwnerPolicy, ESOWCharacterType TargetType)
+{
+    if (OwnerPolicy == ETurretTargetSelectionPolicy::OnEnemy) {
+        return TargetType == ESOWCharacterType::Enemy;
+    }
+
+    else if (OwnerPolicy == ETurretTargetSelectionPolicy::OnTurret) {
+        return TargetType == ESOWCharacterType::Turret;
+    }
+
+    else if (OwnerPolicy == ETurretTargetSelectionPolicy::OnPlayer) {
+        return TargetType == ESOWCharacterType::Player;
+    }
+
+    else {
+        return false;
+    }
+}

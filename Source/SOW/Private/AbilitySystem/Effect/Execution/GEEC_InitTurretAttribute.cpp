@@ -78,6 +78,7 @@ void UGEEC_InitTurretAttribute::Execute_Implementation(const FGameplayEffectCust
 	}
 
 	FName TurretName = SourceTurret->GetTurretName();
+	UE_LOG(LogTemp, Error, TEXT("Turret : %s"), * TurretName.ToString());
 	FTurretAttributeData* ResistanceDataRow = AttributeData->FindRow<FTurretAttributeData>(TurretName, TEXT(""));
 
 	if (!ResistanceDataRow) {
