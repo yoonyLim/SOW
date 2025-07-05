@@ -94,8 +94,8 @@ public:
 
 
 USTRUCT(BlueprintType)
-struct FTurretSummonData : public FTableRowBase {
-
+struct FSpellCombination
+{
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -106,6 +106,22 @@ struct FTurretSummonData : public FTableRowBase {
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EMagicSpell ThirdSpell;
+
+	bool operator==(const FSpellCombination& Other) const
+	{
+		return FirstSpell == Other.FirstSpell &&
+			SecondSpell == Other.SecondSpell &&
+			ThirdSpell == Other.ThirdSpell;
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FTurretSummonData : public FTableRowBase {
+
+	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FSpellCombination SpellComb;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName TurretName;
@@ -144,21 +160,17 @@ struct FCircleWeightByLevelRow : public FTableRowBase
 	TArray<FCircleWeight> CircleWeights;
 };
 
-
 USTRUCT(BlueprintType)
 struct FMagicSpell : public FTableRowBase
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	EMagicSpell MagicSpell; 
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	uint8 Step;
+	EMagicSpell MagicSpell;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UTexture2D* SanskritImage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FText DisplayName; 
+	FText DisplayName;
 };

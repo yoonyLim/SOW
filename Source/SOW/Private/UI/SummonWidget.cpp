@@ -14,6 +14,8 @@
 #include "UObject/UObjectGlobals.h" 
 #include "Animation/WidgetAnimation.h"
 #include "TimerManager.h"
+#include "Core/SOWPlayerController.h"
+#include "Kismet/GameplayStatics.h"
 
 void USummonWidget::NativePreConstruct()
 {
@@ -50,13 +52,12 @@ void USummonWidget::NativeConstruct()
 		UE_LOG(LogTemp, Error, TEXT("Failed to load Magic Spell DataTable"));
 	}
 
-	SpellButtonArray = { BTN_FirstSpell, BTN_SecondSpell, BTN_ThirdSpell, BTN_FourthSpell, BTN_FifthSpell };
+	SpellButtonArray = { BTN_FirstSpell, BTN_SecondSpell, BTN_ThirdSpell, BTN_FourthSpell };
 
 	if (BTN_FirstSpell) BTN_FirstSpell->OnClicked.AddDynamic(this, &USummonWidget::HandleButtonClicked0);
 	if (BTN_SecondSpell) BTN_SecondSpell->OnClicked.AddDynamic(this, &USummonWidget::HandleButtonClicked1);
 	if (BTN_ThirdSpell) BTN_ThirdSpell->OnClicked.AddDynamic(this, &USummonWidget::HandleButtonClicked2);
 	if (BTN_FourthSpell) BTN_FourthSpell->OnClicked.AddDynamic(this, &USummonWidget::HandleButtonClicked3);
-	if (BTN_FifthSpell) BTN_FifthSpell->OnClicked.AddDynamic(this, &USummonWidget::HandleButtonClicked4);
 
 	SetPercent();
 	SetImage();
@@ -92,9 +93,6 @@ void USummonWidget::SetImage()
 			case 4:
 				RoundProgressBarInst->SetTextureParameterValue(FName("Texture"), MagicCircleTexture_Lv4);
 				break;
-			case 5:
-				RoundProgressBarInst->SetTextureParameterValue(FName("Texture"), MagicCircleTexture_Lv5);
-				break;
 			}
 		}
 	}
@@ -110,7 +108,7 @@ TArray<int32> USummonWidget::GetUniqueRandomNumbers(int32 Min, int32 Max, int32 
 		Pool.Add(i);
 	}
 
-	Pool.Sort([](int32 A, int32 B) { return FMath::RandBool(); }); // 섞기 (Fisher-Yates가 더 좋지만 이건 간단 버전)
+	Pool.Sort([](int32 A, int32 B) { return FMath::RandBool(); }); 
 
 	TArray<int32> Result;
 	for (int32 i = 0; i < Count && i < Pool.Num(); ++i)
@@ -132,7 +130,7 @@ void USummonWidget::SetMagicSpell()
 		for (const auto& RowPair : DT_MagicSpell->GetRowMap())
 		{
 			const FMagicSpell* Row = reinterpret_cast<const FMagicSpell*>(RowPair.Value);
-			if (Row && Row->Step == CurrentStep)
+			if (Row)
 			{
 				Spells.Add(Row);
 			}
@@ -146,7 +144,7 @@ void USummonWidget::SetMagicSpell()
 		UE_LOG(LogTemp, Error, TEXT("MagicSpell DataTable is NULL"));
 	}
 
-	TArray<int32> RandomInts = GetUniqueRandomNumbers(0, (Spells.Num() - 1), 5);
+	TArray<int32> RandomInts = GetUniqueRandomNumbers(0, (Spells.Num() - 1), 4);
 
 	UE_LOG(LogTemp, Error, TEXT("SummonWidget: %d"), RandomInts.Num());
 
@@ -234,7 +232,18 @@ void USummonWidget::OnDelayFinished()
 		{
 			IMG_ThirdSpell->SetBrushFromTexture(SelectedSpells[2]->SanskritImage);
 			IMG_ThirdSpell->SetVisibility(ESlateVisibility::Visible);
+			PlaceTurret();
 			return;
 		}
 	}
+}
+
+void USummonWidget::PlaceTurret()
+{
+	ASOWPlayerController* PC = Cast<ASOWPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	
+	FSpellCombination Spells = { SelectedSpells[0]->MagicSpell , SelectedSpells[1]->MagicSpell,SelectedSpells[2]->MagicSpell};
+	PC->StartPlacingTurret(Spells);
+
+	RemoveFromParent();
 }
