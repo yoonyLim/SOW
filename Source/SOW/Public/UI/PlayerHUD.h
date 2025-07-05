@@ -38,12 +38,15 @@ public:
 public:
 	void Init(class USOWAbilitySystemComponent* InASC);
 
+	FDelegateHandle HealthChangedHandle;
+	FDelegateHandle ManaChangedHandle;
+
 private:
 	void BindToASC(class USOWAbilitySystemComponent* InASC);
 
 	void OnHealthChanged(const FOnAttributeChangeData& Data);
 
-	//void OnManaChanged(const FOnAttributeChangeData& Data);
+	void OnManaChanged(const FOnAttributeChangeData& Data);
 
 	//void OnStaminaChanged(const FOnAttributeChangeData& Data);
 
@@ -58,4 +61,6 @@ protected:
 	class USOWAbilitySystemComponent* ASC;
 
 	virtual void NativeConstruct();
+
+	virtual void NativeDestruct();
 };
