@@ -24,8 +24,6 @@ ASOWCharacter::ASOWCharacter()
 
 	AbilitySystemComponent = CreateDefaultSubobject<USOWAbilitySystemComponent>(TEXT("SOWAbilitySystemComponent"));
 	AttributeSet = CreateDefaultSubobject<USOWAttributeSet>(TEXT("SOWAttributeSet"));
-
-	CharacterUIComponent = CreateDefaultSubobject<USOWCharacterUIComponent>(TEXT("CharacterUIComponent"));
 }
 
 ESOWCharacterType ASOWCharacter::GetSOWCharacterType() const
@@ -67,7 +65,7 @@ void ASOWCharacter::BeginPlay() {
 
 USOWCharacterUIComponent* ASOWCharacter::GetCharacterUIComponent() const
 {
-	return CharacterUIComponent;
+	return nullptr;
 }
 
 ESOWCharacterType ASOWCharacter::BP_GetSOWCharacterType() const
@@ -82,12 +80,17 @@ void ASOWCharacter::Tick(float DeltaTime) {
 void ASOWCharacter::OnWalkSpeedChanged(const FOnAttributeChangeData& Data)
 {
 	float NewSpeed = Data.NewValue;
-
+	UE_LOG(LogTemp, Warning, TEXT("Move Speed Must be Changed"));
 	if (GetCharacterMovement()) {
 	
+		UE_LOG(LogTemp, Warning, TEXT("Move Speed Must be Changed"));
+
 		UCharacterMovementComponent* MoveComp = Cast<UCharacterMovementComponent>(GetCharacterMovement());
 
 		MoveComp->MaxWalkSpeed = NewSpeed;
 
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("No CharacterMoveComp Found"));
 	}
 }
