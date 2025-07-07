@@ -7,7 +7,9 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Characters/Enemies/SOWCharacterEnemyBase.h"
 #include "Characters/SOWCharacter.h"
+#include "Characters/CoreRune/SOWCharacterCoreRune.h"
 #include "Enumerations/Enemies/EnemyEnums.h"
+#include "Kismet/GameplayStatics.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
 
@@ -65,7 +67,12 @@ void AEnemyBaseAIController::OnPossess(APawn* PossessedPawn)
 			UseBlackboard(BehaviorTree->BlackboardAsset, Bboard);
 			Blackboard = Bboard; // "Blackboard" is an already existing variable name in AAIController class
 
-			UpdateCurrentState(EEnemyStates::Passive);
+			AActor* CoreRune = UGameplayStatics::GetActorOfClass(GetWorld(), ASOWCharacterCoreRune::StaticClass());
+
+			if (CoreRune)
+				GetBlackboardComponent()->SetValueAsObject("AttackTarget", CoreRune);
+			
+			UpdateCurrentState(EEnemyStates::Attacking);
 			
 			RunBehaviorTree(BehaviorTree);
 		}

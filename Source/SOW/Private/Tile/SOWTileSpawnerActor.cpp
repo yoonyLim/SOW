@@ -1,6 +1,8 @@
 ﻿#include "Tile/SOWTileSpawnerActor.h"
 #include "Tile/SOWTilePlacementHelper.h"
 #include "Kismet/GameplayStatics.h"
+#include "NavigationSystem.h"
+#include "NavMesh/NavMeshBoundsVolume.h"
 
 void ATileSpawner::BeginPlay()
 {
@@ -21,5 +23,17 @@ void ATileSpawner::BeginPlay()
 			FRotator Rotation = FRotator(0.0f, 90.0f, 0.0f);
 			GetWorld()->SpawnActor<AActor>(GridTiles[Index], SpawnLocation, Rotation);
 		}
+	}
+
+	UNavigationSystemV1* NavSystem = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
+
+	if (NavSystem)
+	{
+		// Mark the floor area as dirty
+		// FBox Bounds = FloorMesh->Bounds.GetBox();
+		// NavSystem->AddDirtyArea(Bounds, ENavigationDirtyFlag::All);
+		
+		NavSystem->Build();
+		// NavSystem->OnNavigationBoundsUpdated(NavBoundsVolume);
 	}
 }
