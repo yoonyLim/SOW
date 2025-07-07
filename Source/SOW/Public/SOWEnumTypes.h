@@ -93,3 +93,13 @@ enum class EMagicSpell : uint8 {
 	Rudh,
 	Badh
 };
+
+UENUM(BlueprintType)
+enum class ESkillEffectType : uint8 {
+	// added by : HYJ
+	// Check how the skill acts
+	AttributeModifier		UMETA(DisplayName = "Attribute Modifier"),
+	ExecutionConditional	UMETA(DisplayName = "Execution Conditional"),
+	LogicDriven				UMETA(DisplayName = "Logic Driven"),
+	Mix						UMETA(DisplayName = "Mix"),
+};
