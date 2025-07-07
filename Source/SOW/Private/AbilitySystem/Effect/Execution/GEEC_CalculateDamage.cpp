@@ -2,6 +2,7 @@
 
 
 #include "AbilitySystem/Effect/Execution/GEEC_CalculateDamage.h"
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystem/SOWAttributeSet.h"
 #include "GameplayEffect.h"
 #include "SOWGameplayTags.h"
@@ -104,6 +105,14 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 	);
 
 	float L_FinalDamage = (L_AttackPower - FMath::Log2(2 + L_DefensePower)) * ElementalResistance * DamageReduction;
+	
+	AActor* Target = ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor();
+
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+		Target,
+		SOWGameplayTags::Shared_Event_HitReact,
+		FGameplayEventData()
+	);
 
 	OutExecutionOutput.AddOutputModifier(
 		FGameplayModifierEvaluatedData(

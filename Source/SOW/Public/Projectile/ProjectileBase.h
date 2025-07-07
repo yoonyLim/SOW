@@ -88,5 +88,5 @@ public:
 
 
 	UFUNCTION(BlueprintCallable)
-	void SendTargetDeadEventToInstigator(AActor* InActor);
+	void SendTargetDeadEventToInstigator(AActor* InCheckingTarget);
 };

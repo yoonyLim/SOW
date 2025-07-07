@@ -3,6 +3,7 @@
 
 #include "Projectile/ProjectileBase.h"
 #include "Characters/SOWCharacter.h"
+#include "AbilitySystemBlueprintLibrary.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
 #include "SOWBlueprintFunctionLibrary.h"
@@ -46,11 +47,19 @@ FGameplayEffectSpecHandle AProjectileBase::GetDamageSpecHandle() const
 	return OwnerDamageEffectSpecHandle;
 }
 
-void AProjectileBase::SendTargetDeadEventToInstigator(AActor* InActor)
+void AProjectileBase::SendTargetDeadEventToInstigator(AActor* InCheckingTarget)
 {
-	if (USOWBlueprintFunctionLibrary::DoesActorHasTag(InActor, SOWGameplayTags::Shared_Status_Dead)) {
+	if (USOWBlueprintFunctionLibrary::DoesActorHasTag(InCheckingTarget, SOWGameplayTags::Shared_Status_Dead)) {
 		ASOWCharacter* SOWInstigator = Cast<ASOWCharacter>(GetInstigator());
-		SOWInstigator->OnTargetDead.Broadcast(InActor);
+
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+			SOWInstigator,
+			SOWGameplayTags::Shared_Event_TargetDead,
+			FGameplayEventData()
+		);
+
+		UE_LOG(LogTemp, Warning, TEXT("Sended Target Dead Event"));
+		//SOWInstigator->OnTargetDead.Broadcast(InActor);
 	}
 }
 
