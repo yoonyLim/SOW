@@ -48,13 +48,35 @@ UENUM(BlueprintType)
 enum class ETurretTargetSelectionPriority : uint8 {
 	// added by : PGH
 	// Check how the turret determines the target
+	Uncertain,
 	HighHealth,
 	LowHealth,
 	HighAttack,
 	Nearest,
 	Farthest,
-	Custom
+	LocationFixed,
+	TargetFixed
 };
+
+UENUM(BlueprintType)
+enum class ETurretName : uint8 {
+	Bowman		UMETA(DisplayName = "Bowman"),
+	Hoppy		UMETA(DisplayName = "Hoppy"),
+	Evilwood	UMETA(DisplayName = "Evilwood"),
+	Flower		UMETA(DisplayName = "Flower"),
+	Golem		UMETA(DisplayName = "Golem"),
+	Mushroom	UMETA(DisplayName = "Mushroom"),
+	Owl			UMETA(DisplayName = "Owl"),
+	Spider		UMETA(DisplayName = "Spider")
+};
+
+UENUM(BlueprintType)
+enum class EEvolutionType : uint8 {
+	EVO_NONE	UMETA(DisplayName = "None"),
+	EVO_ALPHA	UMETA(DisplayName = "Alpha"),
+	EVO_BETA	UMETA(DisplayName = "Beta")
+};
+
 
 UENUM(BlueprintType)
 enum class EStat : uint8 {
@@ -65,29 +87,9 @@ enum class EStat : uint8 {
 
 UENUM(BlueprintType)
 enum class EMagicSpell : uint8 {
-	Prema,
-	Jnana,
-	Jyoti,
-	Shanti,
-	Satya,
-	Kala,
-	Jivana,
-	Akasha,
-	Pavana,
-	Padma,
-	Prakashaka,
-	Alingaka,
-	Pravahita,
-	Nayaka,
-	Bodhaka,
-	Tara,
-	Marga,
-	Nayana,
-	Mana,
-	Gita,
-	Devi,
-	Yatrika,
-	Agni,
-	Aranya,
-	Swapna
+	Vadh,
+	Drm,
+	Bhus,
+	Rudh,
+	Badh
 };

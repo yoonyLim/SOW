@@ -47,9 +47,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Summon|Visual")
 	UTexture2D* MagicCircleTexture_Lv4;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Summon|Visual")
-	UTexture2D* MagicCircleTexture_Lv5;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Summon|Spells", meta = (BindWidget))
 	UButton* BTN_FirstSpell;
 
@@ -61,9 +58,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Summon|Spells", meta = (BindWidget))
 	UButton* BTN_FourthSpell;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Summon|Spells", meta = (BindWidget))
-	UButton* BTN_FifthSpell;
 
 	TArray<UButton*> SpellButtonArray;
 
@@ -109,6 +103,9 @@ private:
 	void SetMagicSpell();
 
 	UFUNCTION(BlueprintCallable)
+	void PlaceTurret();
+
+	UFUNCTION(BlueprintCallable)
 	void SetButtonStyle(UButton* TargetButton, UTexture2D* TargetImage);
 
 	TArray<int32> GetUniqueRandomNumbers(int32 Min, int32 Max, int32 Count);
@@ -124,9 +121,6 @@ private:
 
 	UFUNCTION()
 	void HandleButtonClicked3() { OnIndexedButtonClicked(3); }
-
-	UFUNCTION()
-	void HandleButtonClicked4() { OnIndexedButtonClicked(4); }
 
 	UFUNCTION(BlueprintCallable)
 	void OnIndexedButtonClicked(int32 Index);
