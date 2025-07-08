@@ -3,6 +3,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "NavigationSystem.h"
 #include "NavMesh/NavMeshBoundsVolume.h"
+#include "EngineUtils.h"
+
 
 void ATileSpawner::BeginPlay()
 {
@@ -24,17 +26,32 @@ void ATileSpawner::BeginPlay()
 			GetWorld()->SpawnActor<AActor>(GridTiles[Index], SpawnLocation, Rotation);
 		}
 	}
-	/*
-	UNavigationSystemV1* NavSystem = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
+	const FVector Center = SOWTilePlacementHelper::GetTileWorldPosition((GridWidth - 1) / 2.0f, (GridHeight - 1) / 2.0f, TileWidth, TileHeight);
+	const FVector Extent = FVector(
+		(GridWidth * TileWidth * 0.5f) + TileWidth,
+		(GridHeight * TileHeight * 0.5f) + TileHeight,
+		2000.0f
+	);
 
-	if (NavSystem)
+	ANavMeshBoundsVolume* Volume = nullptr;
+	for (TActorIterator<ANavMeshBoundsVolume> It(GetWorld()); It; ++It)
 	{
-		// Mark the floor area as dirty
-		// FBox Bounds = FloorMesh->Bounds.GetBox();
-		// NavSystem->AddDirtyArea(Bounds, ENavigationDirtyFlag::All);
-		
-		NavSystem->Build();
-		// NavSystem->OnNavigationBoundsUpdated(NavBoundsVolume);
+		Volume = *It;
+		break;
 	}
-	*/
+
+	if (!Volume)
+	{
+		FActorSpawnParameters SpawnParams;
+		Volume = GetWorld()->SpawnActor<ANavMeshBoundsVolume>(ANavMeshBoundsVolume::StaticClass(), Center, FRotator::ZeroRotator, SpawnParams);
+	}
+
+	Volume->SetActorLocation(Center);
+	Volume->SetActorScale3D(FVector(1.0f));
+	Volume->GetRootComponent()->SetWorldScale3D(Extent);
+
+	if (UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld()))
+	{
+		NavSys->Build();
+	}
 }
