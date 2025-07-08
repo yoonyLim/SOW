@@ -75,4 +75,7 @@ namespace SOWGameplayTags {
 
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Element_Flame_Major);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Element_Flame_Minor);
+
+	/* Tile Tags */
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Tile_Forest_Normal);
 }
