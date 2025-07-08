@@ -20,11 +20,11 @@ void ATileSpawner::BeginPlay()
 			}
 
 			FVector SpawnLocation = SOWTilePlacementHelper::GetTileWorldPosition(X, Y, TileWidth, TileHeight);
-			FRotator Rotation = FRotator(0.0f, 90.0f, 0.0f);
+			FRotator Rotation = FRotator(0.0f, 0.0f, 0.0f);
 			GetWorld()->SpawnActor<AActor>(GridTiles[Index], SpawnLocation, Rotation);
 		}
 	}
-
+	/*
 	UNavigationSystemV1* NavSystem = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
 
 	if (NavSystem)
@@ -36,4 +36,5 @@ void ATileSpawner::BeginPlay()
 		NavSystem->Build();
 		// NavSystem->OnNavigationBoundsUpdated(NavBoundsVolume);
 	}
+	*/
 }
