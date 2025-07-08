@@ -3,14 +3,16 @@
 
 #include "Characters/Enemies/SOWCharacterEnemyBase.h"
 
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Components/WidgetComponent.h"
+
 #include "SOWGameplayTags.h"
 #include "AbilitySystem/SOWAbilitySystemComponent.h"
 #include "AbilitySystem/SOWAttributeSet.h"
-#include "Characters/Enemies/AI/EnemyBaseAIController.h"
-#include "GameFramework/CharacterMovementComponent.h"
-#include "Structures/Enemies/EnemyStructs.h"
 #include "Characters/Enemies/SOWEnemyCombatComponent.h"
-#include "Components/WidgetComponent.h"
+
+#include "Characters/Enemies/AI/EnemyBaseAIController.h"
+#include "Structures/Enemies/EnemyStructs.h"
 #include "Widget/Enemy/EnemyHealthBarWidget.h"
 
 // Sets default values
@@ -24,6 +26,7 @@ ASOWCharacterEnemyBase::ASOWCharacterEnemyBase()
 	// EnemyCombatComponent ����
 	EnemyCombatComponent = CreateDefaultSubobject<USOWEnemyCombatComponent>(TEXT("EnemyCombatComponent"));
 
+	// Set Healthbar Widget
 	HealthBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBar"));
 
 	if (HealthBarWidget)
@@ -35,10 +38,14 @@ ASOWCharacterEnemyBase::ASOWCharacterEnemyBase()
 		static ConstructorHelpers::FClassFinder<UUserWidget> WidgetClass{ TEXT("/Game/01Blueprints/UI/Enemy/WBP_EnemyHealthBar") };
 
 		if (WidgetClass.Succeeded())
-		{
 			HealthBarWidget->SetWidgetClass((WidgetClass.Class));
-		}
 	}
+
+	// Set Overlay Material
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> OverlayMat(TEXT("/Game/03Materials/Enemy/MI_Enemy_Overlay.MI_Enemy_Overlay"));
+
+	if (OverlayMat.Succeeded())
+		GetMesh()->SetOverlayMaterial(OverlayMat.Object);
 }
 
 // Called when the game starts or when spawned
