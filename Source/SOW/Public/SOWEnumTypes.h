@@ -60,14 +60,22 @@ enum class ETurretTargetSelectionPriority : uint8 {
 
 UENUM(BlueprintType)
 enum class ETurretName : uint8 {
-	Bowman		UMETA(DisplayName = "Bowman"),
-	Hoppy		UMETA(DisplayName = "Hoppy"),
-	Evilwood	UMETA(DisplayName = "Evilwood"),
-	Flower		UMETA(DisplayName = "Flower"),
-	Golem		UMETA(DisplayName = "Golem"),
-	Mushroom	UMETA(DisplayName = "Mushroom"),
-	Owl			UMETA(DisplayName = "Owl"),
-	Spider		UMETA(DisplayName = "Spider")
+	// Nature
+	Bowman			UMETA(DisplayName = "Bowman"),
+	Hoppy			UMETA(DisplayName = "Hoppy"),
+	Evilwood		UMETA(DisplayName = "Evilwood"),
+	Flower			UMETA(DisplayName = "Flower"),
+	Golem			UMETA(DisplayName = "Golem"),
+	Mushroom		UMETA(DisplayName = "Mushroom"),
+	Owl				UMETA(DisplayName = "Owl"),
+	Spider			UMETA(DisplayName = "Spider"),
+
+	// Electro
+	DesertBat		UMETA(DisplayName = "DesertBat"),
+	DesertWizard	UMETA(DisplayName = "DesertWizard"),
+	DesertCactus	UMETA(DisplayName = "DesertCactus"),
+	DesertGolem		UMETA(DisplayName = "DesertGolem")
+	
 };
 
 UENUM(BlueprintType)

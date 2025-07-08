@@ -298,3 +298,17 @@ struct FMagicSpell : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FText DisplayName;
 };
+
+USTRUCT(BlueprintType)
+struct FBuffInfo : public FTableRowBase {
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FGameplayTag BuffTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UTexture2D* BuffImage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString BuffDescription;
+};

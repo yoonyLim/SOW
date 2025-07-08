@@ -3,6 +3,7 @@
 
 #include "Characters/Turrets/Actors/TurretMeleeHitCollision.h"
 #include "Characters/Turrets/SOWCharacterTurretBase.h"
+#include "AbilitySystem/SOWAbilitySystemComponent.h"
 #include "Interface/SOWCharacterTypeInterface.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Components/BoxComponent.h"
@@ -40,16 +41,29 @@ void ATurretMeleeHitCollision::ToggleCollision(bool bShouldEnable)
 void ATurretMeleeHitCollision::ApplyDamageToAllHitTargets()
 {
 	// External Function -> Used in ANS_ToggleHitCollision
-
+	int32 HitCount = 0;
 	for (AActor* TargetActor : OverlappedActors) {
-		FGameplayEventData Data;
+		/*FGameplayEventData Data;
 		Data.Target = TargetActor;
+
+		UE_LOG(LogTemp, Warning, TEXT("Hit Actor : %s"), *Data.Target->GetActorNameOrLabel());
 
 		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
 			CachedInstigator.Get(),
 			SOWGameplayTags::Shared_Event_MeleeHit,
 			Data
+		);*/
+
+		UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(CachedInstigator.Get());
+		UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
+
+		SourceASC->ApplyGameplayEffectSpecToTarget(
+			*OwnerDamageEffectSpecHandle.Data.Get(),
+			TargetASC
 		);
+
+		HitCount++;
+		if (HitCount == 3) break;
 	}
 }
 
