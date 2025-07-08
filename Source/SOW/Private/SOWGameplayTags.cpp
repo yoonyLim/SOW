@@ -11,6 +11,7 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Summon, "Player.Ability.Summon");
 
 	UE_DEFINE_GAMEPLAY_TAG(Player_Status_Rolling, "Player.Status.Rolling");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Status_Fail_Ability, "Player.Status.Fail.Ability");
 	
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Ability_Attack_Melee, "Enemy.Ability.Attack.Melee");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Ability_Attack_Ranged, "Enemy.Ability.Attack.Ranged");
@@ -79,11 +80,13 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Element_Flame_Major, "Shared.Element.Flame.Major");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Element_Flame_Minor, "Shared.Element.Flame.Minor");
 
+	UE_DEFINE_GAMEPLAY_TAG(Tile_Forest_Normal, "Tile.Forest.Normal")
+	
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditiveDamage, "Shared.SetByCaller.AdditiveDamage");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_MultipleDamage, "Shared.SetByCaller.MultipleDamage");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditiveBuffValue, "Shared.SetByCaller.AdditiveBuffValue");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_ReductedDamage, "Shared.SetByCaller.ReductedDamage");
 
-	
-	
+	UE_DEFINE_GAMEPLAY_TAG(Data_ManaCost, "Data.ManaCost");
+
 }

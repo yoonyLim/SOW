@@ -21,6 +21,8 @@ USOWAttributeSet::USOWAttributeSet()
     InitDamageOverTime(0.f);
     InitDetectionRange(50.f);
     InitAttackSpeedBase(1.f);
+    InitMaxManaBase(200.f);
+    InitCurrentMana(200.f);
 }
 
 void USOWAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
