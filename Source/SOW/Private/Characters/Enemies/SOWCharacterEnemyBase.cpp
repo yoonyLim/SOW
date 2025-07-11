@@ -12,6 +12,7 @@
 #include "Characters/Enemies/SOWEnemyCombatComponent.h"
 
 #include "Characters/Enemies/AI/EnemyBaseAIController.h"
+#include "Components/Enemies/EnemyIncomingRouteComponent.h"
 #include "Structures/Enemies/EnemyStructs.h"
 #include "Widget/Enemy/EnemyHealthBarWidget.h"
 
@@ -25,6 +26,9 @@ ASOWCharacterEnemyBase::ASOWCharacterEnemyBase()
 
 	// EnemyCombatComponent ����
 	EnemyCombatComponent = CreateDefaultSubobject<USOWEnemyCombatComponent>(TEXT("EnemyCombatComponent"));
+
+	// EnemyIncomingRouteComponent
+	EnemyIncomingRouteComponent = CreateDefaultSubobject<UEnemyIncomingRouteComponent>(TEXT("EnemyIncomingRouteComponent"));
 
 	// Set Healthbar Widget
 	HealthBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBar"));
@@ -73,7 +77,8 @@ void ASOWCharacterEnemyBase::BeginPlay()
 	}
 
 	// Set up HealthBar Widget
-	HealthBarWidget->SetHiddenInGame(true);
+	if (!bShouldKeepHealthbarOn)
+		HealthBarWidget->SetHiddenInGame(true);
 
 	// bind to health change event
 	if (AbilitySystemComponent)
@@ -88,6 +93,14 @@ void ASOWCharacterEnemyBase::BeginPlay()
 
 	// To initialize Game Ability Attribute
 	AbilitySystemComponent->AddLooseGameplayTag(SOWGameplayTags::Enemy_Ability_Initialize);
+
+	float NewHealth = ASCAttributes->GetMaxHealthBase();
+	float MaxHealth = ASCAttributes->GetMaxHealthBase();
+
+	UpdateHealthBarValue(NewHealth, MaxHealth);
+
+	// Set Incoming Route when spawned
+	GetEnemyIncomingRouteComponent()->SetIncomingRoute(IncomingRoute);
 }
 
 void ASOWCharacterEnemyBase::OnHealthChanged(const FOnAttributeChangeData& Data)
@@ -95,21 +108,28 @@ void ASOWCharacterEnemyBase::OnHealthChanged(const FOnAttributeChangeData& Data)
 	if (GetWorldTimerManager().IsTimerActive(HideHealthBarHandle))
 		GetWorldTimerManager().ClearTimer(HideHealthBarHandle);
 
-	GetWorldTimerManager().SetTimer(
-		HideHealthBarHandle,
-		FTimerDelegate::CreateLambda([&]() { HealthBarWidget->SetHiddenInGame(true); }),
-		1.f,
-		false
-	);
+	if (!bShouldKeepHealthbarOn)
+	{
+		GetWorldTimerManager().SetTimer(
+			HideHealthBarHandle,
+			FTimerDelegate::CreateLambda([&]() { HealthBarWidget->SetHiddenInGame(true); }),
+			1.f,
+			false
+		);
+	}
 	
 	float NewHealth = Data.NewValue;
 	float MaxHealth = ASCAttributes->GetMaxHealthBase();
 
 	UpdateHealthBarValue(NewHealth, MaxHealth);
-	HealthBarWidget->SetHiddenInGame(false);
 
-	if (!HealthBarWidget->bHiddenInGame)
-		Cast<UEnemyHealthBarWidget>(HealthBarWidget->GetUserWidgetObject())->PlayFadeAnimation();
+	if (!bShouldKeepHealthbarOn)
+	{
+		HealthBarWidget->SetHiddenInGame(false);
+
+		if (!HealthBarWidget->bHiddenInGame)
+			Cast<UEnemyHealthBarWidget>(HealthBarWidget->GetUserWidgetObject())->PlayFadeAnimation();
+	}
 
 	if (HitAnimation)
 	{

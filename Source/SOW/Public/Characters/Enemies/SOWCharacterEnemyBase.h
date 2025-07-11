@@ -8,6 +8,8 @@
 #include "Interface/EnemyActionsInterface.h"
 #include "SOWCharacterEnemyBase.generated.h"
 
+class UEnemyIncomingRouteComponent;
+class AEnemyIncomingRoute;
 class AEnemyBaseAIController;
 class UWidgetComponent;
 class UBehaviorTree;
@@ -56,6 +58,12 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Event Dispatcher")
 	FOnEnemyDeath OnEnemyDeath;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+	bool bShouldKeepHealthbarOn = true;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Incoming Route", meta = (ExposeOnSpawn = true))
+	AEnemyIncomingRoute* IncomingRoute;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -69,8 +77,11 @@ protected:
 	UBehaviorTree* BehaviorTree;
 
 	//CombatComponent ���� - added by song
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat Component")
 	USOWEnemyCombatComponent* EnemyCombatComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Incoming Route Component")
+	UEnemyIncomingRouteComponent* EnemyIncomingRouteComponent;
 
 public:
 	// GETTERS
@@ -81,6 +92,7 @@ public:
 	FName GetEnemyTypeStr() const { return EnemyTypeStr; };
 	// GETTERS - added by song
 	USOWEnemyCombatComponent* GetEnemyCombatComponent() const { return EnemyCombatComponent; };
+	UEnemyIncomingRouteComponent* GetEnemyIncomingRouteComponent() const { return EnemyIncomingRouteComponent; };
 	
 	virtual void Attack(const ASOWCharacter* TargetActor) override;
 
