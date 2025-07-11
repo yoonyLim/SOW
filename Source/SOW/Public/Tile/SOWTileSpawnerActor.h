@@ -21,7 +21,7 @@ public:
 	float TileWidth = 249.0f;
 	
 	UPROPERTY(EditAnywhere)
-	float TileHeight = 498.0f;
+	float TileHeight = 249.0f;
 	
 protected:
 	virtual void BeginPlay() override;
