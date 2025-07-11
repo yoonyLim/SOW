@@ -109,7 +109,7 @@ void ASOWPlayerController::ConfirmTurretPlacement()
 
             FVector TargetLocation = Hit.ImpactPoint;
 
-            bool bCanPlace = FVector::Dist(GetPawn()->GetActorLocation(), TargetLocation) <= 200.f;
+            bool bCanPlace = FVector::Dist(GetPawn()->GetActorLocation(), TargetLocation) <= 300.f;
 
             if (bCanPlace)
             {
