@@ -4,10 +4,12 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "Engine/DataTable.h"
+#include "SOWStructTypes.h"
 #include "SOWPlayerController.generated.h"
 
 class ATurretPreviewActor;
 class UDataTable;
+class ASOWCharacterTurretBase;
 
 UCLASS()
 class SOW_API ASOWPlayerController : public APlayerController
@@ -20,8 +22,9 @@ public:
     virtual void SetupInputComponent() override;
 
     UFUNCTION(BlueprintCallable)
-    void StartPlacingTurret(FName TurretRowName);
+    void StartPlacingTurret(FSpellCombination Spells);
 
+    UFUNCTION(BlueprintCallable)
     void ConfirmTurretPlacement();
 
 protected:
@@ -35,7 +38,8 @@ protected:
     UPROPERTY()
     UDataTable* TurretDataTable;
 
-    FName PendingTurretName;
+    FSpellCombination TurretSpells;
+    TSubclassOf<ASOWCharacterTurretBase> TurretClass;
 
     bool bIsPlacingTurret = false;
 };

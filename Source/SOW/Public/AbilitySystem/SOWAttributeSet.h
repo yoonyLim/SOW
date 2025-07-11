@@ -118,7 +118,22 @@ public :
 	FGameplayAttributeData FlameResistance;
 	ATTRIBUTE_ACCESSORS(USOWAttributeSet, FlameResistance)
 
-	
+		/* Status Mana (Only Player) */
+	UPROPERTY(BlueprintReadOnly, Category = "Mana")
+	FGameplayAttributeData MaxManaBase;
+	ATTRIBUTE_ACCESSORS(USOWAttributeSet, MaxManaBase)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Mana")
+	FGameplayAttributeData MaxManaRatio;
+	ATTRIBUTE_ACCESSORS(USOWAttributeSet, MaxManaRatio)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Mana")
+	FGameplayAttributeData MaxMana;
+	ATTRIBUTE_ACCESSORS(USOWAttributeSet, MaxMana)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Mana")
+	FGameplayAttributeData CurrentMana;
+	ATTRIBUTE_ACCESSORS(USOWAttributeSet, CurrentMana)
 
 
 

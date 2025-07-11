@@ -4,9 +4,14 @@
 
 #include "GameplayTagContainer.h"
 #include "AbilitySystem/Ability/SOWPlayerGameplayAbility.h"
-#include "Characters/Turrets/SOWCharacterTurretBase.h"
+#include "AbilitySystem/Ability/SOWTurretGameplayAbility.h"
+#include "DataAsset/DA_TurretEvolutionData.h"
+
+#include "SOWEnumTypes.h"
 #include "SOWStructTypes.generated.h"
 
+class ASOWCharacterTurretBase;
+class ATurretProjectileBase;
 /**
  * 
  */
@@ -91,11 +96,81 @@ public:
 	float DetectionRange;
 };
 
+USTRUCT(BlueprintType)
+struct FTurretPropertyData : public FTableRowBase {
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ETurretRarity TurretRarity;												// Determine Turret Rarity
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<ETurretTargetSelectionPriority> TurretSettablePriority;			// Determine What Target should be Selected
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ETurretTargetSelectionPolicy TurretTargetSelectionPolicy;				// Determine What Policy Turret Can Select.
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ETurretTargetSelectionType TurretTargetSelectionType;					// Determine How many Target selectable
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<ATurretProjectileBase> ProjectileToSpawn;					// Determine What To Spawn While Attack
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool HasDependencyOnProjectile;											// Decide whether to pause the ability until the summonned projectile disappears.
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool HasProjectileMovement;												// Decide the projectile has movement
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool HasIndependantCooltime;											// Decide that Turret Cooltime is not based on attribute
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ProjectileLivingTime;												// Determine the projectile lining time
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "HasProjectileMovement", EditConditionHides))
+	float ProjectileMoveSpeed;												// Determine the projectile move speed
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "HasIndependantCooltime", EditConditionHides))
+	float IndependantCooltime;												// Determine turret ability cooltime independant on attribute
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ProjectileScaleRatio;												// Determine the projectile Collision Scale : Default - 1.0
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 TargetSelectCount;												// Determine How many targets must be selected in the turret
+};
+
 
 USTRUCT(BlueprintType)
-struct FTurretData : public FTableRowBase {
+struct FSpellCombination
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EMagicSpell FirstSpell;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EMagicSpell SecondSpell;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EMagicSpell ThirdSpell;
+
+	bool operator==(const FSpellCombination& Other) const
+	{
+		return FirstSpell == Other.FirstSpell &&
+			SecondSpell == Other.SecondSpell &&
+			ThirdSpell == Other.ThirdSpell;
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FTurretSummonData : public FTableRowBase {
 
 	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FSpellCombination SpellComb;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName TurretName;
@@ -105,4 +180,121 @@ struct FTurretData : public FTableRowBase {
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<ASOWCharacterTurretBase> TurretClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float AttackRange;
+};
+
+USTRUCT(BlueprintType)
+struct FTurretEvolutionItem : public FTableRowBase {
+
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSoftObjectPtr<UDA_TurretEvolutionData> EvolutionDataAsset;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString EvolutionDescription;
+};
+
+USTRUCT(BlueprintType)
+struct FWidgetDesciptableTurretAttribute {
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float MaxHealthBaseValue = 0.f;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float MaxHealthRatioValue = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float DefensePowerBaseValue = 0.f;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float DefensePowerRatioValue = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float AttackPowerBaseValue = 0.f;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float AttackPowerRatioValue = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float AttackSpeedBaseValue = 0.f;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float AttackSpeedRatioValue = 0.f;
+};
+
+USTRUCT(BlueprintType)
+struct FEffectOrientedTurretAttribute {
+	GENERATED_BODY()
+
+public:
+	FEffectOrientedTurretAttribute() {
+		MaxHealthBaseValue = 0.f;
+		DefensePowerBaseValue = 0.f;
+		AttackPowerBaseValue = 0.f;
+		AttackPowerBaseValue = 0.f;
+	};
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float MaxHealthBaseValue;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float DefensePowerBaseValue;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float AttackPowerBaseValue;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float AttackSpeedBaseValue;
+};
+
+USTRUCT(BlueprintType)
+struct FTurretEvolutionData : public FTableRowBase {
+
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FTurretEvolutionItem> EvolutionAlpha;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FTurretEvolutionItem> EvolutionBeta;
+};
+
+USTRUCT(BlueprintType)
+struct FCircleWeight
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 CircleLevel;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 Weight;
+};
+
+USTRUCT(BlueprintType)
+struct FCircleWeightByLevelRow : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 Level;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FCircleWeight> CircleWeights;
+};
+
+USTRUCT(BlueprintType)
+struct FMagicSpell : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	EMagicSpell MagicSpell;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UTexture2D* SanskritImage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FText DisplayName;
 };

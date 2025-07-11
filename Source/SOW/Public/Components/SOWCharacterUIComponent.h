@@ -9,10 +9,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SOWEnumTypes.h"
+#include "SOWStructTypes.h"
 #include "Components/ActorComponent.h"
 #include "SOWCharacterUIComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthPercentChangedDelegate, float, NewPercent);
+
+
+
+
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SOW_API USOWCharacterUIComponent : public UActorComponent
@@ -24,4 +30,6 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnHealthPercentChangedDelegate OnCurrentHealthChanged;
+
+
 };

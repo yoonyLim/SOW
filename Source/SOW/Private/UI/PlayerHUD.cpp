@@ -13,6 +13,23 @@
 
 void UPlayerHUD::NativeConstruct()
 {
+    Super::NativeConstruct();
+}
+
+void UPlayerHUD::NativeDestruct()
+{
+    Super::NativeDestruct();
+
+    if (ASC)
+    {
+        ASC->GetGameplayAttributeValueChangeDelegate(
+            USOWAttributeSet::GetCurrentHealthAttribute()
+        ).Remove(HealthChangedHandle);
+
+        ASC->GetGameplayAttributeValueChangeDelegate(
+            USOWAttributeSet::GetCurrentManaAttribute()
+        ).Remove(ManaChangedHandle);
+    }
 }
 
 void UPlayerHUD::Init(USOWAbilitySystemComponent* InASC)
@@ -25,10 +42,11 @@ void UPlayerHUD::Init(USOWAbilitySystemComponent* InASC)
         float MaxHealth = AttributeSetRef->GetMaxHealthBase();
         float CurrentHealth = AttributeSetRef->GetCurrentHealth();
         SetProgressBar(EStat::HP, MaxHealth, CurrentHealth);
+
+        float MaxMana = AttributeSetRef->GetMaxMana();
+        float CurrentMana = AttributeSetRef->GetCurrentMana();
+        SetProgressBar(EStat::MP, MaxMana, CurrentMana);
     }
-    //float MaxMana = AttributeSetRef->GetMaxMana();
-    //float CurrentMana = AttributeSetRef->GetCurrentMana();
-    //SetProgressBar(EPlayerStat::MP, MaxHealth, CurrentHealth);
 
     //float MaxHealth = AttributeSetRef->GetMaxHealth();
     //float CurrentHealth = AttributeSetRef->GetCurrentHealth();
@@ -43,9 +61,15 @@ void UPlayerHUD::BindToASC(USOWAbilitySystemComponent* InASC)
 
     if (ASC)
     {
-        ASC->GetGameplayAttributeValueChangeDelegate(
+        /* 꼭 언바인드 할 것 */
+
+        HealthChangedHandle = ASC->GetGameplayAttributeValueChangeDelegate(
             USOWAttributeSet::GetCurrentHealthAttribute()
         ).AddUObject(this, &UPlayerHUD::OnHealthChanged);
+
+        ManaChangedHandle = ASC->GetGameplayAttributeValueChangeDelegate(
+            USOWAttributeSet::GetCurrentManaAttribute()
+        ).AddUObject(this, &UPlayerHUD::OnManaChanged);
     }
 
     if (!AttributeSetRef)
@@ -62,7 +86,16 @@ void UPlayerHUD::OnHealthChanged(const FOnAttributeChangeData& Data)
     float NewHealth = Data.NewValue;
 
     SetProgressBar(EStat::HP, MaxHealth, NewHealth);
-    // 여기에 HealthBar->SetPercent(NewHealth / MaxHealth); 등을 작성
+}
+
+void UPlayerHUD::OnManaChanged(const FOnAttributeChangeData& Data)
+{
+    if (!AttributeSetRef) return;
+
+    float MaxMana = AttributeSetRef->GetMaxManaBase();
+    float NewMana = Data.NewValue;
+
+    SetProgressBar(EStat::MP, MaxMana, NewMana);
 }
 
 void UPlayerHUD::SetProgressBar(EStat ChangedStat, float Max, float Current)

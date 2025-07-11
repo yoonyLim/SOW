@@ -6,6 +6,7 @@
 #include "AbilitySystem/Ability/SOWGameplayAbilityBase.h"
 #include "SOWEnemyGameplayAbility.generated.h"
 
+class ASOWCharacterEnemyBase;
 /**
  * 
  */
@@ -13,5 +14,8 @@ UCLASS()
 class SOW_API USOWEnemyGameplayAbility : public USOWGameplayAbilityBase
 {
 	GENERATED_BODY()
-	
+
+protected:
+	UFUNCTION(BlueprintPure)
+	ASOWCharacterEnemyBase* GetSOWEnemyCharacterFromActorInfo() const;
 };
