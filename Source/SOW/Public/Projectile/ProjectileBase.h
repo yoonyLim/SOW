@@ -55,7 +55,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile|Combat", meta = (ExposeOnSpawn = true))
 	ETurretTargetSelectionPolicy OwnerPolicy;					// What the turret should target
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile|Combat", meta = (ExposeOnSpawn = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Projectile|Combat", meta = (ExposeOnSpawn = true))
 	FGameplayEffectSpecHandle OwnerDamageEffectSpecHandle;		// Apply the owner turret's damage specs
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile|Properties", meta = (ExposeOnSpawn = true))

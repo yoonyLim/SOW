@@ -80,32 +80,47 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 	EvalParams.SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
 	EvalParams.TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();
 
-	float ElementalResistance = GetElementalResistanceCost(ExecutionParams, EvalParams);
-	ElementalResistance = ElementalResistance > 0.2f ? ElementalResistance : 0.2f;
-	/* 속성 저항치 로드 완료 */
 
+	
+	// Base Attack Power
 	float L_AttackPower = 0.f;
-
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
 		GetCapturedPropertiesDamage().AttackPowerBaseDef,
 		EvalParams,
 		L_AttackPower
 	);
-
 	L_AttackPower += Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_AdditiveDamage, false, 0.0f);
 	L_AttackPower *= Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_MultipleDamage, false, 1.0f);
 	float DamageReduction = Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_ReductedDamage, false, 1.0f);
 
-	float L_DefensePower = 0.f;
+	
+	// Elemantal Damage
+	float ElementalResistance = GetElementalResistanceCost(ExecutionParams, EvalParams);
+	ElementalResistance = ElementalResistance > 0.2f ? ElementalResistance : 0.2f;
 
+
+	// Additinal Damage By Sine Debuff
+	float AdditinalDamageRatio = 1.0f;
+	AdditinalDamageRatio += Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_AdditinalDamageRatio_SinAlpha, false, 0.f);
+	AdditinalDamageRatio += Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_AdditinalDamageRatio_SinBeta, false, 0.f);
+	AdditinalDamageRatio += Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_AdditinalDamageRatio_SinGamma, false, 0.f);
+	AdditinalDamageRatio += Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_AdditinalDamageRatio_SinDelta, false, 0.f);
+	UE_LOG(LogTemp, Warning, TEXT("Additional Damage Ratio : %s"), *FString::SanitizeFloat(AdditinalDamageRatio, 2));
+
+	// Base Defense Power
+	float L_DefensePower = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
 		GetCapturedPropertiesDamage().DefensePowerBaseDef,
 		EvalParams,
 		L_DefensePower
 	);
 
-	float L_FinalDamage = (L_AttackPower - FMath::Log2(2 + L_DefensePower)) * ElementalResistance * DamageReduction;
+
+	// Calculate Final Damage
+	float L_FinalDamage = (L_AttackPower - FMath::Log2(2 + L_DefensePower)) * ElementalResistance * DamageReduction * AdditinalDamageRatio;
 	
+
+	// Send HitReact Event To Target
 	AActor* Target = ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor();
 
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
@@ -114,6 +129,8 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 		FGameplayEventData()
 	);
 
+
+	// Apply Final Damage
 	OutExecutionOutput.AddOutputModifier(
 		FGameplayModifierEvaluatedData(
 			GetCapturedPropertiesDamage().CurrentHealthDef.AttributeToCapture,

@@ -34,6 +34,16 @@ namespace SOWGameplayTags {
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Debuff_Slow);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Debuff_Rooted);
 
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Debuff_Sin_Alpha);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Debuff_Sin_Beta);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Debuff_Sin_Gamma);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Debuff_Sin_Delta);
+	
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Debuff_Confusing);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Debuff_Static);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Debuff_Sharp);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Debuff_Balancing);
+
 	/* Turret Tags */
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Ability_Attack);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Ability_Attack_Melee);
@@ -57,6 +67,7 @@ namespace SOWGameplayTags {
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Event_TargetCountChanged);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Event_ChangedFixedLocation);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Event_ChangedFixedTarget);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Event_DebuffApplied);
 
 	/* Shared Tags */
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Ability_Death);
@@ -102,6 +113,10 @@ namespace SOWGameplayTags {
 	/* Set By Caller Tags */
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_SetByCaller_AdditiveDamage);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_SetByCaller_MultipleDamage);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_SetByCaller_AdditinalDamageRatio_SinAlpha);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_SetByCaller_AdditinalDamageRatio_SinBeta);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_SetByCaller_AdditinalDamageRatio_SinGamma);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_SetByCaller_AdditinalDamageRatio_SinDelta);
 
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_SetByCaller_AdditiveBuffValue);
 
