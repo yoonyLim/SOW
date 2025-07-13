@@ -6,6 +6,9 @@
 #include "Engine/GameInstance.h"
 #include "SOWGameInstance.generated.h"
 
+class UUSkillManager;
+class UDataTable;
+
 /**
  * 
  */
@@ -14,4 +17,12 @@ class SOW_API USOWGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 	
+public:
+    virtual void Init() override;
+
+    UPROPERTY(BlueprintReadOnly)
+    TObjectPtr<UUSkillManager> SkillManager;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Skill")
+    TObjectPtr<UDataTable> SkillDataTable;
 };

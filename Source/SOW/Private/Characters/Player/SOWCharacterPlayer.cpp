@@ -192,8 +192,12 @@ void ASOWCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInput
 
 void ASOWCharacterPlayer::ShowInstallationRange(bool bShow)
 {
-	if (InstallationRangeDecal)
+	if (bShow)
 	{
-		InstallationRangeDecal->SetVisibility(bShow);
+		InstallationRangeDecal->SetVisibility(true);
+	}
+	else
+	{
+		InstallationRangeDecal->SetVisibility(false);
 	}
 }

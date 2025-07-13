@@ -98,8 +98,8 @@ UENUM(BlueprintType)
 enum class ESkillEffectType : uint8 {
 	// added by : HYJ
 	// Check how the skill acts
-	AttributeModifier		UMETA(DisplayName = "Attribute Modifier"),
-	ExecutionConditional	UMETA(DisplayName = "Execution Conditional"),
-	LogicDriven				UMETA(DisplayName = "Logic Driven"),
-	Mix						UMETA(DisplayName = "Mix"),
+	CircleUpgrade				UMETA(DisplayName = "Circle Upgrade"),
+	AttributeModifier			UMETA(DisplayName = "Attribute Modifier"),
+	DamageFormulaAdjustment		UMETA(DisplayName = "Damage Formula Adjustment"),
+	CustomScript				UMETA(DisplayName = "CustomScript"),
 };

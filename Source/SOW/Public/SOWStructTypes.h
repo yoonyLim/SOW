@@ -12,6 +12,7 @@
 
 class ASOWCharacterTurretBase;
 class ATurretProjectileBase;
+class UNiagaraSystem;
 /**
  * 
  */
@@ -300,56 +301,53 @@ struct FMagicSpell : public FTableRowBase
 };
 
 USTRUCT(BlueprintType)
-struct FStepEffectData
-{
-	GENERATED_BODY()
-
-	/** 효과의 타입 */
-	UPROPERTY(EditDefaultsOnly)
-	ESkillEffectType EffectType;
-
-	/** 해당 효과를 구분하거나 처리 로직을 연결할 태그 */
-	UPROPERTY(EditDefaultsOnly)
-	FGameplayTag SkillEffectTag;
-
-	/** 수치 변화값 (AttributeModifier일 때만 유의미) */
-	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "EffectType==ESkillEffectType::AttributeModifier"))
-	float Value = 0.0f;
-
-	/** 수치 연산 방식 (Add, Multiply 등) (AttributeModifier일 때만 유의미) */
-	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "EffectType==ESkillEffectType::AttributeModifier"))
-	TEnumAsByte<EGameplayModOp::Type> ModifierOp = EGameplayModOp::Additive;
-};
-
-USTRUCT(BlueprintType)
-struct FSkillStepData : public FTableRowBase
+struct FSkillData : public FTableRowBase
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditDefaultsOnly)
 	FName SkillID;
 
-	UPROPERTY(EditDefaultsOnly)
-	int32 StepLevel = 1;
-
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "Skill")
 	FGameplayTag SkillElementTag;
 
-	/* AttributeModifier 타입일 경우 사용할 효과 목록 */
-	UPROPERTY(EditDefaultsOnly)
-	TArray<FStepEffectData> Effects;
+	UPROPERTY(EditDefaultsOnly, Category = "Skill")
+	ESkillEffectType EffectType;
 
 	/* 스킬 활성화 시 부여될 게임플레이 태그 */
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "Skill")
 	FGameplayTag GrantTag;
 
 	/* 선행 스킬 ID */
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "Skill")
 	FGameplayTag RequiredTags;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "Skill")
 	int32 RequiredCurrencyAmount = 0;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "Skill")
 	FText SkillDescription;
+
+	/* Attribute Modifier 타입 스킬에 필요한 데이터 */
+	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "EffectType==ESkillEffectType::AttributeModifier"));
+	FGameplayAttribute TargetAttribute;
+
+	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "EffectType==ESkillEffectType::AttributeModifier"));
+	float ModifierValue = 0.f;
+
+	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "EffectType==ESkillEffectType::AttributeModifier"))
+	TEnumAsByte<EGameplayModOp::Type> ModifierOp = EGameplayModOp::Additive;
+
+	/* CustomScript 타입 스킬에 필요한 데이터 */
+	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "EffectType==ESkillEffectType::LogicDriven"), Category = "Logic Driven")
+	TSubclassOf<UGameplayAbility> GameplayAbilityClass;
+
+	/* VFX / SFX */
+	UPROPERTY(EditDefaultsOnly, Category = "Effect")
+	TObjectPtr<UNiagaraSystem> VFX = nullptr;
+
+	// Sound Effect
+	UPROPERTY(EditDefaultsOnly, Category = "Effect")
+	TObjectPtr<USoundBase> SFX = nullptr;
 };
+
