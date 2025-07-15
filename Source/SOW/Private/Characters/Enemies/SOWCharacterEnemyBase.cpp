@@ -3,14 +3,17 @@
 
 #include "Characters/Enemies/SOWCharacterEnemyBase.h"
 
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Components/WidgetComponent.h"
+
 #include "SOWGameplayTags.h"
 #include "AbilitySystem/SOWAbilitySystemComponent.h"
 #include "AbilitySystem/SOWAttributeSet.h"
-#include "Characters/Enemies/AI/EnemyBaseAIController.h"
-#include "GameFramework/CharacterMovementComponent.h"
-#include "Structures/Enemies/EnemyStructs.h"
 #include "Characters/Enemies/SOWEnemyCombatComponent.h"
-#include "Components/WidgetComponent.h"
+
+#include "Characters/Enemies/AI/EnemyBaseAIController.h"
+#include "Components/Enemies/EnemyIncomingRouteComponent.h"
+#include "Structures/Enemies/EnemyStructs.h"
 #include "Widget/Enemy/EnemyHealthBarWidget.h"
 
 // Sets default values
@@ -24,6 +27,10 @@ ASOWCharacterEnemyBase::ASOWCharacterEnemyBase()
 	// EnemyCombatComponent ����
 	EnemyCombatComponent = CreateDefaultSubobject<USOWEnemyCombatComponent>(TEXT("EnemyCombatComponent"));
 
+	// EnemyIncomingRouteComponent
+	EnemyIncomingRouteComponent = CreateDefaultSubobject<UEnemyIncomingRouteComponent>(TEXT("EnemyIncomingRouteComponent"));
+
+	// Set Healthbar Widget
 	HealthBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBar"));
 
 	if (HealthBarWidget)
@@ -35,10 +42,14 @@ ASOWCharacterEnemyBase::ASOWCharacterEnemyBase()
 		static ConstructorHelpers::FClassFinder<UUserWidget> WidgetClass{ TEXT("/Game/01Blueprints/UI/Enemy/WBP_EnemyHealthBar") };
 
 		if (WidgetClass.Succeeded())
-		{
 			HealthBarWidget->SetWidgetClass((WidgetClass.Class));
-		}
 	}
+
+	// Set Overlay Material
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> OverlayMat(TEXT("/Game/03Materials/Enemy/MI_Enemy_Overlay.MI_Enemy_Overlay"));
+
+	if (OverlayMat.Succeeded())
+		GetMesh()->SetOverlayMaterial(OverlayMat.Object);
 }
 
 // Called when the game starts or when spawned
@@ -66,7 +77,8 @@ void ASOWCharacterEnemyBase::BeginPlay()
 	}
 
 	// Set up HealthBar Widget
-	HealthBarWidget->SetHiddenInGame(true);
+	if (!bShouldKeepHealthbarOn)
+		HealthBarWidget->SetHiddenInGame(true);
 
 	// bind to health change event
 	if (AbilitySystemComponent)
@@ -81,6 +93,14 @@ void ASOWCharacterEnemyBase::BeginPlay()
 
 	// To initialize Game Ability Attribute
 	AbilitySystemComponent->AddLooseGameplayTag(SOWGameplayTags::Enemy_Ability_Initialize);
+
+	float NewHealth = ASCAttributes->GetMaxHealthBase();
+	float MaxHealth = ASCAttributes->GetMaxHealthBase();
+
+	UpdateHealthBarValue(NewHealth, MaxHealth);
+
+	// Set Incoming Route when spawned
+	GetEnemyIncomingRouteComponent()->SetIncomingRoute(IncomingRoute);
 }
 
 void ASOWCharacterEnemyBase::OnHealthChanged(const FOnAttributeChangeData& Data)
@@ -88,21 +108,28 @@ void ASOWCharacterEnemyBase::OnHealthChanged(const FOnAttributeChangeData& Data)
 	if (GetWorldTimerManager().IsTimerActive(HideHealthBarHandle))
 		GetWorldTimerManager().ClearTimer(HideHealthBarHandle);
 
-	GetWorldTimerManager().SetTimer(
-		HideHealthBarHandle,
-		FTimerDelegate::CreateLambda([&]() { HealthBarWidget->SetHiddenInGame(true); }),
-		1.f,
-		false
-	);
+	if (!bShouldKeepHealthbarOn)
+	{
+		GetWorldTimerManager().SetTimer(
+			HideHealthBarHandle,
+			FTimerDelegate::CreateLambda([&]() { HealthBarWidget->SetHiddenInGame(true); }),
+			1.f,
+			false
+		);
+	}
 	
 	float NewHealth = Data.NewValue;
 	float MaxHealth = ASCAttributes->GetMaxHealthBase();
 
 	UpdateHealthBarValue(NewHealth, MaxHealth);
-	HealthBarWidget->SetHiddenInGame(false);
 
-	if (!HealthBarWidget->bHiddenInGame)
-		Cast<UEnemyHealthBarWidget>(HealthBarWidget->GetUserWidgetObject())->PlayFadeAnimation();
+	if (!bShouldKeepHealthbarOn)
+	{
+		HealthBarWidget->SetHiddenInGame(false);
+
+		if (!HealthBarWidget->bHiddenInGame)
+			Cast<UEnemyHealthBarWidget>(HealthBarWidget->GetUserWidgetObject())->PlayFadeAnimation();
+	}
 
 	if (HitAnimation)
 	{

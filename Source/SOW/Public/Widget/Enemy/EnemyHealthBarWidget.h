@@ -16,13 +16,22 @@ class SOW_API UEnemyHealthBarWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
+	FTimerHandle HealthBarEffectHandle;
+
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget, AllowPrivateAccess = "true"))
 	UProgressBar* HealthBar = nullptr;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget, AllowPrivateAccess = "true"))
+	UProgressBar* SecondaryHealthBar = nullptr;
 
 	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim, AllowPrivateAccess = "true"))
 	class UWidgetAnimation* FadeInOutAnimation;
 
 public:
+	UEnemyHealthBarWidget(const FObjectInitializer& ObjectInitializer);
+	
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	
 	void SetHealthBarPercent(float const Value);
 	void HideInGame(bool bHidden);
 	FVector2D GetHealthBarSize();

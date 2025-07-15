@@ -22,6 +22,14 @@ void ATileSpawner::BeginPlay()
 			}
 
 			FVector SpawnLocation = SOWTilePlacementHelper::GetTileWorldPosition(X, Y, TileWidth, TileHeight);
+			
+			FString ClassName = GridTiles[Index]->GetName();
+			
+			if (ClassName.Contains(TEXT("2x2")))
+			{
+				SpawnLocation += FVector( 0, TileHeight, 0.0f);
+			}
+			
 			FRotator Rotation = FRotator(0.0f, 0.0f, 0.0f);
 			GetWorld()->SpawnActor<AActor>(GridTiles[Index], SpawnLocation, Rotation);
 		}
