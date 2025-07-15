@@ -75,27 +75,53 @@ void ASOWCharacterTurretBase::OnGameplayEffectAdded(UAbilitySystemComponent* ASC
 	{
 		const FGameplayAttribute& ModifiedAttr = Modifier.Attribute;
 
-		// Modifier의 Magnitude를 계산
-		float Magnitude = 0.f;
-		if(!Modifier.ModifierMagnitude.AttemptCalculateMagnitude(SpecApplied, Magnitude)) continue;
+		// 현재 Attribute의 원래 값을 가져옴
+		const float OriginalValue = ASC->GetNumericAttributeBase(ModifiedAttr); // Base값 사용
 
+		// Modifier의 Magnitude를 계산
+		float ModifierMagnitude = 0.f;
+		if (!Modifier.ModifierMagnitude.AttemptCalculateMagnitude(SpecApplied, ModifierMagnitude)) continue;
+
+		float Delta = 0.f;       
+
+		// Modifier Type에 따라 증가량 계산 방식 분기
+		switch (Modifier.ModifierOp)
+		{
+		case EGameplayModOp::Additive:
+			Delta = ModifierMagnitude;
+			break;
+
+		case EGameplayModOp::Multiplicitive:
+			Delta = OriginalValue * (ModifierMagnitude - 1.0f); // 예: 0.5 * (2.0 - 1.0) = +0.5
+			break;
+
+		case EGameplayModOp::Override:
+			Delta = ModifierMagnitude - OriginalValue;
+			break;
+
+		default:
+			continue;
+		}
+
+		// 속성에 맞게 값 저장
 		if (ModifiedAttr == USOWAttributeSet::GetAttackPowerBaseAttribute())
 		{
-			Data.AttackPowerBaseValue = Magnitude;
+			Data.AttackPowerBaseValue = Delta;
 		}
 		else if (ModifiedAttr == USOWAttributeSet::GetAttackSpeedBaseAttribute())
 		{
-			Data.AttackSpeedBaseValue = Magnitude;
+			Data.AttackSpeedBaseValue = Delta;
 		}
 		else if (ModifiedAttr == USOWAttributeSet::GetMaxHealthBaseAttribute())
 		{
-			Data.MaxHealthBaseValue = Magnitude;
+			Data.MaxHealthBaseValue = Delta;
 		}
 		else if (ModifiedAttr == USOWAttributeSet::GetDefensePowerBaseAttribute())
 		{
-			Data.DefensePowerBaseValue = Magnitude;
+			Data.DefensePowerBaseValue = Delta;
 		}
 	}
+
 	if (TurretUIComponent && TurretUIComponent->OnEffectApplied.IsBound()) {
 		TurretUIComponent->OnEffectApplied.Broadcast(Data);
 	}

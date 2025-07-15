@@ -12,6 +12,10 @@ namespace SOWGameplayTags
 
 	UE_DEFINE_GAMEPLAY_TAG(Player_Status_Rolling, "Player.Status.Rolling");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Status_Fail_Ability, "Player.Status.Fail.Ability");
+
+	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Restore_Health, "Player.Event.Restore.Health");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Restore_Mana, "Player.Event.Restore.Mana");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Restore_Stamina, "Player.Event.Restore.Stamina")
 	
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Ability_Attack_Melee, "Enemy.Ability.Attack.Melee");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Ability_Attack_Ranged, "Enemy.Ability.Attack.Ranged");
