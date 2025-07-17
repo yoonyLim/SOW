@@ -16,9 +16,9 @@ UEnemyIncomingRouteComponent::UEnemyIncomingRouteComponent()
 	// ...
 }
 
-void UEnemyIncomingRouteComponent::SetIncomingRoute(AEnemyIncomingRoute* IncomingRoute)
+void UEnemyIncomingRouteComponent::SetIncomingRoute(AEnemyIncomingRoute* NewIncomingRoute)
 {
-	this->IncomingRoute = IncomingRoute;
+	IncomingRoute = NewIncomingRoute;
 }
 
 bool UEnemyIncomingRouteComponent::IncrementIncomingRouteIndex()

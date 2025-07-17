@@ -40,6 +40,6 @@ void USOWEnemyCombatComponent::PerformAttack()
 	ASOWCharacter* Enemy = Cast<ASOWCharacter>(GetOwner());
 
 	USOWAbilitySystemComponent* ASC = USOWBlueprintFunctionLibrary::NativeGetSOWAbilitySystemComponentFromActorInfo(GetOwner());
-		
+	
 	ASC->TryActivateAbilityWithTag(AbilityTagToActivation);
 }
