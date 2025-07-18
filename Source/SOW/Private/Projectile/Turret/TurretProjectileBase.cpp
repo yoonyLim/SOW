@@ -2,10 +2,12 @@
 
 
 #include "Projectile/Turret/TurretProjectileBase.h"
+
 #include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
+#include "Characters/Player/SOWCharacterPlayer.h"
 #include "Characters/Turrets/SOWCharacterTurretBase.h"
 #include "Interface/SOWCharacterTypeInterface.h"
 #include "SOWBlueprintFunctionLibrary.h"
@@ -14,6 +16,7 @@
 ATurretProjectileBase::ATurretProjectileBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	ProjectileMoveComp->ProjectileGravityScale = 0.f;
 }
 
 void ATurretProjectileBase::BeginPlay()
@@ -36,6 +39,8 @@ void ATurretProjectileBase::OnCollisionHit(UPrimitiveComponent* OverlappedCompon
 
 	if (!OtherActor) return;
 
+	if (!Cast<ASOWCharacter>(OtherActor) || Cast<ASOWCharacterPlayer>(OtherActor)) return;
+
 	if (CachedInstigator.Get() == OtherActor || OverlappedActors.Contains(OtherActor)) return;
 
 	/*if (!OtherActor->Implements<USOWCharacterTypeInterface>()) return;
@@ -52,7 +57,6 @@ void ATurretProjectileBase::OnCollisionHit(UPrimitiveComponent* OverlappedCompon
 void ATurretProjectileBase::OnCollisionOut(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	Super::OnCollisionOut(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex);
-
 
 	if (!OtherActor) return;
 

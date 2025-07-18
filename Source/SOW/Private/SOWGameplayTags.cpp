@@ -40,6 +40,8 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sharp, "Enemy.Status.Debuff.Sharp");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Balancing, "Enemy.Status.Debuff.Balancing");
 	
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Event_Confusing, "Enemy.Event.Confusing"); 
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Event_Static, "Enemy.Event.Static");
 	
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_Attack, "Turret.Ability.Attack");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_Attack_Melee, "Turret.Ability.Attack.Melee");
