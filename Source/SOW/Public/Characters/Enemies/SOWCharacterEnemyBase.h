@@ -80,6 +80,15 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat Component")
 	USOWEnemyCombatComponent* EnemyCombatComponent;
 
+	// ==================================================== 원거리 공격용 프로퍼티 추가
+	// 원거리 투사체
+	UPROPERTY(EditAnywhere, Category = "Combat|Ranged")
+	TSubclassOf<AActor> RangedProjectileClass;
+	
+	// 메쉬에 붙인 소켓 이름, 이 위치에서 투사체 발사
+	UPROPERTY(EditAnywhere, Category = "Combat|Ranged")
+	FName MuzzleSocketName = TEXT("Muzzle");
+	// =====================================================
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Incoming Route Component")
 	UEnemyIncomingRouteComponent* EnemyIncomingRouteComponent;
 
@@ -92,6 +101,9 @@ public:
 	FName GetEnemyTypeStr() const { return EnemyTypeStr; };
 	// GETTERS - added by song
 	USOWEnemyCombatComponent* GetEnemyCombatComponent() const { return EnemyCombatComponent; };
+	// 원거리용 프로퍼티에 대한 Getter - added by song
+	FORCEINLINE TSubclassOf<AActor> GetRangedProjectileClass() const { return RangedProjectileClass; }
+	FORCEINLINE FName GetMuzzleSocketName() const { return MuzzleSocketName; }
 	UEnemyIncomingRouteComponent* GetEnemyIncomingRouteComponent() const { return EnemyIncomingRouteComponent; };
 	
 	virtual void Attack(const ASOWCharacter* TargetActor) override;
