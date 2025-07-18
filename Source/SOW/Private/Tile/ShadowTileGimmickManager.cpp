@@ -2,61 +2,101 @@
 
 
 #include "Tile/ShadowTileGimmickManager.h"
+#include "Tile/SOWTileSpawnerActor.h"
+#include "Tile/SOWTilePlacementHelper.h"
 #include "EngineUtils.h"
+#include "Kismet/GameplayStatics.h"
+
+
 void AShadowTileGimmickManager::BeginPlay()
 {
 	Super::BeginPlay();
+	TileSpawnerRef = Cast<ATileSpawner>(UGameplayStatics::GetActorOfClass(GetWorld(), ATileSpawner::StaticClass()));
 // 10초 간격으로 변경 수행
 	GetWorld() -> GetTimerManager().SetTimer(TransformTimerHandle, this, &AShadowTileGimmickManager::PickRandomTileAndTransform, 10.0f, true, 5.0f);
 }
 
 void AShadowTileGimmickManager::PickRandomTileAndTransform()
 {
-	FGameplayTag FilterTag = FGameplayTag::RequestGameplayTag("Tile.Grass");
-	TArray<ATileBase*> FilteredTiles;
+	const int32 Width = TileSpawnerRef -> GridWidth;
+	const int32 Height = TileSpawnerRef -> GridHeight;
+	const auto& TileClasses = TileSpawnerRef -> GridTiles;
+	auto& Spawned = TileSpawnerRef -> SpawnedTileActors;
 
-	for (TActorIterator<ATileBase> It(GetWorld()); It; ++It)
+	TArray<FIntPoint> validCoords;
+
+	for (int32 X = 0; X < Width - 1; ++X)
 	{
-		ATileBase* Tile = *It;
-		if (Tile && Tile->TileTag.MatchesTag(FilterTag))
+		for (int32 Y = 0; Y < Height - 1; ++Y)
 		{
-			FilteredTiles.Add(Tile);
+			int32 TileA = Y * Width + X;
+			int32 TileB = Y * Width + X + 1;
+			int32 TileC = (Y + 1) * Width + X;
+			int32 TileD = (Y + 1) * Width + X + 1;
+
+			if (TileClasses.IsValidIndex(TileD) && TileClasses[TileA] && TileClasses[TileB] && TileClasses[TileC] && TileClasses[TileD] &&
+				Spawned.IsValidIndex(TileD) && Spawned[TileA] && Spawned[TileB] && Spawned[TileC] && Spawned[TileD])
+			{
+				validCoords.Add(FIntPoint(X, Y));
+			}
 		}
 	}
 
-	if (FilteredTiles.Num() > 0)
+	if (validCoords.Num() == 0) return;
+
+	FIntPoint Start = validCoords[FMath::RandRange(0, validCoords.Num() - 1)];
+	TArray<FIntPoint> Targets = {
+		Start,
+		{Start.X + 1, Start.Y},
+		{Start.X, Start.Y + 1},
+		{Start.X + 1, Start.Y + 1}
+	};
+	TArray<FRevertTileData> RevertTileDataList;
+
+	for (const FIntPoint& Coord : Targets)
 	{
-		int32 RandomIndex = FMath::RandRange(0, FilteredTiles.Num() - 1);
-		ATileBase* SelectedTile = FilteredTiles[RandomIndex];
+		const int32 Index = Coord.Y * Width + Coord.X;
 
-		if (SelectedTile->ReplacementClass)
+		AActor* OldTile = Spawned[Index];
+		TSubclassOf<AActor> OldClass = TileClasses[Index];
+
+		FVector Location = OldTile->GetActorLocation();
+		FRotator Rotation = OldTile->GetActorRotation();
+
+		OldTile->Destroy();
+
+		TSubclassOf<AActor> Replacement = nullptr;
+
+		ATileBase* OldTileBase = Cast<ATileBase>(OldTile);
+		Replacement = OldTileBase -> ReplacementClass;
+		
+		if (!Replacement)
 		{
-			
-			FVector Location = SelectedTile->GetActorLocation();
-			FRotator Rotation = SelectedTile->GetActorRotation();
-
-			TSubclassOf<ATileBase> OriginalClass = SelectedTile->GetClass();
-
-			SelectedTile->Destroy();
-
-			ATileBase* NewTile = GetWorld()->SpawnActor<ATileBase>(
-				SelectedTile->ReplacementClass,
-				Location,
-				Rotation
-			);
-			FTimerHandle RevertHandle;
-			//5초 후 원복
-			GetWorld()->GetTimerManager().SetTimer(
-				RevertHandle, FTimerDelegate::CreateUObject(this, &AShadowTileGimmickManager::RevertTile,Location,Rotation,OriginalClass),5.0f,false
-			);
+			UE_LOG(LogTemp, Warning, TEXT("No valid replacement for %s"), *OldClass->GetName());
+			continue;
 		}
+		
+		AActor* NewTile = GetWorld()->SpawnActor<AActor>(Replacement, Location, Rotation);
+		Spawned[Index] = NewTile;
+
+		RevertTileDataList.Add({ Location, Rotation, OldClass });
 	}
+	
+	
+
+	FTimerHandle RevertHandle;
+	GetWorld()->GetTimerManager().SetTimer(
+		RevertHandle,
+		FTimerDelegate::CreateUObject(this, &AShadowTileGimmickManager::RevertTiles, RevertTileDataList),
+		5.0f,
+		false
+	);
 }
 
-void AShadowTileGimmickManager::RevertTile(FVector Location, FRotator Rotation, TSubclassOf<ATileBase> OriginalClass)
+void AShadowTileGimmickManager::RevertTiles(TArray<FRevertTileData> TileList)
 {
-	if (OriginalClass)
+	for (const FRevertTileData& Data : TileList)
 	{
-		GetWorld()->SpawnActor<ATileBase>(OriginalClass, Location, Rotation);
+		GetWorld()->SpawnActor<AActor>(Data.OriginalClass, Data.Location, Data.Rotation);
 	}
 }

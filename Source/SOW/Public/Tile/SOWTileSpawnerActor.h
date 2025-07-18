@@ -10,6 +10,9 @@ class SOW_API ATileSpawner : public AActor
 public:
 	UPROPERTY(EditAnywhere)
 	TArray<TSubclassOf<class AActor>> GridTiles;
+
+	UPROPERTY(BlueprintReadOnly)
+	TArray<AActor*> SpawnedTileActors; // 인스턴스 저장
 	
 	UPROPERTY(EditAnywhere)
 	int32 GridWidth = 10;

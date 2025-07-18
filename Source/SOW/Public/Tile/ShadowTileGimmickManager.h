@@ -7,6 +7,16 @@
 #include "GameFramework/Actor.h"
 #include "ShadowTileGimmickManager.generated.h"
 
+USTRUCT()
+struct FRevertTileData
+{
+	GENERATED_BODY()
+
+	FVector Location;
+	FRotator Rotation;
+	TSubclassOf<AActor> OriginalClass;
+};
+
 UCLASS()
 class SOW_API AShadowTileGimmickManager : public AActor
 {
@@ -17,8 +27,12 @@ public:
 
 private:
 	FTimerHandle TransformTimerHandle;
+	
+	UPROPERTY()
+	ATileSpawner* TileSpawnerRef;
 
 	void PickRandomTileAndTransform();
 
-	void RevertTile(FVector Location, FRotator Rotation, TSubclassOf<ATileBase> OriginalClass);
+	void RevertTiles(TArray<FRevertTileData> TileList);
 };
+
