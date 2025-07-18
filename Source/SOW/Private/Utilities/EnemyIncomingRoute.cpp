@@ -10,6 +10,8 @@
 AEnemyIncomingRoute::AEnemyIncomingRoute()
 {
 	IncomingRoute = CreateDefaultSubobject<USplineComponent>("Incoming Route");
+	SetRootComponent(IncomingRoute);
+	IncomingRoute->SetMobility(EComponentMobility::Movable);
 }
 
 int AEnemyIncomingRoute::GetNumberOfPoints() const
@@ -17,8 +19,24 @@ int AEnemyIncomingRoute::GetNumberOfPoints() const
 	return IncomingRoute->GetNumberOfSplinePoints();
 }
 
-FVector AEnemyIncomingRoute::GetCurrentIncomingIndexPosition(int Index)
+FVector AEnemyIncomingRoute::GetCurrentIncomingIndexPosition(const int32 Index) const
 {
-	return IncomingRoute->GetLocationAtSplinePoint(Index, ESplineCoordinateSpace::World);
+	if (IncomingRoute && IncomingRoute->GetNumberOfSplinePoints() > Index)
+		return IncomingRoute->GetLocationAtSplinePoint(Index, ESplineCoordinateSpace::World);
+
+	return FVector::ZeroVector;
+}
+
+void AEnemyIncomingRoute::SetSplinePointsFromLocations(const TArray<FVector>& Locations) const
+{
+	if (!IncomingRoute)
+		return;
+
+	IncomingRoute->ClearSplinePoints(true);
+
+	for (const FVector& Location : Locations)
+		IncomingRoute->AddSplinePoint(Location, ESplineCoordinateSpace::World, true);
+
+	IncomingRoute->UpdateSpline();
 }
 
