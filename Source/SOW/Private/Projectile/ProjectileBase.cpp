@@ -9,6 +9,7 @@
 #include "SOWBlueprintFunctionLibrary.h"
 #include "SOWGameplayTags.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "NiagaraComponent.h"
 
 // Sets default values
 AProjectileBase::AProjectileBase()
@@ -26,6 +27,8 @@ AProjectileBase::AProjectileBase()
 
 	ProjectileMoveComp = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile Movement"));
 
+	ProjectileFxComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Projectile FX"));
+	ProjectileFxComp->SetupAttachment(GetRootComponent());
 }
 
 void AProjectileBase::BeginPlay()

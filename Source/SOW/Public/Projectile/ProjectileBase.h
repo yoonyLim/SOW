@@ -12,6 +12,7 @@
 class UStaticMeshComponent;
 class UBoxComponent;
 class UProjectileMovementComponent;
+class UNiagaraComponent;
 
 UCLASS()
 class SOW_API AProjectileBase : public AActor
@@ -43,11 +44,14 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile|Component")
 	UStaticMeshComponent* ProjectileMeshComp;					// Visible mesh, no collision
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile|Component")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Projectile|Component")
 	UBoxComponent* ProjectileHitCollisionComp;					// Real collision detection area
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile|Component")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Projectile|Component")
 	UProjectileMovementComponent* ProjectileMoveComp;			// Dealing with the movement of projectile
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Projectile|Component")
+	UNiagaraComponent* ProjectileFxComp;
 #pragma endregion
 
 
