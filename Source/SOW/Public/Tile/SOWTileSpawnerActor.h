@@ -4,6 +4,21 @@
 #include "SOWTileSpawnerActor.generated.h"
 class AEnemyIncomingRoute;
 
+USTRUCT(BlueprintType)
+struct FIncomingRouteDefinition
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Route Definition")
+	TArray<int32> TileIndices;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Route Definition")
+	FString RouteName;
+
+	FIncomingRouteDefinition() : RouteName(TEXT("New Route")) {}
+};
+
 UCLASS()
 class SOW_API ATileSpawner : public AActor
 {
@@ -11,13 +26,13 @@ class SOW_API ATileSpawner : public AActor
 
 	TMap<int32, FVector> SpawnedTileLocations;
 
-	TArray<TArray<int32>> DefinedIncomingRoutes;
-
 	UPROPERTY()
 	TArray<AEnemyIncomingRoute*> SpawnedEnemyRoutes;
-
-	void DefineEnemyRoutes();
+	
 	void SpawnIncomingRoutes();
+
+protected:
+	virtual void BeginPlay() override;
 	
 public:
 	UPROPERTY(EditAnywhere)
@@ -37,9 +52,11 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AEnemyIncomingRoute> EnemyIncomingRouteClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tile Spawner|Routes Configuration", meta = (TitleProperty = "RouteName"))
+	TArray<FIncomingRouteDefinition> CustomIncomingRoutes;
 	
 	TArray<AEnemyIncomingRoute*> GetSpawnedEnemyRoutes() const;
-	
-protected:
-	virtual void BeginPlay() override;
+
+	const TMap<int32, FVector>& GetSpawnedTileLocations() const { return SpawnedTileLocations; }
 };

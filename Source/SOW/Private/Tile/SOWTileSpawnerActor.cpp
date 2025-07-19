@@ -40,8 +40,6 @@ void ATileSpawner::BeginPlay()
 		}
 	}
 
-	DefineEnemyRoutes();
-
 	SpawnIncomingRoutes();
 	
 	const FVector Center = SOWTilePlacementHelper::GetTileWorldPosition((GridWidth - 1) / 2.0f, (GridHeight - 1) / 2.0f, TileWidth, TileHeight);
@@ -79,44 +77,6 @@ void ATileSpawner::BeginPlay()
 	}
 }
 
-void ATileSpawner::DefineEnemyRoutes()
-{
-	DefinedIncomingRoutes.Empty();
-
-	// --- Example Route Definitions ---
-	// Route 1 (Top edge)
-	TArray<int32> Route1;
-	for (int32 X = 0; X < GridWidth; ++X)
-	{
-		Route1.Add(0 * GridWidth + X); // First row
-	}
-	DefinedIncomingRoutes.Add(Route1);
-
-	// Route 2 (Left edge)
-	TArray<int32> Route2;
-	for (int32 Y = 0; Y < GridHeight; ++Y)
-	{
-		Route2.Add(Y * GridWidth + 0); // First column
-	}
-	DefinedIncomingRoutes.Add(Route2);
-
-	// Route 3 (Bottom edge)
-	TArray<int32> Route3;
-	for (int32 X = GridWidth - 1; X >= 0; --X) // From right to left
-	{
-		Route3.Add((GridHeight - 1) * GridWidth + X); // Last row
-	}
-	DefinedIncomingRoutes.Add(Route3);
-
-	// Route 4 (Right edge)
-	TArray<int32> Route4;
-	for (int32 Y = GridHeight - 1; Y >= 0; --Y) // From bottom to top
-	{
-		Route4.Add(Y * GridWidth + (GridWidth - 1)); // Last column
-	}
-	DefinedIncomingRoutes.Add(Route4);
-}
-
 void ATileSpawner::SpawnIncomingRoutes()
 {
 	if (!EnemyIncomingRouteClass)
@@ -127,9 +87,10 @@ void ATileSpawner::SpawnIncomingRoutes()
 	
 	SpawnedEnemyRoutes.Empty(); 
 
-	for (int32 RouteIndex = 0; RouteIndex < DefinedIncomingRoutes.Num(); ++RouteIndex)
+	for (int32 RouteIndex = 0; RouteIndex < CustomIncomingRoutes.Num(); ++RouteIndex)
 	{
-		const TArray<int32>& CurrentRouteIndices = DefinedIncomingRoutes[RouteIndex];
+		const FIncomingRouteDefinition& CurrentRouteDefinition = CustomIncomingRoutes[RouteIndex];
+		const TArray<int32>& CurrentRouteIndices = CurrentRouteDefinition.TileIndices;
 		TArray<FVector> CurrentRouteWorldLocations;
 
 		for (const int32 TileIndex : CurrentRouteIndices)
