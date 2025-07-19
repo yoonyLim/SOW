@@ -6,6 +6,11 @@
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
 #include "BTT_FollowIncomingRoute.generated.h"
 
+namespace EPathFollowingResult
+{
+	enum Type : int;
+}
+
 struct FPathFollowingResult;
 /**
  * 
@@ -17,12 +22,17 @@ class SOW_API UBTT_FollowIncomingRoute : public UBTTask_BlackboardBase
 
 	UPROPERTY()
 	AAIController* CachedController;
+
+	UPROPERTY()
+	UBehaviorTreeComponent* CachedOwnerComp;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Navigation", meta = (AllowPrivateAccess = "true"))
-	float AcceptanceRadius = 100.f;
+	float AcceptanceRadius = 50.f;
 
 public:
 	explicit UBTT_FollowIncomingRoute(FObjectInitializer const& ObjectInitializer);
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
-	virtual void OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result);
+
+	UFUNCTION()
+	virtual void OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result);
 };

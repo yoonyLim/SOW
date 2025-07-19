@@ -39,6 +39,8 @@ class SOW_API ASOWCharacterEnemyBase : public ASOWCharacter, public IEnemyAction
 
 	void OnHealthChanged(const FOnAttributeChangeData& Data);
 
+	AEnemyIncomingRoute* FindClosestIncomingRoute() const;
+
 public:
 	// Sets default values for this character's properties
 	ASOWCharacterEnemyBase();
@@ -60,9 +62,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
 	bool bShouldKeepHealthbarOn = true;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Incoming Route", meta = (ExposeOnSpawn = true))
-	AEnemyIncomingRoute* IncomingRoute;
 
 protected:
 	// Called when the game starts or when spawned
