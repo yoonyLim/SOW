@@ -106,6 +106,10 @@ private:
 	UFUNCTION()
 	void OnGameplayEffectRemoved(const FActiveGameplayEffect& Effect);
 
+
+	UFUNCTION()
+	void OnGameplayTagChanged(const FGameplayTag Tag, int32 NewCount);
+
 	UFUNCTION(BlueprintCallable)
 	void GetModifiedAttributesByGameplayEffects(FEffectOrientedTurretAttribute& BuffData, FEffectOrientedTurretAttribute& DebuffData);
 

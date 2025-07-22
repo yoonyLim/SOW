@@ -31,7 +31,8 @@ void ATileSpawner::BeginPlay()
 			}
 			
 			FRotator Rotation = FRotator(0.0f, 0.0f, 0.0f);
-			GetWorld()->SpawnActor<AActor>(GridTiles[Index], SpawnLocation, Rotation);
+			AActor* Spawned = GetWorld()->SpawnActor<AActor>(GridTiles[Index], SpawnLocation, Rotation);
+			SpawnedTileActors.Add(Spawned);
 		}
 	}
 	const FVector Center = SOWTilePlacementHelper::GetTileWorldPosition((GridWidth - 1) / 2.0f, (GridHeight - 1) / 2.0f, TileWidth, TileHeight);

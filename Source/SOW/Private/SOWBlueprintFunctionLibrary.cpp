@@ -101,3 +101,12 @@ bool USOWBlueprintFunctionLibrary::IsTarget(ETurretTargetSelectionPolicy OwnerPo
         return false;
     }
 }
+
+AActor* USOWBlueprintFunctionLibrary::GetOwnerActorFromGameplayEffectSpec(const FGameplayEffectSpec& GESpec)
+{
+    //if (GESpec) return;
+
+    AActor* SourceActor = GESpec.GetContext().GetOriginalInstigator();
+
+    return SourceActor;
+}

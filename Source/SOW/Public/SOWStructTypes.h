@@ -12,7 +12,6 @@
 
 class ASOWCharacterTurretBase;
 class ATurretProjectileBase;
-class UNiagaraSystem;
 /**
  * 
  */
@@ -300,63 +299,16 @@ struct FMagicSpell : public FTableRowBase
 	FText DisplayName;
 };
 
-
 USTRUCT(BlueprintType)
-struct FSkillData : public FTableRowBase
-{
+struct FBuffInfo : public FTableRowBase {
 	GENERATED_BODY()
 
-	UPROPERTY(EditDefaultsOnly)
-	FName SkillID;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FGameplayTag BuffTag;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Skill")
-	FGameplayTag SkillElementTag;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UTexture2D* BuffImage;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Skill")
-	EPassiveSkillTrigger TriggerType;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Skill")
-	ESkillTargetType TargetType;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Skill")
-	ESkillEffectType EffectType;
-
-	/* 스킬 활성화 시 부여될 게임플레이 태그 */
-	UPROPERTY(EditDefaultsOnly, Category = "Skill")
-	FGameplayTag SkillStateTag;
-
-	/* 선행 스킬 ID */
-	UPROPERTY(EditDefaultsOnly, Category = "Skill")
-	FName RequiredSkill;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Skill")
-	int32 RequiredCurrencyAmount = 0;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Skill")
-	FText SkillDescription;
-
-	/* Trigger Type 별 meta data */
-	/* In Overlapping Influence Zone 타입에 필요한 데이터 */
-	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "TriggerType==EPassiveSkillTrigger::InOverlappingInfluenceZone"));
-	uint8 ZoneNum; // 중복 범위 수
-
-	/* Effect Type 별 meta data */
-	/* Attribute Modifier 타입 스킬에 필요한 데이터 */
-	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "EffectType==ESkillEffectType::AttributeModifier"));
-	FGameplayAttribute TargetAttribute;
-
-	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "EffectType==ESkillEffectType::AttributeModifier"));
-	float ModifierValue = 0.f;
-
-	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "EffectType==ESkillEffectType::AttributeModifier"))
-	TEnumAsByte<EGameplayModOp::Type> ModifierOp = EGameplayModOp::Additive;
-
-	/* CustomScript 타입 스킬에 필요한 데이터 */
-	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "EffectType==ESkillEffectType::CustomScript"), Category = "Logic Driven")
-	TSubclassOf<UGameplayAbility> GameplayAbilityClass;
-
-	/* CircleUpgrade 타입 스킬에 필요한 데이터 */
-	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "EffectType==ESkillEffectType::CircleUpgrade"), Category = "CircleUpgrade")
-	uint8 CircleLevel;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString BuffDescription;
 };
-

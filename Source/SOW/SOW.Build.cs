@@ -24,9 +24,8 @@ public class SOW : ModuleRules
 			"UMG",
 			"Slate", // Added by Hjy for UI
 			"SlateCore", // Added by Hjy for UI
-			"Niagara", // Added by Hjy for VFX
-			"NiagaraCore",
-            "NiagaraShader",
+			"Niagara", // Added by Pgh for projectile effect
+			"NiagaraShader" // Added by Pgh for projectile effect
         });
 	}
 }

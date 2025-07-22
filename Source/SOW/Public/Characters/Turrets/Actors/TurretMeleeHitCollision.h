@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "SOWEnumTypes.h"
+#include "GameplayEffectTypes.h"
 #include "GameFramework/Actor.h"
 #include "TurretMeleeHitCollision.generated.h"
 
@@ -33,6 +34,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Turret|Combat", meta = (ExposeOnSpawn = true))
 	ETurretTargetSelectionPolicy OwnerPolicy;							// What the turret should target
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile|Combat", meta = (ExposeOnSpawn = true))
+	FGameplayEffectSpecHandle OwnerDamageEffectSpecHandle;		// Apply the owner turret's damage specs
 			
 private:
 
