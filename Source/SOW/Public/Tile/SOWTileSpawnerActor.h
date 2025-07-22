@@ -2,10 +2,37 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "SOWTileSpawnerActor.generated.h"
+class AEnemyIncomingRoute;
+
+USTRUCT(BlueprintType)
+struct FIncomingRouteDefinition
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Route Definition")
+	TArray<int32> TileIndices;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Route Definition")
+	FString RouteName;
+
+	FIncomingRouteDefinition() : RouteName(TEXT("New Route")) {}
+};
+
 UCLASS()
 class SOW_API ATileSpawner : public AActor
 {
 	GENERATED_BODY()
+
+	TMap<int32, FVector> SpawnedTileLocations;
+
+	UPROPERTY()
+	TArray<AEnemyIncomingRoute*> SpawnedEnemyRoutes;
+	
+	void SpawnIncomingRoutes();
+
+protected:
+	virtual void BeginPlay() override;
 	
 public:
 	UPROPERTY(EditAnywhere)
@@ -27,8 +54,18 @@ public:
 	float TileWidth = 124.5f;
 	
 	UPROPERTY(EditAnywhere)
-	float TileHeight = 124.5f;
+	float TileHeight = 124.5ff;
+
+	UPROPERTY(EditAnywhere)
+	TArray<int32> EnemySpawnerIndexInOrder;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AEnemyIncomingRoute> EnemyIncomingRouteClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tile Spawner|Routes Configuration", meta = (TitleProperty = "RouteName"))
+	TArray<FIncomingRouteDefinition> CustomIncomingRoutes;
 	
-protected:
-	virtual void BeginPlay() override;
+	TArray<AEnemyIncomingRoute*> GetSpawnedEnemyRoutes() const;
+
+	const TMap<int32, FVector>& GetSpawnedTileLocations() const { return SpawnedTileLocations; }
 };
