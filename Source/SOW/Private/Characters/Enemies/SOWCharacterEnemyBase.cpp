@@ -55,7 +55,7 @@ ASOWCharacterEnemyBase::ASOWCharacterEnemyBase()
 		GetMesh()->SetOverlayMaterial(OverlayMat.Object);
 
 	// Set Incoming Route
-	GetEnemyIncomingRouteComponent()->SetIncomingRoute(FindClosestIncomingRoute());
+	// GetEnemyIncomingRouteComponent()->SetIncomingRoute(FindClosestIncomingRoute());
 }
 
 
@@ -78,10 +78,8 @@ void ASOWCharacterEnemyBase::BeginPlay()
 		DeathAnimation = EnemyAttributesData->DeathAnimation;
 		AttackAnimation = EnemyAttributesData->AttackAnimation;
 
-		AIController = Cast<AEnemyBaseAIController>(GetController());
-		
-		if (AIController)
-			AIController->InitializeBlackBoard(EnemyAttributesData->AttackRadius, EnemyAttributesData->AttackSpeed);
+		AttackRadius = EnemyAttributesData->AttackRadius;
+		AttackSpeed = EnemyAttributesData->AttackSpeed;
 	}
 
 	// Set up HealthBar Widget
@@ -149,6 +147,12 @@ void ASOWCharacterEnemyBase::OnHealthChanged(const FOnAttributeChangeData& Data)
 		// GetMesh()->GetAnimInstance()->Montage_SetBlendingOutDelegate(OnHitMontageEnded); // montage interrupted
 		// GetMesh()->GetAnimInstance()->Montage_SetEndDelegate(OnHitMontageEnded); // montage ended
 	}
+}
+
+void ASOWCharacterEnemyBase::SetAIController(AEnemyBaseAIController* NewAIController)
+{
+	AIController = NewAIController;
+	AIController->InitializeBlackBoard(AttackRadius, AttackSpeed);
 }
 
 AEnemyIncomingRoute* ASOWCharacterEnemyBase::FindClosestIncomingRoute() const

@@ -15,17 +15,15 @@ class SOW_API UEnemyIncomingRouteComponent : public UActorComponent
 	GENERATED_BODY()
 
 	UPROPERTY()
-	AEnemyIncomingRoute* IncomingRoute;
+	AEnemyIncomingRoute* EnemyIncomingRoute;
 
 	int IncomingRouteIndex = 0;
 
 public:
-	// Sets default values for this component's properties
-	UEnemyIncomingRouteComponent();
-
-public:
+	UFUNCTION(BlueprintCallable)
 	void SetIncomingRoute(AEnemyIncomingRoute* IncomingRoute);
+	
 	bool IncrementIncomingRouteIndex(); // return true if reached the end to freely head toward the core rune
 	FVector GetCurrentIndexPosition() const;
-	AEnemyIncomingRoute* GetIncomingRoute() const { return IncomingRoute; };
+	AEnemyIncomingRoute* GetIncomingRoute() const { return EnemyIncomingRoute; };
 };

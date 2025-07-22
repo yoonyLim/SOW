@@ -51,7 +51,7 @@ void AEnemyBaseAIController::OnTargetSighted(AActor* SeenTarget, FAIStimulus con
 	if (TargetType == ESOWCharacterType::Player || TargetType == ESOWCharacterType::Turret)
 	{
 		GetBlackboardComponent()->SetValueAsObject("AttackTarget", SeenTarget);
-		UpdateCurrentState(EEnemyStates::Attacking);
+		// UpdateCurrentState(EEnemyStates::Attacking);
 	}
 }
 
@@ -67,12 +67,12 @@ void AEnemyBaseAIController::OnPossess(APawn* PossessedPawn)
 			UseBlackboard(BehaviorTree->BlackboardAsset, Bboard);
 			Blackboard = Bboard; // "Blackboard" is an already existing variable name in AAIController class
 
-			AActor* CoreRune = UGameplayStatics::GetActorOfClass(GetWorld(), ASOWCharacterCoreRune::StaticClass());
+			Enemy->SetAIController(this);
 
-			if (CoreRune)
+			if (AActor* CoreRune = UGameplayStatics::GetActorOfClass(GetWorld(), ASOWCharacterCoreRune::StaticClass()))
 				GetBlackboardComponent()->SetValueAsObject("AttackTarget", CoreRune);
 			
-			UpdateCurrentState(EEnemyStates::Attacking);
+			UpdateCurrentState(EEnemyStates::FollowingIncomingRoute);
 			
 			RunBehaviorTree(BehaviorTree);
 		}

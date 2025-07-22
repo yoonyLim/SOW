@@ -27,12 +27,12 @@ class SOW_API UBTT_FollowIncomingRoute : public UBTTask_BlackboardBase
 	UBehaviorTreeComponent* CachedOwnerComp;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Navigation", meta = (AllowPrivateAccess = "true"))
-	float AcceptanceRadius = 50.f;
+	float AcceptanceRadius = 100.f;
 
 public:
 	explicit UBTT_FollowIncomingRoute(FObjectInitializer const& ObjectInitializer);
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
-	UFUNCTION()
-	virtual void OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result);
+	/*UFUNCTION()
+	virtual void OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result);*/
 };

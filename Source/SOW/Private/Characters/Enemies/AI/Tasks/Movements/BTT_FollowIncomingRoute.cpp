@@ -3,6 +3,7 @@
 
 #include "Characters/Enemies/AI/Tasks/Movements/BTT_FollowIncomingRoute.h"
 
+#include "BehaviorTree/BlackboardComponent.h"
 #include "Characters/Enemies/SOWCharacterEnemyBase.h"
 #include "Characters/Enemies/AI/EnemyBaseAIController.h"
 #include "Components/Enemies/EnemyIncomingRouteComponent.h"
@@ -17,12 +18,24 @@ EBTNodeResult::Type UBTT_FollowIncomingRoute::ExecuteTask(UBehaviorTreeComponent
 {
 	if (ASOWCharacterEnemyBase* const Enemy = Cast<ASOWCharacterEnemyBase>(OwnerComp.GetAIOwner()->GetCharacter()))
 	{
-		CachedOwnerComp = &OwnerComp;
+		FVector TargetLocation = Enemy->GetEnemyIncomingRouteComponent()->GetCurrentIndexPosition();
+		OwnerComp.GetBlackboardComponent()->SetValueAsVector("TargetLocation", TargetLocation);
+
+		if (Enemy->GetEnemyIncomingRouteComponent()->IncrementIncomingRouteIndex())
+		{
+			Enemy->GetAIController()->UpdateCurrentState(EEnemyStates::Attacking);
+		}
+
+		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+		return EBTNodeResult::Succeeded;	
+		
+		/* CachedOwnerComp = &OwnerComp;
 		CachedController = OwnerComp.GetAIOwner();
 		
 		AEnemyIncomingRoute* IncomingRoute = Enemy->GetEnemyIncomingRouteComponent()->GetIncomingRoute();
 
 		FVector TargetLocation = Enemy->GetEnemyIncomingRouteComponent()->GetCurrentIndexPosition();
+		UE_LOG(LogTemp, Warning, TEXT("UBTT_FollowIncomingRoute: Moving to TargetLocation: %s"), *TargetLocation.ToString());
 
 		FAIMoveRequest MoveReq;
 		MoveReq.SetGoalLocation(TargetLocation);
@@ -45,7 +58,7 @@ EBTNodeResult::Type UBTT_FollowIncomingRoute::ExecuteTask(UBehaviorTreeComponent
 			return EBTNodeResult::Failed;
 		}
 
-		/*if (MoveRes.Code == EPathFollowingRequestResult::RequestSuccessful)
+		if (MoveRes.Code == EPathFollowingRequestResult::RequestSuccessful)
 		{
 			// OwnerComp.GetAIOwner()->ReceiveMoveCompleted.AddUObejct(this, &UBTT_FollowIncomingRoute::OnMoveCompleted);
 		}*/
@@ -54,7 +67,7 @@ EBTNodeResult::Type UBTT_FollowIncomingRoute::ExecuteTask(UBehaviorTreeComponent
 	return EBTNodeResult::Failed;
 }
 
-void UBTT_FollowIncomingRoute::OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result)
+/*void UBTT_FollowIncomingRoute::OnMoveCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result)
 {
 	// Ensure we have the owner component
 	UBehaviorTreeComponent* OwnerComp = CachedOwnerComp;
@@ -102,4 +115,4 @@ void UBTT_FollowIncomingRoute::OnMoveCompleted(FAIRequestID RequestID, EPathFoll
 		UE_LOG(LogTemp, Warning, TEXT("UBTT_FollowIncomingRoute: Move to point failed or was aborted. Reason: %s"), *UEnum::GetValueAsString(Result)); // Fixed logging
 		FinishLatentTask(*OwnerComp, EBTNodeResult::Failed); // Inform BT that task failed
 	}
-}
+}*/

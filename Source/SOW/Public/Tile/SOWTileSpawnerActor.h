@@ -51,6 +51,9 @@ public:
 	float TileHeight = 249.0f;
 
 	UPROPERTY(EditAnywhere)
+	TArray<int32> EnemySpawnerIndexInOrder;
+
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<AEnemyIncomingRoute> EnemyIncomingRouteClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tile Spawner|Routes Configuration", meta = (TitleProperty = "RouteName"))

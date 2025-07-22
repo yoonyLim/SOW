@@ -4,6 +4,7 @@
 #include "NavigationSystem.h"
 #include "NavMesh/NavMeshBoundsVolume.h"
 #include "EngineUtils.h"
+#include "Interface/GridTileInterface.h"
 #include "Utilities/EnemyIncomingRoute.h"
 
 void ATileSpawner::BeginPlay()
@@ -12,6 +13,8 @@ void ATileSpawner::BeginPlay()
 
 	SpawnedTileLocations.Empty();
 	SpawnedEnemyRoutes.Empty();
+
+	int32 EnemySpawnerIndexToSpawn = 0;
 
 	for (int32 X = 0; X < GridWidth; ++X)
 	{
@@ -32,11 +35,25 @@ void ATileSpawner::BeginPlay()
 			}
 			
 			FRotator Rotation = FRotator(0.0f, 0.0f, 0.0f);
-			
-			AActor* SpawnedTile = GetWorld()->SpawnActor<AActor>(GridTiles[Index], SpawnLocation, Rotation);
 
-			if (SpawnedTile)
+			if (AActor* SpawnedTile = GetWorld()->SpawnActor<AActor>(GridTiles[Index], SpawnLocation, Rotation))
+			{
 				SpawnedTileLocations.Add(Index, SpawnLocation);
+
+				if (SpawnedTile->Implements<UGridTileInterface>())
+				{
+					if (EnemySpawnerIndexToSpawn < EnemySpawnerIndexInOrder.Num() && GridTiles[Index]->GetName().Contains(TEXT("Enemy")))
+					{
+						IGridTileInterface::Execute_SetTileEnemySpawnerIndex(SpawnedTile, EnemySpawnerIndexInOrder[EnemySpawnerIndexToSpawn]); // Call the interface function
+						// UE_LOG(LogTemp, Error, TEXT("Enemy Spawner '%d' set."), EnemySpawnerIndexInOrder[EnemySpawnerIndexToSpawn]);
+						EnemySpawnerIndexToSpawn++;
+					}
+					else
+					{
+						UE_LOG(LogTemp, Error, TEXT("Enemy Spawner failed to set."));
+					}
+				}
+			}
 		}
 	}
 
