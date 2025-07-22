@@ -9,6 +9,7 @@
 class UUSkillManager;
 class UGlobalCurrencyManager;
 class UOneTimeCurrencyManager;
+class USummonManager;
 class UDataTable;
 
 /**
@@ -30,6 +31,9 @@ public:
     UPROPERTY(BlueprintReadOnly)
     TObjectPtr<UOneTimeCurrencyManager> OneTimeCurrencyManager;
 
+    UPROPERTY(BlueprintReadOnly)
+    TObjectPtr<USummonManager> SummonManager;
+
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Skill")
     TObjectPtr<UDataTable> SkillDataTable;
 
@@ -38,6 +42,9 @@ public:
 
     UFUNCTION(BlueprintCallable)
     UUSkillManager* GetSkillManager() { return SkillManager; }
+
+    UFUNCTION(BlueprintCallable)
+    USummonManager* GetSummonManager() { return SummonManager; }
 
     UFUNCTION(BlueprintCallable)
     UGlobalCurrencyManager* GetGlobalCurrencyManager() { return GlobalCurrencyManager; }

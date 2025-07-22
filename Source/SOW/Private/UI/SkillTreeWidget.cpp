@@ -24,7 +24,7 @@ void USkillTreeWidget::NativeConstruct()
 	}
 }
 
-void USkillTreeWidget::UpdateCurrency(int32 NewCurrency, ECurrencyType CurrencyType)
+void USkillTreeWidget::UpdateCurrency(int32 NewCurrency, EElementalType CurrencyType)
 {
 	if (CurrencyType == ElementalType)
 	{

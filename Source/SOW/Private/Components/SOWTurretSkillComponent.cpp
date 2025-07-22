@@ -86,6 +86,8 @@ FGameplayTag USOWTurretSkillComponent::GetElementTagFromOwner()
 		break;
 	}
 
+	UE_LOG(LogTemp, Error, TEXT("%s"), *BaseElementStr);
+
 	return FGameplayTag::RequestGameplayTag(FName(*BaseElementStr));
 }
 

@@ -6,6 +6,7 @@
 #include "Manager/USkillManager.h"
 #include "Manager/GlobalCurrencyManager.h"
 #include "Manager/OneTimeCurrencyManager.h"
+#include "Manager/SummonManager.h"
 #include "UObject/ConstructorHelpers.h"
 
 void USOWGameInstance::Init()
@@ -27,4 +28,11 @@ void USOWGameInstance::Init()
     }
 
     OneTimeCurrencyManager = NewObject<UOneTimeCurrencyManager>(this);
+
+    SummonManager = NewObject<USummonManager>(this);
+
+    if (SummonManager)
+    {
+        SummonManager->Initialize();
+    }
 }

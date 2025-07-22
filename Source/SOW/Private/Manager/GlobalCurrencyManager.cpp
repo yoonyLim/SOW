@@ -6,9 +6,9 @@
 /* Need to fix when build game */
 void UGlobalCurrencyManager::Initialize()
 {
-	for (int32 i = 0; i < static_cast<int32>(ECurrencyType::Max); i++)
+	for (int32 i = 0; i < static_cast<int32>(EElementalType::Max); i++)
 	{
-		ECurrencyType CurrencyType = static_cast<ECurrencyType>(i);
+		EElementalType CurrencyType = static_cast<EElementalType>(i);
 		if (!CurrentCurrency.Contains(CurrencyType))
 		{
 			/* Set All Currency value to 1000 for test */
@@ -17,7 +17,7 @@ void UGlobalCurrencyManager::Initialize()
 	}
 }
 
-bool UGlobalCurrencyManager::AddCurrency(ECurrencyType CurrencyType, int32 Amount)
+bool UGlobalCurrencyManager::AddCurrency(EElementalType CurrencyType, int32 Amount)
 {
 	if (CurrentCurrency.Contains(CurrencyType))
 	{
@@ -31,7 +31,7 @@ bool UGlobalCurrencyManager::AddCurrency(ECurrencyType CurrencyType, int32 Amoun
 	}
 }
 
-bool UGlobalCurrencyManager::SpentCurrency(ECurrencyType CurrencyType, int32 Amount)
+bool UGlobalCurrencyManager::SpentCurrency(EElementalType CurrencyType, int32 Amount)
 {
 	if (CurrentCurrency.Contains(CurrencyType))
 	{

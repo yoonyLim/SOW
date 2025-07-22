@@ -37,12 +37,12 @@ public:
 	UCanvasPanel* PopUpWidget;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Currency")
-	ECurrencyType ElementalType;
+	EElementalType ElementalType;
 
 	UGlobalCurrencyManager* GCM;
 
 	UFUNCTION(BlueprintCallable)
-	void UpdateCurrency(int32 NewCurrency, ECurrencyType CurrencyType);
+	void UpdateCurrency(int32 NewCurrency, EElementalType CurrencyType);
 
 protected:
 	virtual void NativeConstruct();

@@ -71,7 +71,13 @@ void ASOWCharacterTurretBase::PossessedBy(AController* NewController)
 
 	if (TurretSkillComponent)
 	{
+		UE_LOG(LogTemp, Error, TEXT("Fail"));
+
 		TurretSkillComponent->InitializeSkills();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Fail22"));
 	}
 }
 

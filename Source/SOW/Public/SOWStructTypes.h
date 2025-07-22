@@ -352,7 +352,11 @@ struct FSkillData : public FTableRowBase
 	TEnumAsByte<EGameplayModOp::Type> ModifierOp = EGameplayModOp::Additive;
 
 	/* CustomScript 타입 스킬에 필요한 데이터 */
-	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "EffectType==ESkillEffectType::LogicDriven"), Category = "Logic Driven")
+	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "EffectType==ESkillEffectType::CustomScript"), Category = "Logic Driven")
 	TSubclassOf<UGameplayAbility> GameplayAbilityClass;
+
+	/* CircleUpgrade 타입 스킬에 필요한 데이터 */
+	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "EffectType==ESkillEffectType::CircleUpgrade"), Category = "CircleUpgrade")
+	uint8 CircleLevel;
 };
 

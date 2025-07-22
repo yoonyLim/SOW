@@ -7,7 +7,7 @@
 #include "SOWEnumTypes.h"
 #include "GlobalCurrencyManager.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCurrencyChanged, int32, NewCurrency, ECurrencyType, CurrencyType);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCurrencyChanged, int32, NewCurrency, EElementalType, CurrencyType);
 
 /**
  * 
@@ -25,15 +25,15 @@ public:
     FOnCurrencyChanged OnCurrencyChanged;
 
     UFUNCTION(BlueprintCallable, Category = "Currency")
-    int32 GetCurrency(ECurrencyType CurrencyType) const { return CurrentCurrency[CurrencyType]; }
+    int32 GetCurrency(EElementalType CurrencyType) const { return CurrentCurrency[CurrencyType]; }
 
     UFUNCTION(BlueprintCallable, Category = "Currency")
-    bool AddCurrency(ECurrencyType CurrencyType, int32 Amount);
+    bool AddCurrency(EElementalType CurrencyType, int32 Amount);
 
     UFUNCTION(BlueprintCallable, Category = "Currency")
-    bool SpentCurrency(ECurrencyType CurrencyType, int32 Amount);
+    bool SpentCurrency(EElementalType CurrencyType, int32 Amount);
 
 protected:
     UPROPERTY(BlueprintReadOnly, Category = "Currency")
-    TMap<ECurrencyType, int32> CurrentCurrency;
+    TMap<EElementalType, int32> CurrentCurrency;
 };

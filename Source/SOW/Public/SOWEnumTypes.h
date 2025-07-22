@@ -104,21 +104,6 @@ enum class ESkillEffectType : uint8 {
 };
 
 UENUM(BlueprintType)
-enum class ECurrencyType : uint8 {
-	// added by : HYJ
-	Normal,
-	Nature,
-	Elector,
-	Death,
-	Ice,
-	Wave,
-	Divinity,
-	Madness,
-	Flame,
-	Max		UMETA(Hidden),
-};
-
-UENUM(BlueprintType)
 enum class EPassiveSkillTrigger : uint8
 {
 	// addedby : HJY
@@ -143,4 +128,20 @@ enum class ESkillTargetType : uint8
 	Ally,
 	EnemyInRange,
 	AllyInRange,
+};
+
+UENUM(BlueprintType)
+enum class EElementalType : uint8 
+{
+	// added by : HYJ
+	Normal,
+	Nature,
+	Electro,
+	Death,
+	Ice,
+	Wave,
+	Divinity,
+	Madness,
+	Flame,
+	Max		UMETA(Hidden),
 };

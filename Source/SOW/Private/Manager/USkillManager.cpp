@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "SOWGameInstance.h"
 #include "Manager/GlobalCurrencyManager.h"
+#include "Manager/SummonManager.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayEffect.h"
 #include "GameplayEffectExtension.h" 
@@ -51,12 +52,17 @@ bool UUSkillManager::UnlockSkill(const FName& SkillID)
 		FString LastStr;
 		TagString.Split(TEXT("."), nullptr, &LastStr, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
 
-		ECurrencyType CurrencyType = StringToCurrencyType(LastStr);
+		EElementalType CurrencyType = StringToCurrencyType(LastStr);
 
 		if (GCM->GetCurrency(CurrencyType) >= FoundData->RequiredCurrencyAmount)
 		{
 			if (GCM->SpentCurrency(CurrencyType, FoundData->RequiredCurrencyAmount))
 			{
+				if (FoundData->EffectType == ESkillEffectType::CircleUpgrade)
+				{
+					USummonManager* SummonManager = GI->GetSummonManager();
+					SummonManager->SetCircleLevel(FoundData->SkillElementTag, FoundData->CircleLevel);
+				}
 				UE_LOG(LogTemp, Error, TEXT("Success Unlock Skill"));
 
 				TSharedPtr<FSkillData> UnlockedSkill = MakeShared<FSkillData>(*FoundData);
@@ -109,17 +115,17 @@ void UUSkillManager::ApplyPlayerSkillsToTurret(UAbilitySystemComponent* TargetAS
 	
 }
 
-ECurrencyType UUSkillManager::StringToCurrencyType(const FString& InStr)
+EElementalType UUSkillManager::StringToCurrencyType(const FString& InStr)
 {
-	if (InStr.Equals("Nature", ESearchCase::IgnoreCase)) return ECurrencyType::Nature;
-	if (InStr.Equals("Normal", ESearchCase::IgnoreCase)) return ECurrencyType::Normal;
-	if (InStr.Equals("Elector", ESearchCase::IgnoreCase)) return ECurrencyType::Elector;
-	if (InStr.Equals("Ice", ESearchCase::IgnoreCase)) return ECurrencyType::Ice;
-	if (InStr.Equals("Death", ESearchCase::IgnoreCase)) return ECurrencyType::Death;
-	if (InStr.Equals("Wave", ESearchCase::IgnoreCase)) return ECurrencyType::Wave;
-	if (InStr.Equals("Divinity", ESearchCase::IgnoreCase)) return ECurrencyType::Divinity;
-	if (InStr.Equals("Flame", ESearchCase::IgnoreCase)) return ECurrencyType::Flame;
-	if (InStr.Equals("Madness", ESearchCase::IgnoreCase)) return ECurrencyType::Madness;
+	if (InStr.Equals("Nature", ESearchCase::IgnoreCase)) return EElementalType::Nature;
+	if (InStr.Equals("Normal", ESearchCase::IgnoreCase)) return EElementalType::Normal;
+	if (InStr.Equals("Elector", ESearchCase::IgnoreCase)) return EElementalType::Electro;
+	if (InStr.Equals("Ice", ESearchCase::IgnoreCase)) return EElementalType::Ice;
+	if (InStr.Equals("Death", ESearchCase::IgnoreCase)) return EElementalType::Death;
+	if (InStr.Equals("Wave", ESearchCase::IgnoreCase)) return EElementalType::Wave;
+	if (InStr.Equals("Divinity", ESearchCase::IgnoreCase)) return EElementalType::Divinity;
+	if (InStr.Equals("Flame", ESearchCase::IgnoreCase)) return EElementalType::Flame;
+	if (InStr.Equals("Madness", ESearchCase::IgnoreCase)) return EElementalType::Madness;
 
-	return ECurrencyType::Max;
+	return EElementalType::Max;
 }

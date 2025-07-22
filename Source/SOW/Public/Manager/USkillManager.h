@@ -41,6 +41,6 @@ public:
 private:
 	const FSkillData* FindSkillDataByID(const FName& SkillID) const;
 
-	ECurrencyType StringToCurrencyType(const FString& InStr);
+	EElementalType StringToCurrencyType(const FString& InStr);
 };
 
