@@ -34,11 +34,29 @@ void AShadowTileGimmickManager::PickRandomTileAndTransform()
 			int32 TileC = (Y + 1) * Width + X;
 			int32 TileD = (Y + 1) * Width + X + 1;
 
-			if (TileClasses.IsValidIndex(TileD) && TileClasses[TileA] && TileClasses[TileB] && TileClasses[TileC] && TileClasses[TileD] &&
-				Spawned.IsValidIndex(TileD) && Spawned[TileA] && Spawned[TileB] && Spawned[TileC] && Spawned[TileD])
+			if (!(TileClasses.IsValidIndex(TileD) && TileClasses[TileA] && TileClasses[TileB] && TileClasses[TileC] && TileClasses[TileD] &&
+				Spawned.IsValidIndex(TileD) && Spawned[TileA] && Spawned[TileB] && Spawned[TileC] && Spawned[TileD]))
 			{
-				validCoords.Add(FIntPoint(X, Y));
+				continue;
 			}
+			const TArray<TSubclassOf<AActor>> TargetTiles = {
+				TileClasses[TileA],  TileClasses[TileB],  TileClasses[TileC],  TileClasses[TileD]
+			};
+			bool bContainsExcludedName = false;
+			for (const TSubclassOf<AActor> TargetActor : TargetTiles)
+			{
+				const FString ClassName = TargetActor -> GetName();
+				if (ClassName.ToLower().Contains("blank") ||ClassName.ToLower().Contains("2x2"))
+				{
+					bContainsExcludedName = true;
+					break;
+				}
+			}
+			if (bContainsExcludedName)
+			{
+				continue;
+			}
+			validCoords.Add(FIntPoint(X, Y));
 		}
 	}
 
@@ -52,23 +70,24 @@ void AShadowTileGimmickManager::PickRandomTileAndTransform()
 		{Start.X + 1, Start.Y + 1}
 	};
 	TArray<FRevertTileData> RevertTileDataList;
-
+	
 	for (const FIntPoint& Coord : Targets)
 	{
 		const int32 Index = Coord.Y * Width + Coord.X;
 
 		AActor* OldTile = Spawned[Index];
-		TSubclassOf<AActor> OldClass = TileClasses[Index];
+		TSubclassOf<AActor> OldClass = OldTile->GetClass();;
 
 		FVector Location = OldTile->GetActorLocation();
 		FRotator Rotation = OldTile->GetActorRotation();
-
-		OldTile->Destroy();
-
+		
 		TSubclassOf<AActor> Replacement = nullptr;
 
 		ATileBase* OldTileBase = Cast<ATileBase>(OldTile);
 		Replacement = OldTileBase -> ReplacementClass;
+		
+		OldTile->Destroy();
+		
 		
 		if (!Replacement)
 		{
@@ -78,12 +97,10 @@ void AShadowTileGimmickManager::PickRandomTileAndTransform()
 		
 		AActor* NewTile = GetWorld()->SpawnActor<AActor>(Replacement, Location, Rotation);
 		Spawned[Index] = NewTile;
-
-		RevertTileDataList.Add({ Location, Rotation, OldClass });
+		UE_LOG(LogTemp, Log, TEXT("Tile at index %d replaced: %s -> %s"), Index, *OldClass->GetName(), *Replacement->GetName());
+		RevertTileDataList.Add({ Location, Rotation, OldClass, Index});
 	}
 	
-	
-
 	FTimerHandle RevertHandle;
 	GetWorld()->GetTimerManager().SetTimer(
 		RevertHandle,
@@ -95,8 +112,12 @@ void AShadowTileGimmickManager::PickRandomTileAndTransform()
 
 void AShadowTileGimmickManager::RevertTiles(TArray<FRevertTileData> TileList)
 {
+	auto& Spawned = TileSpawnerRef->SpawnedTileActors;
 	for (const FRevertTileData& Data : TileList)
 	{
-		GetWorld()->SpawnActor<AActor>(Data.OriginalClass, Data.Location, Data.Rotation);
+		Spawned[Data.SpawnIndex]->Destroy();
+		AActor* Reverted = GetWorld()->SpawnActor<AActor>(Data.OriginalClass, Data.Location, Data.Rotation);
+		Spawned[Data.SpawnIndex] = Reverted;
+		UE_LOG(LogTemp, Log, TEXT("Tile at index %d reverted back to %s"), Data.SpawnIndex, *Data.OriginalClass->GetName());
 	}
 }

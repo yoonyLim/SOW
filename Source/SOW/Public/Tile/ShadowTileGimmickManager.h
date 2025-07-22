@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "TileBase.h"
+#include "Tile/SOWTileSpawnerActor.h"
 #include "GameFramework/Actor.h"
 #include "ShadowTileGimmickManager.generated.h"
 
@@ -15,6 +16,7 @@ struct FRevertTileData
 	FVector Location;
 	FRotator Rotation;
 	TSubclassOf<AActor> OriginalClass;
+	int32 SpawnIndex;
 };
 
 UCLASS()
