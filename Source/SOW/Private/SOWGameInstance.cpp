@@ -4,6 +4,8 @@
 #include "SOWGameInstance.h"
 #include "Engine/DataTable.h"
 #include "Manager/USkillManager.h"
+#include "Manager/GlobalCurrencyManager.h"
+#include "Manager/OneTimeCurrencyManager.h"
 #include "UObject/ConstructorHelpers.h"
 
 void USOWGameInstance::Init()
@@ -16,4 +18,13 @@ void USOWGameInstance::Init()
     {
         SkillManager->Initialize(SkillDataTable);
     }
+
+    GlobalCurrencyManager = NewObject<UGlobalCurrencyManager>(this);
+
+    if (GlobalCurrencyManager)
+    {
+        GlobalCurrencyManager->Initialize();
+    }
+
+    OneTimeCurrencyManager = NewObject<UOneTimeCurrencyManager>(this);
 }

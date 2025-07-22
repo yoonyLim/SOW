@@ -100,6 +100,47 @@ enum class ESkillEffectType : uint8 {
 	// Check how the skill acts
 	CircleUpgrade				UMETA(DisplayName = "Circle Upgrade"),
 	AttributeModifier			UMETA(DisplayName = "Attribute Modifier"),
-	DamageFormulaAdjustment		UMETA(DisplayName = "Damage Formula Adjustment"),
 	CustomScript				UMETA(DisplayName = "CustomScript"),
+};
+
+UENUM(BlueprintType)
+enum class ECurrencyType : uint8 {
+	// added by : HYJ
+	Normal,
+	Nature,
+	Elector,
+	Death,
+	Ice,
+	Wave,
+	Divinity,
+	Madness,
+	Flame,
+	Max		UMETA(Hidden),
+};
+
+UENUM(BlueprintType)
+enum class EPassiveSkillTrigger : uint8
+{
+	// addedby : HJY
+	// Check the skill activation conditions
+	None,
+	OnTurretSpawn,
+	OnWaveStart,
+	InOverlappingInfluenceZone,
+
+	/* Nature Turret */
+	InForestAreat,
+};
+
+UENUM(BlueprintType)
+enum class ESkillTargetType : uint8
+{
+	// addedby : HJY
+	// Check the type of skill applied to
+	None, 
+	Self,
+	Enemy,
+	Ally,
+	EnemyInRange,
+	AllyInRange,
 };

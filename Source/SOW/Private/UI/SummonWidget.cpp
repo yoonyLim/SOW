@@ -52,12 +52,13 @@ void USummonWidget::NativeConstruct()
 		UE_LOG(LogTemp, Error, TEXT("Failed to load Magic Spell DataTable"));
 	}
 
-	SpellButtonArray = { BTN_FirstSpell, BTN_SecondSpell, BTN_ThirdSpell, BTN_FourthSpell };
+	SpellButtonArray = { BTN_FirstSpell, BTN_SecondSpell, BTN_ThirdSpell, BTN_FourthSpell, BTN_FifthSpell };
 
 	if (BTN_FirstSpell) BTN_FirstSpell->OnClicked.AddDynamic(this, &USummonWidget::HandleButtonClicked0);
 	if (BTN_SecondSpell) BTN_SecondSpell->OnClicked.AddDynamic(this, &USummonWidget::HandleButtonClicked1);
 	if (BTN_ThirdSpell) BTN_ThirdSpell->OnClicked.AddDynamic(this, &USummonWidget::HandleButtonClicked2);
 	if (BTN_FourthSpell) BTN_FourthSpell->OnClicked.AddDynamic(this, &USummonWidget::HandleButtonClicked3);
+	if (BTN_FifthSpell) BTN_FourthSpell->OnClicked.AddDynamic(this, &USummonWidget::HandleButtonClicked4);
 
 	SetPercent();
 	SetImage();

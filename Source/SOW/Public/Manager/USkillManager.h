@@ -6,8 +6,11 @@
 #include "UObject/NoExportTypes.h"
 #include "SOWStructTypes.h"
 #include "SOWEnumTypes.h"
+#include "Templates/SharedPointer.h"
 #include "GameplayTagContainer.h"
 #include "USkillManager.generated.h"
+
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTryUnlockSkill, )
 
 /**
  * 
@@ -22,23 +25,22 @@ public:
 
 	bool UnlockSkill(const FName& SkillID);
 
+	/* 특정 스킬이 해금 되었는지 확인하는 함수 */
 	bool IsSkillUnlocked(const FName& SkillID) const;
 
-	TArray<FSkillData> GetUnlockedSkillsByElement(FGameplayTag ElementTag) const;
+	TArray<TSharedPtr<FSkillData>> GetUnlockedSkillsByElement(FGameplayTag ElementTag) const;
 
-	/* 입력 Tag의 스킬이 해금 되었는지 확인하는 함수 */
-	bool HasUnlockedSkillWithTag(FGameplayTag Tag) const;
-
-	/** 게임 시작 시 플레이어에게 GrantTag 일괄 부여 */
-	void GrantTagsToPlayer(AActor* Player, const TArray<FGameplayTag>& SelectedElements);
-
+	UFUNCTION(BlueprintCallable)
+	void ApplyPlayerSkillsToTurret(UAbilitySystemComponent* TargetASC, FGameplayTag ElementTag);
 
 	UPROPERTY(BlueprintReadWrite)
 	UDataTable* SkillDataTable;
 
-	UPROPERTY(BlueprintReadWrite)
-	TArray<FSkillData> UnlockedSkillMap;
+	TArray<TSharedPtr<FSkillData>> UnlockedSkillList;
 
 private:
 	const FSkillData* FindSkillDataByID(const FName& SkillID) const;
+
+	ECurrencyType StringToCurrencyType(const FString& InStr);
 };
+

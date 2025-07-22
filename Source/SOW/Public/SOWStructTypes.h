@@ -300,6 +300,7 @@ struct FMagicSpell : public FTableRowBase
 	FText DisplayName;
 };
 
+
 USTRUCT(BlueprintType)
 struct FSkillData : public FTableRowBase
 {
@@ -312,15 +313,21 @@ struct FSkillData : public FTableRowBase
 	FGameplayTag SkillElementTag;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Skill")
+	EPassiveSkillTrigger TriggerType;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Skill")
+	ESkillTargetType TargetType;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Skill")
 	ESkillEffectType EffectType;
 
 	/* 스킬 활성화 시 부여될 게임플레이 태그 */
 	UPROPERTY(EditDefaultsOnly, Category = "Skill")
-	FGameplayTag GrantTag;
+	FGameplayTag SkillStateTag;
 
 	/* 선행 스킬 ID */
 	UPROPERTY(EditDefaultsOnly, Category = "Skill")
-	FGameplayTag RequiredTags;
+	FName RequiredSkill;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Skill")
 	int32 RequiredCurrencyAmount = 0;
@@ -328,6 +335,12 @@ struct FSkillData : public FTableRowBase
 	UPROPERTY(EditDefaultsOnly, Category = "Skill")
 	FText SkillDescription;
 
+	/* Trigger Type 별 meta data */
+	/* In Overlapping Influence Zone 타입에 필요한 데이터 */
+	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "TriggerType==EPassiveSkillTrigger::InOverlappingInfluenceZone"));
+	uint8 ZoneNum; // 중복 범위 수
+
+	/* Effect Type 별 meta data */
 	/* Attribute Modifier 타입 스킬에 필요한 데이터 */
 	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "EffectType==ESkillEffectType::AttributeModifier"));
 	FGameplayAttribute TargetAttribute;
@@ -341,13 +354,5 @@ struct FSkillData : public FTableRowBase
 	/* CustomScript 타입 스킬에 필요한 데이터 */
 	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "EffectType==ESkillEffectType::LogicDriven"), Category = "Logic Driven")
 	TSubclassOf<UGameplayAbility> GameplayAbilityClass;
-
-	/* VFX / SFX */
-	UPROPERTY(EditDefaultsOnly, Category = "Effect")
-	TObjectPtr<UNiagaraSystem> VFX = nullptr;
-
-	// Sound Effect
-	UPROPERTY(EditDefaultsOnly, Category = "Effect")
-	TObjectPtr<USoundBase> SFX = nullptr;
 };
 

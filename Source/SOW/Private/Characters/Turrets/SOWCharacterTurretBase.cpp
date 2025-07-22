@@ -12,6 +12,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Components/SOWTurretCombatComponent.h"
 #include "Components/SOWTurretEvolutionComponent.h"
+#include "Components/SOWTurretSkillComponent.h"
 
 #include "Components/WidgetComponent.h"
 #include "Widget/SOWWidgetBase.h"
@@ -29,6 +30,8 @@ ASOWCharacterTurretBase::ASOWCharacterTurretBase()
 	TurretCombatComponent = CreateDefaultSubobject<USOWTurretCombatComponent>(TEXT("TurretCombatComponent"));
 
 	TurretEvolutionComponent = CreateDefaultSubobject<USOWTurretEvolutionComponent>(TEXT("TurretEvolutionComponent"));
+
+	TurretSkillComponent = CreateDefaultSubobject<USOWTurretSkillComponent>(TEXT("TurretSkillComponent"));
 
 	HealthWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthWidgetComponent"));
 	HealthWidgetComponent->SetupAttachment(GetMesh());
@@ -64,6 +67,11 @@ void ASOWCharacterTurretBase::PossessedBy(AController* NewController)
 	if (USOWAbilitySystemComponent* ASC = GetSOWAbilitySystemComponent()) {
 		ASC->OnActiveGameplayEffectAddedDelegateToSelf.AddUObject(this, &ASOWCharacterTurretBase::OnGameplayEffectAdded);
 		ASC->OnAnyGameplayEffectRemovedDelegate().AddUObject(this, &ASOWCharacterTurretBase::OnGameplayEffectRemoved);
+	}
+
+	if (TurretSkillComponent)
+	{
+		TurretSkillComponent->InitializeSkills();
 	}
 }
 
@@ -274,6 +282,13 @@ USOWTurretCombatComponent* ASOWCharacterTurretBase::GetTurretCombatComponent() c
 	checkf(TurretCombatComponent, TEXT("TurretCombatComponent not Found / Check point : SOWCharacterTurretBase.cpp"));
 
 	return TurretCombatComponent;
+}
+
+USOWTurretSkillComponent* ASOWCharacterTurretBase::GetTurretSkillComponent() const
+{
+	checkf(TurretSkillComponent, TEXT("TurretSkillComponent not Found / Check point : SOWCharacterTurretBase.cpp"));
+
+	return TurretSkillComponent;
 }
 
 

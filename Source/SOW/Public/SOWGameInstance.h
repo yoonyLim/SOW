@@ -7,6 +7,8 @@
 #include "SOWGameInstance.generated.h"
 
 class UUSkillManager;
+class UGlobalCurrencyManager;
+class UOneTimeCurrencyManager;
 class UDataTable;
 
 /**
@@ -15,14 +17,31 @@ class UDataTable;
 UCLASS()
 class SOW_API USOWGameInstance : public UGameInstance
 {
-	GENERATED_BODY()
-	
+    GENERATED_BODY()
+    
 public:
-    virtual void Init() override;
 
     UPROPERTY(BlueprintReadOnly)
     TObjectPtr<UUSkillManager> SkillManager;
 
+    UPROPERTY(BlueprintReadOnly)
+    TObjectPtr<UGlobalCurrencyManager> GlobalCurrencyManager;
+
+    UPROPERTY(BlueprintReadOnly)
+    TObjectPtr<UOneTimeCurrencyManager> OneTimeCurrencyManager;
+
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Skill")
     TObjectPtr<UDataTable> SkillDataTable;
+
+public:
+    virtual void Init() override;
+
+    UFUNCTION(BlueprintCallable)
+    UUSkillManager* GetSkillManager() { return SkillManager; }
+
+    UFUNCTION(BlueprintCallable)
+    UGlobalCurrencyManager* GetGlobalCurrencyManager() { return GlobalCurrencyManager; }
+
+    UFUNCTION(BlueprintCallable)
+    UOneTimeCurrencyManager* GetOneTimeCurrencyManager() { return OneTimeCurrencyManager; }
 };

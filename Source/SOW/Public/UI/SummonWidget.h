@@ -59,6 +59,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Summon|Spells", meta = (BindWidget))
 	UButton* BTN_FourthSpell;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Summon|Spells", meta = (BindWidget))
+	UButton* BTN_FifthSpell;
+
 	TArray<UButton*> SpellButtonArray;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Summon", meta = (ExposeOnSpawn))
@@ -121,6 +124,9 @@ private:
 
 	UFUNCTION()
 	void HandleButtonClicked3() { OnIndexedButtonClicked(3); }
+
+	UFUNCTION()
+	void HandleButtonClicked4() { OnIndexedButtonClicked(4); }
 
 	UFUNCTION(BlueprintCallable)
 	void OnIndexedButtonClicked(int32 Index);
