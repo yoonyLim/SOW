@@ -105,6 +105,8 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Element_Flame_Major, "Shared.Element.Flame.Major");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Element_Flame_Minor, "Shared.Element.Flame.Minor");
 
+	UE_DEFINE_GAMEPLAY_TAG(Tile_Forest_Normal, "Tile.Forest.Normal")
+	
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditiveDamage, "Shared.SetByCaller.AdditiveDamage");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_MultipleDamage, "Shared.SetByCaller.MultipleDamage");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditinalDamageRatio_SinAlpha, "Shared.SetByCaller.AdditinalDamageRatio.SinAlpha");
@@ -119,5 +121,5 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(World_Event_WaveStart, "World.Event.WaveStart");
 
 	UE_DEFINE_GAMEPLAY_TAG(Data_ManaCost, "Data.ManaCost");
-	
+
 }

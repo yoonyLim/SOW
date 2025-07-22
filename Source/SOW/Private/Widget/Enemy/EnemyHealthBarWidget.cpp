@@ -3,6 +3,18 @@
 
 #include "Widget/Enemy/EnemyHealthBarWidget.h"
 
+UEnemyHealthBarWidget::UEnemyHealthBarWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+{
+}
+
+void UEnemyHealthBarWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+
+	if (HealthBar->GetPercent() < SecondaryHealthBar->GetPercent())
+		SecondaryHealthBar->SetPercent(FMath::Lerp(SecondaryHealthBar->GetPercent(), HealthBar->GetPercent(), 0.1f));
+}
+
 void UEnemyHealthBarWidget::SetHealthBarPercent(float const Value)
 {
 	HealthBar->SetPercent(Value);
