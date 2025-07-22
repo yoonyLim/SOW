@@ -15,8 +15,6 @@ class SOW_API ATileBase : public AActor
 public:	
 	// Sets default values for this actor's properties
 	ATileBase();
-	UPROPERTY(EditAnywhere)
-	FGameplayTag TileTag;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ATileBase> ReplacementClass;
