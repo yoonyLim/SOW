@@ -38,6 +38,7 @@ void ATileSpawner::BeginPlay()
 
 			if (AActor* SpawnedTile = GetWorld()->SpawnActor<AActor>(GridTiles[Index], SpawnLocation, Rotation))
 			{
+				SpawnedTileActors.Add(SpawnedTile);
 				SpawnedTileLocations.Add(Index, SpawnLocation);
 
 				if (SpawnedTile->Implements<UGridTileInterface>())

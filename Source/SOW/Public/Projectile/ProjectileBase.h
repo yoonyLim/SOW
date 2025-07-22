@@ -12,6 +12,7 @@
 class UStaticMeshComponent;
 class UBoxComponent;
 class UProjectileMovementComponent;
+class UNiagaraComponent;
 
 UCLASS()
 class SOW_API AProjectileBase : public AActor
@@ -43,11 +44,14 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile|Component")
 	UStaticMeshComponent* ProjectileMeshComp;					// Visible mesh, no collision
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile|Component")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Projectile|Component")
 	UBoxComponent* ProjectileHitCollisionComp;					// Real collision detection area
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile|Component")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Projectile|Component")
 	UProjectileMovementComponent* ProjectileMoveComp;			// Dealing with the movement of projectile
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Projectile|Component")
+	UNiagaraComponent* ProjectileFxComp;
 #pragma endregion
 
 
@@ -55,7 +59,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile|Combat", meta = (ExposeOnSpawn = true))
 	ETurretTargetSelectionPolicy OwnerPolicy;					// What the turret should target
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile|Combat", meta = (ExposeOnSpawn = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Projectile|Combat", meta = (ExposeOnSpawn = true))
 	FGameplayEffectSpecHandle OwnerDamageEffectSpecHandle;		// Apply the owner turret's damage specs
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile|Properties", meta = (ExposeOnSpawn = true))
@@ -88,5 +92,5 @@ public:
 
 
 	UFUNCTION(BlueprintCallable)
-	void SendTargetDeadEventToInstigator(AActor* InActor);
+	void SendTargetDeadEventToInstigator(AActor* InCheckingTarget);
 };

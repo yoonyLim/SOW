@@ -14,6 +14,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClickSildeButton, bool, ToLeft);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClickEvolutionButton, EEvolutionType, Type);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEffectAppliedDelegate, FEffectOrientedTurretAttribute, EffectData);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnBuffTagAddOrRemoved);
 /**
  * 
  */
@@ -37,6 +39,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnEffectAppliedDelegate OnEffectRemoved;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnBuffTagAddOrRemoved OnTagChanged;
 
 	UFUNCTION(BlueprintPure)
 	ASOWCharacterTurretBase* GetOwnerTurret() const;

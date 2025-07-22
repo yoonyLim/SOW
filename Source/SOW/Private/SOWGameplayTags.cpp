@@ -12,6 +12,10 @@ namespace SOWGameplayTags
 
 	UE_DEFINE_GAMEPLAY_TAG(Player_Status_Rolling, "Player.Status.Rolling");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Status_Fail_Ability, "Player.Status.Fail.Ability");
+
+	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Restore_Health, "Player.Event.Restore.Health");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Restore_Mana, "Player.Event.Restore.Mana");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Restore_Stamina, "Player.Event.Restore.Stamina")
 	
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Ability_Attack_Melee, "Enemy.Ability.Attack.Melee");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Ability_Attack_Ranged, "Enemy.Ability.Attack.Ranged");
@@ -20,6 +24,24 @@ namespace SOWGameplayTags
 
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Taunted, "Enemy.Status.Taunted");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Poison, "Enemy.Status.Poison");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Taunted, "Enemy.Status.Debuff.Taunted");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Poison, "Enemy.Status.Debuff.Poison");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_SpiderWeb, "Enemy.Status.Debuff.SpiderWeb");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Slow, "Enemy.Status.Debuff.Slow");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Rooted, "Enemy.Status.Debuff.Rooted");
+
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sin_Alpha, "Enemy.Status.Debuff.Sin.Alpha");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sin_Beta, "Enemy.Status.Debuff.Sin.Beta");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sin_Gamma, "Enemy.Status.Debuff.Sin.Gamma");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sin_Delta, "Enemy.Status.Debuff.Sin.Delta");
+
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Confusing, "Enemy.Status.Debuff.Confusing");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Static, "Enemy.Status.Debuff.Static");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sharp, "Enemy.Status.Debuff.Sharp");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Balancing, "Enemy.Status.Debuff.Balancing");
+	
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Event_Confusing, "Enemy.Event.Confusing"); 
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Event_Static, "Enemy.Event.Static");
 	
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_Attack, "Turret.Ability.Attack");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_Attack_Melee, "Turret.Ability.Attack.Melee");
@@ -27,20 +49,23 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_Buff, "Turret.Ability.Buff"); 
 	
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Hoppy, "Turret.Status.Buff.Hoppy");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_SpiderWeb, "Turret.Status.Buff.SpiderWeb");
 
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Debuff_Slow, "Turret.Status.Debuff.Slow");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Debuff_Root, "Turret.Status.Debuff.Root");
 	
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_Attack_Basic, "Turret.Event.Attack.Basic");
-	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_Attack_Double, "Turret.Event.Attack.Double");
-	
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_Attack_Double, "Turret.Event.Attack.Double"); 
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_EffectApplied, "Turret.Event.EffectApplied");
+
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Evolution_Alpha, "Turret.Evolution.Alpha");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Evolution_Beta, "Turret.Evolution.Beta");
 	
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_SetPropByEvo, "Turret.Event.SetPropByEvo"); 
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_TargetCountChanged, "Turret.Event.TargetCountChanged"); 
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_ChangedFixedLocation, "Turret.Event.ChangedFixedLocation");
-	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_ChangedFixedTarget, "Turret.Event.ChangedFixedTarget");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_ChangedFixedTarget, "Turret.Event.ChangedFixedTarget"); 
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_DebuffApplied, "Turret.Event.DebuffApplied");
 
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Ability_Death, "Shared.Ability.Death");
 
@@ -84,8 +109,16 @@ namespace SOWGameplayTags
 	
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditiveDamage, "Shared.SetByCaller.AdditiveDamage");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_MultipleDamage, "Shared.SetByCaller.MultipleDamage");
+	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditinalDamageRatio_SinAlpha, "Shared.SetByCaller.AdditinalDamageRatio.SinAlpha");
+	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditinalDamageRatio_SinBeta, "Shared.SetByCaller.AdditinalDamageRatio.SinBeta");
+	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditinalDamageRatio_SinGamma, "Shared.SetByCaller.AdditinalDamageRatio.SinGamma");
+	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditinalDamageRatio_SinDelta, "Shared.SetByCaller.AdditinalDamageRatio.SinDelta");
+	
+
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditiveBuffValue, "Shared.SetByCaller.AdditiveBuffValue");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_ReductedDamage, "Shared.SetByCaller.ReductedDamage");
+
+	UE_DEFINE_GAMEPLAY_TAG(World_Event_WaveStart, "World.Event.WaveStart");
 
 	UE_DEFINE_GAMEPLAY_TAG(Data_ManaCost, "Data.ManaCost");
 

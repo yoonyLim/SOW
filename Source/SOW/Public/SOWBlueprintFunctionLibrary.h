@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "SOWEnumTypes.h"
+#include "GameplayEffect.h"
 #include "SOWBlueprintFunctionLibrary.generated.h"
 
 class USOWAbilitySystemComponent;
@@ -39,6 +40,9 @@ public:
 	static FName EnumToFName(const T EnumValue);
 
 	static bool IsTarget(ETurretTargetSelectionPolicy OwnerPolicy, ESOWCharacterType TargetType);
+
+	UFUNCTION(BlueprintCallable, Category = "AbilitySystem")
+	static AActor* GetOwnerActorFromGameplayEffectSpec(const FGameplayEffectSpec& GESpec);
 };
 
 template <typename T>
