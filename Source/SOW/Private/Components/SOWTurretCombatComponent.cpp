@@ -28,24 +28,12 @@ void USOWTurretCombatComponent::BeginPlay()
 	CachedOwnerCharacter = Cast<ASOWCharacterTurretBase>(GetOwner());
 	CachedUIInterface = TWeakInterfacePtr<ISOWCharacterUIInterface>(CachedOwnerCharacter);
 
-	bool L_bHasCooldown = (AbilityTagToActivation == SOWGameplayTags::Turret_Ability_Attack);
+	
 
 	if (!TurretSettablePriority.IsEmpty()) {
 		PriorityChange();
 	}
-
-	GetWorld()->GetTimerManager().SetTimer(
-		AttackTimerHandle,
-		this,
-		&USOWTurretCombatComponent::AttackAbilityActivation,
-		L_bHasCooldown ? GetAttackCooldownTimeFromOwner() : 3.f,
-		true,
-		0.1f
-	);
-
-	
-	
-
+	//ActivateTurretFunction();
 
 	USOWTurretUIComponent* UIComponent = CachedUIInterface ->GetTurretUIComponent();
 	if (UIComponent) {
@@ -66,8 +54,6 @@ float USOWTurretCombatComponent::GetAttackCooldownTimeFromOwner() const
 		CooldownBase += ProjectileLivingTime;
 	}
 
-	
-
 	return CooldownBase;
 }
 
@@ -75,16 +61,6 @@ void USOWTurretCombatComponent::ClearTargetDetectionAsDead()
 {
 	GetWorld()->GetTimerManager().ClearTimer(AttackTimerHandle);
 }
-
-//FVector USOWTurretCombatComponent::FindActualTargetLocation()
-//{
-//	if (TurretTargetSelectionPriority == ETurretTargetSelectionPriority::LocationFixed) {
-//		return FixedLocation;
-//	}
-//	else {
-//		return GetSingleAttackTarget()->GetActorLocation();
-//	}
-//}
 
 void USOWTurretCombatComponent::InitTurretProperties(const FTurretPropertyData& Data)
 {
@@ -210,6 +186,29 @@ void USOWTurretCombatComponent::SetNewTargetSelectCount(int32 NewCount)
 	TargetSelectCount = NewCount;
 }
 
+void USOWTurretCombatComponent::ActivateTurretFunction()
+{
+	bool bIsFixedCooldown = (AbilityTagToActivation == SOWGameplayTags::Turret_Ability_Attack);
+
+	const float NewCooldownTime = bIsFixedCooldown ? GetAttackCooldownTimeFromOwner() : 3.f;
+
+	if (M_CachedCooldownTime != NewCooldownTime)
+	{
+		GetWorld()->GetTimerManager().ClearTimer(AttackTimerHandle);
+
+		GetWorld()->GetTimerManager().SetTimer(
+			AttackTimerHandle,
+			this,
+			&USOWTurretCombatComponent::AttackAbilityActivation,
+			NewCooldownTime,
+			true,
+			0.1f
+		);
+
+		M_CachedCooldownTime = NewCooldownTime;
+	}
+}
+
 bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 {
 	// Check all characters within detection range and designate them as attack targets if they are valid targets.
@@ -232,8 +231,6 @@ bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 		L_DetectableActors
 	);
 
-	//UE_LOG(LogTemp, Warning, TEXT("Detect Count : %s"), *FString::FromInt(L_DetectableActors.Num()));
-
 	for (AActor* CurrentTarget : L_DetectableActors) {
 
 		if (!IsActorValidTarget(CurrentTarget)) continue;
@@ -242,13 +239,11 @@ bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 		ESOWCharacterType TargetType = SOWCharacter->GetSOWCharacterType();
 
 		AddActorMatchesTargetingPolicy(CurrentTarget, TargetType);
-
-		//UE_LOG(LogTemp, Warning, TEXT("Target Type : %s"), *USOWBlueprintFunctionLibrary::EnumToFName<ESOWCharacterType>(TargetType).ToString());
 	}
 
-	//UE_LOG(LogTemp, Warning, TEXT("Target Count : %s"), *FString::FromInt(DetectedTargetActors.Num()));
-	UpdateAttackTimer();
-	return !DetectedTargetActors.IsEmpty();
+
+	ActivateTurretFunction(); // -> Reactivate if cooldowntime has been updated.
+	return !DetectedTargetActors.IsEmpty() || TurretTargetSelectionPriority == ETurretTargetSelectionPriority::LocationFixed;
 }
 
 
@@ -419,26 +414,7 @@ void USOWTurretCombatComponent::UpdateAttackTimer()
 {
 	// if attack cooldown has changed from GE or something, apply that time to attack timer
 	// -> clear old timer and recreate timer with new cooldown
-
-	bool bIsFixedCooldown = (AbilityTagToActivation == SOWGameplayTags::Turret_Ability_Attack);
-
-	const float NewCooldownTime = bIsFixedCooldown ? GetAttackCooldownTimeFromOwner() : 3.f;
-
-	if (M_CachedCooldownTime != NewCooldownTime)
-	{
-		GetWorld()->GetTimerManager().ClearTimer(AttackTimerHandle);
-
-		GetWorld()->GetTimerManager().SetTimer(
-			AttackTimerHandle,
-			this,
-			&USOWTurretCombatComponent::AttackAbilityActivation,
-			NewCooldownTime,
-			true,
-			0.1f
-		);
-
-		M_CachedCooldownTime = NewCooldownTime;
-	}
+	ActivateTurretFunction();
 }
 
 void USOWTurretCombatComponent::AddActorMatchesTargetingPolicy(AActor* CurrentActor, ESOWCharacterType Type) {
