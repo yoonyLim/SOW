@@ -18,6 +18,7 @@ void UANS_ToggleHitCollision::NotifyBegin(USkeletalMeshComponent* MeshComp, UAni
 	USOWTurretCombatComponent* OwnerCombatComp = OwnerTurret->GetTurretCombatComponent();
 	if (!OwnerCombatComp) return;
 
+	UE_LOG(LogTemp, Warning, TEXT("Collision Enable"));
 	OwnerCombatComp->GetHitCollision()->ToggleCollision(true);
 }
 
@@ -35,4 +36,6 @@ void UANS_ToggleHitCollision::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimS
 	OwnerCombatComp->GetHitCollision()->ApplyDamageToAllHitTargets();
 
 	OwnerCombatComp->GetHitCollision()->ToggleCollision(false);
+
+	UE_LOG(LogTemp, Warning, TEXT("Collision Disable"));
 }
