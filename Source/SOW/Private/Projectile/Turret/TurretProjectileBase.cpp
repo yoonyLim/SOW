@@ -63,4 +63,12 @@ void ATurretProjectileBase::OnCollisionOut(UPrimitiveComponent* OverlappedCompon
 	BP_PostProjectileOut(OtherActor);
 }
 
+bool ATurretProjectileBase::IsHostileTarget(AActor* Target)
+{
+	if (!Target->Implements<USOWCharacterTypeInterface>()) return false;
+
+	ESOWCharacterType TargetType = Cast<ISOWCharacterTypeInterface>(Target)->GetSOWCharacterType();
+	return USOWBlueprintFunctionLibrary::IsTarget(OwnerPolicy, TargetType);
+}
+
 

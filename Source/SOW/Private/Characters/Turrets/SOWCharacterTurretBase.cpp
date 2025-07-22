@@ -54,6 +54,11 @@ void ASOWCharacterTurretBase::BeginPlay()
 		SettingWidget->InitTurretCreatedWidget(this);
 	}
 
+	AbilitySystemComponent->RegisterGameplayTagEvent(
+		FGameplayTag::RequestGameplayTag(TEXT("State.Stunned")),
+		EGameplayTagEventType::NewOrRemoved
+	).AddUObject(this, &ThisClass::OnGameplayTagChanged);
+
 
 }
 
@@ -160,6 +165,13 @@ void ASOWCharacterTurretBase::OnGameplayEffectRemoved(const FActiveGameplayEffec
 	}
 	if (TurretUIComponent && TurretUIComponent->OnEffectRemoved.IsBound()) {
 		TurretUIComponent->OnEffectRemoved.Broadcast(Data);
+	}
+}
+
+void ASOWCharacterTurretBase::OnGameplayTagChanged(const FGameplayTag Tag, int32 NewCount)
+{
+	if (TurretUIComponent->OnTagChanged.IsBound()) {
+		TurretUIComponent->OnTagChanged.Broadcast();
 	}
 }
 

@@ -103,6 +103,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
 	void SetNewTargetSelectCount(int32 NewCount);
+
+	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
+	void ActivateTurretFunction();
 #pragma endregion
 
 protected:
