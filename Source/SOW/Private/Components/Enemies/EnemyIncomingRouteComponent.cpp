@@ -5,27 +5,16 @@
 
 #include "Utilities/EnemyIncomingRoute.h"
 
-
-// Sets default values for this component's properties
-UEnemyIncomingRouteComponent::UEnemyIncomingRouteComponent()
-{
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
-}
-
 void UEnemyIncomingRouteComponent::SetIncomingRoute(AEnemyIncomingRoute* NewIncomingRoute)
 {
-	IncomingRoute = NewIncomingRoute;
+	EnemyIncomingRoute = NewIncomingRoute;
 }
 
 bool UEnemyIncomingRouteComponent::IncrementIncomingRouteIndex()
 {
 	IncomingRouteIndex += 1;
 
-	if (IncomingRouteIndex >= IncomingRoute->GetNumberOfPoints() - 1)
+	if (IncomingRouteIndex > EnemyIncomingRoute->GetNumberOfPoints() - 1)
 		return true;
 
 	return false;
@@ -33,5 +22,5 @@ bool UEnemyIncomingRouteComponent::IncrementIncomingRouteIndex()
 
 FVector UEnemyIncomingRouteComponent::GetCurrentIndexPosition() const
 {
-	return IncomingRoute->GetCurrentIncomingIndexPosition(IncomingRouteIndex);
+	return EnemyIncomingRoute->GetCurrentIncomingIndexPosition(IncomingRouteIndex);
 }

@@ -39,6 +39,9 @@ class SOW_API ASOWCharacterEnemyBase : public ASOWCharacter, public IEnemyAction
 
 	void OnHealthChanged(const FOnAttributeChangeData& Data);
 
+	float AttackRadius = 0.f;
+	float AttackSpeed = 0.f;
+
 public:
 	// Sets default values for this character's properties
 	ASOWCharacterEnemyBase();
@@ -60,9 +63,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
 	bool bShouldKeepHealthbarOn = true;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Incoming Route", meta = (ExposeOnSpawn = true))
-	AEnemyIncomingRoute* IncomingRoute;
 
 protected:
 	// Called when the game starts or when spawned
@@ -104,7 +104,14 @@ public:
 	// 원거리용 프로퍼티에 대한 Getter - added by song
 	FORCEINLINE TSubclassOf<AActor> GetRangedProjectileClass() const { return RangedProjectileClass; }
 	FORCEINLINE FName GetMuzzleSocketName() const { return MuzzleSocketName; }
+
+	void SetAIController(AEnemyBaseAIController* NewAIController);
+
+	UFUNCTION(BlueprintCallable)
 	UEnemyIncomingRouteComponent* GetEnemyIncomingRouteComponent() const { return EnemyIncomingRouteComponent; };
+
+	UFUNCTION(BlueprintCallable)
+	AEnemyIncomingRoute* FindClosestIncomingRoute() const;
 	
 	virtual void Attack(const ASOWCharacter* TargetActor) override;
 

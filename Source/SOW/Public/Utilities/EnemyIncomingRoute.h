@@ -23,5 +23,6 @@ public:
 public:
 	// Called every frame
 	int GetNumberOfPoints() const;
-	FVector GetCurrentIncomingIndexPosition(int Index);
+	FVector GetCurrentIncomingIndexPosition(const int32 Index) const;
+	void SetSplinePointsFromLocations(const TArray<FVector>& Locations) const;
 };
