@@ -18,6 +18,11 @@ void AShadowTileGimmickManager::BeginPlay()
 
 void AShadowTileGimmickManager::PickRandomTileAndTransform()
 {
+	if (!TileSpawnerRef)
+	{
+		UE_LOG(LogTemp, Error, TEXT("TileSpawnerRef is nullptr! Check if ATileSpawner exists in the level."));
+		return;
+	}
 	const int32 Width = TileSpawnerRef -> GridWidth;
 	const int32 Height = TileSpawnerRef -> GridHeight;
 	const auto& TileClasses = TileSpawnerRef -> GridTiles;
@@ -80,11 +85,16 @@ void AShadowTileGimmickManager::PickRandomTileAndTransform()
 
 		FVector Location = OldTile->GetActorLocation();
 		FRotator Rotation = OldTile->GetActorRotation();
-		
-		TSubclassOf<AActor> Replacement = nullptr;
 
 		ATileBase* OldTileBase = Cast<ATileBase>(OldTile);
-		Replacement = OldTileBase -> ReplacementClass;
+		
+		if (!OldTileBase)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Tile at index %d is not ATileBase. Skipping transformation."), Index);
+			continue;
+		}
+
+		TSubclassOf<AActor> Replacement = OldTileBase->ReplacementClass;
 		
 		OldTile->Destroy();
 		
