@@ -54,7 +54,7 @@ public:
 	float TileWidth = 124.5f;
 	
 	UPROPERTY(EditAnywhere)
-	float TileHeight = 124.5ff;
+	float TileHeight = 124.5f;
 
 	UPROPERTY(EditAnywhere)
 	TArray<int32> EnemySpawnerIndexInOrder;
