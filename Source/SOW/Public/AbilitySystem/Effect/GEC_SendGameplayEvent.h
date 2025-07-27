@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameplayEffectComponent.h"
 #include "SOWGameplayTags.h"
+#include "AbilitySystemBlueprintLibrary.h"
 #include "GEC_SendGameplayEvent.generated.h"
 
 /**
@@ -31,4 +32,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = OnApplication)
 	ESendTarget TargetToSend = ESendTarget::Target;
+
+protected:
+	virtual FGameplayEventData MakeOugingGameplayEventData(FActiveGameplayEffectsContainer& ActiveGEContainer, FGameplayEffectSpec& GESpec, FPredictionKey& PredictionKey) const;
 };
