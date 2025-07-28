@@ -240,10 +240,10 @@ bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 
 		AddActorMatchesTargetingPolicy(CurrentTarget, TargetType);
 	}
-
-
 	ActivateTurretFunction(); // -> Reactivate if cooldowntime has been updated.
-	return !DetectedTargetActors.IsEmpty() || TurretTargetSelectionPriority == ETurretTargetSelectionPriority::LocationFixed;
+	return !DetectedTargetActors.IsEmpty() || 
+		TurretTargetSelectionPriority == ETurretTargetSelectionPriority::LocationFixed || 
+		TurretTargetSelectionPriority == ETurretTargetSelectionPriority::TargetFixed;
 }
 
 
@@ -292,7 +292,7 @@ AActor* USOWTurretCombatComponent::GetSingleAttackTargetOnList(const TArray<AAct
 		FinalTarget = CachedOwnerCharacter;
 		break;
 	case ETurretTargetSelectionPriority::TargetFixed:
-		FinalTarget = FixedTarget;
+		FinalTarget = InTargetList[0];
 		break;
 	default:
 		break;
@@ -303,11 +303,14 @@ AActor* USOWTurretCombatComponent::GetSingleAttackTargetOnList(const TArray<AAct
 
 TArray<AActor*> USOWTurretCombatComponent::GetAllAttackTarget()
 {
-	TArray<AActor*> BaseActorList = DetectedTargetActors;
+	TArray<AActor*> BaseActorList;
 	TArray<AActor*> FinalTargetList;
 
 	if (TurretTargetSelectionPriority == ETurretTargetSelectionPriority::TargetFixed) {
-		return FixedTargetList;
+		BaseActorList += FixedTargetList;
+	}
+	else {
+		BaseActorList += DetectedTargetActors;
 	}
 
 	for (int i = 0; i < TargetSelectCount; i++) {
@@ -316,9 +319,10 @@ TArray<AActor*> USOWTurretCombatComponent::GetAllAttackTarget()
 		AActor* CurrentTarget = GetSingleAttackTargetOnList(BaseActorList);
 		if (!CurrentTarget) break;
 
-		//UE_LOG(LogTemp, Warning, TEXT("Actual Target : %s"), *CurrentTarget->GetActorNameOrLabel());
-		FinalTargetList.AddUnique(CurrentTarget);
-
+		if (FVector::Distance(CurrentTarget->GetActorLocation(), CachedOwnerCharacter->GetActorLocation()) <= CachedOwnerCharacter->GetDetectionRangeRadius()) {
+			FinalTargetList.AddUnique(CurrentTarget);
+		}
+		
 		BaseActorList.Remove(CurrentTarget); // 더 효율적인 제거 방식
 	}
 
@@ -343,8 +347,21 @@ TArray<AActor*> USOWTurretCombatComponent::GetAllDetectedTarget()
 {
 	return DetectedTargetActors;
 }
-void USOWTurretCombatComponent::AddNewFixedLocation(const FVector NewLocation)
+void USOWTurretCombatComponent::AddNewFixedLocation(const FVector NewLocation, ETargetFixErrorType& Error)
 {
+	float Dist = FVector::Distance(NewLocation, CachedOwnerCharacter->GetActorLocation());
+
+	if (Dist > CachedOwnerCharacter->GetDetectionRangeRadius()) {
+		Error = ETargetFixErrorType::OUT_OF_RANGE;
+		return;
+	}
+
+	if (USOWBlueprintFunctionLibrary::DoesActorHasTag(CachedOwnerCharacter, SOWGameplayTags::Shared_Status_Dead)) {
+		Error = ETargetFixErrorType::TURRET_DEAD;
+		return;
+	}
+
+	Error = ETargetFixErrorType::SUCCESS;
 	FixedLocationList.Add(NewLocation);
 }
 void USOWTurretCombatComponent::ClearFixedLocationList()
@@ -352,20 +369,39 @@ void USOWTurretCombatComponent::ClearFixedLocationList()
 	FixedLocationList.Empty();
 }
 
-bool USOWTurretCombatComponent::TryAddNewFixedTarget(AActor* NewTarget)
+bool USOWTurretCombatComponent::TryAddNewFixedTarget(AActor* NewTarget, ETargetFixErrorType& Error)
 {
-	if (!NewTarget || !NewTarget->Implements<USOWCharacterTypeInterface>()) return false;
+	if (USOWBlueprintFunctionLibrary::DoesActorHasTag(CachedOwnerCharacter, SOWGameplayTags::Shared_Status_Dead)) {
+		Error = ETargetFixErrorType::TURRET_DEAD;
+		return false;
+	}
+
+	if (!NewTarget || !NewTarget->Implements<USOWCharacterTypeInterface>()) {
+		Error = ETargetFixErrorType::INVALID_TARGET;
+		return false;
+	} 
 	ISOWCharacterTypeInterface* SOWCharacter = Cast<ISOWCharacterTypeInterface>(NewTarget);
 	ESOWCharacterType TargetType = SOWCharacter->GetSOWCharacterType();
 
-
-
-	bool bIsSuccess = USOWBlueprintFunctionLibrary::IsTarget(TurretTargetSelectionPolicy, TargetType);
-	if (bIsSuccess) {
-		FixedTargetList.AddUnique(NewTarget);
-		CachedOwnerCharacter->BP_BindOnTargetDead(NewTarget);
+	if (CachedOwnerCharacter->GetDetectionRangeRadius() < FVector::Distance(NewTarget->GetActorLocation(), CachedOwnerCharacter->GetActorLocation())) {
+		Error = ETargetFixErrorType::OUT_OF_RANGE;
+		return false;
 	}
-	return bIsSuccess;
+
+	if (!USOWBlueprintFunctionLibrary::IsTarget(TurretTargetSelectionPolicy, TargetType)) {
+		Error = ETargetFixErrorType::INVALID_TARGET;
+		return false;
+	}
+
+	if (USOWBlueprintFunctionLibrary::DoesActorHasTag(NewTarget, SOWGameplayTags::Shared_Status_Dead)) {
+		Error = ETargetFixErrorType::INVALID_TARGET;
+		return false;
+	}
+	
+	FixedTargetList.AddUnique(NewTarget);
+	CachedOwnerCharacter->BP_BindOnTargetDead(NewTarget);
+	Error = ETargetFixErrorType::SUCCESS;
+	return true;
 }
 
 void USOWTurretCombatComponent::ClearFixedTargetList()
@@ -382,7 +418,10 @@ void USOWTurretCombatComponent::AttackAbilityActivation()
 {
 	if (!CachedOwnerCharacter) return;
 
-	if(!FindAttackTargetFromAllTargetAvailable()) return;
+	if (!FindAttackTargetFromAllTargetAvailable()) {
+		UE_LOG(LogTemp, Warning, TEXT("No Valid Actor Found"));
+		return;
+	} 
 
 	CachedOwnerCharacter->TryActivateAbilityWithTagOnASC(AbilityTagToActivation);
 }

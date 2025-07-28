@@ -88,7 +88,7 @@ void ASOWCharacterTurretBase::PossessedBy(AController* NewController)
 void ASOWCharacterTurretBase::OnGameplayEffectAdded(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& SpecApplied, FActiveGameplayEffectHandle ActiveHandle)
 {
 	FEffectOrientedTurretAttribute Data;
-
+	
 	for (const FGameplayModifierInfo& Modifier : SpecApplied.Def->Modifiers)
 	{
 		const FGameplayAttribute& ModifiedAttr = Modifier.Attribute;
@@ -140,9 +140,16 @@ void ASOWCharacterTurretBase::OnGameplayEffectAdded(UAbilitySystemComponent* ASC
 		}
 	}
 
-	if (TurretUIComponent && TurretUIComponent->OnEffectApplied.IsBound()) {
-		TurretUIComponent->OnEffectApplied.Broadcast(Data);
+	if (TurretUIComponent) {
+		if(TurretUIComponent->OnEffectApplied.IsBound())
+			TurretUIComponent->OnEffectApplied.Broadcast(Data);
+
+		if (TurretUIComponent->OnTagChanged.IsBound()) {
+			TurretUIComponent->OnTagChanged.Broadcast();
+		}
 	}
+
+	
 }
 
 void ASOWCharacterTurretBase::OnGameplayEffectRemoved(const FActiveGameplayEffect& Effect)
@@ -176,8 +183,13 @@ void ASOWCharacterTurretBase::OnGameplayEffectRemoved(const FActiveGameplayEffec
 			Data.DefensePowerBaseValue = Magnitude;
 		}
 	}
-	if (TurretUIComponent && TurretUIComponent->OnEffectRemoved.IsBound()) {
-		TurretUIComponent->OnEffectRemoved.Broadcast(Data);
+	if (TurretUIComponent) {
+		if (TurretUIComponent->OnEffectRemoved.IsBound())
+			TurretUIComponent->OnEffectRemoved.Broadcast(Data);
+
+		if (TurretUIComponent->OnTagChanged.IsBound()) {
+			TurretUIComponent->OnTagChanged.Broadcast();
+		}
 	}
 }
 
