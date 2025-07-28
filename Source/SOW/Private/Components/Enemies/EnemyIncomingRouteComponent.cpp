@@ -10,14 +10,17 @@ void UEnemyIncomingRouteComponent::SetIncomingRoute(AEnemyIncomingRoute* NewInco
 	EnemyIncomingRoute = NewIncomingRoute;
 }
 
-bool UEnemyIncomingRouteComponent::IncrementIncomingRouteIndex()
+bool UEnemyIncomingRouteComponent::HasReachedEnd() const
 {
-	IncomingRouteIndex += 1;
-
 	if (IncomingRouteIndex > EnemyIncomingRoute->GetNumberOfPoints() - 1)
 		return true;
 
 	return false;
+}
+
+void UEnemyIncomingRouteComponent::IncrementIncomingRouteIndex()
+{
+	IncomingRouteIndex += 1;
 }
 
 FVector UEnemyIncomingRouteComponent::GetCurrentIndexPosition() const

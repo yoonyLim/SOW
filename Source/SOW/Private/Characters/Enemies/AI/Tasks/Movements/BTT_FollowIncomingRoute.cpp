@@ -18,13 +18,16 @@ EBTNodeResult::Type UBTT_FollowIncomingRoute::ExecuteTask(UBehaviorTreeComponent
 {
 	if (ASOWCharacterEnemyBase* const Enemy = Cast<ASOWCharacterEnemyBase>(OwnerComp.GetAIOwner()->GetCharacter()))
 	{
-		FVector TargetLocation = Enemy->GetEnemyIncomingRouteComponent()->GetCurrentIndexPosition();
-		OwnerComp.GetBlackboardComponent()->SetValueAsVector("TargetLocation", TargetLocation);
-
-		if (Enemy->GetEnemyIncomingRouteComponent()->IncrementIncomingRouteIndex())
+		if (Enemy->GetEnemyIncomingRouteComponent()->HasReachedEnd())
 		{
 			Enemy->GetAIController()->UpdateCurrentState(EEnemyStates::Attacking);
+			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+			return EBTNodeResult::Succeeded;	
 		}
+		
+		FVector TargetLocation = Enemy->GetEnemyIncomingRouteComponent()->GetCurrentIndexPosition();
+		OwnerComp.GetBlackboardComponent()->SetValueAsVector("TargetLocation", TargetLocation);
+		Enemy->GetEnemyIncomingRouteComponent()->IncrementIncomingRouteIndex();
 
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 		return EBTNodeResult::Succeeded;	

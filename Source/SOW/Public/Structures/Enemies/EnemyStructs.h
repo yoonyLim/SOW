@@ -32,6 +32,9 @@ struct SOW_API FEnemyAttributeData : public FTableRowBase
 	float DefensePowerBase;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EEnemyTargetPriority TargetPriority;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UAnimMontage* HitAnimation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

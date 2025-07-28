@@ -71,6 +71,7 @@ void ASOWCharacterEnemyBase::BeginPlay()
 	if (const auto EnemyAttributesData = EnemyAttributesDT.DataTable->FindRow<FEnemyAttributeData>(EnemyTypeStr, ""))
 	{
 		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, EnemyTypeStr.ToString());
+		TargetPriority = EnemyAttributesData->TargetPriority;
 
 		GetCharacterMovement()->MaxWalkSpeed = EnemyAttributesData->MaxWalkSpeed;
 
@@ -152,7 +153,7 @@ void ASOWCharacterEnemyBase::OnHealthChanged(const FOnAttributeChangeData& Data)
 void ASOWCharacterEnemyBase::SetAIController(AEnemyBaseAIController* NewAIController)
 {
 	AIController = NewAIController;
-	AIController->InitializeBlackBoard(AttackRadius, AttackSpeed);
+	AIController->InitializeBlackBoard(AttackRadius, AttackSpeed, TargetPriority);
 }
 
 AEnemyIncomingRoute* ASOWCharacterEnemyBase::FindClosestIncomingRoute() const

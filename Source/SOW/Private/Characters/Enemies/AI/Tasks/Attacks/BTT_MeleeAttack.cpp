@@ -22,7 +22,7 @@ EBTNodeResult::Type UBTT_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
 	
 		ESOWCharacterType TargetType = SOWCharacter->GetSOWCharacterType();
 	
-		if (TargetType == ESOWCharacterType::Player || TargetType == ESOWCharacterType::Turret)
+		if (TargetType == ESOWCharacterType::CoreRune || TargetType == ESOWCharacterType::Player || TargetType == ESOWCharacterType::Turret)
 		{
 			OnAttackMontageEnded.BindUObject(this, &UBTT_MeleeAttack::OnAttackEnded);
 
