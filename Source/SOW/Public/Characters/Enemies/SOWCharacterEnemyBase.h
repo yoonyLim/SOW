@@ -27,6 +27,9 @@ class SOW_API ASOWCharacterEnemyBase : public ASOWCharacter, public IEnemyAction
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
 	EEnemyTypes EnemyType;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
+	EEnemyTargetPriority TargetPriority;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widgets", meta = (AllowPrivateAccess = "true"))
 	UWidgetComponent* HealthBarWidget;
 
@@ -98,6 +101,7 @@ public:
 	FORCEINLINE FVector2D GetHealthBarWidgetSize() const { return HealthBarWidgetSize; } // widget size getter
 	UBehaviorTree* GetBehaviorTree() const { return BehaviorTree; };
 	EEnemyTypes GetEnemyType() const { return EnemyType; };
+	EEnemyTargetPriority GetTargetPriority() const { return TargetPriority; };
 	FName GetEnemyTypeStr() const { return EnemyTypeStr; };
 	// GETTERS - added by song
 	USOWEnemyCombatComponent* GetEnemyCombatComponent() const { return EnemyCombatComponent; };
