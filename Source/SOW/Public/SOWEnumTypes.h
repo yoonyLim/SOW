@@ -9,6 +9,7 @@ enum class ESOWCharacterType : uint8 {
 	// added by : PGH
 	// Check What Character Type is or the Actor is SOWCharacter
 	Uncertain,
+	CoreRune,
 	Player,
 	Turret,
 	Enemy
@@ -19,6 +20,7 @@ enum class ETurretTargetSelectionPolicy : uint8 {
 	// added by : PGH
 	// Check What Turret's target is 
 	Uncertain,
+	CoreRune,
 	OnPlayer,
 	OnTurret,
 	OnEnemy

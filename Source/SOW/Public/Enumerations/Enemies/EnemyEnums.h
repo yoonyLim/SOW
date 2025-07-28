@@ -54,3 +54,12 @@ enum class EEnemyTypes : uint8
 	// Volcano
 	Dragon UMETA(DisplayName = "Dragon"),
 };
+
+UENUM(BlueprintType)
+enum class EEnemyTargetPriority : uint8
+{
+	None UMETA(DisplayName = "None"),
+	CoreRune UMETA(DisplayName = "CoreRune"),
+	Player UMETA(DisplayName = "Player"),
+	Turret UMETA(DisplayName = "Turret"),
+};
