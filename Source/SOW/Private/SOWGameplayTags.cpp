@@ -119,7 +119,15 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_ReductedDamage, "Shared.SetByCaller.ReductedDamage");
 
 	UE_DEFINE_GAMEPLAY_TAG(World_Event_WaveStart, "World.Event.WaveStart");
-
+	UE_DEFINE_GAMEPLAY_TAG(World_Event_Gen_Nature, "World.Event.Gen.Nature");
+	UE_DEFINE_GAMEPLAY_TAG(World_Event_Gen_Electro, "World.Event.Gen.Electro");
+	UE_DEFINE_GAMEPLAY_TAG(World_Event_Gen_Death, "World.Event.Gen.Death");
+	UE_DEFINE_GAMEPLAY_TAG(World_Event_Gen_Wave, "World.Event.Gen.Wave");
+	UE_DEFINE_GAMEPLAY_TAG(World_Event_Gen_Ice, "World.Event.Gen.Ice");
+	UE_DEFINE_GAMEPLAY_TAG(World_Event_Gen_Divinity, "World.Event.Gen.Divinity");
+	UE_DEFINE_GAMEPLAY_TAG(World_Event_Gen_Madness, "World.Event.Gen.Madness");
+	UE_DEFINE_GAMEPLAY_TAG(World_Event_Gen_Flame, "World.Event.Gen.Flame");
+	
 	UE_DEFINE_GAMEPLAY_TAG(Data_ManaCost, "Data.ManaCost");
 
 }
