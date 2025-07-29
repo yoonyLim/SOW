@@ -209,16 +209,16 @@ void USummonWidget::OnDelayFinished()
 
 	if (CurrentStep == 1)
 	{
-		CurrentStep += 1;
 		HighlightMagicSpell();
+		CurrentStep += 1;
 		IMG_FirstSpell->SetBrushFromTexture(SelectedSpells[0]->SanskritImage);
 		IMG_FirstSpell->SetVisibility(ESlateVisibility::Visible);
 		return;
 	}
 	else if (CurrentStep == 2)
 	{
-		CurrentStep += 1;
 		HighlightMagicSpell();
+		CurrentStep += 1;
 		IMG_SecondSpell->SetBrushFromTexture(SelectedSpells[1]->SanskritImage);
 		IMG_SecondSpell->SetVisibility(ESlateVisibility::Visible);
 		return;
@@ -250,9 +250,13 @@ void USummonWidget::HighlightMagicSpell()
 	USOWGameInstance* GI = Cast<USOWGameInstance>(GetWorld()->GetGameInstance());
 	USummonManager* SummonManager = GI->GetSummonManager();
 
-	TMap<uint8, TArray<uint8>>* M_SpellComp= SummonManager->GetSpellCompMap(EElementalType::Nature, CurrentStep);
+	EElementalType ET = EElementalType::Nature;
+
+	TMap<uint8, TArray<uint8>>* M_SpellComp= SummonManager->GetSpellCompMap(ET, CurrentStep);
 
 	uint8 Key = IndexToKey();
+
+	UE_LOG(LogTemp, Warning, TEXT("Index Key String: %d"), Key);
 
 	if (!(*M_SpellComp).Contains(Key))
 	{

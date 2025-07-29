@@ -96,9 +96,7 @@ void USOWTurretSkillComponent::GetSkills()
 	USOWGameInstance* GI = Cast<USOWGameInstance>(GetWorld()->GetGameInstance());
 	UUSkillManager* SM = GI->GetSkillManager();
 
-	FGameplayTag NatureTag = FGameplayTag::RequestGameplayTag(FName("Shared.Element.Nature"));
-
-	L_PassiveSkills = SM->GetUnlockedSkillsByElement(NatureTag);
+	L_PassiveSkills = SM->GetUnlockedSkillsByElement(GetElementTagFromOwner());
 }
 
 TArray<ASOWCharacter*> USOWTurretSkillComponent::FindTarget(const TSharedPtr<FSkillData>& Skill)
@@ -150,7 +148,6 @@ void USOWTurretSkillComponent::ApplySkill(TArray<ASOWCharacter*> Targets, const 
 			FGameplayAbilitySpecHandle Handle = ASC->GiveAbility(
 				FGameplayAbilitySpec(Skill->GameplayAbilityClass, 1, INDEX_NONE, this));
 
-			// ½ÇÇà
 			bool bSuccess = ASC->TryActivateAbility(Handle);
 
 			if (bSuccess)

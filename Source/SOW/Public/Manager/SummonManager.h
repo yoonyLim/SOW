@@ -34,8 +34,8 @@ public:
 private:
 	TMap<FGameplayTag, uint8> M_CircleLevel;
 
-	TMap<uint8, TArray<uint8>> M_NatureSpellComp_1 = { {2, {2}}, {3, {3}}, {4, {5}}, {5, {2, 4, 5}} };
-	TMap<uint8, TArray<uint8>> M_NatureSpellComp_2 = { {22, {1}}, {33, {3, 5}}, {45, {1}}, {52, {3}}, {54, {5}}, {55, {2, 4}} };
+	TMap<uint8, TArray<uint8>> M_NatureSpellComp_1 = { {1, {1}}, {2, {2}}, {3, {4}}, {4, {1, 2, 4}} };
+	TMap<uint8, TArray<uint8>> M_NatureSpellComp_2 = { {11, {0}}, {22, {2, 4}}, {34, {0}}, {41, {2}}, {43, {4}}, {44, {1, 3}} };
 
 	TMap<uint8, TArray<uint8>> M_ElectroSpellComp_1 = { };
 	TMap<uint8, TArray<uint8>> M_ElectroSpellComp_2 = { };

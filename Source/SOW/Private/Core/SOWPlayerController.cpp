@@ -72,6 +72,8 @@ void ASOWPlayerController::StartPlacingTurret(FSpellCombination Spells)
                 PreviewTurret->SetPreviewActor(Row->Mesh, Row->AttackRange);
             }
         }
+
+        PlayerCharacter->ShowInstallationRange(true);
     }
 }
 
@@ -96,10 +98,6 @@ void ASOWPlayerController::ConfirmTurretPlacement()
 
         APawn* ControlledPawn = GetPawn();
         ASOWCharacterPlayer* SOWPlayer = Cast<ASOWCharacterPlayer>(ControlledPawn);
-        if (SOWPlayer)
-        {
-            SOWPlayer->ShowInstallationRange(true);
-        }
 
         FHitResult Hit;
         if (GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_Visibility), false, Hit))

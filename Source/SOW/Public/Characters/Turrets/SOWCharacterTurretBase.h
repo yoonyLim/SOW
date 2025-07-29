@@ -64,6 +64,10 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	USOWTurretCombatComponent* GetTurretCombatComponent() const;				// Get Combat Component at other classes
+
+	UFUNCTION(BlueprintPure)
+	USOWTurretSkillComponent* GetTurretSkillComponent() const;				// Get Skill Component at other classes
+
 #pragma endregion
 
 #pragma region BlueprintFunctions
@@ -93,6 +97,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	USOWTurretEvolutionComponent* TurretEvolutionComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	USOWTurretSkillComponent* TurretSkillComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
 	UWidgetComponent* HealthWidgetComponent;

@@ -67,12 +67,18 @@ void USummonManager::SetCircleLevel(FGameplayTag Element, uint8 CircleLevel)
 
 TMap<uint8, TArray<uint8>>* USummonManager::GetSpellCompMap(EElementalType Element, uint8 Step)
 {
+	FString ElementName = StaticEnum<EElementalType>()->GetNameStringByValue(static_cast<int32>(Element));
+
+	UE_LOG(LogTemp, Warning, TEXT("[Element: %s] [Step: %d]"), *ElementName, Step);
+
 	switch (Element)
 	{
 	case EElementalType::Nature:
 	{
 		if (Step == 1)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("hrerere"));
+
 			return &M_NatureSpellComp_1;
 		}
 		else
