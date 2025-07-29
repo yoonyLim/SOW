@@ -28,7 +28,8 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Poison, "Enemy.Status.Debuff.Poison");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_SpiderWeb, "Enemy.Status.Debuff.SpiderWeb");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Slow, "Enemy.Status.Debuff.Slow");
-	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Rooted, "Enemy.Status.Debuff.Rooted");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Rooted, "Enemy.Status.Debuff.Rooted"); 
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Shadow, "Enemy.Status.Debuff.Shadow");
 
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sin_Alpha, "Enemy.Status.Debuff.Sin.Alpha");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sin_Beta, "Enemy.Status.Debuff.Sin.Beta");
@@ -40,6 +41,8 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sharp, "Enemy.Status.Debuff.Sharp");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Balancing, "Enemy.Status.Debuff.Balancing");
 	
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Immunity_ShadowAdditionalDamage, "Enemy.Status.Immunity.ShadowAdditionalDamage");
+
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Event_Confusing, "Enemy.Event.Confusing"); 
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Event_Static, "Enemy.Event.Static");
 	
@@ -50,9 +53,14 @@ namespace SOWGameplayTags
 	
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Hoppy, "Turret.Status.Buff.Hoppy");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_SpiderWeb, "Turret.Status.Buff.SpiderWeb");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_NightEyes, "Turret.Status.Buff.NightEyes");
+	
 
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Debuff_Slow, "Turret.Status.Debuff.Slow");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Debuff_Root, "Turret.Status.Debuff.Root");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Debuff_Shadow, "Turret.Status.Debuff.Shadow");
+
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Immunity_Shadow, "Turret.Status.Immunity.Shadow");
 	
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_Attack_Basic, "Turret.Event.Attack.Basic");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_Attack_Double, "Turret.Event.Attack.Double"); 
