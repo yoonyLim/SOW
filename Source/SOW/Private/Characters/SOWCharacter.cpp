@@ -44,11 +44,7 @@ void ASOWCharacter::PossessedBy(AController* NewController)
 
 		ensureMsgf(!StartupData.IsNull(), TEXT("Forgot to assign start up data for %s"), *GetName());
 
-		if (!StartupData.IsNull()) {
-			if (UDA_StartupDataBase* Startup = StartupData.LoadSynchronous()) {
-				Startup->GiveToAbilitySystemComponent(AbilitySystemComponent);
-			}
-		}
+		InitFromDataAsset();
 
 		if (!AbilitySystemComponent || !AttributeSet) return;
 
@@ -61,6 +57,15 @@ void ASOWCharacter::PossessedBy(AController* NewController)
 void ASOWCharacter::BeginPlay() {
 
 	Super::BeginPlay();
+}
+
+void ASOWCharacter::InitFromDataAsset()
+{
+	if (!StartupData.IsNull()) {
+		if (UDA_StartupDataBase* Startup = StartupData.LoadSynchronous()) {
+			Startup->GiveToAbilitySystemComponent(AbilitySystemComponent);
+		}
+	}
 }
 
 USOWCharacterUIComponent* ASOWCharacter::GetCharacterUIComponent() const
