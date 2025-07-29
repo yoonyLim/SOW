@@ -13,7 +13,10 @@
 
 #include "Characters/Enemies/AI/EnemyBaseAIController.h"
 #include "Components/Enemies/EnemyIncomingRouteComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Structures/Enemies/EnemyStructs.h"
+#include "Tile/SOWTileSpawnerActor.h"
+#include "Utilities/EnemyIncomingRoute.h"
 #include "Widget/Enemy/EnemyHealthBarWidget.h"
 
 // Sets default values
@@ -50,7 +53,12 @@ ASOWCharacterEnemyBase::ASOWCharacterEnemyBase()
 
 	if (OverlayMat.Succeeded())
 		GetMesh()->SetOverlayMaterial(OverlayMat.Object);
+
+	// Set Incoming Route
+	// GetEnemyIncomingRouteComponent()->SetIncomingRoute(FindClosestIncomingRoute());
 }
+
+
 
 // Called when the game starts or when spawned
 void ASOWCharacterEnemyBase::BeginPlay()
@@ -63,6 +71,7 @@ void ASOWCharacterEnemyBase::BeginPlay()
 	if (const auto EnemyAttributesData = EnemyAttributesDT.DataTable->FindRow<FEnemyAttributeData>(EnemyTypeStr, ""))
 	{
 		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, EnemyTypeStr.ToString());
+		TargetPriority = EnemyAttributesData->TargetPriority;
 
 		GetCharacterMovement()->MaxWalkSpeed = EnemyAttributesData->MaxWalkSpeed;
 
@@ -70,10 +79,8 @@ void ASOWCharacterEnemyBase::BeginPlay()
 		DeathAnimation = EnemyAttributesData->DeathAnimation;
 		AttackAnimation = EnemyAttributesData->AttackAnimation;
 
-		AIController = Cast<AEnemyBaseAIController>(GetController());
-		
-		if (AIController)
-			AIController->InitializeBlackBoard(EnemyAttributesData->AttackRadius, EnemyAttributesData->AttackSpeed);
+		AttackRadius = EnemyAttributesData->AttackRadius;
+		AttackSpeed = EnemyAttributesData->AttackSpeed;
 	}
 
 	// Set up HealthBar Widget
@@ -100,7 +107,7 @@ void ASOWCharacterEnemyBase::BeginPlay()
 	UpdateHealthBarValue(NewHealth, MaxHealth);
 
 	// Set Incoming Route when spawned
-	GetEnemyIncomingRouteComponent()->SetIncomingRoute(IncomingRoute);
+	GetEnemyIncomingRouteComponent()->SetIncomingRoute(FindClosestIncomingRoute());
 }
 
 void ASOWCharacterEnemyBase::OnHealthChanged(const FOnAttributeChangeData& Data)
@@ -141,6 +148,72 @@ void ASOWCharacterEnemyBase::OnHealthChanged(const FOnAttributeChangeData& Data)
 		// GetMesh()->GetAnimInstance()->Montage_SetBlendingOutDelegate(OnHitMontageEnded); // montage interrupted
 		// GetMesh()->GetAnimInstance()->Montage_SetEndDelegate(OnHitMontageEnded); // montage ended
 	}
+}
+
+void ASOWCharacterEnemyBase::SetAIController(AEnemyBaseAIController* NewAIController)
+{
+	AIController = NewAIController;
+	AIController->InitializeBlackBoard(AttackRadius, AttackSpeed, TargetPriority);
+}
+
+AEnemyIncomingRoute* ASOWCharacterEnemyBase::FindClosestIncomingRoute() const
+{
+	// 1. Find the ATileSpawner actor
+	ATileSpawner* TileSpawner = nullptr;
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATileSpawner::StaticClass(), FoundActors);
+
+	if (FoundActors.Num() > 0)
+	{
+		TileSpawner = Cast<ATileSpawner>(FoundActors[0]);
+	}
+
+	if (!TileSpawner)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Enemy '%s': ATileSpawner not found in the world! Cannot find routes."), *GetName());
+		return nullptr;
+	}
+
+	// 2. Get all available incoming routes from the Tile Spawner
+	TArray<AEnemyIncomingRoute*> AvailableRoutes = TileSpawner->GetSpawnedEnemyRoutes();
+
+	if (AvailableRoutes.Num() == 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Enemy '%s': No incoming routes registered by ATileSpawner."), *GetName());
+		return nullptr;
+	}
+
+	// 3. Find the closest route
+	AEnemyIncomingRoute* ClosestRoute = nullptr;
+	float MinSquaredDistance = TNumericLimits<float>::Max(); // Initialize with a very large number
+
+	FVector EnemyLocation = GetActorLocation();
+
+	for (AEnemyIncomingRoute* Route : AvailableRoutes)
+	{
+		if (Route && Route->GetNumberOfPoints() > 0)
+		{
+			// Get the world position of the first spline point of this route
+			FVector RouteStartLocation = Route->GetCurrentIncomingIndexPosition(0);
+        
+			// Calculate squared distance
+			float CurrentSquaredDistance = FVector::DistSquared(EnemyLocation, RouteStartLocation);
+
+			if (CurrentSquaredDistance < MinSquaredDistance)
+			{
+				MinSquaredDistance = CurrentSquaredDistance;
+				ClosestRoute = Route;
+			}
+		}
+	}
+
+	if (ClosestRoute)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Enemy '%s' chose closest route: '%s' (Squared Distance: %f)"), 
+			*GetName(), *ClosestRoute->GetName(), MinSquaredDistance);
+	}
+
+	return ClosestRoute;
 }
 
 void ASOWCharacterEnemyBase::UpdateHealthBarValue(float NewHealth, float MaxHealth)

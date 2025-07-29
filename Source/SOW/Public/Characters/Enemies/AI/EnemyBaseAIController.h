@@ -24,15 +24,24 @@ class SOW_API AEnemyBaseAIController : public AAIController
 
 	EEnemyStates MCurrentState;
 
+	FTimerHandle ResetTauntHandle;
+	bool bIsTaunted = false;
+
+	UPROPERTY()
+	TWeakObjectPtr<AActor> CachedAttackTarget = nullptr;
+
 protected:
 	virtual void OnPossess(APawn* PossessedPawn) override;
 	
 public:
 	AEnemyBaseAIController(FObjectInitializer const& ObjectInitializer);
 
-	void InitializeBlackBoard(float AttackRadius, float AttackRate);
+	void InitializeBlackBoard(float AttackRadius, float AttackRate, EEnemyTargetPriority TargetPriority);
 
 	FORCEINLINE EEnemyStates GetCurrentState() const { return MCurrentState; }
 
 	void UpdateCurrentState(EEnemyStates NewState);
+
+	UFUNCTION(BlueprintCallable)
+	void Taunt(AActor* TargetActor, float Duration);
 };

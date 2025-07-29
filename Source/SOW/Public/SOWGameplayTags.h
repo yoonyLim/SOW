@@ -128,6 +128,14 @@ namespace SOWGameplayTags {
 
 	/* World Tags */
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(World_Event_WaveStart);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(World_Event_Gen_Nature);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(World_Event_Gen_Electro);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(World_Event_Gen_Death);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(World_Event_Gen_Ice);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(World_Event_Gen_Wave);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(World_Event_Gen_Divinity);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(World_Event_Gen_Madness);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(World_Event_Gen_Flame);
 
 	/* Set By Caller Tags */
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_SetByCaller_AdditiveDamage);

@@ -11,6 +11,7 @@ enum class EEnemyStates : uint8
 	None UMETA(DisplayName = "None"),
 	Passive UMETA(DisplayName = "Passive"),
 	Attacking UMETA(DisplayName = "Attacking"),
+	FollowingIncomingRoute UMETA(DisplayName = "FollowingIncomingRoute"),
 	Dead UMETA(DisplayName = "Dead")
 };
 
@@ -52,4 +53,13 @@ enum class EEnemyTypes : uint8
 
 	// Volcano
 	Dragon UMETA(DisplayName = "Dragon"),
+};
+
+UENUM(BlueprintType)
+enum class EEnemyTargetPriority : uint8
+{
+	None UMETA(DisplayName = "None"),
+	CoreRune UMETA(DisplayName = "CoreRune"),
+	Player UMETA(DisplayName = "Player"),
+	Turret UMETA(DisplayName = "Turret"),
 };
