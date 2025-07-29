@@ -19,10 +19,13 @@ class SOW_API USummonManager : public UObject
 public:
 	void Initialize();
 
+	UFUNCTION(BlueprintCallable)
 	void SetCircleLevel(FGameplayTag Element, uint8 CircleLevel);
 
+	UFUNCTION(BlueprintCallable)
 	uint8 GetCircleLevel(FGameplayTag Element);
 
+	UFUNCTION(BlueprintCallable)
 	uint8 GetCircle(FGameplayTag Element);
 
 	TMap<uint8, TArray<uint8>>* GetSpellCompMap(EElementalType Element, uint8 Step);

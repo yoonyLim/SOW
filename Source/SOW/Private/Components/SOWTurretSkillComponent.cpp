@@ -96,7 +96,9 @@ void USOWTurretSkillComponent::GetSkills()
 	USOWGameInstance* GI = Cast<USOWGameInstance>(GetWorld()->GetGameInstance());
 	UUSkillManager* SM = GI->GetSkillManager();
 
-	L_PassiveSkills = SM->GetUnlockedSkillsByElement(GetElementTagFromOwner());
+	FGameplayTag NatureTag = FGameplayTag::RequestGameplayTag(FName("Shared.Element.Nature"));
+
+	L_PassiveSkills = SM->GetUnlockedSkillsByElement(NatureTag);
 }
 
 TArray<ASOWCharacter*> USOWTurretSkillComponent::FindTarget(const TSharedPtr<FSkillData>& Skill)
@@ -138,48 +140,92 @@ void USOWTurretSkillComponent::ApplySkill(TArray<ASOWCharacter*> Targets, const 
 	{
 	case ESkillEffectType::CustomScript:
 	{
+		for (ASOWCharacter* Target : Targets)
+		{
+			if (!IsValid(Target)) continue;
+
+			USOWAbilitySystemComponent* ASC = Target->GetSOWAbilitySystemComponent();
+			if (!ASC) continue;
+
+			FGameplayAbilitySpecHandle Handle = ASC->GiveAbility(
+				FGameplayAbilitySpec(Skill->GameplayAbilityClass, 1, INDEX_NONE, this));
+
+			// ½ÇÇà
+			bool bSuccess = ASC->TryActivateAbility(Handle);
+
+			if (bSuccess)
+			{
+				UE_LOG(LogTemp, Log, TEXT("GA [%s] activated for Target: %s"),
+					*Skill->GameplayAbilityClass->GetName(), *Target->GetName());
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Failed to activate GA [%s] for Target: %s"),
+					*Skill->GameplayAbilityClass->GetName(), *Target->GetName());
+			}
+		}
 		break;
 	}
 	case ESkillEffectType::AttributeModifier:
 	{
-		UGameplayEffect* TempSkill_GE = CreateGameplayEffect(Skill);
+		if (!Skill.IsValid() || !Skill->TargetAttribute.IsValid())
+		{
+			UE_LOG(LogTemp, Error, TEXT("Invalid SkillData"));
+			return;
+		}
+
+		TSubclassOf<UGameplayEffect> SelectedGEClass = nullptr;
+		SelectedGEClass = Skill->GEClass;
+
+		if (!SelectedGEClass)
+		{
+			UE_LOG(LogTemp, Error, TEXT("GEClass not assigned"));
+			return;
+		}
 
 		for (ASOWCharacter* Target : Targets)
-		{	
-			USOWAbilitySystemComponent* Target_ASC = Target->GetSOWAbilitySystemComponent();
+		{
+			USOWAbilitySystemComponent* ASC = Target->GetSOWAbilitySystemComponent();
+			if (!ASC) continue;
 
-			FGameplayEffectContextHandle EffectContext = Target_ASC->MakeEffectContext();
-			FGameplayEffectSpecHandle SpecHandle = Target_ASC->MakeOutgoingSpec(TempSkill_GE->GetClass(), 1.f, EffectContext);
+			FGameplayEffectContextHandle Context = ASC->MakeEffectContext();
+			FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(SelectedGEClass, 1.f, Context);
 
-			if (SpecHandle.IsValid())
+			if (!SpecHandle.IsValid())
 			{
-				Target_ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
-
-				UE_LOG(LogTemp, Error, TEXT("Apply %s Successfully"), *Skill->SkillID.ToString());
+				UE_LOG(LogTemp, Error, TEXT("Invalid GE Spec"));
+				continue;
 			}
-			else
+
+			UE_LOG(LogTemp, Warning, TEXT("=== Debugging GE Application ==="));
+			UE_LOG(LogTemp, Warning, TEXT("SkillID: %s"), *Skill->SkillID.ToString());
+			UE_LOG(LogTemp, Warning, TEXT("Target Attribute: %s"), *Skill->TargetAttribute.GetName());
+			UE_LOG(LogTemp, Warning, TEXT("GEClass: %s"), *SelectedGEClass->GetName());
+			UE_LOG(LogTemp, Warning, TEXT("SetByCaller Value: %f"), Skill->ModifierValue);
+
+			UGameplayEffect* GE_CDO = SelectedGEClass->GetDefaultObject<UGameplayEffect>();
+			if (GE_CDO)
 			{
-				UE_LOG(LogTemp, Error, TEXT("Fail to apply %s"), *Skill->SkillID.ToString());
+				UE_LOG(LogTemp, Warning, TEXT("GE Modifier Count: %d"), GE_CDO->Modifiers.Num());
+
+				for (const auto& Mod : GE_CDO->Modifiers)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Modifier Attribute : % s"), *Mod.Attribute.AttributeName);
+				}
+			}
+
+			FGameplayTag SetByCallerTag = FGameplayTag::RequestGameplayTag("Data.ModValue");
+			SpecHandle.Data->SetSetByCallerMagnitude(SetByCallerTag, Skill->ModifierValue);
+
+			FActiveGameplayEffectHandle Handle = ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data);
+			if (Handle.IsValid())
+			{
+				float NewVal = ASC->GetNumericAttribute(Skill->TargetAttribute);
+				UE_LOG(LogTemp, Warning, TEXT("Skill %s applied. New [%s] = %f"),
+					*Skill->SkillID.ToString(), *Skill->TargetAttribute.GetName(), NewVal);
 			}
 		}
 		break;
 	}
 	}
-}
-
-UGameplayEffect* USOWTurretSkillComponent::CreateGameplayEffect(const TSharedPtr<FSkillData>& Skill)
-{
-	UGameplayEffect* GE = NewObject<UGameplayEffect>(GetTransientPackage(), FName(TEXT("TempSkillEffect")));
-
-	GE->DurationPolicy = EGameplayEffectDurationType::Instant;
-
-	int32 ModIdx = GE->Modifiers.Num();
-	GE->Modifiers.SetNum(ModIdx + 1);
-
-	FGameplayModifierInfo& ModInfo = GE->Modifiers[ModIdx];
-	ModInfo.Attribute = Skill->TargetAttribute;
-	ModInfo.ModifierOp = Skill->ModifierOp;
-	ModInfo.ModifierMagnitude = FScalableFloat(Skill->ModifierValue);
-
-	return (GE);
 }

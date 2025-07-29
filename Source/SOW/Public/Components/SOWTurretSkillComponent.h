@@ -32,8 +32,6 @@ public:
 
 	void ApplySkill(TArray<ASOWCharacter*> Targets, const TSharedPtr<FSkillData>& Skill);
 
-	UGameplayEffect* CreateGameplayEffect(const TSharedPtr<FSkillData>& Skill);
-
 private:	
 	TArray<TSharedPtr<FSkillData>> L_PassiveSkills;
 

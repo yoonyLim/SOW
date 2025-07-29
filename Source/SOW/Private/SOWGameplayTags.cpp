@@ -129,6 +129,7 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(World_Event_Gen_Flame, "World.Event.Gen.Flame");
 	
 	UE_DEFINE_GAMEPLAY_TAG(Data_ManaCost, "Data.ManaCost");
+	UE_DEFINE_GAMEPLAY_TAG(Data_ModValue, "Data.ModValue");
 
 	/* Player Skill Tag */
 	/* Nature Skills*/

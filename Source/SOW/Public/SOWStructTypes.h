@@ -333,13 +333,14 @@ struct FSkillData : public FTableRowBase
 	UPROPERTY(EditDefaultsOnly, Category = "Skill")
 	ESkillEffectType EffectType;
 
-	/* ��ų Ȱ��ȭ �� �ο��� �����÷��� �±� */
 	UPROPERTY(EditDefaultsOnly, Category = "Skill")
 	FGameplayTag SkillStateTag;
 
-	/* ���� ��ų ID */
 	UPROPERTY(EditDefaultsOnly, Category = "Skill")
 	FName RequiredSkill;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Skill")
+	FName UpperLevelSkill;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Skill")
 	int32 RequiredCurrencyAmount = 0;
@@ -348,12 +349,12 @@ struct FSkillData : public FTableRowBase
 	FText SkillDescription;
 
 	/* Trigger Type �� meta data */
-	/* In Overlapping Influence Zone Ÿ�Կ� �ʿ��� ������ */
+	/* In Overlapping Influence Zone */
 	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "TriggerType==EPassiveSkillTrigger::InOverlappingInfluenceZone"));
-	uint8 ZoneNum; // �ߺ� ���� ��
+	uint8 ZoneNum; //
 
 	/* Effect Type �� meta data */
-	/* Attribute Modifier Ÿ�� ��ų�� �ʿ��� ������ */
+	/* Attribute Modifier */
 	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "EffectType==ESkillEffectType::AttributeModifier"));
 	FGameplayAttribute TargetAttribute;
 
@@ -361,13 +362,13 @@ struct FSkillData : public FTableRowBase
 	float ModifierValue = 0.f;
 
 	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "EffectType==ESkillEffectType::AttributeModifier"))
-	TEnumAsByte<EGameplayModOp::Type> ModifierOp = EGameplayModOp::Additive;
+	TSubclassOf<UGameplayEffect> GEClass;
 
-	/* CustomScript Ÿ�� ��ų�� �ʿ��� ������ */
+	/* CustomScript */
 	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "EffectType==ESkillEffectType::CustomScript"), Category = "Logic Driven")
 	TSubclassOf<UGameplayAbility> GameplayAbilityClass;
 
-	/* CircleUpgrade Ÿ�� ��ų�� �ʿ��� ������ */
+	/* CircleUpgrade */
 	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "EffectType==ESkillEffectType::CircleUpgrade"), Category = "CircleUpgrade")
 	uint8 CircleLevel;
 };

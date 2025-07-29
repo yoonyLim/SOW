@@ -16,6 +16,7 @@ void UUSkillManager::Initialize(UDataTable* InSkillDataTable)
 {
 	SkillDataTable = InSkillDataTable;
 	UnlockedSkillList.Empty();
+	SkillIDToIndex.Empty();
 }
 
 const FSkillData* UUSkillManager::FindSkillDataByID(const FName& SkillID) const
@@ -65,8 +66,11 @@ bool UUSkillManager::UnlockSkill(const FName& SkillID)
 				}
 				UE_LOG(LogTemp, Error, TEXT("Success Unlock Skill"));
 
+				RemoveSkillAtList(FoundData->UpperLevelSkill);
+
 				TSharedPtr<FSkillData> UnlockedSkill = MakeShared<FSkillData>(*FoundData);
-				UnlockedSkillList.Add(UnlockedSkill);
+				int32 NewIndex = UnlockedSkillList.Add(UnlockedSkill);
+				SkillIDToIndex.Add(UnlockedSkill->SkillID, NewIndex);
 
 				return true;
 			}
@@ -128,4 +132,22 @@ EElementalType UUSkillManager::StringToCurrencyType(const FString& InStr)
 	if (InStr.Equals("Madness", ESearchCase::IgnoreCase)) return EElementalType::Madness;
 
 	return EElementalType::Max;
+}
+
+void UUSkillManager::RemoveSkillAtList(const FName& SkillID)
+{
+	int32* FoundIndex = SkillIDToIndex.Find(SkillID);
+	if (!FoundIndex) return;
+
+	int32 IndexToRemove = *FoundIndex;
+
+	UnlockedSkillList.RemoveAt(IndexToRemove);
+	SkillIDToIndex.Remove(SkillID);
+
+	for (int32 i = IndexToRemove; i < UnlockedSkillList.Num(); ++i)
+	{
+		SkillIDToIndex[UnlockedSkillList[i]->SkillID] = i;
+	}
+	
+	return;
 }

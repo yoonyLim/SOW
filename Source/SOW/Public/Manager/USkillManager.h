@@ -37,10 +37,13 @@ public:
 	UDataTable* SkillDataTable;
 
 	TArray<TSharedPtr<FSkillData>> UnlockedSkillList;
+	TMap<FName, int32> SkillIDToIndex;
 
 private:
 	const FSkillData* FindSkillDataByID(const FName& SkillID) const;
 
 	EElementalType StringToCurrencyType(const FString& InStr);
+
+	void RemoveSkillAtList(const FName& SkillID);
 };
 

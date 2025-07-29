@@ -151,6 +151,7 @@ namespace SOWGameplayTags {
 
 	/* Data Tags */
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Data_ManaCost);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Data_ModValue);
 	
 	/* Player Skill Tags */
 	/* Nature Skills */
