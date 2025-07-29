@@ -65,11 +65,21 @@ public:
 	UFUNCTION(BlueprintPure)
 	USOWTurretCombatComponent* GetTurretCombatComponent() const;				// Get Combat Component at other classes
 
+	UFUNCTION(BlueprintPure)
+	USOWTurretSkillComponent* GetTurretSkillComponent() const;				// Get Skill Component at other classes
+
+#pragma endregion
+
+#pragma region BlueprintFunctions
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, meta = (DisplayName = "Bind On Target Dead"))
 	void BP_BindOnTargetDead(AActor* Target);
-	
-	
+
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Deactivate Turret All Function Async"))
+	void BP_DeactivateTurretAllFunctionAsync();
 #pragma endregion
+
+	
+
 
 
 	
@@ -80,12 +90,16 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void PossessedBy(AController* NewController) override;
+	virtual void InitFromDataAsset() override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	USOWTurretCombatComponent* TurretCombatComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	USOWTurretEvolutionComponent* TurretEvolutionComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	USOWTurretSkillComponent* TurretSkillComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
 	UWidgetComponent* HealthWidgetComponent;
@@ -118,5 +132,5 @@ private:
 
 	void AddBuffData(const FGameplayAttribute& ModifiedAttr, FEffectOrientedTurretAttribute& Data, float Value);
 
-
+	FTimerHandle DeathTimerHandle;
 };

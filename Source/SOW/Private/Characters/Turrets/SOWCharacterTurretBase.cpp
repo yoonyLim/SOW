@@ -4,22 +4,33 @@
 #include "Characters/Turrets/SOWCharacterTurretBase.h"
 #include "Characters/Player/SOWCharacterPlayer.h"
 #include "Characters/Enemies/SOWCharacterEnemyBase.h"
-#include "AbilitySystem/SOWAttributeSet.h"
-#include "GameplayEffectTypes.h"
-#include "Components/CapsuleComponent.h"
-#include "Kismet/KismetSystemLibrary.h"
-#include "SOWBlueprintFunctionLibrary.h"
-#include "AbilitySystemBlueprintLibrary.h"
-#include "Components/SOWTurretCombatComponent.h"
-#include "Components/SOWTurretEvolutionComponent.h"
 
 #include "Components/DecalComponent.h"
 #include "Components/WidgetComponent.h"
-#include "Widget/SOWWidgetBase.h"
-#include "Interface/SOWCharacterTypeInterface.h"
+#include "Components/CapsuleComponent.h"
 #include "Components/UI/SOWTurretUIComponent.h"
+#include "Components/SOWTurretCombatComponent.h"
+#include "Components/SOWTurretEvolutionComponent.h"
+#include "Components/SOWTurretSkillComponent.h"
+
+#include "Engine/StreamableManager.h"
+#include "Engine/AssetManager.h"
+
+#include "GameplayEffectTypes.h"
+#include "SOWBlueprintFunctionLibrary.h"
+#include "AbilitySystemBlueprintLibrary.h"
+
 #include "SOWEnumTypes.h"
 #include "SOWStructTypes.h"
+
+#include "AbilitySystem/SOWAttributeSet.h"
+#include "Widget/SOWWidgetBase.h"
+#include "Interface/SOWCharacterTypeInterface.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "DataAsset/DA_StartupDataTurret.h"
+
+
+
 
 
 
@@ -30,6 +41,8 @@ ASOWCharacterTurretBase::ASOWCharacterTurretBase()
 	TurretCombatComponent = CreateDefaultSubobject<USOWTurretCombatComponent>(TEXT("TurretCombatComponent"));
 
 	TurretEvolutionComponent = CreateDefaultSubobject<USOWTurretEvolutionComponent>(TEXT("TurretEvolutionComponent"));
+
+	TurretSkillComponent = CreateDefaultSubobject<USOWTurretSkillComponent>(TEXT("TurretSkillComponent"));
 
 	HealthWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthWidgetComponent"));
 	HealthWidgetComponent->SetupAttachment(GetMesh());
@@ -66,6 +79,7 @@ void ASOWCharacterTurretBase::BeginPlay()
 		SettingWidget->InitTurretCreatedWidget(this);
 	}
 
+	// need to change code
 	AbilitySystemComponent->RegisterGameplayTagEvent(
 		FGameplayTag::RequestGameplayTag(TEXT("State.Stunned")),
 		EGameplayTagEventType::NewOrRemoved
@@ -83,6 +97,23 @@ void ASOWCharacterTurretBase::PossessedBy(AController* NewController)
 		ASC->OnActiveGameplayEffectAddedDelegateToSelf.AddUObject(this, &ASOWCharacterTurretBase::OnGameplayEffectAdded);
 		ASC->OnAnyGameplayEffectRemovedDelegate().AddUObject(this, &ASOWCharacterTurretBase::OnGameplayEffectRemoved);
 	}
+}
+
+void ASOWCharacterTurretBase::InitFromDataAsset()
+{
+	FStreamableManager& Streamable = UAssetManager::GetStreamableManager();
+	Streamable.RequestAsyncLoad(StartupData.ToSoftObjectPath(),
+		FStreamableDelegate::CreateLambda(
+			[this]()
+			{
+				if (StartupData.IsValid()) {
+					UDA_StartupDataBase* LoadData = StartupData.Get();
+					UDA_StartupDataTurret* LoadDataTurret = Cast<UDA_StartupDataTurret>(LoadData);
+					LoadDataTurret->GiveToAbilitySystemComponent(AbilitySystemComponent);
+				}
+			}
+		)
+	);
 }
 
 void ASOWCharacterTurretBase::OnGameplayEffectAdded(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& SpecApplied, FActiveGameplayEffectHandle ActiveHandle)
@@ -342,6 +373,31 @@ USOWTurretCombatComponent* ASOWCharacterTurretBase::GetTurretCombatComponent() c
 	checkf(TurretCombatComponent, TEXT("TurretCombatComponent not Found / Check point : SOWCharacterTurretBase.cpp"));
 
 	return TurretCombatComponent;
+}
+
+USOWTurretSkillComponent* ASOWCharacterTurretBase::GetTurretSkillComponent() const
+{
+	checkf(TurretSkillComponent, TEXT("TurretSkillComponent not Found / Check point : SOWCharacterTurretBase.cpp"));
+
+	return TurretSkillComponent;
+}
+
+void ASOWCharacterTurretBase::BP_DeactivateTurretAllFunctionAsync()
+{
+	if (!AbilitySystemComponent) return;
+
+	// 어빌리티 제거 (비동기 아님, 즉시 제거)
+	AbilitySystemComponent->ClearAllAbilities();
+
+	// 액티브한 GameplayEffect 제거
+	FGameplayEffectQuery EffectQuery = FGameplayEffectQuery::MakeQuery_MatchAllEffectTags(FGameplayTagContainer()); // 전체 매칭
+	AbilitySystemComponent->RemoveActiveEffects(EffectQuery);
+
+	// 애니메이션/사운드/죽음 이펙트 등 재생 (비동기 처리 가능)
+	//PlayDeathEffectAsync();
+
+	// 일정 시간 후 제거 (타이머 기반 비동기 처리)
+	GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this, &AActor::K2_DestroyActor, 3.0f, false, 0.1f);
 }
 
 

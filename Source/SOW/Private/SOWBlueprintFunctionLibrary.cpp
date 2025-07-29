@@ -8,6 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Characters/Turrets/SOWCharacterTurretBase.h"
 #include "AbilitySystem/SOWAbilitySystemComponent.h"
+#include "AIController.h"
 
 USOWAbilitySystemComponent* USOWBlueprintFunctionLibrary::NativeGetSOWAbilitySystemComponentFromActorInfo(AActor* InActor)
 {
@@ -75,6 +76,11 @@ bool USOWBlueprintFunctionLibrary::SpawnTurretWithCircleCount(UObject* WorldCont
 
         UGameplayStatics::FinishSpawningActor(SpawnedTurret, SpawnTransform);
 
+        AAIController* AIController = WorldContextObject->GetWorld()->SpawnActor<AAIController>(AAIController::StaticClass());
+        if (AIController && SpawnedTurret)
+        {
+            AIController->Possess(SpawnedTurret);
+        }
         return true;
     }
 

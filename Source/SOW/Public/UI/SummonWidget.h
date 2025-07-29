@@ -47,6 +47,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Summon|Visual")
 	UTexture2D* MagicCircleTexture_Lv4;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Summon|Visual")
+	UTexture2D* MagicCircleTexture_Lv5;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Summon|Spells", meta = (BindWidget))
 	UButton* BTN_FirstSpell;
 
@@ -59,10 +62,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Summon|Spells", meta = (BindWidget))
 	UButton* BTN_FourthSpell;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Summon|Spells", meta = (BindWidget))
+	UButton* BTN_FifthSpell;
+
 	TArray<UButton*> SpellButtonArray;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Summon", meta = (ExposeOnSpawn))
-	uint8 CircleLevel;
+	uint8 CircleLevel = 0;
 
 	float Percent = 0.0f;
 
@@ -71,6 +77,8 @@ public:
 	TArray<const FMagicSpell*> SpellList;
 
 	TArray<const FMagicSpell*> SelectedSpells;
+
+	TArray<uint8> L_SelectedSpellsIndex;
 
 	UPROPERTY(meta = (BindWidgetAnim), Transient)
 	UWidgetAnimation* SpellFadeIn;
@@ -87,10 +95,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Summon|Spells", meta = (BindWidget))
 	UImage* IMG_ThirdSpell;
 
+private:
+	EElementalType Temp_ElementalType = EElementalType::Nature;
 
 public:
 	UFUNCTION()
 	void OnDelayFinished();
+
+	UFUNCTION()
+	void HighlightMagicSpell();
+
+	UFUNCTION(BlueprintCallable)
+	uint8 GetCircleLevel();
 
 private:
 	UFUNCTION(BlueprintCallable)
@@ -106,9 +122,7 @@ private:
 	void PlaceTurret();
 
 	UFUNCTION(BlueprintCallable)
-	void SetButtonStyle(UButton* TargetButton, UTexture2D* TargetImage);
-
-	TArray<int32> GetUniqueRandomNumbers(int32 Min, int32 Max, int32 Count);
+	void SetButtonStyle(UButton* TargetButton, EElementalType ElementalType, bool bCanBeComp);
 
 	UFUNCTION()
 	void HandleButtonClicked0() { OnIndexedButtonClicked(0); }
@@ -122,9 +136,13 @@ private:
 	UFUNCTION()
 	void HandleButtonClicked3() { OnIndexedButtonClicked(3); }
 
-	UFUNCTION(BlueprintCallable)
-	void OnIndexedButtonClicked(int32 Index);
+	UFUNCTION()
+	void HandleButtonClicked4() { OnIndexedButtonClicked(4); }
 
+	UFUNCTION(BlueprintCallable)
+	void OnIndexedButtonClicked(uint8 Index);
+
+	uint8 IndexToKey();
 
 protected:
 	virtual void NativeConstruct();

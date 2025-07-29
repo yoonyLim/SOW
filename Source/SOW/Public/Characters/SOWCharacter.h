@@ -51,7 +51,7 @@ public:
 protected:
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void BeginPlay() override;
-	
+	virtual void InitFromDataAsset();
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,  Category = "AbilitySystem")

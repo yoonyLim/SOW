@@ -129,5 +129,27 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(World_Event_Gen_Flame, "World.Event.Gen.Flame");
 	
 	UE_DEFINE_GAMEPLAY_TAG(Data_ManaCost, "Data.ManaCost");
+	UE_DEFINE_GAMEPLAY_TAG(Data_ModValue, "Data.ModValue");
 
+	/* Player Skill Tag */
+	/* Nature Skills*/
+	UE_DEFINE_GAMEPLAY_TAG(Player_Skill_Nature_l, "Player.Skill.Nature.l");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Skill_Nature_ll, "Player.Skill.Nature.ll");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Skill_Nature_lll, "Player.Skill.Nature.lll");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Skill_Nature_lV, "Player.Skill.Nature.lV");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Skill_Nature_V, "Player.Skill.Nature.V");
+
+	UE_DEFINE_GAMEPLAY_TAG(Player_Skill_Richness_l, "Player.Skill.Richness.l");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Skill_Richness_ll, "Player.Skill.Richness.ll");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Skill_Richness_lll, "Player.Skill.Richness.lll");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Skill_Richness_lV, "Player.Skill.Richness.lV");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Skill_Richness_V, "Player.Skill.Richness.V");
+
+	UE_DEFINE_GAMEPLAY_TAG(Player_Skill_CycleOfLife_l, "Player.Skill.CycleOfLife.l");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Skill_CycleOfLife_ll, "Player.Skill.CycleOfLife.ll");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Skill_CycleOfLife_lll, "Player.Skill.CycleOfLife.lll");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Skill_CycleOfLife_lV, "Player.Skill.CycleOfLife.lV");
+
+	UE_DEFINE_GAMEPLAY_TAG(Player_Skill_Creation_l, "Player.Skill.Creation.l");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Skill_Creation_ll, "Player.Skill.Creation.ll");
 }
