@@ -7,6 +7,7 @@
 #include "SOWEnemyGameplayAbility.generated.h"
 
 class ASOWCharacterEnemyBase;
+class AEnemyBaseAIController;
 /**
  * 
  */
@@ -18,4 +19,7 @@ class SOW_API USOWEnemyGameplayAbility : public USOWGameplayAbilityBase
 protected:
 	UFUNCTION(BlueprintPure)
 	ASOWCharacterEnemyBase* GetSOWEnemyCharacterFromActorInfo() const;
+
+	UFUNCTION(BlueprintPure)
+	AEnemyBaseAIController* GetSOWEnemyControllerFromActorInfo() const;
 };

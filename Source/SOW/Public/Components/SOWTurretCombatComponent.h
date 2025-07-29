@@ -172,13 +172,13 @@ protected:
 	TArray<AActor*> GetAllDetectedTarget();
 
 	UFUNCTION(BlueprintCallable)
-	void AddNewFixedLocation(const FVector NewLocation);
+	void AddNewFixedLocation(const FVector NewLocation, ETargetFixErrorType& Error);
 
 	UFUNCTION(BlueprintCallable)
 	void ClearFixedLocationList();
 
 	UFUNCTION(BlueprintCallable)
-	bool TryAddNewFixedTarget(AActor* NewTarget);
+	bool TryAddNewFixedTarget(AActor* NewTarget, ETargetFixErrorType& Error);
 
 	UFUNCTION(BlueprintCallable)
 	void ClearFixedTargetList();

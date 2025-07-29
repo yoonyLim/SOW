@@ -4,22 +4,32 @@
 #include "Characters/Turrets/SOWCharacterTurretBase.h"
 #include "Characters/Player/SOWCharacterPlayer.h"
 #include "Characters/Enemies/SOWCharacterEnemyBase.h"
-#include "AbilitySystem/SOWAttributeSet.h"
-#include "GameplayEffectTypes.h"
+
+#include "Components/DecalComponent.h"
+#include "Components/WidgetComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "Kismet/KismetSystemLibrary.h"
-#include "SOWBlueprintFunctionLibrary.h"
-#include "AbilitySystemBlueprintLibrary.h"
+#include "Components/UI/SOWTurretUIComponent.h"
 #include "Components/SOWTurretCombatComponent.h"
 #include "Components/SOWTurretEvolutionComponent.h"
-#include "Components/SOWTurretSkillComponent.h"
 
-#include "Components/WidgetComponent.h"
-#include "Widget/SOWWidgetBase.h"
-#include "Interface/SOWCharacterTypeInterface.h"
-#include "Components/UI/SOWTurretUIComponent.h"
+#include "Engine/StreamableManager.h"
+#include "Engine/AssetManager.h"
+
+#include "GameplayEffectTypes.h"
+#include "SOWBlueprintFunctionLibrary.h"
+#include "AbilitySystemBlueprintLibrary.h"
+
 #include "SOWEnumTypes.h"
 #include "SOWStructTypes.h"
+
+#include "AbilitySystem/SOWAttributeSet.h"
+#include "Widget/SOWWidgetBase.h"
+#include "Interface/SOWCharacterTypeInterface.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "DataAsset/DA_StartupDataTurret.h"
+
+
+
 
 
 
@@ -31,8 +41,6 @@ ASOWCharacterTurretBase::ASOWCharacterTurretBase()
 
 	TurretEvolutionComponent = CreateDefaultSubobject<USOWTurretEvolutionComponent>(TEXT("TurretEvolutionComponent"));
 
-	TurretSkillComponent = CreateDefaultSubobject<USOWTurretSkillComponent>(TEXT("TurretSkillComponent"));
-
 	HealthWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthWidgetComponent"));
 	HealthWidgetComponent->SetupAttachment(GetMesh());
 
@@ -43,6 +51,17 @@ ASOWCharacterTurretBase::ASOWCharacterTurretBase()
 
 	TurretUIComponent = CreateDefaultSubobject<USOWTurretUIComponent>(TEXT("TurretUIComponent"));
 
+	DetectionRangeDecal = CreateDefaultSubobject<UDecalComponent>(TEXT("DetectionRangeDecal"));
+	DetectionRangeDecal->SetupAttachment(RootComponent);
+	DetectionRangeDecal->SetRelativeRotation(FRotator(-90.f, 0.f, 0.f));
+
+	ConstructorHelpers::FObjectFinder<UMaterialInterface> DecalMat(TEXT("/Game/03Materials/M_Range_Decal_Turret.M_Range_Decal_Turret"));
+	if (DecalMat.Succeeded())
+	{
+		DetectionRangeDecal->SetDecalMaterial(DecalMat.Object);
+	}
+	DetectionRangeDecal->SetVisibility(false);
+	
 }
 
 void ASOWCharacterTurretBase::BeginPlay()
@@ -57,12 +76,14 @@ void ASOWCharacterTurretBase::BeginPlay()
 		SettingWidget->InitTurretCreatedWidget(this);
 	}
 
+	// need to change code
 	AbilitySystemComponent->RegisterGameplayTagEvent(
 		FGameplayTag::RequestGameplayTag(TEXT("State.Stunned")),
 		EGameplayTagEventType::NewOrRemoved
 	).AddUObject(this, &ThisClass::OnGameplayTagChanged);
 
-
+	float radius = GetDetectionRangeRadius();
+	DetectionRangeDecal->DecalSize = FVector(radius, radius, radius);
 }
 
 void ASOWCharacterTurretBase::PossessedBy(AController* NewController)
@@ -73,23 +94,30 @@ void ASOWCharacterTurretBase::PossessedBy(AController* NewController)
 		ASC->OnActiveGameplayEffectAddedDelegateToSelf.AddUObject(this, &ASOWCharacterTurretBase::OnGameplayEffectAdded);
 		ASC->OnAnyGameplayEffectRemovedDelegate().AddUObject(this, &ASOWCharacterTurretBase::OnGameplayEffectRemoved);
 	}
+}
 
-	if (TurretSkillComponent)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Fail"));
+void ASOWCharacterTurretBase::InitFromDataAsset()
+{
+	FStreamableManager& Streamable = UAssetManager::GetStreamableManager();
+	Streamable.RequestAsyncLoad(StartupData.ToSoftObjectPath(),
+		FStreamableDelegate::CreateLambda(
+			[this]()
+			{
+				if (StartupData.IsValid()) {
+					UDA_StartupDataBase* LoadData = StartupData.Get();
+					UDA_StartupDataTurret* LoadDataTurret = Cast<UDA_StartupDataTurret>(LoadData);
+					LoadDataTurret->GiveToAbilitySystemComponent(AbilitySystemComponent);
+				}
+			}
+		)
+	);
 
-		TurretSkillComponent->InitializeSkills();
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("Fail22"));
-	}
 }
 
 void ASOWCharacterTurretBase::OnGameplayEffectAdded(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& SpecApplied, FActiveGameplayEffectHandle ActiveHandle)
 {
 	FEffectOrientedTurretAttribute Data;
-
+	
 	for (const FGameplayModifierInfo& Modifier : SpecApplied.Def->Modifiers)
 	{
 		const FGameplayAttribute& ModifiedAttr = Modifier.Attribute;
@@ -141,9 +169,16 @@ void ASOWCharacterTurretBase::OnGameplayEffectAdded(UAbilitySystemComponent* ASC
 		}
 	}
 
-	if (TurretUIComponent && TurretUIComponent->OnEffectApplied.IsBound()) {
-		TurretUIComponent->OnEffectApplied.Broadcast(Data);
+	if (TurretUIComponent) {
+		if(TurretUIComponent->OnEffectApplied.IsBound())
+			TurretUIComponent->OnEffectApplied.Broadcast(Data);
+
+		if (TurretUIComponent->OnTagChanged.IsBound()) {
+			TurretUIComponent->OnTagChanged.Broadcast();
+		}
 	}
+
+	
 }
 
 void ASOWCharacterTurretBase::OnGameplayEffectRemoved(const FActiveGameplayEffect& Effect)
@@ -177,8 +212,13 @@ void ASOWCharacterTurretBase::OnGameplayEffectRemoved(const FActiveGameplayEffec
 			Data.DefensePowerBaseValue = Magnitude;
 		}
 	}
-	if (TurretUIComponent && TurretUIComponent->OnEffectRemoved.IsBound()) {
-		TurretUIComponent->OnEffectRemoved.Broadcast(Data);
+	if (TurretUIComponent) {
+		if (TurretUIComponent->OnEffectRemoved.IsBound())
+			TurretUIComponent->OnEffectRemoved.Broadcast(Data);
+
+		if (TurretUIComponent->OnTagChanged.IsBound()) {
+			TurretUIComponent->OnTagChanged.Broadcast();
+		}
 	}
 }
 
@@ -226,6 +266,11 @@ void ASOWCharacterTurretBase::GetModifiedAttributesByGameplayEffects(FEffectOrie
 
 	BuffData = L_Buff;
 	DebuffData = L_Debuff;
+}
+
+void ASOWCharacterTurretBase::SwitchDetectionRangeDecal(bool On)
+{
+	DetectionRangeDecal->SetVisibility(On);
 }
 
 void ASOWCharacterTurretBase::AddBuffData(const FGameplayAttribute& ModifiedAttr, FEffectOrientedTurretAttribute& Data, float Value)
@@ -328,11 +373,22 @@ USOWTurretCombatComponent* ASOWCharacterTurretBase::GetTurretCombatComponent() c
 	return TurretCombatComponent;
 }
 
-USOWTurretSkillComponent* ASOWCharacterTurretBase::GetTurretSkillComponent() const
+void ASOWCharacterTurretBase::BP_DeactivateTurretAllFunctionAsync()
 {
-	checkf(TurretSkillComponent, TEXT("TurretSkillComponent not Found / Check point : SOWCharacterTurretBase.cpp"));
+	if (!AbilitySystemComponent) return;
 
-	return TurretSkillComponent;
+	// 어빌리티 제거 (비동기 아님, 즉시 제거)
+	AbilitySystemComponent->ClearAllAbilities();
+
+	// 액티브한 GameplayEffect 제거
+	FGameplayEffectQuery EffectQuery = FGameplayEffectQuery::MakeQuery_MatchAllEffectTags(FGameplayTagContainer()); // 전체 매칭
+	AbilitySystemComponent->RemoveActiveEffects(EffectQuery);
+
+	// 애니메이션/사운드/죽음 이펙트 등 재생 (비동기 처리 가능)
+	//PlayDeathEffectAsync();
+
+	// 일정 시간 후 제거 (타이머 기반 비동기 처리)
+	GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this, &AActor::K2_DestroyActor, 3.0f, false, 0.1f);
 }
 
 

@@ -110,7 +110,7 @@ void AEnemyBaseAIController::Taunt(AActor* TargetActor, float Duration)
 		
 	bIsTaunted = true;
 	GetBlackboardComponent()->SetValueAsObject("AttackTarget", TargetActor);
-	UpdateCurrentState(EEnemyStates::Attacking);
+	UpdateCurrentState(EEnemyStates::Taunted);
 
 	GetWorldTimerManager().SetTimer(
 		ResetTauntHandle,

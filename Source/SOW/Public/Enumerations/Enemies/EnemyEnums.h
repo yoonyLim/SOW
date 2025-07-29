@@ -12,6 +12,7 @@ enum class EEnemyStates : uint8
 	Passive UMETA(DisplayName = "Passive"),
 	Attacking UMETA(DisplayName = "Attacking"),
 	FollowingIncomingRoute UMETA(DisplayName = "FollowingIncomingRoute"),
+	Taunted UMETA(DisplayName = "Taunted"),
 	Dead UMETA(DisplayName = "Dead")
 };
 

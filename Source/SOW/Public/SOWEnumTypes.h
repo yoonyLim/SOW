@@ -105,53 +105,9 @@ enum class EMagicSpell : uint8 {
 };
 
 UENUM(BlueprintType)
-enum class ESkillEffectType : uint8 {
-	// added by : HYJ
-	// Check how the skill acts
-	CircleUpgrade				UMETA(DisplayName = "Circle Upgrade"),
-	AttributeModifier			UMETA(DisplayName = "Attribute Modifier"),
-	CustomScript				UMETA(DisplayName = "CustomScript"),
-};
-
-UENUM(BlueprintType)
-enum class EPassiveSkillTrigger : uint8
-{
-	// addedby : HJY
-	// Check the skill activation conditions
-	None,
-	OnTurretSpawn,
-	OnWaveStart,
-	InOverlappingInfluenceZone,
-
-	/* Nature Turret */
-	InForestAreat,
-};
-
-UENUM(BlueprintType)
-enum class ESkillTargetType : uint8
-{
-	// addedby : HJY
-	// Check the type of skill applied to
-	None, 
-	Self,
-	Enemy,
-	Ally,
-	EnemyInRange,
-	AllyInRange,
-};
-
-UENUM(BlueprintType)
-enum class EElementalType : uint8 
-{
-	// added by : HYJ
-	Normal,
-	Nature,
-	Electro,
-	Death,
-	Ice,
-	Wave,
-	Divinity,
-	Madness,
-	Flame,
-	Max		UMETA(Hidden),
+enum class ETargetFixErrorType : uint8 {
+	SUCCESS,
+	OUT_OF_RANGE,
+	INVALID_TARGET,
+	TURRET_DEAD
 };
