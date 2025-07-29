@@ -151,5 +151,28 @@ namespace SOWGameplayTags {
 
 	/* Data Tags */
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Data_ManaCost);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Data_ModValue);
 	
+	/* Player Skill Tags */
+	/* Nature Skills */
+	/* Data Tags */
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Skill_Nature_l);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Skill_Nature_ll);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Skill_Nature_lll);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Skill_Nature_lV);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Skill_Nature_V);
+
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Skill_Richness_l);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Skill_Richness_ll);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Skill_Richness_lll);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Skill_Richness_lV);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Skill_Richness_V);
+
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Skill_CycleOfLife_l);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Skill_CycleOfLife_ll);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Skill_CycleOfLife_lll);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Skill_CycleOfLife_lV);
+
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Skill_Creation_l);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Skill_Creation_ll);
 }

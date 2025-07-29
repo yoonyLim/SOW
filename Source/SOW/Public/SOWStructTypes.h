@@ -312,3 +312,63 @@ struct FBuffInfo : public FTableRowBase {
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString BuffDescription;
 };
+
+USTRUCT(BlueprintType)
+struct FSkillData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly)
+	FName SkillID;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Skill")
+	FGameplayTag SkillElementTag;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Skill")
+	EPassiveSkillTrigger TriggerType;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Skill")
+	ESkillTargetType TargetType;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Skill")
+	ESkillEffectType EffectType;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Skill")
+	FGameplayTag SkillStateTag;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Skill")
+	FName RequiredSkill;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Skill")
+	FName UpperLevelSkill;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Skill")
+	int32 RequiredCurrencyAmount = 0;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Skill")
+	FText SkillDescription;
+
+	/* Trigger Type �� meta data */
+	/* In Overlapping Influence Zone */
+	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "TriggerType==EPassiveSkillTrigger::InOverlappingInfluenceZone"));
+	uint8 ZoneNum; //
+
+	/* Effect Type �� meta data */
+	/* Attribute Modifier */
+	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "EffectType==ESkillEffectType::AttributeModifier"));
+	FGameplayAttribute TargetAttribute;
+
+	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "EffectType==ESkillEffectType::AttributeModifier"));
+	float ModifierValue = 0.f;
+
+	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "EffectType==ESkillEffectType::AttributeModifier"))
+	TSubclassOf<UGameplayEffect> GEClass;
+
+	/* CustomScript */
+	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "EffectType==ESkillEffectType::CustomScript"), Category = "Logic Driven")
+	TSubclassOf<UGameplayAbility> GameplayAbilityClass;
+
+	/* CircleUpgrade */
+	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "EffectType==ESkillEffectType::CircleUpgrade"), Category = "CircleUpgrade")
+	uint8 CircleLevel;
+};

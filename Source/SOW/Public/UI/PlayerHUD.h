@@ -35,6 +35,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	class UHorizontalBox* Stacked_DeBuff_Icon_Box;
 
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	class USkillTreeWidget* SkillTree;
+
 public:
 	void Init(class USOWAbilitySystemComponent* InASC);
 
