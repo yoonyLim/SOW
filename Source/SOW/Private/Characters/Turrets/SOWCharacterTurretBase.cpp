@@ -13,6 +13,7 @@
 #include "Components/SOWTurretCombatComponent.h"
 #include "Components/SOWTurretEvolutionComponent.h"
 
+#include "Components/DecalComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Widget/SOWWidgetBase.h"
 #include "Interface/SOWCharacterTypeInterface.h"
@@ -40,6 +41,17 @@ ASOWCharacterTurretBase::ASOWCharacterTurretBase()
 
 	TurretUIComponent = CreateDefaultSubobject<USOWTurretUIComponent>(TEXT("TurretUIComponent"));
 
+	DetectionRangeDecal = CreateDefaultSubobject<UDecalComponent>(TEXT("DetectionRangeDecal"));
+	DetectionRangeDecal->SetupAttachment(RootComponent);
+	DetectionRangeDecal->SetRelativeRotation(FRotator(-90.f, 0.f, 0.f));
+
+	ConstructorHelpers::FObjectFinder<UMaterialInterface> DecalMat(TEXT("/Game/03Materials/M_Range_Decal_Turret.M_Range_Decal_Turret"));
+	if (DecalMat.Succeeded())
+	{
+		DetectionRangeDecal->SetDecalMaterial(DecalMat.Object);
+	}
+	DetectionRangeDecal->SetVisibility(false);
+	
 }
 
 void ASOWCharacterTurretBase::BeginPlay()
@@ -59,7 +71,8 @@ void ASOWCharacterTurretBase::BeginPlay()
 		EGameplayTagEventType::NewOrRemoved
 	).AddUObject(this, &ThisClass::OnGameplayTagChanged);
 
-
+	float radius = GetDetectionRangeRadius();
+	DetectionRangeDecal->DecalSize = FVector(radius, radius, radius);
 }
 
 void ASOWCharacterTurretBase::PossessedBy(AController* NewController)
@@ -75,7 +88,7 @@ void ASOWCharacterTurretBase::PossessedBy(AController* NewController)
 void ASOWCharacterTurretBase::OnGameplayEffectAdded(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& SpecApplied, FActiveGameplayEffectHandle ActiveHandle)
 {
 	FEffectOrientedTurretAttribute Data;
-
+	
 	for (const FGameplayModifierInfo& Modifier : SpecApplied.Def->Modifiers)
 	{
 		const FGameplayAttribute& ModifiedAttr = Modifier.Attribute;
@@ -127,9 +140,16 @@ void ASOWCharacterTurretBase::OnGameplayEffectAdded(UAbilitySystemComponent* ASC
 		}
 	}
 
-	if (TurretUIComponent && TurretUIComponent->OnEffectApplied.IsBound()) {
-		TurretUIComponent->OnEffectApplied.Broadcast(Data);
+	if (TurretUIComponent) {
+		if(TurretUIComponent->OnEffectApplied.IsBound())
+			TurretUIComponent->OnEffectApplied.Broadcast(Data);
+
+		if (TurretUIComponent->OnTagChanged.IsBound()) {
+			TurretUIComponent->OnTagChanged.Broadcast();
+		}
 	}
+
+	
 }
 
 void ASOWCharacterTurretBase::OnGameplayEffectRemoved(const FActiveGameplayEffect& Effect)
@@ -163,8 +183,13 @@ void ASOWCharacterTurretBase::OnGameplayEffectRemoved(const FActiveGameplayEffec
 			Data.DefensePowerBaseValue = Magnitude;
 		}
 	}
-	if (TurretUIComponent && TurretUIComponent->OnEffectRemoved.IsBound()) {
-		TurretUIComponent->OnEffectRemoved.Broadcast(Data);
+	if (TurretUIComponent) {
+		if (TurretUIComponent->OnEffectRemoved.IsBound())
+			TurretUIComponent->OnEffectRemoved.Broadcast(Data);
+
+		if (TurretUIComponent->OnTagChanged.IsBound()) {
+			TurretUIComponent->OnTagChanged.Broadcast();
+		}
 	}
 }
 
@@ -212,6 +237,11 @@ void ASOWCharacterTurretBase::GetModifiedAttributesByGameplayEffects(FEffectOrie
 
 	BuffData = L_Buff;
 	DebuffData = L_Debuff;
+}
+
+void ASOWCharacterTurretBase::SwitchDetectionRangeDecal(bool On)
+{
+	DetectionRangeDecal->SetVisibility(On);
 }
 
 void ASOWCharacterTurretBase::AddBuffData(const FGameplayAttribute& ModifiedAttr, FEffectOrientedTurretAttribute& Data, float Value)

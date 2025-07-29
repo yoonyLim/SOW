@@ -15,11 +15,12 @@ void UGEC_SendGameplayEvent::OnGameplayEffectApplied(FActiveGameplayEffectsConta
 	UAbilitySystemComponent* TargetASC = ActiveGEContainer.Owner;
 	AActor* TargetActor = TargetASC->GetAvatarActor();
 
+
+	FGameplayEventData Data = MakeOugingGameplayEventData(ActiveGEContainer, GESpec, PredictionKey);
+
 	for (const FGameplayTag& EventTagToSend : TagsToSend) {
 		if (!EventTagToSend.IsValid()) continue;
 
-		FGameplayEventData Data;
-		
 		switch (TargetToSend)
 		{
 		case ESendTarget::Source:
@@ -37,3 +38,10 @@ void UGEC_SendGameplayEvent::OnGameplayEffectApplied(FActiveGameplayEffectsConta
 	}
 	
 }
+
+FGameplayEventData UGEC_SendGameplayEvent::MakeOugingGameplayEventData(FActiveGameplayEffectsContainer& ActiveGEContainer, FGameplayEffectSpec& GESpec, FPredictionKey& PredictionKey) const
+{
+	FGameplayEventData Data;
+	return Data;
+}
+

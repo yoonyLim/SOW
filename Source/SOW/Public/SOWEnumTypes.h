@@ -103,3 +103,11 @@ enum class EMagicSpell : uint8 {
 	Rudh,
 	Badh
 };
+
+UENUM(BlueprintType)
+enum class ETargetFixErrorType : uint8 {
+	SUCCESS,
+	OUT_OF_RANGE,
+	INVALID_TARGET,
+	TURRET_DEAD
+};

@@ -12,6 +12,7 @@ class USOWTurretCombatComponent;
 class USOWTurretEvolutionComponent;
 class UWidgetComponent;
 struct FEffectOrientedTurretAttribute;
+class UDecalComponent;
 
 
 
@@ -34,6 +35,9 @@ public:
 	virtual USOWCharacterUIComponent* GetCharacterUIComponent() const override;
 	virtual USOWTurretUIComponent* GetTurretUIComponent() const override;
 	/* End ISOWCharacterUIInterface implement */
+
+	UFUNCTION(BlueprintCallable)
+	void SwitchDetectionRangeDecal(bool On);
 
 #pragma region NativeGetter
 
@@ -92,6 +96,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
 	USOWTurretUIComponent* TurretUIComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Decal")
+	UDecalComponent* DetectionRangeDecal;
+
 private:
 	UFUNCTION()
 	void OnGameplayEffectAdded(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& SpecApplied, FActiveGameplayEffectHandle ActiveHandle);
@@ -107,5 +114,9 @@ private:
 	UFUNCTION(BlueprintCallable)
 	void GetModifiedAttributesByGameplayEffects(FEffectOrientedTurretAttribute& BuffData, FEffectOrientedTurretAttribute& DebuffData);
 
+
+
 	void AddBuffData(const FGameplayAttribute& ModifiedAttr, FEffectOrientedTurretAttribute& Data, float Value);
+
+
 };
