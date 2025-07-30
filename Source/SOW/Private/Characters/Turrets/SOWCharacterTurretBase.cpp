@@ -82,8 +82,7 @@ void ASOWCharacterTurretBase::BeginPlay()
 		EGameplayTagEventType::NewOrRemoved
 	).AddUObject(this, &ThisClass::OnGameplayTagChanged);
 
-	float radius = GetDetectionRangeRadius();
-	DetectionRangeDecal->DecalSize = FVector(radius, radius, radius);
+	
 }
 
 void ASOWCharacterTurretBase::PossessedBy(AController* NewController)
@@ -93,7 +92,15 @@ void ASOWCharacterTurretBase::PossessedBy(AController* NewController)
 	if (USOWAbilitySystemComponent* ASC = GetSOWAbilitySystemComponent()) {
 		ASC->OnActiveGameplayEffectAddedDelegateToSelf.AddUObject(this, &ASOWCharacterTurretBase::OnGameplayEffectAdded);
 		ASC->OnAnyGameplayEffectRemovedDelegate().AddUObject(this, &ASOWCharacterTurretBase::OnGameplayEffectRemoved);
+
+		if (!AttributeSet) return;
+
+		ASC->GetGameplayAttributeValueChangeDelegate(
+			AttributeSet->GetDetectionRangeAttribute())
+			.AddUObject(this, &ASOWCharacterTurretBase::OnDetectionRangeChanged);
 	}
+
+	
 }
 
 void ASOWCharacterTurretBase::InitFromDataAsset()
@@ -270,6 +277,9 @@ void ASOWCharacterTurretBase::GetModifiedAttributesByGameplayEffects(FEffectOrie
 
 void ASOWCharacterTurretBase::SwitchDetectionRangeDecal(bool On)
 {
+	float radius = GetDetectionRangeRadius();
+	UE_LOG(LogTemp, Warning, TEXT("Radius : %s"), *FString::SanitizeFloat(radius));
+	DetectionRangeDecal->DecalSize = FVector(radius, radius, radius);
 	DetectionRangeDecal->SetVisibility(On);
 }
 
@@ -291,6 +301,12 @@ void ASOWCharacterTurretBase::AddBuffData(const FGameplayAttribute& ModifiedAttr
 	{
 		Data.DefensePowerBaseValue += Value;
 	}
+}
+
+void ASOWCharacterTurretBase::OnDetectionRangeChanged(const FOnAttributeChangeData& Data)
+{
+	//float NewRadius = Data.NewValue;
+	SwitchDetectionRangeDecal(DetectionRangeDecal->GetVisibleFlag());
 }
 
 void ASOWCharacterTurretBase::Tick(float DeltaTime) {
@@ -373,23 +389,12 @@ USOWTurretCombatComponent* ASOWCharacterTurretBase::GetTurretCombatComponent() c
 	return TurretCombatComponent;
 }
 
-void ASOWCharacterTurretBase::BP_DeactivateTurretAllFunctionAsync()
+bool ASOWCharacterTurretBase::IsActiveTurret() const
 {
-	if (!AbilitySystemComponent) return;
-
-	// 어빌리티 제거 (비동기 아님, 즉시 제거)
-	AbilitySystemComponent->ClearAllAbilities();
-
-	// 액티브한 GameplayEffect 제거
-	FGameplayEffectQuery EffectQuery = FGameplayEffectQuery::MakeQuery_MatchAllEffectTags(FGameplayTagContainer()); // 전체 매칭
-	AbilitySystemComponent->RemoveActiveEffects(EffectQuery);
-
-	// 애니메이션/사운드/죽음 이펙트 등 재생 (비동기 처리 가능)
-	//PlayDeathEffectAsync();
-
-	// 일정 시간 후 제거 (타이머 기반 비동기 처리)
-	GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this, &AActor::K2_DestroyActor, 3.0f, false, 0.1f);
+	return TurretCombatComponent->GetActiveBool();
 }
+
+
 
 
 
