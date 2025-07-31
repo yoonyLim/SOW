@@ -277,8 +277,10 @@ void ASOWCharacterTurretBase::GetModifiedAttributesByGameplayEffects(FEffectOrie
 
 void ASOWCharacterTurretBase::SwitchDetectionRangeDecal(bool On)
 {
+	DetectionRangeDecal->SetVisibility(false);
+
 	float radius = GetDetectionRangeRadius();
-	UE_LOG(LogTemp, Warning, TEXT("Radius : %s"), *FString::SanitizeFloat(radius));
+	//UE_LOG(LogTemp, Warning, TEXT("Radius : %s"), *FString::SanitizeFloat(radius));
 	DetectionRangeDecal->DecalSize = FVector(radius, radius, radius);
 	DetectionRangeDecal->SetVisibility(On);
 }
@@ -306,6 +308,7 @@ void ASOWCharacterTurretBase::AddBuffData(const FGameplayAttribute& ModifiedAttr
 void ASOWCharacterTurretBase::OnDetectionRangeChanged(const FOnAttributeChangeData& Data)
 {
 	//float NewRadius = Data.NewValue;
+	//UE_LOG(LogTemp, Warning, TEXT("Radius Changed."));
 	SwitchDetectionRangeDecal(DetectionRangeDecal->GetVisibleFlag());
 }
 
