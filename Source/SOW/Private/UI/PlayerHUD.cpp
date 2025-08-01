@@ -9,6 +9,7 @@
 // Widget
 #include "Components/ProgressBar.h"
 #include "Components/Image.h"
+#include "Components/Button.h"
 #include "Components/HorizontalBox.h"
 
 void UPlayerHUD::NativeConstruct()

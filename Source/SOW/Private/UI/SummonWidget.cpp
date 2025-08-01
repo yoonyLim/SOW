@@ -14,6 +14,8 @@
 #include "UObject/UObjectGlobals.h" 
 #include "Animation/WidgetAnimation.h"
 #include "TimerManager.h"
+#include "Manager/SummonManager.h"
+#include "SOWGameInstance.h"
 #include "Core/SOWPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -42,6 +44,18 @@ void USummonWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	USOWGameInstance* GI = Cast<USOWGameInstance>(GetWorld()->GetGameInstance());
+	USummonManager* SummonManager = GI->GetSummonManager();
+
+	FGameplayTag NatureTag = FGameplayTag::RequestGameplayTag(FName("Shared.Element.Nature"));
+
+	CircleLevel = SummonManager->GetCircleLevel(NatureTag);
+
+	if (CircleLevel == 0)
+	{
+		RemoveFromParent();
+	}
+
 	DT_MagicSpell = LoadObject<UDataTable>(
 		nullptr,
 		TEXT("/Game/01Blueprints/DataTable/MagicSpell/DT_MagicSpell.DT_MagicSpell")
@@ -52,12 +66,13 @@ void USummonWidget::NativeConstruct()
 		UE_LOG(LogTemp, Error, TEXT("Failed to load Magic Spell DataTable"));
 	}
 
-	SpellButtonArray = { BTN_FirstSpell, BTN_SecondSpell, BTN_ThirdSpell, BTN_FourthSpell };
+	SpellButtonArray = { BTN_FirstSpell, BTN_SecondSpell, BTN_ThirdSpell, BTN_FourthSpell, BTN_FifthSpell };
 
 	if (BTN_FirstSpell) BTN_FirstSpell->OnClicked.AddDynamic(this, &USummonWidget::HandleButtonClicked0);
 	if (BTN_SecondSpell) BTN_SecondSpell->OnClicked.AddDynamic(this, &USummonWidget::HandleButtonClicked1);
 	if (BTN_ThirdSpell) BTN_ThirdSpell->OnClicked.AddDynamic(this, &USummonWidget::HandleButtonClicked2);
 	if (BTN_FourthSpell) BTN_FourthSpell->OnClicked.AddDynamic(this, &USummonWidget::HandleButtonClicked3);
+	if (BTN_FifthSpell) BTN_FifthSpell->OnClicked.AddDynamic(this, &USummonWidget::HandleButtonClicked4);
 
 	SetPercent();
 	SetImage();
@@ -75,53 +90,50 @@ void USummonWidget::SetPercent()
 
 void USummonWidget::SetImage()
 {
+	USOWGameInstance* GI = Cast<USOWGameInstance>(GetWorld()->GetGameInstance());
+	USummonManager* SummonManager = GI->GetSummonManager();
+
+	FGameplayTag NatureTag = FGameplayTag::RequestGameplayTag(FName("Shared.Element.Nature"));
+
 	if (RoundProgressBarInst)
 	{
-		if (CircleLevel)
+		switch (SummonManager->GetCircle(NatureTag))
 		{
-			switch (CircleLevel)
-			{
-			case 1:
-				RoundProgressBarInst->SetTextureParameterValue(FName("Texture"), MagicCircleTexture_Lv1);
-				break;
-			case 2:
-				RoundProgressBarInst->SetTextureParameterValue(FName("Texture"), MagicCircleTexture_Lv2);
-				break;
-			case 3:
-				RoundProgressBarInst->SetTextureParameterValue(FName("Texture"), MagicCircleTexture_Lv3);
-				break;
-			case 4:
-				RoundProgressBarInst->SetTextureParameterValue(FName("Texture"), MagicCircleTexture_Lv4);
-				break;
-			}
+		case 0:
+			break;
+		case 1:
+		{
+			RoundProgressBarInst->SetTextureParameterValue(FName("Texture"), MagicCircleTexture_Lv1);
+			break;
+		}
+		case 2:
+		{
+			RoundProgressBarInst->SetTextureParameterValue(FName("Texture"), MagicCircleTexture_Lv2);
+			break;
+		}
+		case 3:
+		{
+			RoundProgressBarInst->SetTextureParameterValue(FName("Texture"), MagicCircleTexture_Lv3);
+			break;
+		}
+		case 4:
+		{
+			RoundProgressBarInst->SetTextureParameterValue(FName("Texture"), MagicCircleTexture_Lv4);
+			break;
+		}
+		case 5:
+		{
+			RoundProgressBarInst->SetTextureParameterValue(FName("Texture"), MagicCircleTexture_Lv5);
+			break;
+		}
 		}
 	}
-
 	return;
-}
-
-TArray<int32> USummonWidget::GetUniqueRandomNumbers(int32 Min, int32 Max, int32 Count)
-{
-	TArray<int32> Pool;
-	for (int32 i = Min; i <= Max; ++i)
-	{
-		Pool.Add(i);
-	}
-
-	Pool.Sort([](int32 A, int32 B) { return FMath::RandBool(); }); 
-
-	TArray<int32> Result;
-	for (int32 i = 0; i < Count && i < Pool.Num(); ++i)
-	{
-		Result.Add(Pool[i]);
-	}
-
-	return Result;
 }
 
 void USummonWidget::SetMagicSpell()
 {
-	TArray<const FMagicSpell*> Spells;
+	if (CircleLevel == 0) return;
 
 	if (DT_MagicSpell)
 	{
@@ -132,73 +144,60 @@ void USummonWidget::SetMagicSpell()
 			const FMagicSpell* Row = reinterpret_cast<const FMagicSpell*>(RowPair.Value);
 			if (Row)
 			{
-				Spells.Add(Row);
+				SpellList.Add(Row);
 			}
 		}
 		UE_LOG(LogTemp, Error, TEXT("SummonWidget: step is %d"), CurrentStep);
-
-		UE_LOG(LogTemp, Log, TEXT("SummonWidget: spell num is %d"), Spells.Num());
 	}
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("MagicSpell DataTable is NULL"));
 	}
 
-	TArray<int32> RandomInts = GetUniqueRandomNumbers(0, (Spells.Num() - 1), 4);
 
-	UE_LOG(LogTemp, Error, TEXT("SummonWidget: %d"), RandomInts.Num());
-
-	for (int32 i = 0; i < RandomInts.Num(); ++i)
+	for (int32 i = 0; i < 5; i++)
 	{
 		if (SpellButtonArray[i])
 		{
-			SpellList.Add(Spells[RandomInts[i]]);
 			SpellButtonArray[i]->SetVisibility(ESlateVisibility::Visible);
-			SetButtonStyle(SpellButtonArray[i], Spells[RandomInts[i]]->SanskritImage);
+			SetButtonStyle(SpellButtonArray[i], EElementalType::Nature, false);
 		}
 	}
 
 	PlayAnimation(SpellFadeIn);
 }
 
-void USummonWidget::OnIndexedButtonClicked(int32 Index)
+void USummonWidget::OnIndexedButtonClicked(uint8 Index)
 {
-	UE_LOG(LogTemp, Error, TEXT("SummonWidget: SpellList Num is  %d"), SpellList.Num());
 
 	SelectedSpells.Add(SpellList[Index]);
-	SpellList.Empty();
+	UE_LOG(LogTemp, Error, TEXT("SummonWidget: SpellList Num is  %d"), Index);
+	L_SelectedSpellsIndex.Add(Index);
 
-	if (SpellFadeOut)
-	{
-		FWidgetAnimationDynamicEvent AnimationFinishedEvent;
-		AnimationFinishedEvent.BindDynamic(this, &USummonWidget::OnDelayFinished);
-
-		// 애니메이션 바인딩
-		BindToAnimationFinished(SpellFadeOut, AnimationFinishedEvent);
-
-		// 애니메이션 재생
-		PlayAnimation(SpellFadeOut);
-	}
+	OnDelayFinished();
 }
 
 
-void USummonWidget::SetButtonStyle(UButton* TargetButton, UTexture2D* TargetImage)
+void USummonWidget::SetButtonStyle(UButton* TargetButton, EElementalType ElementalType ,bool bCanBeComp)
 {
-	if (!TargetButton || !TargetImage)
+	if (!TargetButton)
 		return;
 
-	FSlateBrush TargetBrush;
-	TargetBrush.SetResourceObject(TargetImage);
-	TargetBrush.ImageSize = FVector2D(250.f, 150.f);
+	FButtonStyle ButtonStyle = TargetButton->WidgetStyle;
 
-	FButtonStyle ButtonStyle;
-	ButtonStyle.SetNormal(TargetBrush);
-	ButtonStyle.SetHovered(TargetBrush);
-	ButtonStyle.SetPressed(TargetBrush);
+	if (bCanBeComp)
+	{
+		ButtonStyle.Normal.TintColor = FSlateColor(FLinearColor(72.f / 255.f, 156.f / 255.f, 20.f / 255.f, 1.f));
+		ButtonStyle.Hovered.TintColor = FSlateColor(FLinearColor(72.f / 255.f, 156.f / 255.f, 20.f / 255.f, 1.f));
+		ButtonStyle.Pressed.TintColor = FSlateColor(FLinearColor(72.f / 255.f, 156.f / 255.f, 20.f / 255.f, 1.f));
+	}
+	else
+	{
+		ButtonStyle.Normal.TintColor = FSlateColor(FLinearColor::White);
+		ButtonStyle.Hovered.TintColor = FSlateColor(FLinearColor::White);
+		ButtonStyle.Pressed.TintColor = FSlateColor(FLinearColor::White);
+	}
 
-	ButtonStyle.Normal.TintColor = FSlateColor(FLinearColor::White);
-	ButtonStyle.Hovered.TintColor = FSlateColor(FLinearColor::White);
-	ButtonStyle.Pressed.TintColor = FSlateColor(FLinearColor::White);
 
 	TargetButton->WidgetStyle = ButtonStyle;
 }
@@ -208,20 +207,18 @@ void USummonWidget::OnDelayFinished()
 {
 	UE_LOG(LogTemp, Error, TEXT("SummonWidget: %d"), CurrentStep);
 
-
-
 	if (CurrentStep == 1)
 	{
+		HighlightMagicSpell();
 		CurrentStep += 1;
-		SetMagicSpell();
 		IMG_FirstSpell->SetBrushFromTexture(SelectedSpells[0]->SanskritImage);
 		IMG_FirstSpell->SetVisibility(ESlateVisibility::Visible);
 		return;
 	}
 	else if (CurrentStep == 2)
 	{
+		HighlightMagicSpell();
 		CurrentStep += 1;
-		SetMagicSpell();
 		IMG_SecondSpell->SetBrushFromTexture(SelectedSpells[1]->SanskritImage);
 		IMG_SecondSpell->SetVisibility(ESlateVisibility::Visible);
 		return;
@@ -246,4 +243,58 @@ void USummonWidget::PlaceTurret()
 	PC->StartPlacingTurret(Spells);
 
 	RemoveFromParent();
+}
+
+void USummonWidget::HighlightMagicSpell()
+{
+	USOWGameInstance* GI = Cast<USOWGameInstance>(GetWorld()->GetGameInstance());
+	USummonManager* SummonManager = GI->GetSummonManager();
+
+	EElementalType ET = EElementalType::Nature;
+
+	TMap<uint8, TArray<uint8>>* M_SpellComp= SummonManager->GetSpellCompMap(ET, CurrentStep);
+
+	uint8 Key = IndexToKey();
+
+	UE_LOG(LogTemp, Warning, TEXT("Index Key String: %d"), Key);
+
+	if (!(*M_SpellComp).Contains(Key))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Here"));
+		return;
+	}
+
+	for (int i = 0; i < 5; i++)
+	{
+		if ((*M_SpellComp)[Key].Contains(i))
+		{
+			SetButtonStyle(SpellButtonArray[i], EElementalType::Nature, true);
+		}
+		else
+		{
+			SetButtonStyle(SpellButtonArray[i], EElementalType::Nature, false);
+		}
+	}
+}
+
+uint8 USummonWidget::IndexToKey()
+{
+	FString A = "";
+
+	for (uint8 Num : L_SelectedSpellsIndex)
+	{
+		A += FString::FormatAsNumber(Num);
+	}
+
+	return FCString::Atoi(*A);
+}
+
+uint8 USummonWidget::GetCircleLevel()
+{
+	USOWGameInstance* GI = Cast<USOWGameInstance>(GetWorld()->GetGameInstance());
+	USummonManager* SummonManager = GI->GetSummonManager();
+
+	FGameplayTag NatureTag = FGameplayTag::RequestGameplayTag(FName("Shared.Element.Nature"));
+
+	return SummonManager->GetCircleLevel(NatureTag);
 }

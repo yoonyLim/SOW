@@ -11,6 +11,7 @@
 #include "Components/UI/SOWTurretUIComponent.h"
 #include "Components/SOWTurretCombatComponent.h"
 #include "Components/SOWTurretEvolutionComponent.h"
+#include "Components/SOWTurretSkillComponent.h"
 
 #include "Engine/StreamableManager.h"
 #include "Engine/AssetManager.h"
@@ -40,6 +41,8 @@ ASOWCharacterTurretBase::ASOWCharacterTurretBase()
 	TurretCombatComponent = CreateDefaultSubobject<USOWTurretCombatComponent>(TEXT("TurretCombatComponent"));
 
 	TurretEvolutionComponent = CreateDefaultSubobject<USOWTurretEvolutionComponent>(TEXT("TurretEvolutionComponent"));
+
+	TurretSkillComponent = CreateDefaultSubobject<USOWTurretSkillComponent>(TEXT("TurretSkillComponent"));
 
 	HealthWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthWidgetComponent"));
 	HealthWidgetComponent->SetupAttachment(GetMesh());
@@ -118,7 +121,6 @@ void ASOWCharacterTurretBase::InitFromDataAsset()
 			}
 		)
 	);
-
 }
 
 void ASOWCharacterTurretBase::OnGameplayEffectAdded(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& SpecApplied, FActiveGameplayEffectHandle ActiveHandle)
@@ -393,6 +395,14 @@ USOWTurretCombatComponent* ASOWCharacterTurretBase::GetTurretCombatComponent() c
 }
 
 bool ASOWCharacterTurretBase::IsActiveTurret() const
+USOWTurretSkillComponent* ASOWCharacterTurretBase::GetTurretSkillComponent() const
+{
+	checkf(TurretSkillComponent, TEXT("TurretSkillComponent not Found / Check point : SOWCharacterTurretBase.cpp"));
+
+	return TurretSkillComponent;
+}
+
+void ASOWCharacterTurretBase::BP_DeactivateTurretAllFunctionAsync()
 {
 	return TurretCombatComponent->GetActiveBool();
 }

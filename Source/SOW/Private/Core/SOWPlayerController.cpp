@@ -72,6 +72,8 @@ void ASOWPlayerController::StartPlacingTurret(FSpellCombination Spells)
                 PreviewTurret->SetPreviewActor(Row->Mesh, Row->AttackRange);
             }
         }
+
+        PlayerCharacter->ShowInstallationRange(true);
     }
 }
 
@@ -90,48 +92,40 @@ void ASOWPlayerController::UpdateTurretPreview()
 
 void ASOWPlayerController::ConfirmTurretPlacement()
 {
-    FName TargetRowName = TEXT("SpellComb");
-
-    UE_LOG(LogTemp, Log, TEXT("Hit Actor: ee"));
-
-    FHitResult Hit;
-    if (GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_Visibility), false, Hit))
+    if (bIsPlacingTurret)
     {
-        UE_LOG(LogTemp, Log, TEXT("Hit Actor: ii"));
+        FName TargetRowName = TEXT("SpellComb");
 
-        if (bIsPlacingTurret)
+        APawn* ControlledPawn = GetPawn();
+        ASOWCharacterPlayer* SOWPlayer = Cast<ASOWCharacterPlayer>(ControlledPawn);
+
+        FHitResult Hit;
+        if (GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_Visibility), false, Hit))
         {
-            AActor* HitActor = Hit.GetActor();
-            if (HitActor)
+            if (bIsPlacingTurret)
             {
-                UE_LOG(LogTemp, Log, TEXT("Hit Actor: %s"), *HitActor->GetName());
-            }
+                AActor* HitActor = Hit.GetActor();
+                if (HitActor)
+                {
+                    UE_LOG(LogTemp, Log, TEXT("Hit Actor: %s"), *HitActor->GetName());
+                }
 
-            FVector TargetLocation = Hit.ImpactPoint;
+                FVector TargetLocation = Hit.ImpactPoint;
 
-            bool bCanPlace = FVector::Dist(GetPawn()->GetActorLocation(), TargetLocation) <= 300.f;
+                bool bCanPlace = FVector::Dist(GetPawn()->GetActorLocation(), TargetLocation) <= 300.f;
 
-            if (bCanPlace)
-            {
-                //GetWorld()->SpawnActor<AActor>(TurretClass, TargetLocation, FRotator::ZeroRotator);
-                USOWBlueprintFunctionLibrary::SpawnTurretWithCircleCount(this, TurretClass, TargetLocation, FRotator::ZeroRotator, 2);
+                if (bCanPlace)
+                {
+                    USOWBlueprintFunctionLibrary::SpawnTurretWithCircleCount(this, TurretClass, TargetLocation, FRotator::ZeroRotator, 2);
 
-                PreviewTurret->Destroy();
-                PreviewTurret = nullptr;
+                    PreviewTurret->Destroy();
+                    PreviewTurret = nullptr;
 
-                bIsPlacingTurret = false;
-            }
-            APawn* ControlledPawn = GetPawn();
-            if (ASOWCharacterPlayer* SOWPlayer = Cast<ASOWCharacterPlayer>(ControlledPawn))
-            {
+                    bIsPlacingTurret = false;
+                }
                 SOWPlayer->bCanMove = true;
                 SOWPlayer->ShowInstallationRange(false);
             }
-        }
-        else
-        {
-            AActor* HitActor = Hit.GetActor();
-            UE_LOG(LogTemp, Log, TEXT("Hit Actor: %s"), *HitActor->GetName());
         }
     }
 }
