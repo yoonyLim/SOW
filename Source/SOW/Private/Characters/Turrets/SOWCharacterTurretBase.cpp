@@ -394,7 +394,10 @@ USOWTurretCombatComponent* ASOWCharacterTurretBase::GetTurretCombatComponent() c
 	return TurretCombatComponent;
 }
 
-bool ASOWCharacterTurretBase::IsActiveTurret() const
+bool ASOWCharacterTurretBase::IsActiveTurret() const 
+{
+	return TurretCombatComponent->GetActiveBool();
+}
 USOWTurretSkillComponent* ASOWCharacterTurretBase::GetTurretSkillComponent() const
 {
 	checkf(TurretSkillComponent, TEXT("TurretSkillComponent not Found / Check point : SOWCharacterTurretBase.cpp"));
@@ -402,10 +405,6 @@ USOWTurretSkillComponent* ASOWCharacterTurretBase::GetTurretSkillComponent() con
 	return TurretSkillComponent;
 }
 
-void ASOWCharacterTurretBase::BP_DeactivateTurretAllFunctionAsync()
-{
-	return TurretCombatComponent->GetActiveBool();
-}
 
 
 
