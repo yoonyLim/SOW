@@ -113,6 +113,11 @@ float USOWTurretCombatComponent::GetProjectileLivingTime() const
 	return Duration;
 }
 
+bool USOWTurretCombatComponent::GetActiveBool() const
+{
+	return bActive;
+}
+
 void USOWTurretCombatComponent::SetHitCollision(ATurretMeleeHitCollision* HitCollsion)
 {
 	if (!HitCollsion) {
@@ -207,6 +212,8 @@ void USOWTurretCombatComponent::ActivateTurretFunction()
 
 		M_CachedCooldownTime = NewCooldownTime;
 	}
+
+	bActive = true;
 }
 
 bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()

@@ -17,6 +17,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEffectAppliedDelegate, FEffectOri
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnBuffTagAddOrRemoved);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDetectionRangeChangedDelegate);
+
 /**
  * 
  */
@@ -43,6 +45,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnBuffTagAddOrRemoved OnTagChanged;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnDetectionRangeChangedDelegate OnRangeChanged;
 
 	UFUNCTION(BlueprintPure)
 	ASOWCharacterTurretBase* GetOwnerTurret() const;
