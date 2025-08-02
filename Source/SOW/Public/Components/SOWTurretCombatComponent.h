@@ -75,6 +75,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
 	float GetProjectileLivingTime() const;
+
+	bool GetActiveBool() const;
 #pragma endregion
 
 	
@@ -224,6 +226,8 @@ private:
 	int32 CurrentPriorityNumber = 0;
 
 	ASOWCharacterTurretBase* CachedOwnerCharacter;
+
+	bool bActive = false;
 
 
 	float M_CachedCooldownTime;

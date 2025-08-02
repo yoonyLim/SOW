@@ -66,6 +66,9 @@ public:
 	USOWTurretCombatComponent* GetTurretCombatComponent() const;				// Get Combat Component at other classes
 
 	UFUNCTION(BlueprintPure)
+	bool IsActiveTurret() const;
+
+	UFUNCTION(BlueprintPure)
 	USOWTurretSkillComponent* GetTurretSkillComponent() const;				// Get Skill Component at other classes
 
 #pragma endregion
@@ -73,9 +76,6 @@ public:
 #pragma region BlueprintFunctions
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, meta = (DisplayName = "Bind On Target Dead"))
 	void BP_BindOnTargetDead(AActor* Target);
-
-	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Deactivate Turret All Function Async"))
-	void BP_DeactivateTurretAllFunctionAsync();
 #pragma endregion
 
 	
@@ -132,5 +132,5 @@ private:
 
 	void AddBuffData(const FGameplayAttribute& ModifiedAttr, FEffectOrientedTurretAttribute& Data, float Value);
 
-	FTimerHandle DeathTimerHandle;
+	void OnDetectionRangeChanged(const FOnAttributeChangeData& Data);
 };

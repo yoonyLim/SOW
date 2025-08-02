@@ -41,6 +41,9 @@ public:
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Get SOW Character Type"))
 	ESOWCharacterType BP_GetSOWCharacterType() const;
 
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Deactivate Character All Function Async"))
+	void BP_DeactivateCharacterAllFunctionAsync();
+
 	virtual void Tick(float DeltaTime) override;
 
 	USOWAbilitySystemComponent* GetSOWAbilitySystemComponent() const { return AbilitySystemComponent; }
@@ -52,7 +55,7 @@ protected:
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void BeginPlay() override;
 	virtual void InitFromDataAsset();
-
+	
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,  Category = "AbilitySystem")
 	USOWAbilitySystemComponent* AbilitySystemComponent;
@@ -65,9 +68,7 @@ protected:
 
 	ESOWCharacterType CharacterType;
 
-
-
-	
+	FTimerHandle DeathTimerHandle;
 
 	void OnWalkSpeedChanged(const FOnAttributeChangeData& Data);
 	
