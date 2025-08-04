@@ -66,7 +66,7 @@ void UANS_MeleeAttack::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenc
 		}
 
 		// ANS cannot access GetWorld directly
-		DrawDebugSphere(MeshComp->GetWorld(), Start + (End - Start) * 0.5f, AttackRadius, 24, Hit.bBlockingHit ? FColor::Blue : FColor::Red, false, 5.0f, 0, 10.0f);
+		// DrawDebugSphere(MeshComp->GetWorld(), Start + (End - Start) * 0.5f, AttackRadius, 24, Hit.bBlockingHit ? FColor::Blue : FColor::Red, false, 5.0f, 0, 10.0f);
 	}
 }
 
