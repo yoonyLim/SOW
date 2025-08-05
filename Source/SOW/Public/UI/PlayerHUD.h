@@ -36,13 +36,14 @@ public:
 	class UHorizontalBox* Stacked_DeBuff_Icon_Box;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	class USkillTreeWidget* SkillTree;
+	class USkillSelectWidget* SkillSelectWidget;
 
 public:
 	void Init(class USOWAbilitySystemComponent* InASC);
 
 	FDelegateHandle HealthChangedHandle;
 	FDelegateHandle ManaChangedHandle;
+	FDelegateHandle StaminaChangedHandle;
 
 private:
 	void BindToASC(class USOWAbilitySystemComponent* InASC);
@@ -51,7 +52,7 @@ private:
 
 	void OnManaChanged(const FOnAttributeChangeData& Data);
 
-	//void OnStaminaChanged(const FOnAttributeChangeData& Data);
+	void OnStaminaChanged(const FOnAttributeChangeData& Data);
 
 	void SetProgressBar(EStat ChangedStat, float Max, float Current);
 

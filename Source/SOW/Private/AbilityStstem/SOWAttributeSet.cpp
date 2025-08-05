@@ -23,6 +23,8 @@ USOWAttributeSet::USOWAttributeSet()
     InitAttackSpeedBase(1.f);
     InitMaxManaBase(200.f);
     InitCurrentMana(200.f);
+    InitMaxStaminaBase(100.f);
+    InitCurrentStamina(GetMaxStaminaBase());
 }
 
 void USOWAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)

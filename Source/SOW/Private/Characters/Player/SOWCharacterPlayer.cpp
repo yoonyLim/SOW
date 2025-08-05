@@ -20,8 +20,10 @@
 
 #include "AbilitySystem/SOWAbilitySystemComponent.h"
 #include "AbilitySystem/SOWAttributeSet.h"
+#include "GameplayAbilities/Public/GameplayEffect.h"
 
 #include "UI/PlayerHUD.h"
+#include "UI/SkillSelectWidget.h"
 
 // Sets default values
 ASOWCharacterPlayer::ASOWCharacterPlayer()
@@ -179,8 +181,13 @@ void ASOWCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInput
 		// Rolling
 		EnhancedInputComponent->BindAction(RollAction, ETriggerEvent::Triggered, this, &ASOWCharacterPlayer::Roll);
 
-		// Rolling
 		EnhancedInputComponent->BindAction(UseSkillAction, ETriggerEvent::Triggered, this, &ASOWCharacterPlayer::UseSkill);
+
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &ASOWCharacterPlayer::StartSprint);
+
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ASOWCharacterPlayer::StopSprint);
+
+		EnhancedInputComponent->BindAction(SkillSelectAction, ETriggerEvent::Triggered, this, &ASOWCharacterPlayer::SelectSkill);
 
 		EnhancedInputComponent->BindAction(InstallTurretAction, ETriggerEvent::Triggered, this, &ASOWCharacterPlayer::InstallTurret);
 	}
@@ -199,5 +206,40 @@ void ASOWCharacterPlayer::ShowInstallationRange(bool bShow)
 	else
 	{
 		InstallationRangeDecal->SetVisibility(false);
+	}
+}
+
+void ASOWCharacterPlayer::StartSprint(const FInputActionValue& Value)
+{
+	GetCharacterMovement()->MaxWalkSpeed = 700.f;
+
+	FGameplayEffectContextHandle Context = AbilitySystemComponent->MakeEffectContext();
+	FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(SprintCostEffect, 1.f, Context);
+
+	if (SpecHandle.IsValid())
+	{
+		StaminaEffectHandle = AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+	}
+}
+
+void ASOWCharacterPlayer::StopSprint(const FInputActionValue& Value)
+{
+	GetCharacterMovement()->MaxWalkSpeed = 500.f;
+
+	if (AbilitySystemComponent && StaminaEffectHandle.IsValid())
+	{
+		AbilitySystemComponent->RemoveActiveGameplayEffect(StaminaEffectHandle);
+	}
+}
+
+void ASOWCharacterPlayer::SelectSkill(const FInputActionValue& Value)
+{
+	if (MyHUD->SkillSelectWidget->GetVisibility() == ESlateVisibility::Collapsed)
+	{
+		MyHUD->SkillSelectWidget->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		MyHUD->SkillSelectWidget->SetVisibility(ESlateVisibility::Collapsed);
 	}
 }
