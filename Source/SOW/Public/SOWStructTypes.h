@@ -224,6 +224,27 @@ public:
 };
 
 USTRUCT(BlueprintType)
+struct FWidgetDescAtt {
+	GENERATED_BODY()
+
+	FWidgetDescAtt() {
+		EvoValue = 0.f;
+		BuffValue = 0.f;
+	}
+	FWidgetDescAtt(float E, float B) {
+		EvoValue = E;
+		BuffValue = B;
+	}
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float EvoValue;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float BuffValue;
+
+};
+
+USTRUCT(BlueprintType)
 struct FEffectOrientedTurretAttribute {
 	GENERATED_BODY()
 

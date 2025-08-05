@@ -30,10 +30,6 @@
 #include "DataAsset/DA_StartupDataTurret.h"
 
 
-
-
-
-
 ASOWCharacterTurretBase::ASOWCharacterTurretBase()
 {
 	check(AttributeSet);
@@ -47,8 +43,6 @@ ASOWCharacterTurretBase::ASOWCharacterTurretBase()
 	HealthWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthWidgetComponent"));
 	HealthWidgetComponent->SetupAttachment(GetMesh());
 
-	SettingWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("SettingWidgetComponent"));
-	SettingWidgetComponent->SetupAttachment(GetMesh());
 
 	CharacterType = ESOWCharacterType::Turret;
 
@@ -75,17 +69,15 @@ void ASOWCharacterTurretBase::BeginPlay()
 		HealthWidget->InitTurretCreatedWidget(this);
 	}
 
-	if (USOWWidgetBase* SettingWidget = Cast<USOWWidgetBase>(SettingWidgetComponent->GetUserWidgetObject())) {
-		SettingWidget->InitTurretCreatedWidget(this);
-	}
-
-	// need to change code
 	AbilitySystemComponent->RegisterGameplayTagEvent(
-		FGameplayTag::RequestGameplayTag(TEXT("State.Stunned")),
+		FGameplayTag::RequestGameplayTag(TEXT("Turret.Status.Buff")),
 		EGameplayTagEventType::NewOrRemoved
 	).AddUObject(this, &ThisClass::OnGameplayTagChanged);
 
-	
+	AbilitySystemComponent->RegisterGameplayTagEvent(
+		FGameplayTag::RequestGameplayTag(TEXT("Turret.Status.Debuff")),
+		EGameplayTagEventType::NewOrRemoved
+	).AddUObject(this, &ThisClass::OnGameplayTagChanged);
 }
 
 void ASOWCharacterTurretBase::PossessedBy(AController* NewController)
@@ -93,17 +85,30 @@ void ASOWCharacterTurretBase::PossessedBy(AController* NewController)
 	Super::PossessedBy(NewController);
 
 	if (USOWAbilitySystemComponent* ASC = GetSOWAbilitySystemComponent()) {
-		ASC->OnActiveGameplayEffectAddedDelegateToSelf.AddUObject(this, &ASOWCharacterTurretBase::OnGameplayEffectAdded);
-		ASC->OnAnyGameplayEffectRemovedDelegate().AddUObject(this, &ASOWCharacterTurretBase::OnGameplayEffectRemoved);
 
 		if (!AttributeSet) return;
 
 		ASC->GetGameplayAttributeValueChangeDelegate(
 			AttributeSet->GetDetectionRangeAttribute())
 			.AddUObject(this, &ASOWCharacterTurretBase::OnDetectionRangeChanged);
-	}
 
-	
+
+		ASC->GetGameplayAttributeValueChangeDelegate(
+			AttributeSet->GetMaxHealthBaseAttribute())
+			.AddUObject(this, &ASOWCharacterTurretBase::OnWidgetAttributeChanged);
+
+		ASC->GetGameplayAttributeValueChangeDelegate(
+			AttributeSet->GetAttackPowerBaseAttribute())
+			.AddUObject(this, &ASOWCharacterTurretBase::OnWidgetAttributeChanged);
+
+		ASC->GetGameplayAttributeValueChangeDelegate(
+			AttributeSet->GetDefensePowerBaseAttribute())
+			.AddUObject(this, &ASOWCharacterTurretBase::OnWidgetAttributeChanged);
+
+		ASC->GetGameplayAttributeValueChangeDelegate(
+			AttributeSet->GetAttackSpeedBaseAttribute())
+			.AddUObject(this, &ASOWCharacterTurretBase::OnWidgetAttributeChanged);
+	}
 }
 
 void ASOWCharacterTurretBase::InitFromDataAsset()
@@ -123,113 +128,7 @@ void ASOWCharacterTurretBase::InitFromDataAsset()
 	);
 }
 
-void ASOWCharacterTurretBase::OnGameplayEffectAdded(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& SpecApplied, FActiveGameplayEffectHandle ActiveHandle)
-{
-	FEffectOrientedTurretAttribute Data;
-	
-	for (const FGameplayModifierInfo& Modifier : SpecApplied.Def->Modifiers)
-	{
-		const FGameplayAttribute& ModifiedAttr = Modifier.Attribute;
 
-		// 현재 Attribute의 원래 값을 가져옴
-		const float OriginalValue = ASC->GetNumericAttributeBase(ModifiedAttr); // Base값 사용
-
-		// Modifier의 Magnitude를 계산
-		float ModifierMagnitude = 0.f;
-		if (!Modifier.ModifierMagnitude.AttemptCalculateMagnitude(SpecApplied, ModifierMagnitude)) continue;
-
-		float Delta = 0.f;       
-
-		// Modifier Type에 따라 증가량 계산 방식 분기
-		switch (Modifier.ModifierOp)
-		{
-		case EGameplayModOp::Additive:
-			Delta = ModifierMagnitude;
-			break;
-
-		case EGameplayModOp::Multiplicitive:
-			Delta = OriginalValue * (ModifierMagnitude - 1.0f); // 예: 0.5 * (2.0 - 1.0) = +0.5
-			break;
-
-		case EGameplayModOp::Override:
-			Delta = ModifierMagnitude - OriginalValue;
-			break;
-
-		default:
-			continue;
-		}
-
-		// 속성에 맞게 값 저장
-		if (ModifiedAttr == USOWAttributeSet::GetAttackPowerBaseAttribute())
-		{
-			Data.AttackPowerBaseValue = Delta;
-		}
-		else if (ModifiedAttr == USOWAttributeSet::GetAttackSpeedBaseAttribute())
-		{
-			Data.AttackSpeedBaseValue = Delta;
-		}
-		else if (ModifiedAttr == USOWAttributeSet::GetMaxHealthBaseAttribute())
-		{
-			Data.MaxHealthBaseValue = Delta;
-		}
-		else if (ModifiedAttr == USOWAttributeSet::GetDefensePowerBaseAttribute())
-		{
-			Data.DefensePowerBaseValue = Delta;
-		}
-	}
-
-	if (TurretUIComponent) {
-		if(TurretUIComponent->OnEffectApplied.IsBound())
-			TurretUIComponent->OnEffectApplied.Broadcast(Data);
-
-		if (TurretUIComponent->OnTagChanged.IsBound()) {
-			TurretUIComponent->OnTagChanged.Broadcast();
-		}
-	}
-
-	
-}
-
-void ASOWCharacterTurretBase::OnGameplayEffectRemoved(const FActiveGameplayEffect& Effect)
-{
-	FEffectOrientedTurretAttribute Data;
-
-	FGameplayEffectSpec RemovedSpec = Effect.Spec;
-
-	for (const FGameplayModifierInfo& Modifier : RemovedSpec.Def->Modifiers)
-	{
-		const FGameplayAttribute& ModifiedAttr = Modifier.Attribute;
-
-		// Modifier의 Magnitude를 계산
-		float Magnitude = 0.f;
-		if (!Modifier.ModifierMagnitude.AttemptCalculateMagnitude(RemovedSpec, Magnitude)) continue;
-
-		if (ModifiedAttr == USOWAttributeSet::GetAttackPowerBaseAttribute())
-		{
-			Data.AttackPowerBaseValue = Magnitude;
-		}
-		else if (ModifiedAttr == USOWAttributeSet::GetAttackSpeedBaseAttribute())
-		{
-			Data.AttackSpeedBaseValue = Magnitude;
-		}
-		else if (ModifiedAttr == USOWAttributeSet::GetMaxHealthBaseAttribute())
-		{
-			Data.MaxHealthBaseValue = Magnitude;
-		}
-		else if (ModifiedAttr == USOWAttributeSet::GetDefensePowerBaseAttribute())
-		{
-			Data.DefensePowerBaseValue = Magnitude;
-		}
-	}
-	if (TurretUIComponent) {
-		if (TurretUIComponent->OnEffectRemoved.IsBound())
-			TurretUIComponent->OnEffectRemoved.Broadcast(Data);
-
-		if (TurretUIComponent->OnTagChanged.IsBound()) {
-			TurretUIComponent->OnTagChanged.Broadcast();
-		}
-	}
-}
 
 void ASOWCharacterTurretBase::OnGameplayTagChanged(const FGameplayTag Tag, int32 NewCount)
 {
@@ -238,79 +137,71 @@ void ASOWCharacterTurretBase::OnGameplayTagChanged(const FGameplayTag Tag, int32
 	}
 }
 
-void ASOWCharacterTurretBase::GetModifiedAttributesByGameplayEffects(FEffectOrientedTurretAttribute& BuffData, FEffectOrientedTurretAttribute& DebuffData)
-{
-	FGameplayEffectQuery Query;
-	FEffectOrientedTurretAttribute L_Buff, L_Debuff;
-
-	TArray<FActiveGameplayEffectHandle> ActiveEffectHandles = AbilitySystemComponent->GetActiveEffects(Query);
-
-	for (const FActiveGameplayEffectHandle& Handle : ActiveEffectHandles)
-	{
-		const FActiveGameplayEffect* ActiveEffect = AbilitySystemComponent->GetActiveGameplayEffect(Handle);
-		if (ActiveEffect)
-		{
-			const FGameplayEffectSpec& Spec = ActiveEffect->Spec;
-
-			// 여기서 Spec.Def 또는 SourceTags 등 접근 가능
-			//UE_LOG(LogTemp, Log, TEXT("Active Effect: %s"), *GetNameSafe(Spec.Def));
-
-			for (const FGameplayModifierInfo& Modifier : Spec.Def->Modifiers)
-			{
-				const FGameplayAttribute& ModifiedAttr = Modifier.Attribute;
-
-				// Modifier의 Magnitude를 계산
-				float Magnitude = 0.f;
-				if (!Modifier.ModifierMagnitude.AttemptCalculateMagnitude(Spec, Magnitude)) continue;
-
-				if (Magnitude > 0) {
-					AddBuffData(ModifiedAttr, L_Buff, Magnitude);
-				}
-				else {
-					AddBuffData(ModifiedAttr, L_Debuff, Magnitude);
-				}
-			}
-		}
-	}
-
-	BuffData = L_Buff;
-	DebuffData = L_Debuff;
-}
 
 void ASOWCharacterTurretBase::SwitchDetectionRangeDecal(bool On)
 {
 	DetectionRangeDecal->SetVisibility(false);
 
 	float radius = GetDetectionRangeRadius();
-	//UE_LOG(LogTemp, Warning, TEXT("Radius : %s"), *FString::SanitizeFloat(radius));
 	DetectionRangeDecal->DecalSize = FVector(radius, radius, radius);
 	DetectionRangeDecal->SetVisibility(On);
 }
 
-void ASOWCharacterTurretBase::AddBuffData(const FGameplayAttribute& ModifiedAttr, FEffectOrientedTurretAttribute& Data, float Value)
+
+void ASOWCharacterTurretBase::OnWidgetAttributeChanged(const FOnAttributeChangeData& Data)
 {
-	if (ModifiedAttr == USOWAttributeSet::GetAttackPowerBaseAttribute())
+	FWidgetDesciptableTurretAttribute BaseAtts = TurretCombatComponent->GetWidgetDesciptableTurretAttribute();
+
+	if (Data.Attribute == USOWAttributeSet::GetAttackPowerBaseAttribute())
 	{
-		Data.AttackPowerBaseValue += Value;
+		// For AttackPower
+		TurretUIComponent->OnAttackChanged.Broadcast(GetWidgetAttributeChangeDelegate(AttributeSet->AttackPowerBase, BaseAtts.AttackPowerBaseValue, BaseAtts.AttackPowerRatioValue));
+		
 	}
-	else if (ModifiedAttr == USOWAttributeSet::GetAttackSpeedBaseAttribute())
+	else if (Data.Attribute == USOWAttributeSet::GetAttackSpeedBaseAttribute())
 	{
-		Data.AttackSpeedBaseValue += Value;
+		// For AttackSpeed
+		TurretUIComponent->OnSpeedChanged.Broadcast(GetWidgetAttributeChangeDelegate(AttributeSet->AttackSpeedBase, BaseAtts.AttackSpeedBaseValue, BaseAtts.AttackSpeedRatioValue));
 	}
-	else if (ModifiedAttr == USOWAttributeSet::GetMaxHealthBaseAttribute())
+	else if (Data.Attribute == USOWAttributeSet::GetMaxHealthBaseAttribute())
 	{
-		Data.MaxHealthBaseValue += Value;
+		// For Health
+		TurretUIComponent->OnHealthChanged.Broadcast(GetWidgetAttributeChangeDelegate(AttributeSet->MaxHealthBase, BaseAtts.MaxHealthBaseValue, BaseAtts.MaxHealthRatioValue));
 	}
-	else if (ModifiedAttr == USOWAttributeSet::GetDefensePowerBaseAttribute())
+	else if (Data.Attribute == USOWAttributeSet::GetDefensePowerBaseAttribute())
 	{
-		Data.DefensePowerBaseValue += Value;
+		// For Defense
+		TurretUIComponent->OnDefenseChanged.Broadcast(GetWidgetAttributeChangeDelegate(AttributeSet->DefensePowerBase, BaseAtts.DefensePowerBaseValue, BaseAtts.DefensePowerRatioValue));
 	}
 }
 
+void ASOWCharacterTurretBase::InitWidgetAttributeChange()
+{
+	FWidgetDesciptableTurretAttribute BaseAtts = TurretCombatComponent->GetWidgetDesciptableTurretAttribute();
+
+	TurretUIComponent->OnHealthChanged.Broadcast(GetWidgetAttributeChangeDelegate(AttributeSet->MaxHealthBase, BaseAtts.MaxHealthBaseValue, BaseAtts.MaxHealthRatioValue));
+	TurretUIComponent->OnAttackChanged.Broadcast(GetWidgetAttributeChangeDelegate(AttributeSet->AttackPowerBase, BaseAtts.AttackPowerBaseValue, BaseAtts.AttackPowerRatioValue));
+	TurretUIComponent->OnDefenseChanged.Broadcast(GetWidgetAttributeChangeDelegate(AttributeSet->DefensePowerBase, BaseAtts.DefensePowerBaseValue, BaseAtts.DefensePowerRatioValue));
+	TurretUIComponent->OnSpeedChanged.Broadcast(GetWidgetAttributeChangeDelegate(AttributeSet->AttackSpeedBase, BaseAtts.AttackSpeedBaseValue, BaseAtts.AttackSpeedRatioValue));
+}
+
+
+
+FWidgetDescAtt ASOWCharacterTurretBase::GetWidgetAttributeChangeDelegate(const FGameplayAttributeData Att, const float Base, const float Circle)
+{
+	float BaseValue = Att.GetBaseValue();
+
+	float CurrentValue = Att.GetCurrentValue();
+
+	float BuffedValue = CurrentValue - BaseValue;
+	float EvoValue = BaseValue - Base - Circle;
+
+	return FWidgetDescAtt(EvoValue, BuffedValue);
+}
+
+
 void ASOWCharacterTurretBase::OnDetectionRangeChanged(const FOnAttributeChangeData& Data)
 {
-	//float NewRadius = Data.NewValue;
-	//UE_LOG(LogTemp, Warning, TEXT("Radius Changed."));
 	SwitchDetectionRangeDecal(DetectionRangeDecal->GetVisibleFlag());
 }
 
@@ -326,47 +217,43 @@ void ASOWCharacterTurretBase::TryActivateAbilityWithTagOnASC(const FGameplayTag&
 
 USOWCharacterUIComponent* ASOWCharacterTurretBase::GetCharacterUIComponent() const
 {
+	check(TurretUIComponent);
 	return TurretUIComponent;
 }
 
 USOWTurretUIComponent* ASOWCharacterTurretBase::GetTurretUIComponent() const
 {
+	check(TurretUIComponent);
 	return TurretUIComponent;
 }
 
 float ASOWCharacterTurretBase::GetAttackPower() const
 {
 	checkf(AttributeSet, TEXT("AttributeSet not Found / Check point : SOWCharacterTurretBase.cpp"));
-
 	return AttributeSet->GetAttackPowerBase();
 }
 
 float ASOWCharacterTurretBase::GetCurrentHealth() const
 {
 	checkf(AttributeSet, TEXT("AttributeSet not Found / Check point : SOWCharacterTurretBase.cpp"));
-
 	return AttributeSet->GetCurrentHealth();
 }
 
 float ASOWCharacterTurretBase::GetDetectionRangeRadius() const
 {
 	checkf(AttributeSet, TEXT("AttributeSet not Found / Check point : SOWCharacterTurretBase.cpp"));
-
 	return AttributeSet->GetDetectionRange();
 }
 
 float ASOWCharacterTurretBase::GetAttackCooldownTime() const
 {
 	checkf(AttributeSet, TEXT("AttributeSet not Found / Check point : SOWCharacterTurretBase.cpp"));
-
 	return 1.0f / AttributeSet->GetAttackSpeedBase();
 }
 
 FName ASOWCharacterTurretBase::GetTurretName() const
 {
 	checkf(TurretCombatComponent, TEXT("Invalid Component : TurretCombatComponent"));
-
-	
 	return USOWBlueprintFunctionLibrary::EnumToFName<ETurretName>(TurretCombatComponent->GetTurretNameByEnum());
 }
 
@@ -383,14 +270,12 @@ float ASOWCharacterTurretBase::BP_GetDetectionRangeRadius() const
 float ASOWCharacterTurretBase::GetHealthRatio() const
 {
 	checkf(AttributeSet, TEXT("AttributeSet not Found / Check point : SOWCharacterTurretBase.cpp"));
-
 	return AttributeSet->GetCurrentHealth() / AttributeSet->GetMaxHealthBase();
 }
 
 USOWTurretCombatComponent* ASOWCharacterTurretBase::GetTurretCombatComponent() const
 {
 	checkf(TurretCombatComponent, TEXT("TurretCombatComponent not Found / Check point : SOWCharacterTurretBase.cpp"));
-
 	return TurretCombatComponent;
 }
 
@@ -404,11 +289,3 @@ USOWTurretSkillComponent* ASOWCharacterTurretBase::GetTurretSkillComponent() con
 
 	return TurretSkillComponent;
 }
-
-
-
-
-
-
-
-	
