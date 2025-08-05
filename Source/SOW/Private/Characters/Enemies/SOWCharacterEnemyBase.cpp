@@ -59,6 +59,10 @@ ASOWCharacterEnemyBase::ASOWCharacterEnemyBase()
 }
 
 
+void ASOWCharacterEnemyBase::PossessedBy(AController* NewController) {
+	Super::PossessedBy(NewController);
+	AbilitySystemComponent->AddLooseGameplayTag(SOWGameplayTags::Enemy_Ability_Initialize);
+}
 
 // Called when the game starts or when spawned
 void ASOWCharacterEnemyBase::BeginPlay()
@@ -99,7 +103,7 @@ void ASOWCharacterEnemyBase::BeginPlay()
 	ASCAttributes = Cast<USOWAttributeSet>(AbilitySystemComponent->GetAttributeSet(USOWAttributeSet::StaticClass()));
 
 	// To initialize Game Ability Attribute
-	AbilitySystemComponent->AddLooseGameplayTag(SOWGameplayTags::Enemy_Ability_Initialize);
+	//AbilitySystemComponent->AddLooseGameplayTag(SOWGameplayTags::Enemy_Ability_Initialize);
 
 	float NewHealth = ASCAttributes->GetMaxHealthBase();
 	float MaxHealth = ASCAttributes->GetMaxHealthBase();

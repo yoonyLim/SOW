@@ -99,3 +99,21 @@ void ASOWCharacter::OnWalkSpeedChanged(const FOnAttributeChangeData& Data)
 		UE_LOG(LogTemp, Warning, TEXT("No CharacterMoveComp Found"));
 	}
 }
+
+void ASOWCharacter::BP_DeactivateCharacterAllFunctionAsync()
+{
+	if (!AbilitySystemComponent) return;
+
+	// 어빌리티 제거 (비동기 아님, 즉시 제거)
+	AbilitySystemComponent->ClearAllAbilities();
+
+	// 액티브한 GameplayEffect 제거
+	FGameplayEffectQuery EffectQuery = FGameplayEffectQuery::MakeQuery_MatchAllEffectTags(FGameplayTagContainer()); // 전체 매칭
+	AbilitySystemComponent->RemoveActiveEffects(EffectQuery);
+
+	// 애니메이션/사운드/죽음 이펙트 등 재생 (비동기 처리 가능)
+	//PlayDeathEffectAsync();
+
+	// 일정 시간 후 제거 (타이머 기반 비동기 처리)
+	GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this, &AActor::K2_DestroyActor, 3.0f, false, 0.1f);
+}
