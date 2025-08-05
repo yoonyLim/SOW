@@ -56,8 +56,12 @@ void USOWAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbac
         }
     }
     else if (Data.EvaluatedData.Attribute == GetCurrentStaminaAttribute()) {
-        float NewCurrentStamina = FMath::Clamp(GetCurrentStamina(), 0.f, GetMaxStaminaBase());
-        SetCurrentStamina(NewCurrentStamina);
+        float Clamped = FMath::Clamp(GetCurrentStamina(), 0.f, GetMaxStaminaBase());
+
+        if (!FMath::IsNearlyEqual(GetCurrentStamina(), Clamped))
+        {
+            SetCurrentStamina(Clamped);
+        }
 
         UE_LOG(LogTemp, Warning, TEXT("Actor has Current Stamina : %f"), GetCurrentStamina());
     }

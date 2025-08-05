@@ -227,6 +227,8 @@ void ASOWCharacterPlayer::BindAttributeToCharacter()
 
 void ASOWCharacterPlayer::UnBindAttributeToCharacter()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Clear"));
+
 	if (AbilitySystemComponent)
 	{
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
@@ -260,11 +262,19 @@ void ASOWCharacterPlayer::CanApplyStaminaRegen(const FOnAttributeChangeData& Dat
 
 	float MaxStamina = AttributeSetRef->GetMaxStaminaBase();
 
-	if (MaxStamina <= Data.NewValue)
+	if (MaxStamina == Data.NewValue)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("%f : MaxStamina, %f : CurrentStamina"), MaxStamina, Data.NewValue);
+
 		if (AbilitySystemComponent && hStaminaRegenEffect.IsValid())
 		{
+			UE_LOG(LogTemp, Warning, TEXT("Success to remove"));
+
 			AbilitySystemComponent->RemoveActiveGameplayEffect(hStaminaRegenEffect);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Fail to remove"));
 		}
 
 		UnBindAttributeToCharacter();
@@ -273,6 +283,13 @@ void ASOWCharacterPlayer::CanApplyStaminaRegen(const FOnAttributeChangeData& Dat
 
 void ASOWCharacterPlayer::StartSprint(const FInputActionValue& Value)
 {
+	if (AbilitySystemComponent && hStaminaRegenEffect.IsValid())
+	{
+		AbilitySystemComponent->RemoveActiveGameplayEffect(hStaminaRegenEffect);
+	}
+
+	UnBindAttributeToCharacter();
+
 	GetCharacterMovement()->MaxWalkSpeed = 700.f;
 
 	FGameplayEffectContextHandle Context = AbilitySystemComponent->MakeEffectContext();
