@@ -80,11 +80,17 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Cost")
 	TSubclassOf<UGameplayEffect> SprintCostEffect;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Passive")
+	TSubclassOf<UGameplayEffect> StaminaRegenEffect;
+
 public:
 	bool bCanMove = true;
 
 private:
-	FActiveGameplayEffectHandle StaminaEffectHandle;
+	FActiveGameplayEffectHandle hSprintCostEffect;
+	FActiveGameplayEffectHandle hStaminaRegenEffect;
+
+	FDelegateHandle StaminaChangedHandle;
 
 public:
 	// Sets default values for this character's properties
@@ -115,6 +121,14 @@ protected:
 	void SelectSkill(const FInputActionValue& Value);
 
 	virtual void NotifyControllerChanged() override;
+
+	void BindAttributeToCharacter();
+
+	void UnBindAttributeToCharacter();
+
+	void StartStaminaRegen();
+
+	void CanApplyStaminaRegen(const FOnAttributeChangeData& Data);
 
 public:
 	// Called to bind functionality to input

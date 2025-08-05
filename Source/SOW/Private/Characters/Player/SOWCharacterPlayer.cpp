@@ -105,7 +105,6 @@ void ASOWCharacterPlayer::BeginPlay()
 	}
 }
 
-
 void ASOWCharacterPlayer::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
@@ -209,6 +208,69 @@ void ASOWCharacterPlayer::ShowInstallationRange(bool bShow)
 	}
 }
 
+void ASOWCharacterPlayer::BindAttributeToCharacter()
+{
+	const USOWAttributeSet* AttributeSetRef = Cast<USOWAttributeSet>(AbilitySystemComponent->GetAttributeSet(USOWAttributeSet::StaticClass()));
+
+	if (AbilitySystemComponent)
+	{
+		StaminaChangedHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
+			USOWAttributeSet::GetCurrentStaminaAttribute()
+		).AddUObject(this, &ASOWCharacterPlayer::CanApplyStaminaRegen);
+	}
+
+	if (!AttributeSetRef)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HUD : Fail to bind AttributeSet"));
+	}
+}
+
+void ASOWCharacterPlayer::UnBindAttributeToCharacter()
+{
+	if (AbilitySystemComponent)
+	{
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
+			USOWAttributeSet::GetCurrentStaminaAttribute()
+		).Remove(StaminaChangedHandle);
+	}
+}
+
+void ASOWCharacterPlayer::StartStaminaRegen()
+{
+	const USOWAttributeSet* AttributeSetRef = Cast<USOWAttributeSet>(AbilitySystemComponent->GetAttributeSet(USOWAttributeSet::StaticClass()));
+
+	float MaxStamina = AttributeSetRef->GetMaxStaminaBase();
+
+	FGameplayEffectContextHandle Context = AbilitySystemComponent->MakeEffectContext();
+	FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(StaminaRegenEffect, 1.f, Context);
+
+	if (SpecHandle.IsValid())
+	{
+		SpecHandle.Data->SetSetByCallerMagnitude(
+			FGameplayTag::RequestGameplayTag("Data.ModValue"),
+			(MaxStamina * 5 / 1000)
+		);
+		hStaminaRegenEffect = AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+	}
+}
+
+void ASOWCharacterPlayer::CanApplyStaminaRegen(const FOnAttributeChangeData& Data)
+{
+	const USOWAttributeSet* AttributeSetRef = Cast<USOWAttributeSet>(AbilitySystemComponent->GetAttributeSet(USOWAttributeSet::StaticClass()));
+
+	float MaxStamina = AttributeSetRef->GetMaxStaminaBase();
+
+	if (MaxStamina <= Data.NewValue)
+	{
+		if (AbilitySystemComponent && hStaminaRegenEffect.IsValid())
+		{
+			AbilitySystemComponent->RemoveActiveGameplayEffect(hStaminaRegenEffect);
+		}
+
+		UnBindAttributeToCharacter();
+	}
+}
+
 void ASOWCharacterPlayer::StartSprint(const FInputActionValue& Value)
 {
 	GetCharacterMovement()->MaxWalkSpeed = 700.f;
@@ -218,7 +280,7 @@ void ASOWCharacterPlayer::StartSprint(const FInputActionValue& Value)
 
 	if (SpecHandle.IsValid())
 	{
-		StaminaEffectHandle = AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+		hSprintCostEffect = AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 	}
 }
 
@@ -226,10 +288,13 @@ void ASOWCharacterPlayer::StopSprint(const FInputActionValue& Value)
 {
 	GetCharacterMovement()->MaxWalkSpeed = 500.f;
 
-	if (AbilitySystemComponent && StaminaEffectHandle.IsValid())
+	if (AbilitySystemComponent && hSprintCostEffect.IsValid())
 	{
-		AbilitySystemComponent->RemoveActiveGameplayEffect(StaminaEffectHandle);
+		AbilitySystemComponent->RemoveActiveGameplayEffect(hSprintCostEffect);
 	}
+
+	BindAttributeToCharacter();
+	StartStaminaRegen();
 }
 
 void ASOWCharacterPlayer::SelectSkill(const FInputActionValue& Value)
