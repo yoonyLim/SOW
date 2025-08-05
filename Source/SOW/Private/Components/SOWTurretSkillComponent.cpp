@@ -226,3 +226,13 @@ void USOWTurretSkillComponent::ApplySkill(TArray<ASOWCharacter*> Targets, const 
 	}
 	}
 }
+
+void USOWTurretSkillComponent::RiseImpactCount()
+{
+	ImpactCount += 1;
+}
+
+void USOWTurretSkillComponent::DropImpactCount()
+{
+	ImpactCount -= 1;
+}

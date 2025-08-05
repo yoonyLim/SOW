@@ -32,8 +32,16 @@ public:
 
 	void ApplySkill(TArray<ASOWCharacter*> Targets, const TSharedPtr<FSkillData>& Skill);
 
+	UFUNCTION(BlueprintCallable)
+	void RiseImpactCount();
+
+	UFUNCTION(BlueprintCallable)
+	void DropImpactCount();
+
 private:	
 	TArray<TSharedPtr<FSkillData>> L_PassiveSkills;
+
+	uint8 ImpactCount = 0;
 
 protected:
 	// Called when the game starts

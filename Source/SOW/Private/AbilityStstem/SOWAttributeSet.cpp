@@ -23,6 +23,8 @@ USOWAttributeSet::USOWAttributeSet()
     InitAttackSpeedBase(1.f);
     InitMaxManaBase(200.f);
     InitCurrentMana(200.f);
+    InitMaxStaminaBase(100.f);
+    InitCurrentStamina(GetMaxStaminaBase());
 }
 
 void USOWAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
@@ -53,6 +55,23 @@ void USOWAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbac
             CharacterUIComponent->OnCurrentHealthChanged.Broadcast(GetCurrentHealth() / GetMaxHealthBase());
         }
     }
+    else if (Data.EvaluatedData.Attribute == GetCurrentStaminaAttribute()) {
+        float Clamped = FMath::Clamp(GetCurrentStamina(), 0.f, GetMaxStaminaBase());
+
+        if (!FMath::IsNearlyEqual(GetCurrentStamina(), Clamped))
+        {
+            SetCurrentStamina(Clamped);
+        }
+
+        UE_LOG(LogTemp, Warning, TEXT("Actor has Current Stamina : %f"), GetCurrentStamina());
+    }
+    else if (Data.EvaluatedData.Attribute == GetCurrentManaAttribute()) {
+        float NewCurrentMana = FMath::Clamp(GetCurrentMana(), 0.f, GetMaxManaBase());
+        SetCurrentMana(NewCurrentMana);
+
+        UE_LOG(LogTemp, Warning, TEXT("Actor has Current Mana : %f"), GetCurrentMana());
+    }
+
 
 
     if (GetCurrentHealth() == 0.f) {
