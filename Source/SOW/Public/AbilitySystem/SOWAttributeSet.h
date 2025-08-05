@@ -38,6 +38,7 @@ public :
 	FGameplayAttributeData MaxHealthRatio;
 	ATTRIBUTE_ACCESSORS(USOWAttributeSet, MaxHealthRatio)
 
+		/* Don't Use */
 	UPROPERTY(BlueprintReadOnly, Category = "Health")
 	FGameplayAttributeData MaxHealth;
 	ATTRIBUTE_ACCESSORS(USOWAttributeSet, MaxHealth)
@@ -128,13 +129,20 @@ public :
 	ATTRIBUTE_ACCESSORS(USOWAttributeSet, MaxManaRatio)
 
 	UPROPERTY(BlueprintReadOnly, Category = "Mana")
-	FGameplayAttributeData MaxMana;
-	ATTRIBUTE_ACCESSORS(USOWAttributeSet, MaxMana)
-
-	UPROPERTY(BlueprintReadOnly, Category = "Mana")
 	FGameplayAttributeData CurrentMana;
 	ATTRIBUTE_ACCESSORS(USOWAttributeSet, CurrentMana)
 
+	UPROPERTY(BlueprintReadOnly, Category = "Stamina")
+	FGameplayAttributeData MaxStaminaBase;
+	ATTRIBUTE_ACCESSORS(USOWAttributeSet, MaxStaminaBase)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Stamina")
+	FGameplayAttributeData MaxStaminaRatio;
+	ATTRIBUTE_ACCESSORS(USOWAttributeSet, MaxStaminaRatio)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Stamina")
+	FGameplayAttributeData CurrentStamina;
+	ATTRIBUTE_ACCESSORS(USOWAttributeSet, CurrentStamina)
 
 
 	/** 특정 태그에 대한 저항값을 반환하는 함수 */

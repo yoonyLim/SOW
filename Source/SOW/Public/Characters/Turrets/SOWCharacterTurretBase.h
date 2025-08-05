@@ -40,6 +40,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SwitchDetectionRangeDecal(bool On);
 
+	UFUNCTION(BlueprintCallable)
+	void FindTurretByElementTarget();
+
 #pragma region NativeGetter
 
 	float GetAttackPower() const;

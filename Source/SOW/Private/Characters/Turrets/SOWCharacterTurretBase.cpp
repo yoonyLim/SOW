@@ -289,3 +289,46 @@ USOWTurretSkillComponent* ASOWCharacterTurretBase::GetTurretSkillComponent() con
 
 	return TurretSkillComponent;
 }
+
+
+
+
+void ASOWCharacterTurretBase::FindTurretByElementTarget()
+{
+	TArray<AActor*> L_DetectableActors;
+
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
+	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn));
+
+	UKismetSystemLibrary::SphereOverlapActors(
+		GetWorld(),
+		this->GetActorLocation(),
+		this->GetDetectionRangeRadius(),
+		ObjectTypes,
+		nullptr,
+		TArray<AActor*>(),
+		L_DetectableActors
+	);
+
+	for (AActor* CurrentTarget : L_DetectableActors)
+	{
+		if (!(CurrentTarget == this))
+		{
+			ISOWCharacterTypeInterface* SOWCharacter = Cast<ISOWCharacterTypeInterface>(CurrentTarget);
+			ESOWCharacterType TargetType = SOWCharacter->GetSOWCharacterType();
+
+			if (TargetType == ESOWCharacterType::Turret)
+			{
+				USOWTurretSkillComponent* Target_SC = Cast<ASOWCharacterTurretBase>(CurrentTarget)->GetTurretSkillComponent();
+				FGameplayTag TargetElemental = Target_SC->GetElementTagFromOwner();
+				
+				if (TurretSkillComponent->GetElementTagFromOwner() == TargetElemental)
+				{
+					Target_SC->RiseImpactCount();
+				}
+			}
+		}
+	}
+}
+
+	

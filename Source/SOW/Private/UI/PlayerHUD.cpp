@@ -11,10 +11,13 @@
 #include "Components/Image.h"
 #include "Components/Button.h"
 #include "Components/HorizontalBox.h"
+#include "UI/SkillSelectWidget.h"
 
 void UPlayerHUD::NativeConstruct()
 {
     Super::NativeConstruct();
+
+    SkillSelectWidget->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UPlayerHUD::NativeDestruct()
@@ -23,6 +26,7 @@ void UPlayerHUD::NativeDestruct()
 
     if (ASC)
     {
+        /* Unbind Delegate */
         ASC->GetGameplayAttributeValueChangeDelegate(
             USOWAttributeSet::GetCurrentHealthAttribute()
         ).Remove(HealthChangedHandle);
@@ -30,6 +34,10 @@ void UPlayerHUD::NativeDestruct()
         ASC->GetGameplayAttributeValueChangeDelegate(
             USOWAttributeSet::GetCurrentManaAttribute()
         ).Remove(ManaChangedHandle);
+
+        ASC->GetGameplayAttributeValueChangeDelegate(
+            USOWAttributeSet::GetCurrentStaminaAttribute()
+        ).Remove(StaminaChangedHandle);
     }
 }
 
@@ -40,18 +48,18 @@ void UPlayerHUD::Init(USOWAbilitySystemComponent* InASC)
 
     if (AttributeSetRef)
     {
-        float MaxHealth = AttributeSetRef->GetMaxHealthBase();
+        float MaxHealthBase = AttributeSetRef->GetMaxHealthBase();
         float CurrentHealth = AttributeSetRef->GetCurrentHealth();
-        SetProgressBar(EStat::HP, MaxHealth, CurrentHealth);
+        SetProgressBar(EStat::HP, MaxHealthBase, CurrentHealth);
 
-        float MaxMana = AttributeSetRef->GetMaxMana();
+        float MaxManaBase = AttributeSetRef->GetMaxManaBase();
         float CurrentMana = AttributeSetRef->GetCurrentMana();
-        SetProgressBar(EStat::MP, MaxMana, CurrentMana);
-    }
+        SetProgressBar(EStat::MP, MaxManaBase, CurrentMana);
 
-    //float MaxHealth = AttributeSetRef->GetMaxHealth();
-    //float CurrentHealth = AttributeSetRef->GetCurrentHealth();
-    //SetProgressBar(EPlayerStat::Stamina, MaxHealth, CurrentHealth);
+        float MaxStaminaBase = AttributeSetRef->GetMaxStaminaBase();
+        float CurrentStamina = AttributeSetRef->GetCurrentStamina();
+        SetProgressBar(EStat::Stamina, MaxStaminaBase, CurrentStamina);
+    }
 }
 
 void UPlayerHUD::BindToASC(USOWAbilitySystemComponent* InASC)
@@ -62,8 +70,6 @@ void UPlayerHUD::BindToASC(USOWAbilitySystemComponent* InASC)
 
     if (ASC)
     {
-        /* 꼭 언바인드 할 것 */
-
         HealthChangedHandle = ASC->GetGameplayAttributeValueChangeDelegate(
             USOWAttributeSet::GetCurrentHealthAttribute()
         ).AddUObject(this, &UPlayerHUD::OnHealthChanged);
@@ -71,6 +77,10 @@ void UPlayerHUD::BindToASC(USOWAbilitySystemComponent* InASC)
         ManaChangedHandle = ASC->GetGameplayAttributeValueChangeDelegate(
             USOWAttributeSet::GetCurrentManaAttribute()
         ).AddUObject(this, &UPlayerHUD::OnManaChanged);
+
+        StaminaChangedHandle = ASC->GetGameplayAttributeValueChangeDelegate(
+            USOWAttributeSet::GetCurrentStaminaAttribute()
+        ).AddUObject(this, &UPlayerHUD::OnStaminaChanged);
     }
 
     if (!AttributeSetRef)
@@ -97,6 +107,16 @@ void UPlayerHUD::OnManaChanged(const FOnAttributeChangeData& Data)
     float NewMana = Data.NewValue;
 
     SetProgressBar(EStat::MP, MaxMana, NewMana);
+}
+
+void UPlayerHUD::OnStaminaChanged(const FOnAttributeChangeData& Data)
+{
+    if (!AttributeSetRef) return;
+
+    float MaxStamina = AttributeSetRef->GetMaxStaminaBase();
+    float NewMana = Data.NewValue;
+
+    SetProgressBar(EStat::Stamina, MaxStamina, NewMana);
 }
 
 void UPlayerHUD::SetProgressBar(EStat ChangedStat, float Max, float Current)
