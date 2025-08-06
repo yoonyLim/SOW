@@ -113,6 +113,14 @@ enum class ETargetFixErrorType : uint8 {
 };
 
 UENUM(BlueprintType)
+enum class EWidgetDescriptedAtt : uint8 {
+	MAXHEALTH,
+	ATTACKPOWER,
+	DEFENSEPOWER,
+	ATTACKSPEED
+};
+
+UENUM(BlueprintType)
 enum class ESkillEffectType : uint8 {
 	// added by : HYJ
 	// Check how the skill acts
