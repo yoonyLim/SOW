@@ -68,4 +68,7 @@ public:
 	TArray<AEnemyIncomingRoute*> GetSpawnedEnemyRoutes() const;
 
 	const TMap<int32, FVector>& GetSpawnedTileLocations() const { return SpawnedTileLocations; }
+	
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AActor> DefaultTileClass;
 };

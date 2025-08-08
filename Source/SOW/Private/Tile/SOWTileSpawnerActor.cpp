@@ -9,6 +9,20 @@
 
 void ATileSpawner::BeginPlay()
 {
+	if (DefaultTileClass)
+	{
+		if (GridTiles.Num() < GridWidth * GridHeight)
+		{
+			GridTiles.SetNum(GridWidth * GridHeight);
+		}
+		for (int32 i = 0; i < GridTiles.Num(); ++i)
+		{
+			if (!GridTiles[i])
+			{
+				GridTiles[i] = DefaultTileClass;
+			}
+		}
+	}
 	Super::BeginPlay();
 
 	SpawnedTileLocations.Empty();
