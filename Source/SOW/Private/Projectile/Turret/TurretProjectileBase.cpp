@@ -2,6 +2,7 @@
 
 
 #include "Projectile/Turret/TurretProjectileBase.h"
+#include "Components/SOWProjectilePoolingComponent.h"
 
 #include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
@@ -17,6 +18,12 @@ ATurretProjectileBase::ATurretProjectileBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	ProjectileMoveComp->ProjectileGravityScale = 0.f;
+}
+
+void ATurretProjectileBase::BP_DestroyProjectile()
+{
+	CachedInstigator.Get()->GetProjectilePoolingComponent()->ReturnProjectile(this);
+	UE_LOG(LogTemp, Warning, TEXT("Return to Pool : %s"), *this->GetActorNameOrLabel());
 }
 
 void ATurretProjectileBase::BeginPlay()
