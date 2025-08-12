@@ -5,6 +5,8 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Characters/Enemies/SOWCharacterEnemyBase.h"           // ASOWCharacterEnemyBase
 #include "Projectile/Enemy/EnemyProjectileBase.h"
+#include "AbilitySystem/GA_Enemy_RangedAttack.h"
+#include "AbilitySystemComponent.h"
 //#include "SOWCharacter.h"                    // ASOWCharacter
 //#include "SOWCharacterTypeInterface.h"       // ISOWCharacterTypeInterface
 
@@ -64,38 +66,67 @@ EBTNodeResult::Type UBTT_RangedAttack::ExecuteTask(
     Enemy->Attack(TargetActor);
     UE_LOG(LogTemp, Warning, TEXT("[RangedAttack] Called Attack() on Enemy")); // LogAdded
 
-    // 5) 투사체 스폰 로직 삽입
 
-    const TSubclassOf<AActor> ProjectileClass = Enemy->GetRangedProjectileClass();
-    const FName MuzzleSocketName = Enemy->GetMuzzleSocketName();
-
-    if (ProjectileClass)
+    // 어빌리티 실행.
+    UAbilitySystemComponent* ASC = Enemy->FindComponentByClass<UAbilitySystemComponent>();
+    if (ASC)
     {
-        UE_LOG(LogTemp, Warning, TEXT("[RangedAttack] ProjectileClass valid")); // LogAdded
+        UE_LOG(LogTemp, Warning, TEXT("[RangedAttack] ASC is valid, checking abilities:"));
 
-        // 스폰 위치·회전 계산
-        FVector SpawnLoc = Enemy->GetActorLocation();
-        FRotator SpawnRot = Enemy->GetActorRotation();
-        if (Enemy->GetMesh()->DoesSocketExist(MuzzleSocketName))
+        for (const FGameplayAbilitySpec& Spec : ASC->GetActivatableAbilities())
         {
-            SpawnLoc = Enemy->GetMesh()->GetSocketLocation(MuzzleSocketName);
-            SpawnRot = (TargetActor->GetActorLocation() - SpawnLoc).Rotation();
+            if (Spec.Ability)
+            {
+                UE_LOG(LogTemp, Warning, TEXT("[RangedAttack] Has ability: %s"), *Spec.Ability->GetName());
+
+                if (Spec.Ability->GetClass() == UGA_Enemy_RangedAttack::StaticClass())
+                {
+                    UE_LOG(LogTemp, Warning, TEXT("[RangedAttack] Found matching RangedAttack ability."));
+                }
+            }
         }
 
-        // Deferred 스폰
-        FTransform TM(SpawnRot, SpawnLoc);
-        AEnemyProjectileBase* Proj = Enemy->GetWorld()
-            ->SpawnActorDeferred<AEnemyProjectileBase>(
-                ProjectileClass, TM, Enemy, Enemy,
-                ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
-
-        if (Proj)
-        {
-            Proj->EnemyTypeRowName = Enemy->GetEnemyTypeStr();
-            Proj->FinishSpawning(TM);
-            UE_LOG(LogTemp, Warning, TEXT("[RangedAttack] Spawned projectile")); // LogAdded
-        }
+        bool bActivated = ASC->TryActivateAbilityByClass(UGA_Enemy_RangedAttack::StaticClass());
+        UE_LOG(LogTemp, Warning, TEXT("[RangedAttack] TryActivateAbilityByClass: %s"),
+            bActivated ? TEXT("Success") : TEXT("Failed"));
     }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("[RangedAttack] ASC is null!"));
+    }
+
+    //// 5) 투사체 스폰 로직 삽입
+
+    //const TSubclassOf<AActor> ProjectileClass = Enemy->GetRangedProjectileClass();
+    //const FName MuzzleSocketName = Enemy->GetMuzzleSocketName();
+
+    //if (ProjectileClass)
+    //{
+    //    UE_LOG(LogTemp, Warning, TEXT("[RangedAttack] ProjectileClass valid")); // LogAdded
+
+    //    // 스폰 위치·회전 계산
+    //    FVector SpawnLoc = Enemy->GetActorLocation();
+    //    FRotator SpawnRot = Enemy->GetActorRotation();
+    //    if (Enemy->GetMesh()->DoesSocketExist(MuzzleSocketName))
+    //    {
+    //        SpawnLoc = Enemy->GetMesh()->GetSocketLocation(MuzzleSocketName);
+    //        SpawnRot = (TargetActor->GetActorLocation() - SpawnLoc).Rotation();
+    //    }
+
+    //    // Deferred 스폰
+    //    FTransform TM(SpawnRot, SpawnLoc);
+    //    AEnemyProjectileBase* Proj = Enemy->GetWorld()
+    //        ->SpawnActorDeferred<AEnemyProjectileBase>(
+    //            ProjectileClass, TM, Enemy, Enemy,
+    //            ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+
+    //    if (Proj)
+    //    {
+    //        Proj->EnemyTypeRowName = Enemy->GetEnemyTypeStr();
+    //        Proj->FinishSpawning(TM);
+    //        UE_LOG(LogTemp, Warning, TEXT("[RangedAttack] Spawned projectile")); // LogAdded
+    //    }
+    //}
 
 
     // 6) 몽타주 콜백 바인딩

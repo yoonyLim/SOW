@@ -10,8 +10,10 @@
 class UCapsuleComponent;
 class USOWTurretCombatComponent;
 class USOWTurretEvolutionComponent;
+class USOWProjectilePoolingComponent;
 class UWidgetComponent;
 struct FEffectOrientedTurretAttribute;
+struct FWidgetDescAtt;
 class UDecalComponent;
 
 
@@ -38,6 +40,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SwitchDetectionRangeDecal(bool On);
+
+	UFUNCTION(BlueprintCallable)
+	void FindTurretByElementTarget();
 
 #pragma region NativeGetter
 
@@ -71,6 +76,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	USOWTurretSkillComponent* GetTurretSkillComponent() const;				// Get Skill Component at other classes
 
+	UFUNCTION(BlueprintPure)
+	USOWProjectilePoolingComponent* GetProjectilePoolingComponent() const;				// Get Pooling Component at other classes
+
 #pragma endregion
 
 #pragma region BlueprintFunctions
@@ -78,11 +86,6 @@ public:
 	void BP_BindOnTargetDead(AActor* Target);
 #pragma endregion
 
-	
-
-
-
-	
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Turret|Properties", meta = (ExposeOnSpawn = true))
 	int32 CircleCount;															// Determine additional Attribute. multiply with attribute - ratio and add in base
 
@@ -101,11 +104,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	USOWTurretSkillComponent* TurretSkillComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
-	UWidgetComponent* HealthWidgetComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	USOWProjectilePoolingComponent* ProjectilePoolingComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
-	UWidgetComponent* SettingWidgetComponent;
+	UWidgetComponent* HealthWidgetComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
 	USOWTurretUIComponent* TurretUIComponent;
@@ -113,24 +116,19 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Decal")
 	UDecalComponent* DetectionRangeDecal;
 
+
+
 private:
-	UFUNCTION()
-	void OnGameplayEffectAdded(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& SpecApplied, FActiveGameplayEffectHandle ActiveHandle);
-	
-
-	UFUNCTION()
-	void OnGameplayEffectRemoved(const FActiveGameplayEffect& Effect);
-
 
 	UFUNCTION()
 	void OnGameplayTagChanged(const FGameplayTag Tag, int32 NewCount);
 
-	UFUNCTION(BlueprintCallable)
-	void GetModifiedAttributesByGameplayEffects(FEffectOrientedTurretAttribute& BuffData, FEffectOrientedTurretAttribute& DebuffData);
-
-
-
-	void AddBuffData(const FGameplayAttribute& ModifiedAttr, FEffectOrientedTurretAttribute& Data, float Value);
-
 	void OnDetectionRangeChanged(const FOnAttributeChangeData& Data);
+
+	void OnWidgetAttributeChanged(const FOnAttributeChangeData& Data);
+
+	UFUNCTION(BlueprintCallable)
+	void InitWidgetAttributeChange();
+
+	FWidgetDescAtt GetWidgetAttributeChangeDelegate(const FGameplayAttributeData Att, const float Base, const float Circle);
 };

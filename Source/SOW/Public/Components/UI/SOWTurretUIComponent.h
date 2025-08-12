@@ -19,6 +19,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnBuffTagAddOrRemoved);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDetectionRangeChangedDelegate);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChanged, FWidgetDescAtt, AttData);
+
 /**
  * 
  */
@@ -48,6 +50,18 @@ public:
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnDetectionRangeChangedDelegate OnRangeChanged;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnAttributeChanged OnHealthChanged;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnAttributeChanged OnAttackChanged;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnAttributeChanged OnDefenseChanged;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnAttributeChanged OnSpeedChanged;
 
 	UFUNCTION(BlueprintPure)
 	ASOWCharacterTurretBase* GetOwnerTurret() const;

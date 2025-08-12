@@ -31,6 +31,16 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Turret|Hit", meta = (DisplayName = "Post Projectile Out"))
 	void BP_PostProjectileOut(AActor* Target);
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "Turret|Effect", meta = (DisplayName = "Execute Projectile Spawn Effect"))
+	void BP_ExecuteProjectileSpawnEffect();
+
+	void ActivateMovement();
+
+	void ResetProjectile();
+
+	UFUNCTION(BlueprintCallable, Category = "Turret|Hit", meta = (DisplayName = "Destroy Projectile"))
+	virtual void BP_DestroyProjectile();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -73,6 +83,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile|Properties", meta = (ExposeOnSpawn = true))
 	float ScaleRatio = 1.f;										// Collision Scale
+
+	int PoolNumber;
+	bool InGame = false;
 #pragma endregion
 
 
@@ -88,8 +101,24 @@ public:
 #pragma region Getter
 	UFUNCTION(BlueprintPure, Category = "Projectile|Combat")
 	FGameplayEffectSpecHandle GetDamageSpecHandle() const;
-#pragma endregion
 
+	UFUNCTION(BlueprintPure, Category = "Projectile|Combat")
+	int GetPoolNumber() const;
+
+	UFUNCTION(BlueprintPure, Category = "Projectile|Combat")
+	bool GetProjectileInGame() const;
+#pragma endregion
+	UFUNCTION(BlueprintCallable)
+	void InitProjectileProperties(FTransform InTransform, ETurretTargetSelectionPolicy InPolicy, FGameplayEffectSpecHandle InHandle, bool InMovement, float InSpeed, float InDuration, float InScale);
+
+	UFUNCTION(BlueprintCallable)
+	void SetPoolNumber(int InNumber);
+
+	UFUNCTION(BlueprintCallable)
+	void SetProjectileInGame(bool In);
+
+	//UFUNCTION(BlueprintCallable)
+	//void SetNewVelocity(FVector InVelocity);
 
 	UFUNCTION(BlueprintCallable)
 	void SendTargetDeadEventToInstigator(AActor* InCheckingTarget);

@@ -16,12 +16,14 @@ class USOWAbilitySystemComponent;
 class USOWAttributeSet;
 class USOWPlayerGameplayAbility;
 class UDA_InputData;
+class UGameplayEffect;
 
 UCLASS()
 class SOW_API ASOWCharacterPlayer : public ASOWCharacter
 {
 	GENERATED_BODY()
 
+public:
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* CameraBoom;
@@ -46,6 +48,14 @@ class SOW_API ASOWCharacterPlayer : public ASOWCharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* UseSkillAction;
 
+	/** Sprint Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* SprintAction;
+
+	/** Skill Select Action Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* SkillSelectAction;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* InstallTurretAction;
 
@@ -67,8 +77,20 @@ class SOW_API ASOWCharacterPlayer : public ASOWCharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Decal")
 	class UDecalComponent* InstallationRangeDecal;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Cost")
+	TSubclassOf<UGameplayEffect> SprintCostEffect;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Passive")
+	TSubclassOf<UGameplayEffect> StaminaRegenEffect;
+
 public:
 	bool bCanMove = true;
+
+private:
+	FActiveGameplayEffectHandle hSprintCostEffect;
+	FActiveGameplayEffectHandle hStaminaRegenEffect;
+
+	FDelegateHandle StaminaChangedHandle;
 
 public:
 	// Sets default values for this character's properties
@@ -92,7 +114,21 @@ protected:
 
 	void InstallTurret(const FInputActionValue& Value);
 
+	void StartSprint(const FInputActionValue& Value);
+
+	void StopSprint(const FInputActionValue& Value);
+
+	void SelectSkill(const FInputActionValue& Value);
+
 	virtual void NotifyControllerChanged() override;
+
+	void BindAttributeToCharacter();
+
+	void UnBindAttributeToCharacter();
+
+	void StartStaminaRegen();
+
+	void CanApplyStaminaRegen(const FOnAttributeChangeData& Data);
 
 public:
 	// Called to bind functionality to input
