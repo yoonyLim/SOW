@@ -130,12 +130,11 @@ void ASOWCharacterPlayer::Move(const FInputActionValue& Value)
 
 void ASOWCharacterPlayer::Roll(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Log, TEXT("Roll triggered"));
+
 }
 
 void ASOWCharacterPlayer::UseSkill(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Log, TEXT("Roll triggered"));
 	AbilitySystemComponent->OnAbilityInputPressed(CurrentSkillTag);
 }
 

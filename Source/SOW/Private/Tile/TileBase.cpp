@@ -2,19 +2,20 @@
 
 #include "Tile/TileBase.h"
 #include "Components/StaticMeshComponent.h"
-#include "Manager/SummonManager.h"
-#include "SOWGameInstance.h"
+#include "Core/SOWPlayerController.h"
 
 // Sets default values
 ATileBase::ATileBase()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	OverlayPlane = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("OverlayPlane"));
-	SetRootComponent(OverlayPlane);
+	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
+	SetRootComponent(MeshComponent);
 
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> PlaneMesh(
-		TEXT("/Engine/BasicShapes/Plane.Plane"));
+	OverlayPlane = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("OverlayPlane"));
+	OverlayPlane->SetupAttachment(MeshComponent);           
+
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> PlaneMesh(TEXT("/Engine/BasicShapes/Plane.Plane"));
 	if (PlaneMesh.Succeeded())
 	{
 		OverlayPlane->SetStaticMesh(PlaneMesh.Object);
@@ -22,24 +23,14 @@ ATileBase::ATileBase()
 
 	OverlayPlane->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	OverlayPlane->SetCastShadow(false);
-	OverlayPlane->SetRelativeLocation(FVector(0, 0, 0.1));
+	OverlayPlane->SetRelativeLocation(FVector(0, 0, 0.1f));    
 	OverlayPlane->SetRelativeRotation(FRotator(0.f, 45.f, 0.f));
 	OverlayPlane->SetVisibility(false);
-
-	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
-	SetRootComponent(MeshComponent);
 }
 
 void ATileBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	USOWGameInstance* GI = Cast<USOWGameInstance>(GetWorld()->GetGameInstance());
-
-	USummonManager* SM = GI->GetSummonManager();
-
-	SM->SummonStart.AddDynamic(this, &ATileBase::ShowTileMask);
-	SM->SummonEnd.AddDynamic(this, &ATileBase::DeActivateTileMask);
 
 	if (!OverlayMID)
 	{
@@ -48,6 +39,11 @@ void ATileBase::BeginPlay()
 
 	OverlayMID->SetScalarParameterValue(TEXT("UseInstanceData"), 0.f);
 	OverlayMID->SetScalarParameterValue(TEXT("CanPlace"), bCanPlace ? 1.f : 0.f);
+
+	ASOWPlayerController* PC = Cast<ASOWPlayerController>(GetWorld()->GetFirstPlayerController());
+
+	PC->SummonEnd.AddDynamic(this, &ATileBase::DeActivateTileMask);
+	PC->SummonStart.AddDynamic(this, &ATileBase::ShowTileMask);
 }
 
 void ATileBase::OnTransformToAlternate() {}
@@ -61,6 +57,8 @@ void ATileBase::OnConstruction(const FTransform& Transform)
 
 void ATileBase::ShowTileMask()
 {
+	UE_LOG(LogTemp, Error, TEXT("DD"));
+	OverlayMID->SetScalarParameterValue(TEXT("CanPlace"), bCanPlace ? 1.f : 0.f);
 	OverlayPlane->SetVisibility(true);
 }
 

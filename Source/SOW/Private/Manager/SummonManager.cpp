@@ -26,8 +26,6 @@ void USummonManager::Initialize()
 
 uint8 USummonManager::GetCircle(FGameplayTag Element)
 {
-	SummonStart.Broadcast();
-
 	int32 TotalWeight = 0;
 
 	if (M_CircleLevel[Element] == 0) return 0;

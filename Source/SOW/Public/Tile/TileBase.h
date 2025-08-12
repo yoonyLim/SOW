@@ -24,7 +24,7 @@ public:
 	virtual void OnTransformToAlternate();
 	virtual void OnRevertToOriginal();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Tile")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tile")
 	UStaticMeshComponent* MeshComponent;
 	
 	UPROPERTY(EditAnywhere)
@@ -46,6 +46,9 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	UFUNCTION(BlueprintCallable)
 	void ShowTileMask();
+
+	UFUNCTION(BlueprintCallable)
 	void DeActivateTileMask();
 };
