@@ -8,6 +8,9 @@
 #include "SOWEnumTypes.h"
 #include "SummonManager.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSummonStart);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSummonEnd);
+
 /**
  * 
  */
@@ -30,6 +33,8 @@ public:
 
 	TMap<uint8, TArray<uint8>>* GetSpellCompMap(EElementalType Element, uint8 Step);
 
+	FOnSummonStart SummonStart;
+	FOnSummonEnd SummonEnd;
 
 private:
 	TMap<FGameplayTag, uint8> M_CircleLevel;
