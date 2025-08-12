@@ -33,6 +33,11 @@ void USOWProjectilePoolingComponent::CreateAndFixPool(TSubclassOf<AProjectileBas
 
 		Pool.Add(NewProjectile);
 	}
+
+	if (PoolNumber > 0) {
+		Pools.Remove(PoolNumber - 1);
+	}
+	
 }
 
 AProjectileBase* USOWProjectilePoolingComponent::SpawnProjectile(const FTransform& SpawnTransform, ETurretTargetSelectionPolicy InPolicy, FGameplayEffectSpecHandle InHandle, bool InMovement, float InSpeed, float InDuration, float InScale)
@@ -65,7 +70,7 @@ AProjectileBase* USOWProjectilePoolingComponent::SpawnProjectile(const FTransfor
 	Projectile->SetActorHiddenInGame(false);
 	Projectile->ActivateMovement();
 
-
+	Projectile->BP_ExecuteProjectileSpawnEffect();
 	return Projectile;
 }
 
@@ -76,6 +81,10 @@ void USOWProjectilePoolingComponent::ReturnProjectile(AProjectileBase* Projectil
 	Projectile->ResetProjectile();
 	Projectile->SetActorTransform(FTransform::Identity);
 	
+	if (!Pools.Find(Projectile->GetPoolNumber())) {
+		Projectile->Destroy();
+		return;
+	}
 	Pools[Projectile->GetPoolNumber()].Add(Projectile);
 }
 

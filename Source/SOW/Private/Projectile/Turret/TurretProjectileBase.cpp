@@ -20,16 +20,13 @@ ATurretProjectileBase::ATurretProjectileBase()
 	ProjectileMoveComp->ProjectileGravityScale = 0.f;
 }
 
-void ATurretProjectileBase::BP_DestroyProjectile()
-{
-	CachedInstigator.Get()->GetProjectilePoolingComponent()->ReturnProjectile(this);
-	UE_LOG(LogTemp, Warning, TEXT("Return to Pool : %s"), *this->GetActorNameOrLabel());
-}
+
+
 
 void ATurretProjectileBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	CachedInstigator = CastChecked<ASOWCharacterTurretBase>(GetInstigator());
 }
 
 
@@ -38,11 +35,7 @@ void ATurretProjectileBase::OnCollisionHit(UPrimitiveComponent* OverlappedCompon
 	// Overlapping Callback Function
 	Super::OnCollisionHit(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 
-	if (!CachedInstigator.Get()) {
-		CachedInstigator = CastChecked<ASOWCharacterTurretBase>(GetInstigator());
-
-		if (!CachedInstigator.Get()) return;
-	}
+	if (!CachedInstigator.Get()) return;
 
 	if (!OtherActor) return;
 
@@ -79,3 +72,10 @@ bool ATurretProjectileBase::IsHostileTarget(AActor* Target)
 }
 
 
+void ATurretProjectileBase::BP_DestroyProjectile()
+{
+	//checkf(CachedInstigator.Get()->GetProjectilePoolingComponent(), TEXT("No Pool Found For %s"), *CachedInstigator.Get()->GetActorNameOrLabel());
+
+	CachedInstigator.Get()->GetProjectilePoolingComponent()->ReturnProjectile(this);
+	UE_LOG(LogTemp, Warning, TEXT("Return to Pool : %s"), *this->GetActorNameOrLabel());
+}

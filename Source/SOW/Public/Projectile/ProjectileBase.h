@@ -31,6 +31,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Turret|Hit", meta = (DisplayName = "Post Projectile Out"))
 	void BP_PostProjectileOut(AActor* Target);
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "Turret|Effect", meta = (DisplayName = "Execute Projectile Spawn Effect"))
+	void BP_ExecuteProjectileSpawnEffect();
+
 	void ActivateMovement();
 
 	void ResetProjectile();
