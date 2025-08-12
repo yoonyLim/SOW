@@ -10,6 +10,7 @@
 class UCapsuleComponent;
 class USOWTurretCombatComponent;
 class USOWTurretEvolutionComponent;
+class USOWProjectilePoolingComponent;
 class UWidgetComponent;
 struct FEffectOrientedTurretAttribute;
 struct FWidgetDescAtt;
@@ -75,6 +76,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	USOWTurretSkillComponent* GetTurretSkillComponent() const;				// Get Skill Component at other classes
 
+	UFUNCTION(BlueprintPure)
+	USOWProjectilePoolingComponent* GetProjectilePoolingComponent() const;				// Get Pooling Component at other classes
+
 #pragma endregion
 
 #pragma region BlueprintFunctions
@@ -100,6 +104,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	USOWTurretSkillComponent* TurretSkillComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	USOWProjectilePoolingComponent* ProjectilePoolingComponent;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
 	UWidgetComponent* HealthWidgetComponent;
 
@@ -108,6 +115,8 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Decal")
 	UDecalComponent* DetectionRangeDecal;
+
+
 
 private:
 
