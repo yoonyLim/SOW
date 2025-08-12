@@ -129,6 +129,7 @@ void ATileSpawner::SpawnIncomingRoutes()
 		{
 			if (SpawnedTileLocations.Contains(TileIndex))
 			{
+				// FVector SpawnLocation = FVector(SpawnedTileLocations[TileIndex].X, SpawnedTileLocations[TileIndex].Y, SpawnedTileLocations[TileIndex].Z + 5.f);
 				CurrentRouteWorldLocations.Add(SpawnedTileLocations[TileIndex]);
 			}
 			else
