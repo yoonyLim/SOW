@@ -6,6 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "SkillSelectWidget.generated.h"
 
+class UButton;
+
 /**
  * 
  */
@@ -13,5 +15,6 @@ UCLASS()
 class SOW_API USkillSelectWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
+
 };
