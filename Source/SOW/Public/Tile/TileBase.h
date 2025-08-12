@@ -15,7 +15,8 @@ class SOW_API ATileBase : public AActor
 public:	
 	// Sets default values for this actor's properties
 	ATileBase();
-
+	virtual void OnConstruction(const FTransform& Transform) override;
+	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ATileBase> ReplacementClass;
 	
@@ -23,4 +24,9 @@ public:
 	virtual void OnTransformToAlternate();
 	virtual void OnRevertToOriginal();
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Tile")
+	UStaticMeshComponent* MeshComponent;
+	
+	UPROPERTY(EditAnywhere)
+	FVector TileSize = FVector(1.0f, 1.0f, 1.0f);
 };
