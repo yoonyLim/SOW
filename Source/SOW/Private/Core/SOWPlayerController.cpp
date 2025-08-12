@@ -8,6 +8,7 @@
 #include "SOWStructTypes.h"
 #include "Characters/Player/SOWCharacterPlayer.h"
 #include "Characters/Turrets/SOWCharacterTurretBase.h"
+#include "Tile/TileBase.h"
 
 #include "SOWBlueprintFunctionLibrary.h"
 
@@ -42,6 +43,8 @@ void ASOWPlayerController::Tick(float DeltaTime)
 
 void ASOWPlayerController::StartPlacingTurret(FSpellCombination Spells)
 {
+    SummonStart.Broadcast();
+
     FName TargetRowName = TEXT("SpellComb");
     TurretSpells = Spells;
     bIsPlacingTurret = true;
@@ -70,6 +73,10 @@ void ASOWPlayerController::StartPlacingTurret(FSpellCombination Spells)
                 UE_LOG(LogTemp, Log, TEXT("Found matching row: %s"), *Pair.Key.ToString());
 
                 PreviewTurret->SetPreviewActor(Row->Mesh, Row->AttackRange);
+            }
+            else
+            {
+                return;
             }
         }
 
@@ -110,21 +117,31 @@ void ASOWPlayerController::ConfirmTurretPlacement()
                     UE_LOG(LogTemp, Log, TEXT("Hit Actor: %s"), *HitActor->GetName());
                 }
 
-                FVector TargetLocation = Hit.ImpactPoint;
-
-                bool bCanPlace = FVector::Dist(GetPawn()->GetActorLocation(), TargetLocation) <= 300.f;
-
-                if (bCanPlace)
+                if (ATileBase* HitTile = Cast<ATileBase>(HitActor))
                 {
-                    USOWBlueprintFunctionLibrary::SpawnTurretWithCircleCount(this, TurretClass, TargetLocation, FRotator::ZeroRotator, 2);
+                    UE_LOG(LogTemp, Log, TEXT("hrerere"));
 
-                    PreviewTurret->Destroy();
-                    PreviewTurret = nullptr;
+                    if (HitTile->bCanPlace)
+                    {
+                        FVector TargetLocation = HitTile->GetActorLocation();
+                    
+                        bool bCanPlace = FVector::Dist(GetPawn()->GetActorLocation(), TargetLocation) <= 300.f;
 
-                    bIsPlacingTurret = false;
+                        if (bCanPlace)
+                        {
+                            USOWBlueprintFunctionLibrary::SpawnTurretWithCircleCount(this, TurretClass, TargetLocation, FRotator::ZeroRotator, 2);
+
+                            PreviewTurret->Destroy();
+                            PreviewTurret = nullptr;
+
+                            bIsPlacingTurret = false;
+                        }
+                        SOWPlayer->bCanMove = true;
+                        SOWPlayer->ShowInstallationRange(false);
+
+                        SummonEnd.Broadcast();
+                    }
                 }
-                SOWPlayer->bCanMove = true;
-                SOWPlayer->ShowInstallationRange(false);
             }
         }
     }

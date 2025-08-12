@@ -24,9 +24,31 @@ public:
 	virtual void OnTransformToAlternate();
 	virtual void OnRevertToOriginal();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Tile")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tile")
 	UStaticMeshComponent* MeshComponent;
 	
 	UPROPERTY(EditAnywhere)
 	FVector TileSize = FVector(1.0f, 1.0f, 1.0f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tile|Overlay") 
+	UMaterialInterface* OverlayMaterial = nullptr;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tile|Overlay")
+	UStaticMeshComponent* OverlayPlane;
+
+	UPROPERTY()
+	UMaterialInstanceDynamic* OverlayMID = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Summon")
+	bool bCanPlace = false;
+
+protected:
+	virtual void BeginPlay() override;
+
+private:
+	UFUNCTION(BlueprintCallable)
+	void ShowTileMask();
+
+	UFUNCTION(BlueprintCallable)
+	void DeActivateTileMask();
 };
