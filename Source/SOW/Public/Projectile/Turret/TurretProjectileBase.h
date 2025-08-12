@@ -18,7 +18,7 @@ class SOW_API ATurretProjectileBase : public AProjectileBase
 public:	
 	// Sets default values for this actor's properties
 	ATurretProjectileBase();
-
+	virtual void BP_DestroyProjectile() override;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
