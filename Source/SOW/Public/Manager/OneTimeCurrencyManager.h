@@ -4,7 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "SOWEnumTypes.h"
 #include "OneTimeCurrencyManager.generated.h"
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnOneTiemCurrencyChanged, int32, NewCurrency, EElementalType, CurrencyType);
 
 /**
  * 
@@ -14,4 +17,24 @@ class SOW_API UOneTimeCurrencyManager : public UObject
 {
 	GENERATED_BODY()
 	
+public:
+
+	void Initialize();
+
+	UPROPERTY(BlueprintAssignable, Category = "Currency")
+	FOnOneTiemCurrencyChanged OnOneTimeCurrencyChanged;
+
+	UFUNCTION(BlueprintCallable, Category = "Currency")
+	int32 GetCurrency(EElementalType CurrencyType) const { return CurrentCurrency[CurrencyType]; }
+
+	UFUNCTION(BlueprintCallable, Category = "Currency")
+	bool AddCurrency(EElementalType CurrencyType, int32 Amount);
+
+	UFUNCTION(BlueprintCallable, Category = "Currency")
+	bool SpentCurrency(EElementalType CurrencyType, int32 Amount);
+
+protected:
+	UPROPERTY(BlueprintReadOnly, Category = "Currency")
+	TMap<EElementalType, int32> CurrentCurrency;
+
 };

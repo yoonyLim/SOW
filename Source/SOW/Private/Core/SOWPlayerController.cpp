@@ -47,7 +47,6 @@ void ASOWPlayerController::StartPlacingTurret(FSpellCombination Spells)
 
     FName TargetRowName = TEXT("SpellComb");
     TurretSpells = Spells;
-    bIsPlacingTurret = true;
 
     if (!PreviewTurret)
     {
@@ -73,14 +72,21 @@ void ASOWPlayerController::StartPlacingTurret(FSpellCombination Spells)
                 UE_LOG(LogTemp, Log, TEXT("Found matching row: %s"), *Pair.Key.ToString());
 
                 PreviewTurret->SetPreviewActor(Row->Mesh, Row->AttackRange);
-            }
-            else
-            {
-                return;
+
+                bIsPlacingTurret = true;
+                PlayerCharacter->ShowInstallationRange(true);
+                break;
             }
         }
 
-        PlayerCharacter->ShowInstallationRange(true);
+        if (!bIsPlacingTurret)
+        {
+            SummonEnd.Broadcast();
+            PreviewTurret->Destroy();
+            PreviewTurret = nullptr;
+            PlayerCharacter->bCanMove = true;
+            PlayerCharacter->ShowInstallationRange(false);
+        }
     }
 }
 
@@ -124,6 +130,7 @@ void ASOWPlayerController::ConfirmTurretPlacement()
                     if (HitTile->bCanPlace)
                     {
                         FVector TargetLocation = HitTile->GetActorLocation();
+                        TargetLocation = TargetLocation + (0.f, 0.f, 0.5f);
                     
                         bool bCanPlace = FVector::Dist(GetPawn()->GetActorLocation(), TargetLocation) <= 300.f;
 

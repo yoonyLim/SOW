@@ -74,6 +74,31 @@ void USummonWidget::NativeConstruct()
 	if (BTN_FourthSpell) BTN_FourthSpell->OnClicked.AddDynamic(this, &USummonWidget::HandleButtonClicked3);
 	if (BTN_FifthSpell) BTN_FifthSpell->OnClicked.AddDynamic(this, &USummonWidget::HandleButtonClicked4);
 
+	if (DT_MagicSpell)
+	{
+		static const FString ContextString(TEXT("Spell Filter"));
+
+		for (const auto& RowPair : DT_MagicSpell->GetRowMap())
+		{
+			const FMagicSpell* Row = reinterpret_cast<const FMagicSpell*>(RowPair.Value);
+			if (Row)
+			{
+				SpellList.Add(Row);
+
+				FString InternalName = StaticEnum<EMagicSpell>()->GetNameStringByValue(static_cast<int64>(Row->MagicSpell));
+				UE_LOG(LogTemp, Warning, TEXT("Internal Enum Name: %s"), *InternalName);
+			}
+		}
+	}
+	for (int32 i = 0; i < 5; i++)
+	{
+		if (SpellButtonArray[i])
+		{
+			SpellButtonArray[i]->SetVisibility(ESlateVisibility::Visible);
+			SetButtonStyle(SpellButtonArray[i], EElementalType::Nature, false);
+		}
+	}
+
 	SetPercent();
 	SetImage();
 }
@@ -135,35 +160,6 @@ void USummonWidget::SetMagicSpell()
 {
 	if (CircleLevel == 0) return;
 
-	if (DT_MagicSpell)
-	{
-		static const FString ContextString(TEXT("Spell Filter"));
-
-		for (const auto& RowPair : DT_MagicSpell->GetRowMap())
-		{
-			const FMagicSpell* Row = reinterpret_cast<const FMagicSpell*>(RowPair.Value);
-			if (Row)
-			{
-				SpellList.Add(Row);
-			}
-		}
-		UE_LOG(LogTemp, Error, TEXT("SummonWidget: step is %d"), CurrentStep);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("MagicSpell DataTable is NULL"));
-	}
-
-
-	for (int32 i = 0; i < 5; i++)
-	{
-		if (SpellButtonArray[i])
-		{
-			SpellButtonArray[i]->SetVisibility(ESlateVisibility::Visible);
-			SetButtonStyle(SpellButtonArray[i], EElementalType::Nature, false);
-		}
-	}
-
 	PlayAnimation(SpellFadeIn);
 }
 
@@ -171,6 +167,11 @@ void USummonWidget::OnIndexedButtonClicked(uint8 Index)
 {
 
 	SelectedSpells.Add(SpellList[Index]);
+
+
+	FString InternalName = StaticEnum<EMagicSpell>()->GetNameStringByValue(static_cast<int64>(SpellList[Index]->MagicSpell));
+	UE_LOG(LogTemp, Warning, TEXT("Internal Enum Name: %s"), *InternalName);
+
 	UE_LOG(LogTemp, Error, TEXT("SummonWidget: SpellList Num is  %d"), Index);
 	L_SelectedSpellsIndex.Add(Index);
 

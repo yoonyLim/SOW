@@ -57,7 +57,6 @@ void ATileBase::OnConstruction(const FTransform& Transform)
 
 void ATileBase::ShowTileMask()
 {
-	UE_LOG(LogTemp, Error, TEXT("DD"));
 	OverlayMID->SetScalarParameterValue(TEXT("CanPlace"), bCanPlace ? 1.f : 0.f);
 	OverlayPlane->SetVisibility(true);
 }
