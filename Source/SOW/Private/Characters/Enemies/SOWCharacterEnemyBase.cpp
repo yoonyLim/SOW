@@ -19,6 +19,8 @@
 #include "Utilities/EnemyIncomingRoute.h"
 #include "Widget/Enemy/EnemyHealthBarWidget.h"
 
+#include "AbilitySystem/GA_Enemy_RangedAttack.h"
+
 // Sets default values
 ASOWCharacterEnemyBase::ASOWCharacterEnemyBase()
 {
@@ -59,6 +61,10 @@ ASOWCharacterEnemyBase::ASOWCharacterEnemyBase()
 }
 
 
+void ASOWCharacterEnemyBase::PossessedBy(AController* NewController) {
+	Super::PossessedBy(NewController);
+	AbilitySystemComponent->AddLooseGameplayTag(SOWGameplayTags::Enemy_Ability_Initialize);
+}
 
 // Called when the game starts or when spawned
 void ASOWCharacterEnemyBase::BeginPlay()
@@ -99,7 +105,7 @@ void ASOWCharacterEnemyBase::BeginPlay()
 	ASCAttributes = Cast<USOWAttributeSet>(AbilitySystemComponent->GetAttributeSet(USOWAttributeSet::StaticClass()));
 
 	// To initialize Game Ability Attribute
-	AbilitySystemComponent->AddLooseGameplayTag(SOWGameplayTags::Enemy_Ability_Initialize);
+	//AbilitySystemComponent->AddLooseGameplayTag(SOWGameplayTags::Enemy_Ability_Initialize);
 
 	float NewHealth = ASCAttributes->GetMaxHealthBase();
 	float MaxHealth = ASCAttributes->GetMaxHealthBase();
@@ -108,6 +114,16 @@ void ASOWCharacterEnemyBase::BeginPlay()
 
 	// Set Incoming Route when spawned
 	GetEnemyIncomingRouteComponent()->SetIncomingRoute(FindClosestIncomingRoute());
+
+	// 원거리 공격용 어빌리티 추가
+	if (AbilitySystemComponent)
+	{
+		static const TSubclassOf<UGameplayAbility> RangedAttackAbilityClass = UGA_Enemy_RangedAttack::StaticClass();
+		FGameplayAbilitySpec AbilitySpec(RangedAttackAbilityClass, 1);
+		AbilitySystemComponent->GiveAbility(AbilitySpec);
+
+		UE_LOG(LogTemp, Warning, TEXT("[EnemyBase] RangedAttack Ability Granted"));
+	}
 }
 
 void ASOWCharacterEnemyBase::OnHealthChanged(const FOnAttributeChangeData& Data)
