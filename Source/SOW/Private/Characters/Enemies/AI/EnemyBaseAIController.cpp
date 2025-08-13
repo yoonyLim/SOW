@@ -70,6 +70,9 @@ void AEnemyBaseAIController::OnPossess(APawn* PossessedPawn)
 {
 	Super::OnPossess(PossessedPawn);
 
+	//디버그용 코드
+	UE_LOG(LogTemp, Warning, TEXT("▶ Running AIC OnPossess Func"));
+
 	if (ASOWCharacterEnemyBase* const Enemy = Cast<ASOWCharacterEnemyBase>(PossessedPawn))
 	{
 		if (UBehaviorTree* const BehaviorTree = Enemy->GetBehaviorTree())
@@ -78,6 +81,9 @@ void AEnemyBaseAIController::OnPossess(APawn* PossessedPawn)
 			UseBlackboard(BehaviorTree->BlackboardAsset, Bboard);
 			Blackboard = Bboard; // "Blackboard" is an already existing variable name in AAIController class
 
+			//디버그용 코드
+			UE_LOG(LogTemp, Warning, TEXT("▶ Running BT: %s"), *BehaviorTree->GetName());
+
 			Enemy->SetAIController(this);
 
 			if (AActor* CoreRune = UGameplayStatics::GetActorOfClass(GetWorld(), ASOWCharacterCoreRune::StaticClass()))
@@ -85,7 +91,11 @@ void AEnemyBaseAIController::OnPossess(APawn* PossessedPawn)
 			
 			UpdateCurrentState(EEnemyStates::FollowingIncomingRoute);
 			
-			RunBehaviorTree(BehaviorTree);
+			//RunBehaviorTree(BehaviorTree);
+			//디버그용 코드. 확인 후 지워서 원상복구 할 것.
+			const bool bLaunched = RunBehaviorTree(BehaviorTree);
+			UE_LOG(LogTemp, Warning, TEXT("▶ [AIC] RunBehaviorTree returned %s"),
+			bLaunched ? TEXT("Success") : TEXT("Failure"));
 		}
 	}
 }
