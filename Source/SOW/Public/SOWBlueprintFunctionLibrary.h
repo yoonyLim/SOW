@@ -12,6 +12,7 @@ class USOWAbilitySystemComponent;
 class ASOWCharacterTurretBase;
 struct FGameplayTag;
 
+
 /**
  * 
  */
@@ -49,6 +50,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "AbilitySystem")
 	static bool QueryForCurrencyCountSufficient(UObject* WorldContextObject, const FGameplayTag& InTag, const int InCount);
+
+	static EElementalType TranslateElementTagToEnum(const FGameplayTag& InTag);
 };
 
 template <typename T>
