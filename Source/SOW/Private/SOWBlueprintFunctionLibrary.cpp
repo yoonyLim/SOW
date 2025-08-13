@@ -9,6 +9,7 @@
 #include "Characters/Turrets/SOWCharacterTurretBase.h"
 #include "AbilitySystem/SOWAbilitySystemComponent.h"
 #include "AIController.h"
+#include "SOWGameInstance.h"
 
 USOWAbilitySystemComponent* USOWBlueprintFunctionLibrary::NativeGetSOWAbilitySystemComponentFromActorInfo(AActor* InActor)
 {
@@ -115,4 +116,26 @@ AActor* USOWBlueprintFunctionLibrary::GetOwnerActorFromGameplayEffectSpec(const 
     AActor* SourceActor = GESpec.GetContext().GetOriginalInstigator();
 
     return SourceActor;
+}
+
+void USOWBlueprintFunctionLibrary::RequestToGenerateOnTimeCurrency(UObject* WorldContextObject, const FGameplayTag& InTag, const int InCount)
+{
+    FGameplayEventData Data;
+    Data.EventMagnitude = InCount;
+
+    USOWGameInstance* SOWGameInstance = Cast<USOWGameInstance>(WorldContextObject->GetWorld()->GetGameInstance());
+
+    SOWGameInstance->GetOneTimeCurrencyManager();
+}
+
+bool USOWBlueprintFunctionLibrary::QueryForCurrencyCountSufficient(UObject* WorldContextObject, const FGameplayTag& InTag, const int InCount)
+{
+    // Has Enough Currency Count?
+
+    if (true) {
+        RequestToGenerateOnTimeCurrency(WorldContextObject, InTag, -InCount);
+        return true;
+    }
+
+    return false;
 }
