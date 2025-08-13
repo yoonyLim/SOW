@@ -69,6 +69,7 @@ public:
 
 protected:
 	// Called when the game starts or when spawned
+	virtual void PossessedBy(AController* NewController) override;
 	virtual void BeginPlay() override;
 
 	virtual void UpdateHealthBarValue(float NewHealth, float MaxHealth);
