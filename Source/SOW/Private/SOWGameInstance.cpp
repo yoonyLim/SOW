@@ -29,6 +29,11 @@ void USOWGameInstance::Init()
 
     OneTimeCurrencyManager = NewObject<UOneTimeCurrencyManager>(this);
 
+    if (GlobalCurrencyManager)
+    {
+        OneTimeCurrencyManager->Initialize();
+    }
+
     SummonManager = NewObject<USummonManager>(this);
 
     if (SummonManager)
