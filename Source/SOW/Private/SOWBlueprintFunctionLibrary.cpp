@@ -128,9 +128,9 @@ void USOWBlueprintFunctionLibrary::RequestToGenerateOnTimeCurrency(UObject* Worl
 
     USOWGameInstance* SOWGameInstance = Cast<USOWGameInstance>(WorldContextObject->GetWorld()->GetGameInstance());
 
-    SOWGameInstance->GetGlobalCurrencyManager()->AddCurrency(TranslateElementTagToEnum(InTag), InCount);
+    SOWGameInstance->GetOneTimeCurrencyManager()->AddCurrency(TranslateElementTagToEnum(InTag), InCount);
     
-    UE_LOG(LogTemp, Warning, TEXT("Currency : %s"), *FString::FromInt(SOWGameInstance->GetGlobalCurrencyManager()->GetCurrency(TranslateElementTagToEnum(InTag))));
+    UE_LOG(LogTemp, Warning, TEXT("Currency : %s"), *FString::FromInt(SOWGameInstance->GetOneTimeCurrencyManager()->GetCurrency(TranslateElementTagToEnum(InTag))));
 }
 
 bool USOWBlueprintFunctionLibrary::QueryForCurrencyCountSufficient(UObject* WorldContextObject, const FGameplayTag& InTag, const int InCount)
@@ -138,7 +138,7 @@ bool USOWBlueprintFunctionLibrary::QueryForCurrencyCountSufficient(UObject* Worl
     // Has Enough Currency Count?
     USOWGameInstance* SOWGameInstance = Cast<USOWGameInstance>(WorldContextObject->GetWorld()->GetGameInstance());
 
-    int32 Currency = SOWGameInstance->GetGlobalCurrencyManager()->GetCurrency(TranslateElementTagToEnum(InTag));
+    int32 Currency = SOWGameInstance->GetOneTimeCurrencyManager()->GetCurrency(TranslateElementTagToEnum(InTag));
 
     if (Currency >= InCount) {
         RequestToGenerateOnTimeCurrency(WorldContextObject, InTag, -InCount);
