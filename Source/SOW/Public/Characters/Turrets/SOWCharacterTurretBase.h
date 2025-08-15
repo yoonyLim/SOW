@@ -52,6 +52,7 @@ public:
 	float GetAttackCooldownTime() const;										// Get Attack Delay From Attribute Set in Turret Base
 	int32 GetCircleCount() const { return CircleCount; };						// Get Circle Count when Turret Spawning Time
 	FName GetTurretName() const;												// Get Turret Name (enum) to FName
+	FGameplayTag GetTurretElementTag() const;
 
 #pragma endregion
 
