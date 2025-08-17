@@ -12,6 +12,7 @@ class USOWAbilitySystemComponent;
 class ASOWCharacterTurretBase;
 struct FGameplayTag;
 
+
 /**
  * 
  */
@@ -43,6 +44,14 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "AbilitySystem")
 	static AActor* GetOwnerActorFromGameplayEffectSpec(const FGameplayEffectSpec& GESpec);
+
+	UFUNCTION(BlueprintCallable, Category = "AbilitySystem")
+	static void RequestToGenerateOnTimeCurrency(UObject* WorldContextObject, const FGameplayTag& InTag, const int InCount);
+
+	UFUNCTION(BlueprintCallable, Category = "AbilitySystem")
+	static bool QueryForCurrencyCountSufficient(UObject* WorldContextObject, const FGameplayTag& InTag, const int InCount);
+
+	static EElementalType TranslateElementTagToEnum(const FGameplayTag& InTag);
 };
 
 template <typename T>

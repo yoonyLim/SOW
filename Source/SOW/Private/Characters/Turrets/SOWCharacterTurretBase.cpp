@@ -8,10 +8,12 @@
 #include "Components/DecalComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Components/CapsuleComponent.h"
+
 #include "Components/UI/SOWTurretUIComponent.h"
 #include "Components/SOWTurretCombatComponent.h"
 #include "Components/SOWTurretEvolutionComponent.h"
 #include "Components/SOWTurretSkillComponent.h"
+#include "Components/SOWProjectilePoolingComponent.h"
 
 #include "Engine/StreamableManager.h"
 #include "Engine/AssetManager.h"
@@ -39,6 +41,8 @@ ASOWCharacterTurretBase::ASOWCharacterTurretBase()
 	TurretEvolutionComponent = CreateDefaultSubobject<USOWTurretEvolutionComponent>(TEXT("TurretEvolutionComponent"));
 
 	TurretSkillComponent = CreateDefaultSubobject<USOWTurretSkillComponent>(TEXT("TurretSkillComponent"));
+
+	ProjectilePoolingComponent = CreateDefaultSubobject<USOWProjectilePoolingComponent>(TEXT("TurretProjectilePoolingComponent"));
 
 	HealthWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthWidgetComponent"));
 	HealthWidgetComponent->SetupAttachment(GetMesh());
@@ -69,15 +73,7 @@ void ASOWCharacterTurretBase::BeginPlay()
 		HealthWidget->InitTurretCreatedWidget(this);
 	}
 
-	AbilitySystemComponent->RegisterGameplayTagEvent(
-		FGameplayTag::RequestGameplayTag(TEXT("Turret.Status.Buff")),
-		EGameplayTagEventType::NewOrRemoved
-	).AddUObject(this, &ThisClass::OnGameplayTagChanged);
-
-	AbilitySystemComponent->RegisterGameplayTagEvent(
-		FGameplayTag::RequestGameplayTag(TEXT("Turret.Status.Debuff")),
-		EGameplayTagEventType::NewOrRemoved
-	).AddUObject(this, &ThisClass::OnGameplayTagChanged);
+	
 }
 
 void ASOWCharacterTurretBase::PossessedBy(AController* NewController)
@@ -108,6 +104,16 @@ void ASOWCharacterTurretBase::PossessedBy(AController* NewController)
 		ASC->GetGameplayAttributeValueChangeDelegate(
 			AttributeSet->GetAttackSpeedBaseAttribute())
 			.AddUObject(this, &ASOWCharacterTurretBase::OnWidgetAttributeChanged);
+
+		ASC->RegisterGameplayTagEvent(
+			FGameplayTag::RequestGameplayTag(TEXT("Turret.Status.Buff")),
+			EGameplayTagEventType::NewOrRemoved
+		).AddUObject(this, &ThisClass::OnGameplayTagChanged);
+
+		ASC->RegisterGameplayTagEvent(
+			FGameplayTag::RequestGameplayTag(TEXT("Turret.Status.Debuff")),
+			EGameplayTagEventType::NewOrRemoved
+		).AddUObject(this, &ThisClass::OnGameplayTagChanged);
 	}
 }
 
@@ -257,6 +263,29 @@ FName ASOWCharacterTurretBase::GetTurretName() const
 	return USOWBlueprintFunctionLibrary::EnumToFName<ETurretName>(TurretCombatComponent->GetTurretNameByEnum());
 }
 
+FGameplayTag ASOWCharacterTurretBase::GetTurretElementTag() const
+{
+	//    else if (InTag.MatchesTag(FGameplayTag::RequestGameplayTag(TEXT("Shared.Element.Ice")))) {
+	checkf(AbilitySystemComponent, TEXT("Invalid Component : AbilitySystemComponent"));
+
+	FGameplayTag ParentTag = FGameplayTag::RequestGameplayTag(TEXT("Shared.Element"));
+
+	// ASC에서 현재 보유한 태그 전부 가져오기
+	FGameplayTagContainer OwnedTags;
+	AbilitySystemComponent->GetOwnedGameplayTags(OwnedTags);
+
+	// 매칭되는 태그 찾기
+	for (const FGameplayTag& Tag : OwnedTags)
+	{
+		if (Tag.MatchesTag(ParentTag))
+		{
+			return Tag;
+		}
+	}
+
+	return FGameplayTag();
+}
+
 FName ASOWCharacterTurretBase::BP_GetTurretName() const
 {
 	return GetTurretName();
@@ -288,6 +317,12 @@ USOWTurretSkillComponent* ASOWCharacterTurretBase::GetTurretSkillComponent() con
 	checkf(TurretSkillComponent, TEXT("TurretSkillComponent not Found / Check point : SOWCharacterTurretBase.cpp"));
 
 	return TurretSkillComponent;
+}
+
+USOWProjectilePoolingComponent* ASOWCharacterTurretBase::GetProjectilePoolingComponent() const
+{
+	checkf(ProjectilePoolingComponent, TEXT("ProjectilePoolingComponent not Found / Check point : SOWCharacterTurretBase.cpp"))
+	return ProjectilePoolingComponent;
 }
 
 

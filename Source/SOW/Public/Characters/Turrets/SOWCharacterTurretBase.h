@@ -10,6 +10,7 @@
 class UCapsuleComponent;
 class USOWTurretCombatComponent;
 class USOWTurretEvolutionComponent;
+class USOWProjectilePoolingComponent;
 class UWidgetComponent;
 struct FEffectOrientedTurretAttribute;
 struct FWidgetDescAtt;
@@ -51,6 +52,7 @@ public:
 	float GetAttackCooldownTime() const;										// Get Attack Delay From Attribute Set in Turret Base
 	int32 GetCircleCount() const { return CircleCount; };						// Get Circle Count when Turret Spawning Time
 	FName GetTurretName() const;												// Get Turret Name (enum) to FName
+	FGameplayTag GetTurretElementTag() const;
 
 #pragma endregion
 
@@ -74,6 +76,9 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	USOWTurretSkillComponent* GetTurretSkillComponent() const;				// Get Skill Component at other classes
+
+	UFUNCTION(BlueprintPure)
+	USOWProjectilePoolingComponent* GetProjectilePoolingComponent() const;				// Get Pooling Component at other classes
 
 #pragma endregion
 
@@ -100,6 +105,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	USOWTurretSkillComponent* TurretSkillComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	USOWProjectilePoolingComponent* ProjectilePoolingComponent;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
 	UWidgetComponent* HealthWidgetComponent;
 
@@ -108,6 +116,8 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Decal")
 	UDecalComponent* DetectionRangeDecal;
+
+
 
 private:
 

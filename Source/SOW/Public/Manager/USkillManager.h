@@ -23,6 +23,7 @@ class SOW_API UUSkillManager : public UObject
 public:
 	void Initialize(UDataTable* InSkillDataTable);
 
+	UFUNCTION(BlueprintCallable)
 	bool UnlockSkill(const FName& SkillID);
 
 	/* 특정 스킬이 해금 되었는지 확인하는 함수 */

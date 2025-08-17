@@ -7,6 +7,9 @@
 #include "SOWStructTypes.h"
 #include "SOWPlayerController.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSummonStart);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSummmonEnd);
+
 class ATurretPreviewActor;
 class UDataTable;
 class ASOWCharacterTurretBase;
@@ -26,6 +29,12 @@ public:
 
     UFUNCTION(BlueprintCallable)
     void ConfirmTurretPlacement();
+
+    UPROPERTY(BlueprintAssignable, Category = "Summon")
+    FOnSummonStart SummonStart;
+
+    UPROPERTY(BlueprintAssignable, Category = "Summon")
+    FOnSummmonEnd SummonEnd;
 
 protected:
     ASOWPlayerController();
