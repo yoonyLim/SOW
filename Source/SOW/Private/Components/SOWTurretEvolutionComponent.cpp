@@ -5,7 +5,9 @@
 #include "Characters/Turrets/SOWCharacterTurretBase.h"
 #include "Components/UI/SOWTurretUIComponent.h"
 #include "AbilitySystem/SOWAbilitySystemComponent.h"
+#include "SOWBlueprintFunctionLibrary.h"
 #include "Engine/DataTable.h"
+#include "Engine/CurveTable.h"
 
 // Sets default values for this component's properties
 USOWTurretEvolutionComponent::USOWTurretEvolutionComponent()
@@ -39,12 +41,29 @@ void USOWTurretEvolutionComponent::BeginPlay()
 
 void USOWTurretEvolutionComponent::TryEvolution(EEvolutionType Type)
 {
+	
+	
+
 	if (USOWAbilitySystemComponent* ASC = CachedOwnerCharacter->GetSOWAbilitySystemComponent()) {
 		
 
 
 		if (!EvolutionDataRow || EvolutionLevel >= 4) {
 			return;
+		}
+
+		if (UCurveTable* PriceData = LoadObject<UCurveTable>(nullptr, TEXT("/Game/01Blueprints/Turret/CT_TurretEvolutionPrices.CT_TurretEvolutionPrices"))) {
+			FName TName = CachedOwnerCharacter->GetTurretName();
+			FGameplayTag ETag = CachedOwnerCharacter->GetTurretElementTag();
+			FRealCurve* FoundCurve = PriceData->FindCurve(TName, TEXT(""));
+
+			if (!FoundCurve) return;
+
+			float PriceValue = FoundCurve->Eval(EvolutionLevel + 1);
+			if (!USOWBlueprintFunctionLibrary::QueryForCurrencyCountSufficient(CachedOwnerCharacter, ETag, PriceValue)) {
+				UE_LOG(LogTemp, Warning, TEXT("Not Enough Currency"));
+				return;
+			}
 		}
 
 		if (EvolutionState == EEvolutionType::EVO_NONE) {

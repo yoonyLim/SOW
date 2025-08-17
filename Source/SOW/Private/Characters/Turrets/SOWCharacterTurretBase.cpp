@@ -263,6 +263,29 @@ FName ASOWCharacterTurretBase::GetTurretName() const
 	return USOWBlueprintFunctionLibrary::EnumToFName<ETurretName>(TurretCombatComponent->GetTurretNameByEnum());
 }
 
+FGameplayTag ASOWCharacterTurretBase::GetTurretElementTag() const
+{
+	//    else if (InTag.MatchesTag(FGameplayTag::RequestGameplayTag(TEXT("Shared.Element.Ice")))) {
+	checkf(AbilitySystemComponent, TEXT("Invalid Component : AbilitySystemComponent"));
+
+	FGameplayTag ParentTag = FGameplayTag::RequestGameplayTag(TEXT("Shared.Element"));
+
+	// ASC에서 현재 보유한 태그 전부 가져오기
+	FGameplayTagContainer OwnedTags;
+	AbilitySystemComponent->GetOwnedGameplayTags(OwnedTags);
+
+	// 매칭되는 태그 찾기
+	for (const FGameplayTag& Tag : OwnedTags)
+	{
+		if (Tag.MatchesTag(ParentTag))
+		{
+			return Tag;
+		}
+	}
+
+	return FGameplayTag();
+}
+
 FName ASOWCharacterTurretBase::BP_GetTurretName() const
 {
 	return GetTurretName();

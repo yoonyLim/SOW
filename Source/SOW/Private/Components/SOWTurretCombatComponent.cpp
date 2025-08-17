@@ -426,7 +426,7 @@ void USOWTurretCombatComponent::AttackAbilityActivation()
 	if (!CachedOwnerCharacter) return;
 
 	if (!FindAttackTargetFromAllTargetAvailable()) {
-		UE_LOG(LogTemp, Warning, TEXT("No Valid Actor Found"));
+		//UE_LOG(LogTemp, Warning, TEXT("No Valid Actor Found"));
 		return;
 	} 
 

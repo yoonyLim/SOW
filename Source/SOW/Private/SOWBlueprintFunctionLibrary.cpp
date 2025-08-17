@@ -4,11 +4,15 @@
 #include "SOWBlueprintFunctionLibrary.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "SOWGameplayTags.h"
+#include "SOWEnumTypes.h"
 #include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "Characters/Turrets/SOWCharacterTurretBase.h"
 #include "AbilitySystem/SOWAbilitySystemComponent.h"
 #include "AIController.h"
+#include "SOWGameInstance.h"
+#include "Manager/GlobalCurrencyManager.h"
+#include "Manager/OneTimeCurrencyManager.h"
 
 USOWAbilitySystemComponent* USOWBlueprintFunctionLibrary::NativeGetSOWAbilitySystemComponentFromActorInfo(AActor* InActor)
 {
@@ -115,4 +119,70 @@ AActor* USOWBlueprintFunctionLibrary::GetOwnerActorFromGameplayEffectSpec(const 
     AActor* SourceActor = GESpec.GetContext().GetOriginalInstigator();
 
     return SourceActor;
+}
+
+void USOWBlueprintFunctionLibrary::RequestToGenerateOnTimeCurrency(UObject* WorldContextObject, const FGameplayTag& InTag, const int InCount)
+{
+    FGameplayEventData Data;
+    Data.EventMagnitude = InCount;
+
+    USOWGameInstance* SOWGameInstance = Cast<USOWGameInstance>(WorldContextObject->GetWorld()->GetGameInstance());
+
+    SOWGameInstance->GetOneTimeCurrencyManager()->AddCurrency(TranslateElementTagToEnum(InTag), InCount);
+    
+    UE_LOG(LogTemp, Warning, TEXT("Currency : %s"), *FString::FromInt(SOWGameInstance->GetOneTimeCurrencyManager()->GetCurrency(TranslateElementTagToEnum(InTag))));
+}
+
+bool USOWBlueprintFunctionLibrary::QueryForCurrencyCountSufficient(UObject* WorldContextObject, const FGameplayTag& InTag, const int InCount)
+{
+    // Has Enough Currency Count?
+    USOWGameInstance* SOWGameInstance = Cast<USOWGameInstance>(WorldContextObject->GetWorld()->GetGameInstance());
+
+    int32 Currency = SOWGameInstance->GetOneTimeCurrencyManager()->GetCurrency(TranslateElementTagToEnum(InTag));
+
+    if (Currency >= InCount) {
+        RequestToGenerateOnTimeCurrency(WorldContextObject, InTag, -InCount);
+        return true;
+    }
+
+    return false;
+}
+
+EElementalType USOWBlueprintFunctionLibrary::TranslateElementTagToEnum(const FGameplayTag& InTag){
+
+    if (InTag.MatchesTag(FGameplayTag::RequestGameplayTag(TEXT("Shared.Element.Nature")))) {
+        return EElementalType::Nature;
+    }
+
+    else if (InTag.MatchesTag(FGameplayTag::RequestGameplayTag(TEXT("Shared.Element.Electro")))) {
+        return EElementalType::Electro;
+    }
+
+    else if (InTag.MatchesTag(FGameplayTag::RequestGameplayTag(TEXT("Shared.Element.Wave")))) {
+        return EElementalType::Wave;
+    }
+
+    else if (InTag.MatchesTag(FGameplayTag::RequestGameplayTag(TEXT("Shared.Element.Ice")))) {
+        return EElementalType::Ice;
+    }
+
+    else if (InTag.MatchesTag(FGameplayTag::RequestGameplayTag(TEXT("Shared.Element.Divinity")))) {
+        return EElementalType::Divinity;
+    }
+
+    else if (InTag.MatchesTag(FGameplayTag::RequestGameplayTag(TEXT("Shared.Element.Death")))) {
+        return EElementalType::Death;
+    }
+
+    else if (InTag.MatchesTag(FGameplayTag::RequestGameplayTag(TEXT("Shared.Element.Flame")))) {
+        return EElementalType::Flame;
+    }
+    else if (InTag.MatchesTag(FGameplayTag::RequestGameplayTag(TEXT("Shared.Element.Madness")))) {
+        return EElementalType::Madness;
+    }
+
+    else {
+        return EElementalType::Normal;
+    }
+
 }

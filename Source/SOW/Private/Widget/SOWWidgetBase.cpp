@@ -8,22 +8,11 @@
 void USOWWidgetBase::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
-
-	/*UE_LOG(LogTemp, Warning, TEXT("UI Initialzed"));
-
-	if (ISOWCharacterUIInterface* UIInterface = Cast<ISOWCharacterUIInterface>(GetOwningPlayerPawn())) {
-
-		if (USOWCharacterUIComponent* UIComponent = UIInterface->GetCharacterUIComponent()) {
-			BP_OnOwningUIComponentInitialized(UIComponent);
-
-			UE_LOG(LogTemp, Warning, TEXT("BP_OnOwningUIComponentInitialized was activated"));
-		}
-	}*/
 }
 
 void USOWWidgetBase::InitTurretCreatedWidget(AActor* OwningActor)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Extracted UI Component for %s"), *OwningActor->GetActorNameOrLabel());
+//	UE_LOG(LogTemp, Warning, TEXT("Extracted UI Component for %s"), *OwningActor->GetActorNameOrLabel());
 
 	if (ISOWCharacterUIInterface* UIInterface = Cast<ISOWCharacterUIInterface>(OwningActor)) {
 		USOWTurretUIComponent* UIComponent = UIInterface->GetTurretUIComponent();
