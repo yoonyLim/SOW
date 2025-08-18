@@ -44,6 +44,8 @@ class SOW_API ASOWCharacterEnemyBase : public ASOWCharacter, public IEnemyAction
 
 	float AttackRadius = 0.f;
 	float AttackSpeed = 0.f;
+	int ShardDropAmount = 0;
+	int ShardDropAmountVariation = 0;
 
 public:
 	// Sets default values for this character's properties

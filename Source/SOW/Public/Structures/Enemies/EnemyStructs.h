@@ -35,6 +35,12 @@ struct SOW_API FEnemyAttributeData : public FTableRowBase
 	float DefensePowerBase;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int ShardDropAmount;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int ShardDropAmountVariation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EEnemyTargetPriority TargetPriority;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -53,27 +59,27 @@ struct SOW_API FProjectileAttributeData : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	/** Åõ»çÃ¼ ÀÌµ¿ ¿©ºÎ */
+	/** ï¿½ï¿½ï¿½ï¿½Ã¼ ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
 	bool bHasMovement = true;
 
-	/** Åõ»çÃ¼ ¼Óµµ */
+	/** ï¿½ï¿½ï¿½ï¿½Ã¼ ï¿½Óµï¿½ */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile", meta = (EditCondition = "bHasMovement"))
 	float Speed = 1200.f;
 
-	/** Åõ»çÃ¼ Áö¼Ó½Ã°£(ÃÊ) */
+	/** ï¿½ï¿½ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½Ó½Ã°ï¿½(ï¿½ï¿½) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
 	float Duration = 3.f;
 
-	/** Åõ»çÃ¼ ½ºÄÉÀÏ ¹èÀ² */
+	/** ï¿½ï¿½ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
 	float ScaleRatio = 1.f;
 
-	/** µ¥¹ÌÁö ÀÌÆåÆ® Å¬·¡½º */
+	/** ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® Å¬ï¿½ï¿½ï¿½ï¿½ */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
 	TSubclassOf<UGameplayEffect> DamageEffectClass;
 
-	/** ÀÌÆåÆ® ·¹º§ */
+	/** ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
 	float EffectLevel = 1.f;
 };

@@ -47,10 +47,6 @@ ASOWCharacterTurretBase::ASOWCharacterTurretBase()
 	HealthWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthWidgetComponent"));
 	HealthWidgetComponent->SetupAttachment(RootComponent);
 
-	ManaWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("ManaWidgetComponent"));
-	ManaWidgetComponent->SetupAttachment(RootComponent);
-
-
 	CharacterType = ESOWCharacterType::Turret;
 
 	TurretUIComponent = CreateDefaultSubobject<USOWTurretUIComponent>(TEXT("TurretUIComponent"));
@@ -75,12 +71,6 @@ void ASOWCharacterTurretBase::BeginPlay()
 	if (USOWWidgetBase* HealthWidget = Cast<USOWWidgetBase>(HealthWidgetComponent->GetUserWidgetObject())) {
 		HealthWidget->InitTurretCreatedWidget(this);
 	}
-
-	if (USOWWidgetBase* ManaWidget = Cast<USOWWidgetBase>(ManaWidgetComponent->GetUserWidgetObject())) {
-		ManaWidget->InitTurretCreatedWidget(this);
-	}
-
-	
 }
 
 void ASOWCharacterTurretBase::PossessedBy(AController* NewController)

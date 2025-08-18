@@ -3,6 +3,7 @@
 
 #include "Characters/Enemies/SOWCharacterEnemyBase.h"
 
+#include "SOWGameInstance.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/WidgetComponent.h"
 
@@ -20,6 +21,7 @@
 #include "Widget/Enemy/EnemyHealthBarWidget.h"
 
 #include "AbilitySystem/GA_Enemy_RangedAttack.h"
+#include "Manager/OneTimeCurrencyManager.h"
 
 // Sets default values
 ASOWCharacterEnemyBase::ASOWCharacterEnemyBase()
@@ -87,6 +89,8 @@ void ASOWCharacterEnemyBase::BeginPlay()
 
 		AttackRadius = EnemyAttributesData->AttackRadius;
 		AttackSpeed = EnemyAttributesData->AttackSpeed;
+		ShardDropAmount = EnemyAttributesData->ShardDropAmount;
+		ShardDropAmountVariation = EnemyAttributesData->ShardDropAmountVariation;
 	}
 
 	// Set up HealthBar Widget
@@ -143,6 +147,9 @@ void ASOWCharacterEnemyBase::OnHealthChanged(const FOnAttributeChangeData& Data)
 	
 	float NewHealth = Data.NewValue;
 	float MaxHealth = ASCAttributes->GetMaxHealthBase();
+
+	if (NewHealth <= 0)
+		BroadcastEnemyDeath(0);
 
 	UpdateHealthBarValue(NewHealth, MaxHealth);
 
@@ -250,6 +257,11 @@ void ASOWCharacterEnemyBase::Attack(const ASOWCharacter* TargetActor)
 
 void ASOWCharacterEnemyBase::BroadcastEnemyDeath(int GoldAmount)
 {
-	OnEnemyDeath.Broadcast(GoldAmount);
-}
+	int ShardAmount = FMath::Clamp(FMath::RandRange(ShardDropAmount - ShardDropAmountVariation, ShardDropAmount + ShardDropAmountVariation) , 0, ShardDropAmount + ShardDropAmountVariation);
+	
+	OnEnemyDeath.Broadcast(ShardAmount);
 
+	USOWGameInstance* SOWGameInstance = Cast<USOWGameInstance>(GetWorld()->GetGameInstance());
+
+	SOWGameInstance->GetOneTimeCurrencyManager()->AddCurrency(EElementalType::Normal, ShardAmount);
+}
