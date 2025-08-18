@@ -56,6 +56,10 @@ float USOWTurretCombatComponent::GetAttackCooldownTimeFromOwner() const
 		CooldownBase += ProjectileLivingTime;
 	}
 
+	if (!bTargetFound) {
+		CooldownBase = 0.5f;
+	}
+
 	return CooldownBase;
 }
 
@@ -218,6 +222,11 @@ void USOWTurretCombatComponent::ActivateTurretFunction()
 	bActive = true;
 }
 
+void USOWTurretCombatComponent::SetManaConsumptionValue(float value)
+{
+	ManaConsumption = value;
+}
+
 bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 {
 	// Check all characters within detection range and designate them as attack targets if they are valid targets.
@@ -228,7 +237,7 @@ bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn));
 
-	if (!CachedOwnerCharacter) return false;
+	if (!CachedOwnerCharacter) return (bTargetFound = false);
 
 	UKismetSystemLibrary::SphereOverlapActors(
 		GetWorld(),
@@ -250,7 +259,7 @@ bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 		AddActorMatchesTargetingPolicy(CurrentTarget, TargetType);
 	}
 	ActivateTurretFunction(); // -> Reactivate if cooldowntime has been updated.
-	return !DetectedTargetActors.IsEmpty() || 
+	return bTargetFound = !DetectedTargetActors.IsEmpty() || 
 		TurretTargetSelectionPriority == ETurretTargetSelectionPriority::LocationFixed || 
 		TurretTargetSelectionPriority == ETurretTargetSelectionPriority::TargetFixed;
 }
@@ -265,7 +274,6 @@ AActor* USOWTurretCombatComponent::GetSingleAttackTargetOnList(const TArray<AAct
 	switch (TurretTargetSelectionPriority)
 	{
 	case ETurretTargetSelectionPriority::Uncertain:
-		FinalTarget = CachedOwnerCharacter;
 		break;
 	case ETurretTargetSelectionPriority::HighHealth:
 		CriticValue = 0;
@@ -279,6 +287,7 @@ AActor* USOWTurretCombatComponent::GetSingleAttackTargetOnList(const TArray<AAct
 				CriticValue = TargetValue;
 			}
 		}
+		//UE_LOG(LogTemp, Warning, TEXT("HighHealth / Target : %s"), *FinalTarget->GetActorNameOrLabel());
 		break;
 	case ETurretTargetSelectionPriority::LowHealth:
 		CriticValue = 10000.0f;
@@ -292,6 +301,7 @@ AActor* USOWTurretCombatComponent::GetSingleAttackTargetOnList(const TArray<AAct
 				CriticValue = TargetValue;
 			}
 		}
+		//UE_LOG(LogTemp, Warning, TEXT("LowHealth / Target : %s"), *FinalTarget->GetActorNameOrLabel());
 		break;
 	case ETurretTargetSelectionPriority::HighAttack:
 		CriticValue = 0.f;
@@ -305,6 +315,7 @@ AActor* USOWTurretCombatComponent::GetSingleAttackTargetOnList(const TArray<AAct
 				CriticValue = TargetValue;
 			}
 		}
+		//UE_LOG(LogTemp, Warning, TEXT("HighAttack / Target : %s"), *FinalTarget->GetActorNameOrLabel());
 		break;
 	case ETurretTargetSelectionPriority::Nearest:
 		CriticValue = CachedOwnerCharacter->GetDetectionRangeRadius() * 2.f;

@@ -45,7 +45,10 @@ ASOWCharacterTurretBase::ASOWCharacterTurretBase()
 	ProjectilePoolingComponent = CreateDefaultSubobject<USOWProjectilePoolingComponent>(TEXT("TurretProjectilePoolingComponent"));
 
 	HealthWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthWidgetComponent"));
-	HealthWidgetComponent->SetupAttachment(GetMesh());
+	HealthWidgetComponent->SetupAttachment(RootComponent);
+
+	ManaWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("ManaWidgetComponent"));
+	ManaWidgetComponent->SetupAttachment(RootComponent);
 
 
 	CharacterType = ESOWCharacterType::Turret;
@@ -71,6 +74,10 @@ void ASOWCharacterTurretBase::BeginPlay()
 
 	if (USOWWidgetBase* HealthWidget = Cast<USOWWidgetBase>(HealthWidgetComponent->GetUserWidgetObject())) {
 		HealthWidget->InitTurretCreatedWidget(this);
+	}
+
+	if (USOWWidgetBase* ManaWidget = Cast<USOWWidgetBase>(ManaWidgetComponent->GetUserWidgetObject())) {
+		ManaWidget->InitTurretCreatedWidget(this);
 	}
 
 	
@@ -364,6 +371,11 @@ void ASOWCharacterTurretBase::FindTurretByElementTarget()
 			}
 		}
 	}
+}
+
+void ASOWCharacterTurretBase::SetManaConsumption(float value)
+{
+	GetTurretCombatComponent()->SetManaConsumptionValue(value);
 }
 
 	

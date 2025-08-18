@@ -18,6 +18,8 @@ struct FAttributeCapturesTurretData {
 	DECLARE_ATTRIBUTE_CAPTUREDEF(AttackSpeedRatio);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(DetectionRange);
 
+	DECLARE_ATTRIBUTE_CAPTUREDEF(MaxManaBase);
+
 	FAttributeCapturesTurretData() {
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, MaxHealthBase, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, MaxHealthRatio, Target, false);
@@ -28,6 +30,8 @@ struct FAttributeCapturesTurretData {
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, AttackSpeedBase, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, AttackSpeedRatio, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, DetectionRange, Target, false);
+
+		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, MaxManaBase, Target, false);
 	}
 };
 
@@ -57,6 +61,7 @@ UGEEC_InitTurretAttribute::UGEEC_InitTurretAttribute()
 	RelevantAttributesToCapture.Add(GetCapturedTurretData().AttackSpeedBaseDef);
 	RelevantAttributesToCapture.Add(GetCapturedTurretData().AttackSpeedRatioDef);
 	RelevantAttributesToCapture.Add(GetCapturedTurretData().DetectionRangeDef);
+	RelevantAttributesToCapture.Add(GetCapturedTurretData().MaxManaBaseDef);
 }
 
 void UGEEC_InitTurretAttribute::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const {
@@ -148,5 +153,15 @@ void UGEEC_InitTurretAttribute::Execute_Implementation(const FGameplayEffectCust
 			EGameplayModOp::Override,
 			ResistanceDataRow->DetectionRange)
 	);
-	
+
+	OutExecutionOutput.AddOutputModifier(
+		FGameplayModifierEvaluatedData(
+			GetCapturedTurretData().MaxManaBaseDef.AttributeToCapture,
+			EGameplayModOp::Override,
+			ResistanceDataRow->MaxManaBase)
+	);
+
+
+	SourceTurret->SetManaConsumption(ResistanceDataRow->ManaConsumption);
+	UE_LOG(LogTemp, Warning, TEXT("Mana Consumption : %s"), *FString::SanitizeFloat(ResistanceDataRow->ManaConsumption));
 }
