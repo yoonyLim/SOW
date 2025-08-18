@@ -6,6 +6,9 @@
 #include "EngineUtils.h"
 #include "Interface/GridTileInterface.h"
 #include "Utilities/EnemyIncomingRoute.h"
+#include "Materials/MaterialInstanceDynamic.h"
+#include "Components/StaticMeshComponent.h"
+#include "UObject/ConstructorHelpers.h"
 
 void ATileSpawner::BeginPlay()
 {
@@ -73,7 +76,20 @@ void ATileSpawner::BeginPlay()
 	}
 
 	SpawnIncomingRoutes();
-	
+
+	// 맵 중심 & 크기 계산
+	FVector CenterWS = FVector::ZeroVector;
+	FVector2D HalfSizeWorldXY = FVector2D::ZeroVector;
+	ComputeMapBoundsFromTiles(SpawnedTileLocations, TileWidth, TileHeight, CenterWS, HalfSizeWorldXY);
+
+	// 원래 쓰던 Z를 유지하고 싶다면:
+	CenterWS.Z = SOWTilePlacementHelper::GetTileWorldPosition(
+		(GridWidth - 1) / 2.0f, (GridHeight - 1) / 2.0f, TileWidth, TileHeight).Z;
+
+	if (bSpawnGradientPlane)
+	{
+		SetupGradientPlaneAndMaterial(CenterWS, HalfSizeWorldXY);
+	}
 	const FVector Center = SOWTilePlacementHelper::GetTileWorldPosition((GridWidth - 1) / 2.0f, (GridHeight - 1) / 2.0f, TileWidth, TileHeight);
 	const FVector Extent = FVector(
 		(GridWidth * TileWidth * 0.5f) + TileWidth,
@@ -174,4 +190,93 @@ void ATileSpawner::SpawnIncomingRoutes()
 TArray<AEnemyIncomingRoute*> ATileSpawner::GetSpawnedEnemyRoutes() const
 {
 	return SpawnedEnemyRoutes;
+}
+
+
+// === 평면 자동 세팅 + 머티리얼 파라미터 주입 ===
+// 선언부(.h)도 함께 변경:
+// void SetupGradientPlaneAndMaterial(const FVector& CenterWS, float MapW, float MapH);
+void ATileSpawner::SetupGradientPlaneAndMaterial(const FVector& CenterWS, const FVector2D& HalfSizeWorldXY)
+{
+    UWorld* World = GetWorld();
+    if (!World) return;
+
+    if (!GradientPlaneMesh) {
+        static ConstructorHelpers::FObjectFinder<UStaticMesh> PlaneSM(TEXT("/Engine/BasicShapes/Plane.Plane"));
+        if (PlaneSM.Succeeded()) GradientPlaneMesh = PlaneSM.Object;
+    }
+    if (!GradientPlaneMesh) { UE_LOG(LogTemp, Warning, TEXT("GradientPlaneMesh is null.")); return; }
+    if (!GradientMaterial)  { UE_LOG(LogTemp, Warning, TEXT("GradientMaterial is null."));  return; }
+
+    FActorSpawnParameters Params;
+    Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+    const FRotator PlaneRot = GetActorRotation() + FRotator(0.f, 45.f, 0.f); // 다이아 맵
+    const FVector  PlaneLoc = CenterWS + FVector(0.f, 0.f, PlaneZOffset);
+
+    GradientPlaneActor = World->SpawnActor<AStaticMeshActor>(AStaticMeshActor::StaticClass(), PlaneLoc, PlaneRot, Params);
+    if (!GradientPlaneActor) { UE_LOG(LogTemp, Error, TEXT("Failed to spawn GradientPlaneActor")); return; }
+
+    UStaticMeshComponent* PlaneMC = GradientPlaneActor->GetStaticMeshComponent();
+    PlaneMC->SetStaticMesh(GradientPlaneMesh);
+    PlaneMC->SetMobility(EComponentMobility::Movable);
+    PlaneMC->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
+    PlaneMC->CastShadow = false;
+    PlaneMC->bRenderCustomDepth = false;
+    PlaneMC->SetMaterial(0, GradientMaterial);
+
+    // 평면 목표 크기 = 맵 + 양쪽 Softness 여유
+    const float TargetW = HalfSizeWorldXY.X * 5.f + 2.f * GradientSoftnessWorld;
+    const float TargetH = HalfSizeWorldXY.Y * 5.f + 2.f * GradientSoftnessWorld;
+
+    const FVector SMSize = GradientPlaneMesh->GetBounds().BoxExtent * 2.f; // 로컬
+    const FVector NewScale(
+        TargetW / FMath::Max(1.f, SMSize.X),
+        TargetH / FMath::Max(1.f, SMSize.Y),
+        1.f
+    );
+    PlaneMC->SetWorldScale3D(NewScale);
+
+    // MID 생성 + 파라미터
+    UMaterialInstanceDynamic* Dyn =
+        PlaneMC->CreateAndSetMaterialInstanceDynamicFromMaterial(0, GradientMaterial);
+    if (!Dyn) { UE_LOG(LogTemp, Error, TEXT("Failed to create MID for GradientPlane.")); return; }
+
+    // 머티리얼 내부에서 World→Local + ObjectScale 보정 사용 가정
+    Dyn->SetVectorParameterValue(TEXT("HalfSizeWorld"),
+        FLinearColor(HalfSizeWorldXY.X, HalfSizeWorldXY.Y, 0, 0));
+    Dyn->SetScalarParameterValue(TEXT("SoftnessWorld"), GradientSoftnessWorld);
+	Dyn->SetVectorParameterValue(TEXT("MapCenterWS"), FLinearColor(CenterWS.X, CenterWS.Y, CenterWS.Z, 0));
+
+	
+}
+
+
+// 스폰된 타일 위치들(중심)로부터 실제 맵 경계를 계산
+void ATileSpawner::ComputeMapBoundsFromTiles(
+	const TMap<int32, FVector>& TileCenters,
+	float TileWidth, float TileHeight,
+	FVector& OutCenterWS,            // XY 중심 (Z는 호출부에서 원하는 값으로 보정)
+	FVector2D& OutHalfSizeWorldXY)   // XY 반경 (월드 단위)
+{
+	if (TileCenters.Num() == 0) { OutCenterWS = FVector::ZeroVector; OutHalfSizeWorldXY = FVector2D::ZeroVector; return; }
+
+	float minX =  FLT_MAX, maxX = -FLT_MAX;
+	float minY =  FLT_MAX, maxY = -FLT_MAX;
+
+	for (const auto& It : TileCenters)
+	{
+		const FVector& P = It.Value;   // 타일 중심 좌표
+		minX = FMath::Min(minX, P.X);  maxX = FMath::Max(maxX, P.X);
+		minY = FMath::Min(minY, P.Y);  maxY = FMath::Max(maxY, P.Y);
+	}
+
+	const float halfTileX = TileWidth  * 0.5f;   // 외곽 타일의 반쪽까지 포함
+	const float halfTileY = TileHeight * 0.5f;
+
+	OutCenterWS.X = 0.5f * (minX + maxX);
+	OutCenterWS.Y = 0.5f * (minY + maxY);
+
+	OutHalfSizeWorldXY.X = 0.5f * (maxX - minX) + halfTileX;
+	OutHalfSizeWorldXY.Y = 0.5f * (maxY - minY) + halfTileY;
 }
