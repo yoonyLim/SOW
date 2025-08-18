@@ -21,7 +21,7 @@ public:
 
 	void Initialize();
 
-	UPROPERTY(BlueprintAssignable, Category = "Currency")
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Currency")
 	FOnOneTiemCurrencyChanged OnOneTimeCurrencyChanged;
 
 	UFUNCTION(BlueprintCallable, Category = "Currency")
