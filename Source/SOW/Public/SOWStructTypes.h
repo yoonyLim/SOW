@@ -94,12 +94,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Attribute Value"))
 	float DetectionRange;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Attribute Value"))
-	float MaxManaBase;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Attribute Value"))
-	float ManaConsumption;
 };
 
 USTRUCT(BlueprintType)
