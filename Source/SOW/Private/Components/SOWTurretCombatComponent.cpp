@@ -8,7 +8,9 @@
 #include "Characters/Player/SOWCharacterPlayer.h"
 #include "Interface/SOWCharacterUIInterface.h"
 #include "Components/UI/SOWTurretUIComponent.h"
+#include "AbilitySystem/SOWAbilitySystemComponent.h"
 #include "Projectile/Turret/TurretProjectileBase.h"
+#include "AbilitySystem/SOWAttributeSet.h"
 
 #include "SOWBlueprintFunctionLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -52,6 +54,10 @@ float USOWTurretCombatComponent::GetAttackCooldownTimeFromOwner() const
 
 	if (HasDependencyOnProjectile) {
 		CooldownBase += ProjectileLivingTime;
+	}
+
+	if (!bTargetFound) {
+		CooldownBase = 0.5f;
 	}
 
 	return CooldownBase;
@@ -216,6 +222,11 @@ void USOWTurretCombatComponent::ActivateTurretFunction()
 	bActive = true;
 }
 
+void USOWTurretCombatComponent::SetManaConsumptionValue(float value)
+{
+	ManaConsumption = value;
+}
+
 bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 {
 	// Check all characters within detection range and designate them as attack targets if they are valid targets.
@@ -226,7 +237,7 @@ bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn));
 
-	if (!CachedOwnerCharacter) return false;
+	if (!CachedOwnerCharacter) return (bTargetFound = false);
 
 	UKismetSystemLibrary::SphereOverlapActors(
 		GetWorld(),
@@ -248,7 +259,7 @@ bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 		AddActorMatchesTargetingPolicy(CurrentTarget, TargetType);
 	}
 	ActivateTurretFunction(); // -> Reactivate if cooldowntime has been updated.
-	return !DetectedTargetActors.IsEmpty() || 
+	return bTargetFound = !DetectedTargetActors.IsEmpty() || 
 		TurretTargetSelectionPriority == ETurretTargetSelectionPriority::LocationFixed || 
 		TurretTargetSelectionPriority == ETurretTargetSelectionPriority::TargetFixed;
 }
@@ -257,41 +268,76 @@ bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 AActor* USOWTurretCombatComponent::GetSingleAttackTargetOnList(const TArray<AActor*> InTargetList)
 {
 	AActor* FinalTarget = CachedOwnerCharacter;
-	double DistanceMin, DistanceMax, Distance;
+	double TargetValue, CriticValue;
 	FVector TurretLocation = CachedOwnerCharacter->GetActorLocation();
 
 	switch (TurretTargetSelectionPriority)
 	{
 	case ETurretTargetSelectionPriority::Uncertain:
-		FinalTarget = CachedOwnerCharacter;
 		break;
 	case ETurretTargetSelectionPriority::HighHealth:
-		break;
-	case ETurretTargetSelectionPriority::LowHealth:
-		break;
-	case ETurretTargetSelectionPriority::HighAttack:
-		break;
-	case ETurretTargetSelectionPriority::Nearest:
-		DistanceMax = CachedOwnerCharacter->GetDetectionRangeRadius() * 2.f;
+		CriticValue = 0;
 
 		for (AActor* ATarget : InTargetList) {
-			Distance = FVector::Dist(TurretLocation, ATarget->GetActorLocation());
+			ASOWCharacterEnemyBase* TargetEnemy = Cast<ASOWCharacterEnemyBase>(ATarget);
+			TargetValue = TargetEnemy->GetSOWAttibuteSet()->GetCurrentHealth();
 
-			if (DistanceMax > Distance) {
+			if (CriticValue < TargetValue) {
 				FinalTarget = ATarget;
-				DistanceMax = Distance;
+				CriticValue = TargetValue;
+			}
+		}
+		//UE_LOG(LogTemp, Warning, TEXT("HighHealth / Target : %s"), *FinalTarget->GetActorNameOrLabel());
+		break;
+	case ETurretTargetSelectionPriority::LowHealth:
+		CriticValue = 10000.0f;
+
+		for (AActor* ATarget : InTargetList) {
+			ASOWCharacterEnemyBase* TargetEnemy = Cast<ASOWCharacterEnemyBase>(ATarget);
+			TargetValue = TargetEnemy->GetSOWAttibuteSet()->GetCurrentHealth();
+
+			if (CriticValue > TargetValue) {
+				FinalTarget = ATarget;
+				CriticValue = TargetValue;
+			}
+		}
+		//UE_LOG(LogTemp, Warning, TEXT("LowHealth / Target : %s"), *FinalTarget->GetActorNameOrLabel());
+		break;
+	case ETurretTargetSelectionPriority::HighAttack:
+		CriticValue = 0.f;
+
+		for (AActor* ATarget : InTargetList) {
+			ASOWCharacterEnemyBase* TargetEnemy = Cast<ASOWCharacterEnemyBase>(ATarget);
+			TargetValue = TargetEnemy->GetSOWAttibuteSet()->GetAttackPowerBase();
+
+			if (CriticValue < TargetValue) {
+				FinalTarget = ATarget;
+				CriticValue = TargetValue;
+			}
+		}
+		//UE_LOG(LogTemp, Warning, TEXT("HighAttack / Target : %s"), *FinalTarget->GetActorNameOrLabel());
+		break;
+	case ETurretTargetSelectionPriority::Nearest:
+		CriticValue = CachedOwnerCharacter->GetDetectionRangeRadius() * 2.f;
+
+		for (AActor* ATarget : InTargetList) {
+			TargetValue = FVector::Dist(TurretLocation, ATarget->GetActorLocation());
+
+			if (CriticValue > TargetValue) {
+				FinalTarget = ATarget;
+				CriticValue = TargetValue;
 			}
 		}
 		break;
 	case ETurretTargetSelectionPriority::Farthest:
-		DistanceMin = 0.f;
+		CriticValue = 0.f;
 
 		for (AActor* ATarget : InTargetList) {
-			Distance = FVector::Dist(TurretLocation, ATarget->GetActorLocation());
+			TargetValue = FVector::Dist(TurretLocation, ATarget->GetActorLocation());
 
-			if (DistanceMin < Distance) {
+			if (CriticValue < TargetValue) {
 				FinalTarget = ATarget;
-				DistanceMin = Distance;
+				CriticValue = TargetValue;
 			}
 		}
 		break;
