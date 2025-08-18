@@ -30,7 +30,4 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributePercentChangedDelegate OnCurrentHealthChanged;
-
-	UPROPERTY(BlueprintAssignable)
-	FOnAttributePercentChangedDelegate OnCurrentManaChanged;
 };
