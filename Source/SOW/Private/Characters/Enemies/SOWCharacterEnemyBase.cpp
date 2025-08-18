@@ -263,5 +263,5 @@ void ASOWCharacterEnemyBase::BroadcastEnemyDeath(int GoldAmount)
 
 	USOWGameInstance* SOWGameInstance = Cast<USOWGameInstance>(GetWorld()->GetGameInstance());
 
-	SOWGameInstance->GetOneTimeCurrencyManager()->AddCurrency(EElementalType::Normal, ShardAmount);
+	SOWGameInstance->GetOneTimeCurrencyManager()->AddCurrency(EElementalType::Nature, ShardAmount);
 }
