@@ -121,6 +121,14 @@ enum class EWidgetDescriptedAtt : uint8 {
 };
 
 UENUM(BlueprintType)
+enum class ESkillExecuteType : uint8 {
+	// added by : HYJ
+	// Check how the skill acts
+	Active				UMETA(DisplayName = "Circle Upgrade"),
+	Passive			UMETA(DisplayName = "Attribute Modifier"),
+};
+
+UENUM(BlueprintType)
 enum class ESkillEffectType : uint8 {
 	// added by : HYJ
 	// Check how the skill acts
@@ -140,7 +148,7 @@ enum class EPassiveSkillTrigger : uint8
 	InOverlappingInfluenceZone,
 
 	/* Nature Turret */
-	InForestAreat,
+	InForestArea,
 };
 
 UENUM(BlueprintType)

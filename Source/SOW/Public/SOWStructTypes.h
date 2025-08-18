@@ -346,6 +346,9 @@ struct FSkillData : public FTableRowBase
 	FGameplayTag SkillElementTag;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Skill")
+	ESkillExecuteType ExecuteType;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Skill")
 	EPassiveSkillTrigger TriggerType;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Skill")
