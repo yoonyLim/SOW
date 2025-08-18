@@ -48,6 +48,8 @@ public:
 
 	USOWAbilitySystemComponent* GetSOWAbilitySystemComponent() const { return AbilitySystemComponent; }
 
+	USOWAttributeSet* GetSOWAttibuteSet() const { return AttributeSet;  }
+
 	UPROPERTY(BlueprintCallable, BlueprintAssignable)
 	FOnTargetDeadDelegate OnTargetDead;
 

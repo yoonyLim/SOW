@@ -72,6 +72,11 @@ void USOWAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbac
         SetCurrentMana(NewCurrentMana);
 
         UE_LOG(LogTemp, Warning, TEXT("Actor has Current Mana : %f"), GetCurrentMana());
+
+        if (CharacterUIComponent && CharacterUIComponent->OnCurrentManaChanged.IsBound())
+        {
+            CharacterUIComponent->OnCurrentManaChanged.Broadcast(GetCurrentMana() / GetMaxManaBase());
+        }
     }
 
 

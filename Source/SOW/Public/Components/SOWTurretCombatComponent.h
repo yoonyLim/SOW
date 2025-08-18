@@ -108,6 +108,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
 	void ActivateTurretFunction();
+
+	void SetManaConsumptionValue(float value);
 #pragma endregion
 
 protected:
@@ -206,6 +208,7 @@ private:
 	UPROPERTY()
 	AActor* AttackTarget;
 
+	
 #pragma region Test
 	UPROPERTY()
 	TArray<AActor*> AttackTargetList;
@@ -236,7 +239,8 @@ private:
 	bool HasDependencyOnProjectile;
 	bool HasProjectileMovement;
 	bool HasIndependantCooltime;
-
+	float ManaConsumption;
+	bool bTargetFound;
 
 	UPROPERTY(VisibleAnywhere, Category = "Turret|Combat")
 	ATurretMeleeHitCollision* CreatedHitCollision;

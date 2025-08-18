@@ -44,6 +44,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void FindTurretByElementTarget();
 
+	void SetManaConsumption(float value);
+
 #pragma region NativeGetter
 
 	float GetAttackPower() const;
@@ -90,6 +92,7 @@ public:
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Turret|Properties", meta = (ExposeOnSpawn = true))
 	int32 CircleCount;															// Determine additional Attribute. multiply with attribute - ratio and add in base
 
+
 	
 protected:
 	virtual void BeginPlay() override;
@@ -110,6 +113,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
 	UWidgetComponent* HealthWidgetComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
+	UWidgetComponent* ManaWidgetComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
 	USOWTurretUIComponent* TurretUIComponent;

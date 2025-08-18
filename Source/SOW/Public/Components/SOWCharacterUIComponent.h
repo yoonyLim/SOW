@@ -14,7 +14,7 @@
 #include "Components/ActorComponent.h"
 #include "SOWCharacterUIComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthPercentChangedDelegate, float, NewPercent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributePercentChangedDelegate, float, NewPercent);
 
 
 
@@ -29,7 +29,8 @@ public:
 	// Sets default values for this component's properties
 
 	UPROPERTY(BlueprintAssignable)
-	FOnHealthPercentChangedDelegate OnCurrentHealthChanged;
+	FOnAttributePercentChangedDelegate OnCurrentHealthChanged;
 
-
+	UPROPERTY(BlueprintAssignable)
+	FOnAttributePercentChangedDelegate OnCurrentManaChanged;
 };
