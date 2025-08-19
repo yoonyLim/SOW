@@ -112,15 +112,21 @@ void AProjectileBase::InitProjectileProperties(FTransform InTransform, ETurretTa
 	OwnerPolicy = InPolicy;
 	OwnerDamageEffectSpecHandle = InHandle;
 	
-	FVector ScaledCollisionExtent = ProjectileHitCollisionComp->GetUnscaledBoxExtent() * InScale;
-	ProjectileHitCollisionComp->SetBoxExtent(ScaledCollisionExtent);
+	if (OriginScaledCollisionExtent == FVector::ZeroVector) {
+		OriginScaledCollisionExtent = ProjectileHitCollisionComp->GetUnscaledBoxExtent();
+	}
+
+	//FVector ScaledCollisionExtent = ProjectileHitCollisionComp->GetUnscaledBoxExtent() * InScale;
+	ProjectileHitCollisionComp->SetBoxExtent(OriginScaledCollisionExtent * InScale);
 
 	ProjectileMoveComp->InitialSpeed = InSpeed;
 	ProjectileMoveComp->MaxSpeed = InSpeed;
 	ProjectileMoveComp->Velocity = InTransform.GetRotation().GetForwardVector() * ProjectileMoveComp->InitialSpeed;
 
-	FVector ScaledMeshExtent = ProjectileMeshComp->GetRelativeScale3D() * InScale;
-	ProjectileMeshComp->SetWorldScale3D(FVector(ScaledMeshExtent.X, ScaledMeshExtent.Y, ScaledMeshExtent.Z));
+	if (OriginScaledMeshExtent == FVector::ZeroVector) {
+		OriginScaledMeshExtent = ProjectileMeshComp->GetRelativeScale3D();
+	}
+	ProjectileMeshComp->SetWorldScale3D(FVector(OriginScaledMeshExtent.X, OriginScaledMeshExtent.Y, OriginScaledMeshExtent.Z) * InScale);
 
 	HasMovement = InMovement;
 	Duration = InDuration;
