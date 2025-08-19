@@ -184,7 +184,7 @@ void USummonWidget::SetButtonStyle(UButton* TargetButton, EElementalType Element
 	if (!TargetButton)
 		return;
 
-	FButtonStyle ButtonStyle = TargetButton->WidgetStyle;
+	FButtonStyle ButtonStyle = TargetButton->GetStyle();
 
 	if (bCanBeComp)
 	{
@@ -200,7 +200,7 @@ void USummonWidget::SetButtonStyle(UButton* TargetButton, EElementalType Element
 	}
 
 
-	TargetButton->WidgetStyle = ButtonStyle;
+	TargetButton->SetStyle(ButtonStyle);
 }
 
 
