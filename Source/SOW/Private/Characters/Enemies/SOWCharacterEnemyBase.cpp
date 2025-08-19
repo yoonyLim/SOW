@@ -3,6 +3,8 @@
 
 #include "Characters/Enemies/SOWCharacterEnemyBase.h"
 
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 #include "SOWGameInstance.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/WidgetComponent.h"
@@ -53,13 +55,27 @@ ASOWCharacterEnemyBase::ASOWCharacterEnemyBase()
 	}
 
 	// Set Overlay Material
-	static ConstructorHelpers::FObjectFinder<UMaterialInterface> OverlayMat(TEXT("/Game/03Materials/Enemy/MI_Enemy_Overlay.MI_Enemy_Overlay"));
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> OverlayMat(TEXT("/Game/03Materials/Enemy/MI_Enemy_Aura.MI_Enemy_Aura"));
 
 	if (OverlayMat.Succeeded())
+	{
+		// UE_LOG(LogTemp, Error, TEXT("Overlay material class found"));
 		GetMesh()->SetOverlayMaterial(OverlayMat.Object);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to find overlay material class"));
+	}
 
-	// Set Incoming Route
-	// GetEnemyIncomingRouteComponent()->SetIncomingRoute(FindClosestIncomingRoute());
+	NiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComp"));
+	NiagaraComponent->SetupAttachment(RootComponent);
+
+	static ConstructorHelpers::FObjectFinder<UNiagaraSystem> NiagaraEffect(TEXT("/Game/03Materials/Enemy/NS_Enemy_Aura.NS_Enemy_Aura"));
+
+	if (NiagaraEffect.Succeeded())
+	{
+		AuraEffect = NiagaraEffect.Object;
+	}
 }
 
 
@@ -127,6 +143,22 @@ void ASOWCharacterEnemyBase::BeginPlay()
 		AbilitySystemComponent->GiveAbility(AbilitySpec);
 
 		UE_LOG(LogTemp, Warning, TEXT("[EnemyBase] RangedAttack Ability Granted"));
+	}
+
+	if (AuraEffect)
+	{
+		NiagaraComponent->SetVariableObject(FName("SurfaceMesh"), GetMesh());
+		
+		UNiagaraFunctionLibrary::SpawnSystemAttached(
+			AuraEffect,
+			GetMesh(),
+			NAME_None,
+			FVector::ZeroVector,
+			FRotator::ZeroRotator,
+			EAttachLocation::SnapToTargetIncludingScale,
+			true);
+	
+		NiagaraComponent->Activate();
 	}
 }
 

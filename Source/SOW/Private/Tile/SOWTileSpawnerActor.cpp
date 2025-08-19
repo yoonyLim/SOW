@@ -170,7 +170,7 @@ void ATileSpawner::SpawnIncomingRoutes()
 			if (NewRouteActor)
 			{
 				NewRouteActor->SetSplinePointsFromLocations(CurrentRouteWorldLocations);
-				NewRouteActor->SetActorLabel(FString::Printf(TEXT("EnemyRoute_%d"), RouteIndex));
+				// NewRouteActor->SetActorLabel(FString::Printf(TEXT("EnemyRoute_%d"), RouteIndex));
 				SpawnedEnemyRoutes.Add(NewRouteActor);
 				UE_LOG(LogTemp, Log, TEXT("Spawned EnemyIncomingRoute Actor for Route %d with %d points. Total routes: %d"), 
 					RouteIndex, CurrentRouteWorldLocations.Num(), SpawnedEnemyRoutes.Num());
