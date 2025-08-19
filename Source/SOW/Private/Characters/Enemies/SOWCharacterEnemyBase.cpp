@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Characters/Enemies/SOWCharacterEnemyBase.h"
 
 #include "SOWGameInstance.h"
@@ -46,7 +45,7 @@ ASOWCharacterEnemyBase::ASOWCharacterEnemyBase()
 		HealthBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
 		HealthBarWidget->SetRelativeLocation(FVector(0.f, 0.f, 1.f));
 
-		static ConstructorHelpers::FClassFinder<UUserWidget> WidgetClass{ TEXT("/Game/01Blueprints/UI/Enemy/WBP_EnemyHealthBar") };
+		static ConstructorHelpers::FClassFinder<UUserWidget> WidgetClass{TEXT("/Game/01Blueprints/UI/Enemy/WBP_EnemyHealthBar")};
 
 		if (WidgetClass.Succeeded())
 			HealthBarWidget->SetWidgetClass((WidgetClass.Class));
@@ -62,8 +61,8 @@ ASOWCharacterEnemyBase::ASOWCharacterEnemyBase()
 	// GetEnemyIncomingRouteComponent()->SetIncomingRoute(FindClosestIncomingRoute());
 }
 
-
-void ASOWCharacterEnemyBase::PossessedBy(AController* NewController) {
+void ASOWCharacterEnemyBase::PossessedBy(AController *NewController)
+{
 	Super::PossessedBy(NewController);
 	AbilitySystemComponent->AddLooseGameplayTag(SOWGameplayTags::Enemy_Ability_Initialize);
 }
@@ -101,15 +100,15 @@ void ASOWCharacterEnemyBase::BeginPlay()
 	if (AbilitySystemComponent)
 	{
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
-			USOWAttributeSet::GetCurrentHealthAttribute()
-		).AddUObject(this, &ASOWCharacterEnemyBase::OnHealthChanged);
+								  USOWAttributeSet::GetCurrentHealthAttribute())
+			.AddUObject(this, &ASOWCharacterEnemyBase::OnHealthChanged);
 	}
 
 	// ASC Attributes Reference
 	ASCAttributes = Cast<USOWAttributeSet>(AbilitySystemComponent->GetAttributeSet(USOWAttributeSet::StaticClass()));
 
 	// To initialize Game Ability Attribute
-	//AbilitySystemComponent->AddLooseGameplayTag(SOWGameplayTags::Enemy_Ability_Initialize);
+	// AbilitySystemComponent->AddLooseGameplayTag(SOWGameplayTags::Enemy_Ability_Initialize);
 
 	float NewHealth = ASCAttributes->GetMaxHealthBase();
 	float MaxHealth = ASCAttributes->GetMaxHealthBase();
@@ -130,7 +129,7 @@ void ASOWCharacterEnemyBase::BeginPlay()
 	}
 }
 
-void ASOWCharacterEnemyBase::OnHealthChanged(const FOnAttributeChangeData& Data)
+void ASOWCharacterEnemyBase::OnHealthChanged(const FOnAttributeChangeData &Data)
 {
 	if (GetWorldTimerManager().IsTimerActive(HideHealthBarHandle))
 		GetWorldTimerManager().ClearTimer(HideHealthBarHandle);
@@ -139,12 +138,12 @@ void ASOWCharacterEnemyBase::OnHealthChanged(const FOnAttributeChangeData& Data)
 	{
 		GetWorldTimerManager().SetTimer(
 			HideHealthBarHandle,
-			FTimerDelegate::CreateLambda([&]() { HealthBarWidget->SetHiddenInGame(true); }),
+			FTimerDelegate::CreateLambda([&]()
+										 { HealthBarWidget->SetHiddenInGame(true); }),
 			1.f,
-			false
-		);
+			false);
 	}
-	
+
 	float NewHealth = Data.NewValue;
 	float MaxHealth = ASCAttributes->GetMaxHealthBase();
 
@@ -164,8 +163,8 @@ void ASOWCharacterEnemyBase::OnHealthChanged(const FOnAttributeChangeData& Data)
 	if (HitAnimation)
 	{
 		// OnHitMontageEnded.BindUObject(this, &ASuraCharacterEnemyBase::OnHitEnded);
-		
-		UAnimInstance* const EnemyAnimInstance = GetMesh()->GetAnimInstance();
+
+		UAnimInstance *const EnemyAnimInstance = GetMesh()->GetAnimInstance();
 		EnemyAnimInstance->Montage_Play(HitAnimation);
 
 		// GetMesh()->GetAnimInstance()->Montage_SetBlendingOutDelegate(OnHitMontageEnded); // montage interrupted
@@ -173,17 +172,17 @@ void ASOWCharacterEnemyBase::OnHealthChanged(const FOnAttributeChangeData& Data)
 	}
 }
 
-void ASOWCharacterEnemyBase::SetAIController(AEnemyBaseAIController* NewAIController)
+void ASOWCharacterEnemyBase::SetAIController(AEnemyBaseAIController *NewAIController)
 {
 	AIController = NewAIController;
 	AIController->InitializeBlackBoard(AttackRadius, AttackSpeed, TargetPriority);
 }
 
-AEnemyIncomingRoute* ASOWCharacterEnemyBase::FindClosestIncomingRoute() const
+AEnemyIncomingRoute *ASOWCharacterEnemyBase::FindClosestIncomingRoute() const
 {
 	// 1. Find the ATileSpawner actor
-	ATileSpawner* TileSpawner = nullptr;
-	TArray<AActor*> FoundActors;
+	ATileSpawner *TileSpawner = nullptr;
+	TArray<AActor *> FoundActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATileSpawner::StaticClass(), FoundActors);
 
 	if (FoundActors.Num() > 0)
@@ -198,7 +197,7 @@ AEnemyIncomingRoute* ASOWCharacterEnemyBase::FindClosestIncomingRoute() const
 	}
 
 	// 2. Get all available incoming routes from the Tile Spawner
-	TArray<AEnemyIncomingRoute*> AvailableRoutes = TileSpawner->GetSpawnedEnemyRoutes();
+	TArray<AEnemyIncomingRoute *> AvailableRoutes = TileSpawner->GetSpawnedEnemyRoutes();
 
 	if (AvailableRoutes.Num() == 0)
 	{
@@ -207,18 +206,18 @@ AEnemyIncomingRoute* ASOWCharacterEnemyBase::FindClosestIncomingRoute() const
 	}
 
 	// 3. Find the closest route
-	AEnemyIncomingRoute* ClosestRoute = nullptr;
+	AEnemyIncomingRoute *ClosestRoute = nullptr;
 	float MinSquaredDistance = TNumericLimits<float>::Max(); // Initialize with a very large number
 
 	FVector EnemyLocation = GetActorLocation();
 
-	for (AEnemyIncomingRoute* Route : AvailableRoutes)
+	for (AEnemyIncomingRoute *Route : AvailableRoutes)
 	{
 		if (Route && Route->GetNumberOfPoints() > 0)
 		{
 			// Get the world position of the first spline point of this route
 			FVector RouteStartLocation = Route->GetCurrentIncomingIndexPosition(0);
-        
+
 			// Calculate squared distance
 			float CurrentSquaredDistance = FVector::DistSquared(EnemyLocation, RouteStartLocation);
 
@@ -232,8 +231,8 @@ AEnemyIncomingRoute* ASOWCharacterEnemyBase::FindClosestIncomingRoute() const
 
 	if (ClosestRoute)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Enemy '%s' chose closest route: '%s' (Squared Distance: %f)"), 
-			*GetName(), *ClosestRoute->GetName(), MinSquaredDistance);
+		UE_LOG(LogTemp, Log, TEXT("Enemy '%s' chose closest route: '%s' (Squared Distance: %f)"),
+			   *GetName(), *ClosestRoute->GetName(), MinSquaredDistance);
 	}
 
 	return ClosestRoute;
@@ -241,15 +240,15 @@ AEnemyIncomingRoute* ASOWCharacterEnemyBase::FindClosestIncomingRoute() const
 
 void ASOWCharacterEnemyBase::UpdateHealthBarValue(float NewHealth, float MaxHealth)
 {
-	if (UEnemyHealthBarWidget* const Widget = Cast<UEnemyHealthBarWidget>(HealthBarWidget->GetUserWidgetObject()))
+	if (UEnemyHealthBarWidget *const Widget = Cast<UEnemyHealthBarWidget>(HealthBarWidget->GetUserWidgetObject()))
 		Widget->SetHealthBarPercent(NewHealth / MaxHealth);
 }
 
-void ASOWCharacterEnemyBase::Attack(const ASOWCharacter* TargetActor)
+void ASOWCharacterEnemyBase::Attack(const ASOWCharacter *TargetActor)
 {
 	if (AttackAnimation)
 	{
-		UAnimInstance* const EnemyAnimInstance = GetMesh()->GetAnimInstance();
+		UAnimInstance *const EnemyAnimInstance = GetMesh()->GetAnimInstance();
 		EnemyAnimInstance->Montage_Play(AttackAnimation);
 		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Attack Animation Played!"));
 	}
@@ -257,11 +256,13 @@ void ASOWCharacterEnemyBase::Attack(const ASOWCharacter* TargetActor)
 
 void ASOWCharacterEnemyBase::BroadcastEnemyDeath(int GoldAmount)
 {
-	int ShardAmount = FMath::Clamp(FMath::RandRange(ShardDropAmount - ShardDropAmountVariation, ShardDropAmount + ShardDropAmountVariation) , 0, ShardDropAmount + ShardDropAmountVariation);
-	
+	UE_LOG(LogTemp, Warning, TEXT("Enemy Death Event Broadcasted! Shard Amount: %d"), ShardDropAmount);
+
+	int ShardAmount = FMath::Clamp(FMath::RandRange(ShardDropAmount - ShardDropAmountVariation, ShardDropAmount + ShardDropAmountVariation), 0, ShardDropAmount + ShardDropAmountVariation);
+
 	OnEnemyDeath.Broadcast(ShardAmount);
 
-	USOWGameInstance* SOWGameInstance = Cast<USOWGameInstance>(GetWorld()->GetGameInstance());
+	USOWGameInstance *SOWGameInstance = Cast<USOWGameInstance>(GetWorld()->GetGameInstance());
 
 	SOWGameInstance->GetOneTimeCurrencyManager()->AddCurrency(EElementalType::Nature, ShardAmount);
 }
