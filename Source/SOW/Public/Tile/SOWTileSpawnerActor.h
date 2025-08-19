@@ -94,6 +94,16 @@ public:
 	UPROPERTY(EditAnywhere, Category="BackgroundGradient")
 	float PlaneZOffset = -1.0f;
 
+	// InnerColor 범위
+	UPROPERTY(EditAnywhere, Category="BackgroundGradient")
+	float GradientInnerRadius = 1200.0f;
+
+	// InnerColor 색상
+	UPROPERTY(EditAnywhere, Category="BackgroundGradient")
+	FLinearColor GradientInnerColor = FLinearColor(0.070049f,0.33125,0.058659);
+	// OuterColor 색상
+	UPROPERTY(EditAnywhere, Category="BackgroundGradient")
+	FLinearColor GradientOuterColor = FLinearColor(0.036458f,0.036458f,0.036458f);
 private:
 	// 생성된 평면 액터 핸들
 	UPROPERTY(Transient)
