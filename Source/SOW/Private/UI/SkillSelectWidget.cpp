@@ -2,4 +2,17 @@
 
 
 #include "UI/SkillSelectWidget.h"
+#include "Components/Image.h"
+#include "Components/Button.h"
 
+void USkillSelectWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+}
+
+void USkillSelectWidget::InitWidget()
+{
+
+
+	
+}

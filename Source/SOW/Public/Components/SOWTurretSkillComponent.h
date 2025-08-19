@@ -10,7 +10,6 @@
 #include "SOWTurretSkillComponent.generated.h"
 
 class ASOWCharacter;
-class USOWCharacter;
 class UGameplayEffect;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -31,6 +30,8 @@ public:
 	TArray<ASOWCharacter*> FindTarget( const TSharedPtr<FSkillData>& Skill );
 
 	void ApplySkill(TArray<ASOWCharacter*> Targets, const TSharedPtr<FSkillData>& Skill);
+
+	/* ImpaceCount: Factors that change the form of influencing skill, ex) LifeOfCycle*/
 
 	UFUNCTION(BlueprintCallable)
 	void RiseImpactCount();

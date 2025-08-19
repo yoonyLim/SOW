@@ -11,13 +11,24 @@
 #include "Components/Image.h"
 #include "Components/Button.h"
 #include "Components/HorizontalBox.h"
+#include "Components/TextBlock.h"
 #include "UI/SkillSelectWidget.h"
+#include "SOWGameInstance.h"
+#include "Manager/OneTimeCurrencyManager.h"
 
 void UPlayerHUD::NativeConstruct()
 {
     Super::NativeConstruct();
 
     SkillSelectWidget->SetVisibility(ESlateVisibility::Collapsed);
+
+    USOWGameInstance* GI = Cast<USOWGameInstance>(GetWorld()->GetGameInstance());
+    UOneTimeCurrencyManager* OCM = GI->GetOneTimeCurrencyManager();
+
+    OCM->OnOneTimeCurrencyChanged.AddDynamic(this, &UPlayerHUD::ChangeFragment);
+
+    TXT_Fragment->SetText(FText::AsNumber(OCM->GetCurrency(EElementalType::Nature)));
+
 }
 
 void UPlayerHUD::NativeDestruct()
@@ -136,4 +147,14 @@ void UPlayerHUD::SetProgressBar(EStat ChangedStat, float Max, float Current)
         break;
     }
     return;
+}
+
+void UPlayerHUD::ChangeFragment(int32 NewCurrency, EElementalType CurrencyType)
+{
+    UE_LOG(LogTemp, Warning, TEXT("%d"), NewCurrency);
+
+    USOWGameInstance* GI = Cast<USOWGameInstance>(GetWorld()->GetGameInstance());
+    UOneTimeCurrencyManager* OCM = GI->GetOneTimeCurrencyManager();
+
+    TXT_Fragment->SetText(FText::AsNumber(OCM->GetCurrency(EElementalType::Nature)));
 }

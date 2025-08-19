@@ -38,6 +38,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	class USkillSelectWidget* SkillSelectWidget;
 
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	class UTextBlock* TXT_Fragment;
+
 public:
 	void Init(class USOWAbilitySystemComponent* InASC);
 
@@ -55,6 +58,9 @@ private:
 	void OnStaminaChanged(const FOnAttributeChangeData& Data);
 
 	void SetProgressBar(EStat ChangedStat, float Max, float Current);
+
+	UFUNCTION()
+	void ChangeFragment(int32 NewCurrency, EElementalType CurrencyType);
 
 protected:
 

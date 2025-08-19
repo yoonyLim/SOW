@@ -8,6 +8,7 @@
 #include "SOWStructTypes.h"
 #include "Characters/Player/SOWCharacterPlayer.h"
 #include "Characters/Turrets/SOWCharacterTurretBase.h"
+#include "AbilitySystem/SOWAbilitySystemComponent.h"
 #include "Tile/TileBase.h"
 
 #include "SOWBlueprintFunctionLibrary.h"
@@ -125,8 +126,6 @@ void ASOWPlayerController::ConfirmTurretPlacement()
 
                 if (ATileBase* HitTile = Cast<ATileBase>(HitActor))
                 {
-                    UE_LOG(LogTemp, Log, TEXT("hrerere"));
-
                     if (HitTile->bCanPlace)
                     {
                         FVector TargetLocation = HitTile->GetActorLocation();
@@ -142,11 +141,15 @@ void ASOWPlayerController::ConfirmTurretPlacement()
                             PreviewTurret = nullptr;
 
                             bIsPlacingTurret = false;
-                        }
-                        SOWPlayer->bCanMove = true;
-                        SOWPlayer->ShowInstallationRange(false);
 
-                        SummonEnd.Broadcast();
+                            SOWPlayer->bCanMove = true;
+                            SOWPlayer->ShowInstallationRange(false);
+
+                            SummonEnd.Broadcast();
+
+                            ASOWCharacterPlayer* CharacterPlayer = Cast<ASOWCharacterPlayer>(GetPawn());
+                            CharacterPlayer->GetSOWAbilitySystemComponent()->RemoveLooseGameplayTag(FGameplayTag::RequestGameplayTag("Player.Ability.Summon"));
+                        }
                     }
                 }
             }
