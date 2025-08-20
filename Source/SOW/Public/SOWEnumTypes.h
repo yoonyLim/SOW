@@ -62,6 +62,7 @@ enum class ETurretTargetSelectionPriority : uint8 {
 
 UENUM(BlueprintType)
 enum class ETurretName : uint8 {
+	// added by : PGH
 	// Nature
 	Bowman			UMETA(DisplayName = "Bowman"),
 	Hoppy			UMETA(DisplayName = "Hoppy"),
@@ -82,6 +83,8 @@ enum class ETurretName : uint8 {
 
 UENUM(BlueprintType)
 enum class EEvolutionType : uint8 {
+	// added by : PGH
+	// determine turret evolution type 
 	EVO_NONE	UMETA(DisplayName = "None"),
 	EVO_ALPHA	UMETA(DisplayName = "Alpha"),
 	EVO_BETA	UMETA(DisplayName = "Beta")
@@ -178,4 +181,12 @@ enum class EElementalType : uint8
 	Madness,
 	Flame,
 	Max		UMETA(Hidden),
+};
+
+UENUM(BlueprintType)
+enum class ETileSelectType : uint8 {
+	// added by : PGH
+	// check tile selection mode
+	SQUARED		UMETA(DisplayName = "Squared"),
+	STRAIGHT	UMETA(DisplayName = "Straight")
 };

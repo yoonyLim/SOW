@@ -10,6 +10,7 @@
 
 class USOWAbilitySystemComponent;
 class ASOWCharacterTurretBase;
+class ATileBase;
 struct FGameplayTag;
 
 
@@ -52,6 +53,9 @@ public:
 	static bool QueryForCurrencyCountSufficient(UObject* WorldContextObject, const FGameplayTag& InTag, const int InCount);
 
 	static EElementalType TranslateElementTagToEnum(const FGameplayTag& InTag);
+
+	UFUNCTION(BlueprintCallable, Category = "AbilitySystem")
+	static TArray<ATileBase*> GetTilesAroundMouse(APlayerController* PlayerController, const ETileSelectType TileSelectionType, const int32 N, const float TileSize);
 };
 
 template <typename T>

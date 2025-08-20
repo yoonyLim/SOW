@@ -11,6 +11,7 @@
 #include "AbilitySystem/SOWAbilitySystemComponent.h"
 #include "AIController.h"
 #include "SOWGameInstance.h"
+#include "Tile/TileBase.h"
 #include "Manager/GlobalCurrencyManager.h"
 #include "Manager/OneTimeCurrencyManager.h"
 
@@ -185,4 +186,98 @@ EElementalType USOWBlueprintFunctionLibrary::TranslateElementTagToEnum(const FGa
         return EElementalType::Normal;
     }
 
+}
+
+TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAroundMouse(APlayerController* PlayerController, const ETileSelectType TileSelectionType, const int32 N, const float TileSize = 83.f)
+{
+    TArray<ATileBase*> SelectedTiles;
+
+    if (!PlayerController || N <= 0) return SelectedTiles;
+
+    // 1. 마우스 위치의 타일 인식
+    float MouseX, MouseY;
+    if (!PlayerController->GetMousePosition(MouseX, MouseY)) return SelectedTiles;
+
+    FVector WorldOrigin, WorldDirection;
+    if (!PlayerController->DeprojectScreenPositionToWorld(MouseX, MouseY, WorldOrigin, WorldDirection))
+        return SelectedTiles;
+
+    FVector TraceStart = WorldOrigin;
+    FVector TraceEnd = TraceStart + (WorldDirection * 10000.f);
+
+    FHitResult Hit;
+    FCollisionQueryParams Params;
+    Params.bReturnPhysicalMaterial = false;
+
+    if (!PlayerController->GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_Camera, Params))
+        return SelectedTiles;
+
+    AActor* CenterTile = Hit.GetActor();
+    if (!CenterTile) return SelectedTiles;
+
+    // 2. 중심 타일의 중심 위치 확인
+    FVector CenterLocation = Hit.GetActor()->GetActorLocation();
+    if (N % 2 == 0) {
+        // 2-1. N이 짝수 일 경우 중심 위치 조정
+        float DotMax = 0;
+        int32 dx[] = {-1,0,1,0};
+        int32 dy[] = { 0,1,0,-1 };
+        FVector CenterPos;
+
+        FVector MouseVector = (Hit.ImpactPoint - CenterLocation);
+        for (int i = 0; i < 4; i++) {
+            FVector Pivot = FVector(TileSize * dx[i], TileSize * dy[i], 0);
+            float Dot = FVector::DotProduct(MouseVector, Pivot);
+
+            if (Dot >= DotMax) {
+                DotMax = Dot;
+                CenterPos = CenterLocation + Pivot;
+            }
+        }
+       
+        CenterLocation = CenterPos;
+    }
+
+
+    // 3. 중심 위치에서 n x n 정사각형 영역 트레이싱
+    float SideLength = TileSize;
+
+    FVector UpperOffset(SideLength, SideLength, 0.f);
+    FVector DownOffset(-SideLength, SideLength, 0.f);
+    FVector OriginOffset = CenterLocation - (N / 2) * FVector(0, TileSize * 2, 0);
+    if (N % 2 == 0) {
+        // 3-1. N이 짝수 일 경우 중심 위치 조정
+        OriginOffset += FVector(0, TileSize, 0);
+    }
+    FVector CurrentOffSet = OriginOffset;
+    
+
+
+    UE_LOG(LogTemp, Warning, TEXT("Center Pos : %s, %s, %s"), * FString::SanitizeFloat(CenterLocation.X), *FString::SanitizeFloat(CenterLocation.Y), *FString::SanitizeFloat(CenterLocation.Z));
+    UE_LOG(LogTemp, Warning, TEXT("Origin Pos : %s, %s, %s"), * FString::SanitizeFloat(OriginOffset.X), *FString::SanitizeFloat(OriginOffset.Y), *FString::SanitizeFloat(OriginOffset.Z));
+
+    for (int32 X = 0; X < N; X++)
+    {
+        
+        UE_LOG(LogTemp, Warning, TEXT("Current Pos : %s, %s, %s"), *FString::SanitizeFloat(CurrentOffSet.X), *FString::SanitizeFloat(CurrentOffSet.Y), *FString::SanitizeFloat(CurrentOffSet.Z));
+        for (int32 Y = 0; Y < N; Y++)
+        {
+           
+            FVector Start = CurrentOffSet + FVector(0, 0, 500.f) + Y * UpperOffset;
+            FVector End = CurrentOffSet + FVector(0, 0, -500.f) + Y * UpperOffset;
+
+            FHitResult TileHit;
+            if (PlayerController->GetWorld()->LineTraceSingleByChannel(TileHit, Start, End, ECC_Visibility, Params))
+            {
+                if (TileHit.GetActor() && !SelectedTiles.Contains(TileHit.GetActor()))
+                {
+                    SelectedTiles.AddUnique(Cast<ATileBase>(TileHit.GetActor()));
+                }
+            }
+        }
+        CurrentOffSet += DownOffset;
+    }
+
+    // 5. 타일 배열 반환
+    return SelectedTiles;
 }
