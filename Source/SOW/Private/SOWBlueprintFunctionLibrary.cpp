@@ -194,13 +194,11 @@ TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAroundMouse(APlayerCont
 
     if (!PlayerController || N <= 0) return SelectedTiles;
 
-    // 1. 마우스 위치의 타일 인식
     float MouseX, MouseY;
     if (!PlayerController->GetMousePosition(MouseX, MouseY)) return SelectedTiles;
 
     FVector WorldOrigin, WorldDirection;
-    if (!PlayerController->DeprojectScreenPositionToWorld(MouseX, MouseY, WorldOrigin, WorldDirection))
-        return SelectedTiles;
+    if (!PlayerController->DeprojectScreenPositionToWorld(MouseX, MouseY, WorldOrigin, WorldDirection)) return SelectedTiles;
 
     FVector TraceStart = WorldOrigin;
     FVector TraceEnd = TraceStart + (WorldDirection * 10000.f);
@@ -209,16 +207,14 @@ TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAroundMouse(APlayerCont
     FCollisionQueryParams Params;
     Params.bReturnPhysicalMaterial = false;
 
-    if (!PlayerController->GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_Camera, Params))
-        return SelectedTiles;
+    if (!PlayerController->GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_Camera, Params)) return SelectedTiles;
 
     AActor* CenterTile = Hit.GetActor();
     if (!CenterTile) return SelectedTiles;
 
-    // 2. 중심 타일의 중심 위치 확인
     FVector CenterLocation = Hit.GetActor()->GetActorLocation();
+    // Get Center Position
     if (N % 2 == 0) {
-        // 2-1. N이 짝수 일 경우 중심 위치 조정
         float DotMax = 0;
         int32 dx[] = {-1,0,1,0};
         int32 dy[] = { 0,1,0,-1 };
@@ -234,35 +230,47 @@ TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAroundMouse(APlayerCont
                 CenterPos = CenterLocation + Pivot;
             }
         }
-       
         CenterLocation = CenterPos;
     }
 
+    switch (TileSelectionType)
+    {
+    case ETileSelectType::SQUARED:
+        return GetTilesAsSquaredFromCenterLocation(PlayerController, CenterLocation, N, TileSize);
+    case ETileSelectType::STRAIGHT:
+        return GetTilesAsStraightFromCenterLocation(PlayerController, CenterLocation, N, TileSize, true);
+    default:
+        break;
+    }
+    return TArray< ATileBase*>();
+}
 
-    // 3. 중심 위치에서 n x n 정사각형 영역 트레이싱
+TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAsSquaredFromCenterLocation(APlayerController* PlayerController, FVector CenterPosition, const int32 N, const float TileSize)
+{
+    // Get Tiles Around Center Tile Location.
+    // If N is odd, center position must be the center coordinates of the tile.
+    // else, it should be the vertex closest to the center coordinates.
+
+    TArray<ATileBase*> SelectedTiles;
     float SideLength = TileSize;
+
+    FCollisionQueryParams Params;
+    Params.bReturnPhysicalMaterial = false;
 
     FVector UpperOffset(SideLength, SideLength, 0.f);
     FVector DownOffset(-SideLength, SideLength, 0.f);
-    FVector OriginOffset = CenterLocation - (N / 2) * FVector(0, TileSize * 2, 0);
+    FVector OriginOffset = CenterPosition - (N / 2) * FVector(0, TileSize * 2, 0);
     if (N % 2 == 0) {
         // 3-1. N이 짝수 일 경우 중심 위치 조정
         OriginOffset += FVector(0, TileSize, 0);
     }
     FVector CurrentOffSet = OriginOffset;
-    
-
-
-    UE_LOG(LogTemp, Warning, TEXT("Center Pos : %s, %s, %s"), * FString::SanitizeFloat(CenterLocation.X), *FString::SanitizeFloat(CenterLocation.Y), *FString::SanitizeFloat(CenterLocation.Z));
-    UE_LOG(LogTemp, Warning, TEXT("Origin Pos : %s, %s, %s"), * FString::SanitizeFloat(OriginOffset.X), *FString::SanitizeFloat(OriginOffset.Y), *FString::SanitizeFloat(OriginOffset.Z));
 
     for (int32 X = 0; X < N; X++)
     {
-        
-        UE_LOG(LogTemp, Warning, TEXT("Current Pos : %s, %s, %s"), *FString::SanitizeFloat(CurrentOffSet.X), *FString::SanitizeFloat(CurrentOffSet.Y), *FString::SanitizeFloat(CurrentOffSet.Z));
         for (int32 Y = 0; Y < N; Y++)
         {
-           
+
             FVector Start = CurrentOffSet + FVector(0, 0, 500.f) + Y * UpperOffset;
             FVector End = CurrentOffSet + FVector(0, 0, -500.f) + Y * UpperOffset;
 
@@ -277,7 +285,43 @@ TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAroundMouse(APlayerCont
         }
         CurrentOffSet += DownOffset;
     }
+    return SelectedTiles;
+}
 
-    // 5. 타일 배열 반환
+TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAsStraightFromCenterLocation(APlayerController* PlayerController, FVector CenterPosition, const int32 N, const float TileSize, bool bRot)
+{
+    TArray<ATileBase*> SelectedTiles;
+    float SideLength = TileSize;
+
+    FCollisionQueryParams Params;
+    Params.bReturnPhysicalMaterial = false;
+
+    FVector CriticVector = FVector(TileSize * sqrt(2.f) / 2, 0, 0) + (bRot ? 1 : -1) * FVector(0, TileSize * sqrt(2.f) / 2, 0);
+
+    for (int32 X = 0; X <= N / 2; X++)
+    {
+        FVector StartRight = CenterPosition + FVector(0, 0, 500.f) + X * CriticVector + (N % 2 == 0 ? CriticVector/2 : FVector::ZeroVector);
+        FVector EndRight = CenterPosition + FVector(0, 0, -500.f) + X * CriticVector + (N % 2 == 0 ? CriticVector/2 : FVector::ZeroVector);
+
+        FHitResult TileHit;
+        if (PlayerController->GetWorld()->LineTraceSingleByChannel(TileHit, StartRight, EndRight, ECC_Visibility, Params))
+        {
+            if (TileHit.GetActor() && !SelectedTiles.Contains(TileHit.GetActor()))
+            {
+                SelectedTiles.AddUnique(Cast<ATileBase>(TileHit.GetActor()));
+            }
+        }
+
+        FVector StartLeft = CenterPosition + FVector(0, 0, 500.f) - X * CriticVector - (N % 2 == 0 ? CriticVector/2 : FVector::ZeroVector);
+        FVector EndLeft = CenterPosition + FVector(0, 0, -500.f) - X * CriticVector - (N % 2 == 0 ? CriticVector/2 : FVector::ZeroVector);
+
+        if (PlayerController->GetWorld()->LineTraceSingleByChannel(TileHit, StartLeft, EndLeft, ECC_Visibility, Params))
+        {
+            if (TileHit.GetActor() && !SelectedTiles.Contains(TileHit.GetActor()))
+            {
+                SelectedTiles.AddUnique(Cast<ATileBase>(TileHit.GetActor()));
+            }
+        }
+    }
     return SelectedTiles;
 }
