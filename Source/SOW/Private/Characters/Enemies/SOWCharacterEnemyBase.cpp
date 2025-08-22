@@ -23,6 +23,8 @@
 #include "Widget/Enemy/EnemyHealthBarWidget.h"
 
 #include "AbilitySystem/GA_Enemy_RangedAttack.h"
+#include "Characters/CoreRune/SOWCharacterCoreRune.h"
+#include "Components/CapsuleComponent.h"
 #include "Manager/OneTimeCurrencyManager.h"
 
 // Sets default values
@@ -33,8 +35,14 @@ ASOWCharacterEnemyBase::ASOWCharacterEnemyBase()
 
 	CharacterType = ESOWCharacterType::Enemy;
 
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("EnemyPawn"));
+	GetMesh()->SetCollisionProfileName(TEXT("EnemyPawn"));
+
+	GetCapsuleComponent()->OnComponentHit.AddDynamic(this, &ASOWCharacterEnemyBase::OnHit);
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ASOWCharacterEnemyBase::OnBeginOverlap);
+
 	// EnemyCombatComponent ����
-	EnemyCombatComponent = CreateDefaultSubobject<USOWEnemyCombatComponent>(TEXT("EnemyCombatComponent"));
+	// EnemyCombatComponent = CreateDefaultSubobject<USOWEnemyCombatComponent>(TEXT("EnemyCombatComponent"));
 
 	// EnemyIncomingRouteComponent
 	EnemyIncomingRouteComponent = CreateDefaultSubobject<UEnemyIncomingRouteComponent>(TEXT("EnemyIncomingRouteComponent"));
@@ -135,15 +143,15 @@ void ASOWCharacterEnemyBase::BeginPlay()
 	// Set Incoming Route when spawned
 	GetEnemyIncomingRouteComponent()->SetIncomingRoute(FindClosestIncomingRoute());
 
-	// 원거리 공격용 어빌리티 추가
-	if (AbilitySystemComponent)
+	// Ranged Attack
+	/*if (AbilitySystemComponent)
 	{
 		static const TSubclassOf<UGameplayAbility> RangedAttackAbilityClass = UGA_Enemy_RangedAttack::StaticClass();
 		FGameplayAbilitySpec AbilitySpec(RangedAttackAbilityClass, 1);
 		AbilitySystemComponent->GiveAbility(AbilitySpec);
 
 		UE_LOG(LogTemp, Warning, TEXT("[EnemyBase] RangedAttack Ability Granted"));
-	}
+	}*/
 
 	if (AuraEffect)
 	{
@@ -275,6 +283,25 @@ void ASOWCharacterEnemyBase::UpdateHealthBarValue(float NewHealth, float MaxHeal
 {
 	if (UEnemyHealthBarWidget* const Widget = Cast<UEnemyHealthBarWidget>(HealthBarWidget->GetUserWidgetObject()))
 		Widget->SetHealthBarPercent(NewHealth / MaxHealth);
+}
+
+void ASOWCharacterEnemyBase::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	FVector NormalImpulse, const FHitResult& HitResult)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Others Hit?"))
+	
+	if (ASOWCharacterCoreRune* Rune = Cast<ASOWCharacterCoreRune>(OtherActor))
+		UE_LOG(LogTemp, Warning, TEXT("Rune Hit?"))
+}
+
+void ASOWCharacterEnemyBase::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (ASOWCharacterCoreRune* Rune = Cast<ASOWCharacterCoreRune>(OtherActor))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Rune Overlapped"))
+		Destroy();
+	}
 }
 
 void ASOWCharacterEnemyBase::Attack(const ASOWCharacter* TargetActor)

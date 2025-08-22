@@ -13,12 +13,12 @@
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
 
-AEnemyBaseAIController::AEnemyBaseAIController(FObjectInitializer const& ObjectInitializer)
+/*AEnemyBaseAIController::AEnemyBaseAIController(FObjectInitializer const& ObjectInitializer)
 {
 	SetupPerceptionSystem();
-}
+}*/
 
-void AEnemyBaseAIController::SetupPerceptionSystem()
+/*void AEnemyBaseAIController::SetupPerceptionSystem()
 {
 	MSightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Config"));
 
@@ -39,9 +39,9 @@ void AEnemyBaseAIController::SetupPerceptionSystem()
 		GetPerceptionComponent()->OnTargetPerceptionUpdated.AddDynamic(this, &AEnemyBaseAIController::OnTargetSighted);
 		GetPerceptionComponent()->ConfigureSense(*MSightConfig);
 	}
-}
+}*/
 
-void AEnemyBaseAIController::OnTargetSighted(AActor* SeenTarget, FAIStimulus const Stimulus)
+/*void AEnemyBaseAIController::OnTargetSighted(AActor* SeenTarget, FAIStimulus const Stimulus)
 {
 	ISOWCharacterTypeInterface* SOWCharacter = Cast<ISOWCharacterTypeInterface>(SeenTarget);
 	if (!SOWCharacter) return;
@@ -64,13 +64,13 @@ void AEnemyBaseAIController::OnTargetSighted(AActor* SeenTarget, FAIStimulus con
 	{
 		GetBlackboardComponent()->SetValueAsObject("AttackTarget", SeenTarget);
 	}
-}
+}*/
 
 void AEnemyBaseAIController::OnPossess(APawn* PossessedPawn)
 {
 	Super::OnPossess(PossessedPawn);
 
-	//디버그용 코드
+	// Debugger
 	UE_LOG(LogTemp, Warning, TEXT("▶ Running AIC OnPossess Func"));
 
 	if (ASOWCharacterEnemyBase* const Enemy = Cast<ASOWCharacterEnemyBase>(PossessedPawn))
@@ -81,7 +81,7 @@ void AEnemyBaseAIController::OnPossess(APawn* PossessedPawn)
 			UseBlackboard(BehaviorTree->BlackboardAsset, Bboard);
 			Blackboard = Bboard; // "Blackboard" is an already existing variable name in AAIController class
 
-			//디버그용 코드
+			// Debugger
 			UE_LOG(LogTemp, Warning, TEXT("▶ Running BT: %s"), *BehaviorTree->GetName());
 
 			Enemy->SetAIController(this);
@@ -92,7 +92,7 @@ void AEnemyBaseAIController::OnPossess(APawn* PossessedPawn)
 			UpdateCurrentState(EEnemyStates::FollowingIncomingRoute);
 			
 			//RunBehaviorTree(BehaviorTree);
-			//디버그용 코드. 확인 후 지워서 원상복구 할 것.
+			// Debugger
 			const bool bLaunched = RunBehaviorTree(BehaviorTree);
 			UE_LOG(LogTemp, Warning, TEXT("▶ [AIC] RunBehaviorTree returned %s"),
 			bLaunched ? TEXT("Success") : TEXT("Failure"));
