@@ -17,10 +17,10 @@ class SOW_API AEnemyBaseAIController : public AAIController
 	UPROPERTY()
 	class UAISenseConfig_Sight* MSightConfig;
 
-	void SetupPerceptionSystem();
+	// void SetupPerceptionSystem();
 
-	UFUNCTION()
-	void OnTargetSighted(AActor* SeenTarget, FAIStimulus const Stimulus);
+	/*UFUNCTION()
+	void OnTargetSighted(AActor* SeenTarget, FAIStimulus const Stimulus);*/
 
 	EEnemyStates MCurrentState;
 
@@ -34,7 +34,7 @@ protected:
 	virtual void OnPossess(APawn* PossessedPawn) override;
 	
 public:
-	AEnemyBaseAIController(FObjectInitializer const& ObjectInitializer);
+	// AEnemyBaseAIController(FObjectInitializer const& ObjectInitializer);
 
 	void InitializeBlackBoard(float AttackRadius, float AttackRate, EEnemyTargetPriority TargetPriority);
 

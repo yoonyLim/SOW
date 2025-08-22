@@ -209,10 +209,10 @@ void ATileSpawner::SetupGradientPlaneAndMaterial(const FVector& CenterWS, const 
     FActorSpawnParameters Params;
     Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-    const FRotator PlaneRot = GetActorRotation() + FRotator(0.f, 45.f, 0.f); // 다이아 맵
-    const FVector  PlaneLoc = CenterWS + FVector(0.f, 0.f, PlaneZOffset);
+    // const FRotator PlaneRot = GetActorRotation() + FRotator(0.f, 45.f, 0.f); // 다이아 맵
+    const FVector PlaneLoc = CenterWS + FVector(0.f, 0.f, PlaneZOffset);
 
-    GradientPlaneActor = World->SpawnActor<AStaticMeshActor>(AStaticMeshActor::StaticClass(), PlaneLoc, PlaneRot, Params);
+    GradientPlaneActor = World->SpawnActor<AStaticMeshActor>(AStaticMeshActor::StaticClass(), PlaneLoc, GetActorRotation(), Params);
     if (!GradientPlaneActor) { UE_LOG(LogTemp, Error, TEXT("Failed to spawn GradientPlaneActor")); return; }
 
     UStaticMeshComponent* PlaneMC = GradientPlaneActor->GetStaticMeshComponent();

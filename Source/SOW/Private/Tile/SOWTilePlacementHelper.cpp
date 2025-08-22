@@ -5,7 +5,7 @@
 
 FVector SOWTilePlacementHelper::GetTileWorldPosition(int32 GridX, int32 GridY, float TileWidth, float TileHeight)
 {
-	float WorldX = (GridX - GridY) * (TileWidth);
-	float WorldY = (GridX + GridY) * (TileHeight);
+	float WorldX = GridX * TileWidth;
+	float WorldY = GridY * TileHeight;
 	return FVector(WorldX, WorldY, 10.0f);
 }
