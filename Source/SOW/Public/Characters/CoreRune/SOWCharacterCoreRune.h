@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// SOWCharacterCoreRune.h
 
 #pragma once
 
@@ -6,23 +6,52 @@
 #include "Characters/SOWCharacter.h"
 #include "SOWCharacterCoreRune.generated.h"
 
+class UWidgetComponent;
+class USOWAttributeSet;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCoreDestroyed);
+
 UCLASS()
 class SOW_API ASOWCharacterCoreRune : public ASOWCharacter
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	ASOWCharacterCoreRune();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	// === Health / UI ===
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widgets", meta = (AllowPrivateAccess = "true"))
+	UWidgetComponent *HealthBarWidget;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	// EnemyBase처럼 일정 시간 후 숨기고 싶을 때 사용 (옵션)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+	bool bShouldKeepHealthbarOn = true;
+
+	FTimerHandle HideHealthBarHandle;
+
+	// ASC에서 가져오는 실제 속성 컨테이너
+	UPROPERTY()
+	const USOWAttributeSet *ASCAttributes;
+
+	// 체력 변화 콜백 (ASC 바인딩)
+	UFUNCTION()
+	void OnHealthChanged(const FOnAttributeChangeData &Data);
+
+	// 체력바 퍼센트 갱신
+	virtual void UpdateHealthBarValue(float NewHealth, float MaxHealth);
+
+public:
+	virtual void Tick(float DeltaTime) override;
+	virtual void SetupPlayerInputComponent(class UInputComponent *PlayerInputComponent) override;
+
+	// 코어 파괴 알림 (게임오버 트리거 등 외부에서 바인딩해서 사용)
+	UPROPERTY(BlueprintAssignable, Category = "Event Dispatcher")
+	FOnCoreDestroyed OnCoreDestroyed;
+
+	// 체력이 0 이하일 때 호출되는 처리(게임 오버 신호 보내기 등)
+	UFUNCTION(BlueprintCallable, Category = "Core")
+	void HandleCoreDestroyed();
 };
