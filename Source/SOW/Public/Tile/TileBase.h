@@ -42,6 +42,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Summon")
 	bool bCanPlace = false;
 
+	///  added by pgh
+	void ShowRange();
+	void HideRange();
+	///  added by pgh
+
 protected:
 	virtual void BeginPlay() override;
 

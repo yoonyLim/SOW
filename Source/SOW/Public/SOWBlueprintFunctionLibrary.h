@@ -54,15 +54,21 @@ public:
 
 	static EElementalType TranslateElementTagToEnum(const FGameplayTag& InTag);
 
+
+
 	UFUNCTION(BlueprintCallable, Category = "Tile")
 	static TArray<ATileBase*> GetTilesAroundMouse(APlayerController* PlayerController, const ETileSelectType TileSelectionType, const int32 N, const float TileSize);
 	
+	UFUNCTION(BlueprintCallable, Category = "Tile")
+	static FVector MakeCentralTileLocationFromAnyPoint(APlayerController* PlayerController, FVector AnyPoint, const ETileSelectType TileSelectionType, const int32 N, const float TileSize, bool bRot);
+
 	UFUNCTION(BlueprintCallable, Category = "Tile")
 	static TArray<ATileBase*> GetTilesAsSquaredFromCenterLocation(APlayerController* PlayerController, FVector CenterPosition, const int32 N, const float TileSize);
 
 	UFUNCTION(BlueprintCallable, Category = "Tile")
 	static TArray<ATileBase*> GetTilesAsStraightFromCenterLocation(APlayerController* PlayerController, FVector CenterPosition, const int32 N, const float TileSize, bool bRot);
 
+	static TArray<AActor*> GetActorsOnTiles(TArray<ATileBase*> Tiles);
 };
 
 template <typename T>

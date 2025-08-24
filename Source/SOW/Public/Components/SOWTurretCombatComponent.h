@@ -14,6 +14,7 @@ class ASOWCharacterTurretBase;
 class ATurretMeleeHitCollision;
 class ATurretProjectileBase;
 class ISOWCharacterUIInterface;
+class ATileBase;
 
 
 
@@ -33,6 +34,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Turret|Properties")
 	void AddNewTargetPriority(ETurretTargetSelectionPriority NewPriority);
+
+	void VisualizeTurretDetectionRange(bool bOn);
 
 #pragma endregion
 
@@ -109,6 +112,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
 	void ActivateTurretFunction();
 
+	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
+	void RefreshTurretFunction();
+
 	void SetManaConsumptionValue(float value);
 #pragma endregion
 
@@ -162,6 +168,8 @@ protected:
 #pragma region TargetManagement
 	/*UFUNCTION(BlueprintPure, Category = "Turret|TargetDetection")
 	AActor* GetSingleAttackTarget();*/
+	UFUNCTION(BlueprintPure, Category = "Turret|TargetDetection")
+	ETurretRarity GetTurretRarity() const { return TurretRarity;  };
 
 	UFUNCTION(BlueprintPure, Category = "Turret|TargetDetection")
 	AActor* GetSingleAttackTargetOnList(const TArray<AActor*> InTargetList);
@@ -248,6 +256,8 @@ private:
 	FWidgetDesciptableTurretAttribute WidgetDescriptableAttritutes;
 
 	TWeakInterfacePtr<ISOWCharacterUIInterface> CachedUIInterface;
+
+	TArray<ATileBase*> DetectorTiles;
 #pragma endregion
 
 

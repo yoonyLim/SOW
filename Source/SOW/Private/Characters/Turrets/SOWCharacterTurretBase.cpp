@@ -143,11 +143,13 @@ void ASOWCharacterTurretBase::OnGameplayTagChanged(const FGameplayTag Tag, int32
 
 void ASOWCharacterTurretBase::SwitchDetectionRangeDecal(bool On)
 {
-	DetectionRangeDecal->SetVisibility(false);
+	/*DetectionRangeDecal->SetVisibility(false);
 
 	float radius = GetDetectionRangeRadius();
 	DetectionRangeDecal->DecalSize = FVector(radius, radius, radius);
-	DetectionRangeDecal->SetVisibility(On);
+	DetectionRangeDecal->SetVisibility(On);*/
+
+	GetTurretCombatComponent()->VisualizeTurretDetectionRange(On);
 }
 
 

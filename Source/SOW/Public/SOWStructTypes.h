@@ -68,28 +68,28 @@ struct FTurretAttributeData : public FTableRowBase {
 public:
 	FTurretAttributeData();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Attribute Value"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Unusing Value"))
 	float MaxHealthBase;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Attribute Value"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Unusing Value"))
 	float MaxHealthRatio;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Attribute Value"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Unusing Value"))
 	float DefensePowerBase;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Attribute Value"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Unusing Value"))
 	float DefensePowerRatio;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Attribute Value"))
 	float AttackPowerBase;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Attribute Value"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Unusing Value"))
 	float AttackPowerRatio;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Attribute Value"))
 	float AttackSpeedBase;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Attribute Value"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Unusing Value"))
 	float AttackSpeedRatio;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Attribute Value"))
@@ -101,43 +101,43 @@ struct FTurretPropertyData : public FTableRowBase {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Turret Property"))
 	ETurretRarity TurretRarity;												// Determine Turret Rarity
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Turret Property"))
 	TArray<ETurretTargetSelectionPriority> TurretSettablePriority;			// Determine What Target should be Selected
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Turret Property"))
 	ETurretTargetSelectionPolicy TurretTargetSelectionPolicy;				// Determine What Policy Turret Can Select.
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Turret Property"))
 	ETurretTargetSelectionType TurretTargetSelectionType;					// Determine How many Target selectable
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<ATurretProjectileBase> ProjectileToSpawn;					// Determine What To Spawn While Attack
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Projectile Info"))
 	bool HasDependencyOnProjectile;											// Decide whether to pause the ability until the summonned projectile disappears.
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Projectile Info"))
 	bool HasProjectileMovement;												// Decide the projectile has movement
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Projectile Info"))
 	bool HasIndependantCooltime;											// Decide that Turret Cooltime is not based on attribute
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Projectile Info"))
 	float ProjectileLivingTime;												// Determine the projectile lining time
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "HasProjectileMovement", EditConditionHides))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Projectile Info", EditCondition = "HasProjectileMovement", EditConditionHides))
 	float ProjectileMoveSpeed;												// Determine the projectile move speed
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "HasIndependantCooltime", EditConditionHides))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Projectile Info", EditCondition = "HasIndependantCooltime", EditConditionHides))
 	float IndependantCooltime;												// Determine turret ability cooltime independant on attribute
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Projectile Info"))
 	float ProjectileScaleRatio;												// Determine the projectile Collision Scale : Default - 1.0
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Turret Property"))
 	int32 TargetSelectCount;												// Determine How many targets must be selected in the turret
 };
 
