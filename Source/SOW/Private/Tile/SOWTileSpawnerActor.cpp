@@ -170,7 +170,7 @@ void ATileSpawner::SpawnIncomingRoutes()
 			if (NewRouteActor)
 			{
 				NewRouteActor->SetSplinePointsFromLocations(CurrentRouteWorldLocations);
-				NewRouteActor->SetActorLabel(FString::Printf(TEXT("EnemyRoute_%d"), RouteIndex));
+				// NewRouteActor->SetActorLabel(FString::Printf(TEXT("EnemyRoute_%d"), RouteIndex));
 				SpawnedEnemyRoutes.Add(NewRouteActor);
 				UE_LOG(LogTemp, Log, TEXT("Spawned EnemyIncomingRoute Actor for Route %d with %d points. Total routes: %d"), 
 					RouteIndex, CurrentRouteWorldLocations.Num(), SpawnedEnemyRoutes.Num());
@@ -193,9 +193,7 @@ TArray<AEnemyIncomingRoute*> ATileSpawner::GetSpawnedEnemyRoutes() const
 }
 
 
-// === 평면 자동 세팅 + 머티리얼 파라미터 주입 ===
-// 선언부(.h)도 함께 변경:
-// void SetupGradientPlaneAndMaterial(const FVector& CenterWS, float MapW, float MapH);
+// 평면 자동 세팅 + 머티리얼 파라미터 주입
 void ATileSpawner::SetupGradientPlaneAndMaterial(const FVector& CenterWS, const FVector2D& HalfSizeWorldXY)
 {
     UWorld* World = GetWorld();
@@ -211,10 +209,10 @@ void ATileSpawner::SetupGradientPlaneAndMaterial(const FVector& CenterWS, const 
     FActorSpawnParameters Params;
     Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-    const FRotator PlaneRot = GetActorRotation() + FRotator(0.f, 45.f, 0.f); // 다이아 맵
-    const FVector  PlaneLoc = CenterWS + FVector(0.f, 0.f, PlaneZOffset);
+    // const FRotator PlaneRot = GetActorRotation() + FRotator(0.f, 45.f, 0.f); // 다이아 맵
+    const FVector PlaneLoc = CenterWS + FVector(0.f, 0.f, PlaneZOffset);
 
-    GradientPlaneActor = World->SpawnActor<AStaticMeshActor>(AStaticMeshActor::StaticClass(), PlaneLoc, PlaneRot, Params);
+    GradientPlaneActor = World->SpawnActor<AStaticMeshActor>(AStaticMeshActor::StaticClass(), PlaneLoc, GetActorRotation(), Params);
     if (!GradientPlaneActor) { UE_LOG(LogTemp, Error, TEXT("Failed to spawn GradientPlaneActor")); return; }
 
     UStaticMeshComponent* PlaneMC = GradientPlaneActor->GetStaticMeshComponent();
@@ -247,7 +245,13 @@ void ATileSpawner::SetupGradientPlaneAndMaterial(const FVector& CenterWS, const 
         FLinearColor(HalfSizeWorldXY.X, HalfSizeWorldXY.Y, 0, 0));
     Dyn->SetScalarParameterValue(TEXT("SoftnessWorld"), GradientSoftnessWorld);
 	Dyn->SetVectorParameterValue(TEXT("MapCenterWS"), FLinearColor(CenterWS.X, CenterWS.Y, CenterWS.Z, 0));
-
+	
+	// 머티리얼 내부 innerColor 나타나는 범위
+	Dyn->SetScalarParameterValue(TEXT("InnerRadiusColor"), GradientInnerRadius);
+	
+	// innercolor, outercolor 색상 지정
+	Dyn->SetVectorParameterValue(TEXT("InnerColor"), GradientInnerColor);
+	Dyn->SetVectorParameterValue(TEXT("OuterColor"), GradientOuterColor);
 	
 }
 

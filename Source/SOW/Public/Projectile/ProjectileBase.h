@@ -86,6 +86,7 @@ protected:
 
 	int PoolNumber;
 	bool InGame = false;
+
 #pragma endregion
 
 
@@ -93,6 +94,9 @@ protected:
 	TArray<AActor*> OverlappedActors;							// Once a target has been damaged, it must be ignored.
 
 	FVector TargetLocation;										// If you need to specify a location other than the target
+
+	FVector OriginScaledCollisionExtent;
+	FVector OriginScaledMeshExtent;
 #pragma endregion
 
 
