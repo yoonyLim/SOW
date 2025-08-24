@@ -19,31 +19,14 @@ class SOW_API ASOWTileSpawner : public AActor
 	TMap<int32, FVector> SpawnedTileLocations;
 
 	UPROPERTY()
-	TArray<AEnemyIncomingRoute*> SpawnedEnemyRoutes;
-
-	void SpawnIncomingRoutes();
+	TArray<TObjectPtr<AEnemyIncomingRoute>> SpawnedEnemyRoutes;
 
 protected:
 	virtual void BeginPlay() override;
 
 public:
-	UPROPERTY(EditAnywhere)
-	TArray<TSubclassOf<class AActor>> GridTiles;
-
 	UPROPERTY(BlueprintReadOnly)
 	TArray<AActor*> SpawnedTileActors;
-
-	UPROPERTY(EditAnywhere)
-	int32 GridWidth = 10;
-
-	UPROPERTY(EditAnywhere)
-	int32 GridHeight = 10;
-
-	UPROPERTY(EditAnywhere)
-	float TileWidth = 124.5f;
-
-	UPROPERTY(EditAnywhere)
-	float TileHeight = 124.5f;
 
 	UPROPERTY(EditAnywhere)
 	TArray<int32> EnemySpawnerIndexInOrder;
@@ -54,7 +37,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tile Spawner|Routes Configuration", meta = (TitleProperty = "RouteName"))
 	TArray<FIncomingRouteDefinition> CustomIncomingRoutes;
 
-	TArray<AEnemyIncomingRoute*> GetSpawnedEnemyRoutes() const;
+	TArray<TObjectPtr<AEnemyIncomingRoute>> GetSpawnedEnemyRoutes() const;
 
 	const TMap<int32, FVector>& GetSpawnedTileLocations() const { return SpawnedTileLocations; }
 
@@ -85,12 +68,30 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MapScript")
 	bool LoadAndBuildFromScript(const FString& InFilePathRelOrAbs);
 
+	UFUNCTION(BlueprintCallable, Category = "MapScript")
+	void SpawnIncomingRoutes();
+
 	//UFUNCTION(Exec)
 	//void ReloadMapScript();
 
 private:
 	UPROPERTY(Transient)
 	AStaticMeshActor* GradientPlaneActor = nullptr;
+
+	int32 GridWidth = 9;
+
+	int32 GridHeight = 5;
+
+	float TileWidth = 116.f;
+
+	float TileHeight = 116.f;
+
+	TArray<TSubclassOf<class AActor>> GridTiles;
+
+	UPROPERTY(Transient)
+	TArray<FIncomingRouteDefinition> RoutesFromScript;
+
+private:
 
 	void SetupGradientPlaneAndMaterial(const FVector& CenterWS, const FVector2D& HalfSizeWorldXY);
 	static void ComputeMapBoundsFromTiles(const TMap<int32, FVector>& TileCenters, float TileWidth, float TileHeight, FVector& OutCenterWS, FVector2D& OutHalfSizeWorldXY);

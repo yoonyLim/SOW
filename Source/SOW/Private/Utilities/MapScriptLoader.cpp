@@ -61,6 +61,7 @@ bool MapScriptLoader::LoadFromFile(const FString& AbsPath, FLoadedMapSpec& Out, 
 	if (!ParseMeta(Cfg, Out, OutError)) return false;
 	if (!ParseClassMap(Cfg, Out, OutError)) return false;
 	if (!ParseGrid(Cfg, Out, OutError)) return false;
+	if (!ParseRoutes(Cfg, Out, OutError)) return false;
 
 	return true;
 }
@@ -155,6 +156,72 @@ bool MapScriptLoader::ParseGrid(const FConfigFile& Cfg, FLoadedMapSpec& Out, FSt
 		{
 			Out.GridTokens[Y][X] = FName(*Cells[X]);
 		}
+	}
+
+	return true;
+}
+
+/* Parse Routes */
+static void NormalizeRouteLine(FString& S)
+{
+	/*
+		In .ini,
+		ex)
+		[Route Name] = [Coord Sets] 
+		MainPath = (0, 0) -> (0, 5) -> (3, 5)
+	*/
+
+	S.ReplaceInline(TEXT(" "), TEXT(""));
+	S.ReplaceInline(TEXT("("), TEXT(""));
+	S.ReplaceInline(TEXT(")"), TEXT(""));
+	S.ReplaceInline(TEXT("->"), TEXT(";"), ESearchCase::IgnoreCase);
+}
+
+bool MapScriptLoader::ParseRoutes(const FConfigFile& Cfg, FLoadedMapSpec& Out, FString& Err)
+{
+	const FConfigSection* S = FindSection(Cfg, TEXT("EnemyRoutes"));
+	if (!S)
+	{
+		Out.EnemyRoutes.Reset();
+		return true;
+	}
+
+	for (const auto& Pair : *S)
+	{
+		FEnemyRoute R;
+		R.RouteName = Pair.Key.GetPlainNameString();
+
+		FString Line = Pair.Value.GetValue();
+		NormalizeRouteLine(Line);
+
+		TArray<FString> Segs;
+		Line.ParseIntoArray(Segs, TEXT(";"), true);
+
+		if (Segs.Num() < 2)
+		{
+			continue;
+		}
+
+		for (const FString& Seg : Segs)
+		{
+			TArray<FString> XY;
+			Seg.ParseIntoArray(XY, TEXT(","), true);
+
+			if (XY.Num() != 2) { Err = FString::Printf(TEXT("MapScriptLoader: [EnemyRoutes].%s : malformed '%s'"), *R.RouteName, *Seg);  return false; }
+
+			const int32 X = FCString::Atoi(*XY[0]);
+			const int32 Y = FCString::Atoi(*XY[1]);
+
+			if (X < 0 || X >= Out.GridWidth || Y < 0 || Y >= Out.GridHeight)
+			{
+				Err = FString::Printf(TEXT("MapScriptLoader: [EnemyRoutes].%s : point (%d, %d) out of bounds [%d x %d]"),
+					*R.RouteName, X, Y, Out.GridWidth, Out.GridHeight);
+				return false;
+			}
+			R.Points.Add(FIntPoint(X, Y));
+		}
+
+		Out.EnemyRoutes.Add(MoveTemp(R));
 	}
 
 	return true;

@@ -156,3 +156,8 @@ void ASOWPlayerController::ConfirmTurretPlacement()
         }
     }
 }
+
+void ASOWPlayerController::InitTileMap(TArray<AActor*> SpawnedTileActors)
+{
+    L_Tiles = SpawnedTileActors;
+}

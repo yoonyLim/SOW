@@ -62,7 +62,6 @@ bool UUSkillManager::UnlockSkill(const FName& SkillID)
 				if (FoundData->EffectType == ESkillEffectType::CircleUpgrade)
 				{
 					USummonManager* SummonManager = GI->GetSummonManager();
-					SummonManager->SetCircleLevel(FoundData->SkillElementTag, FoundData->CircleLevel);
 				}
 				UE_LOG(LogTemp, Error, TEXT("Success Unlock Skill"));
 

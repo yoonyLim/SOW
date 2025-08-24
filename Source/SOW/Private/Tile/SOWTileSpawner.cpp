@@ -9,6 +9,7 @@
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Components/StaticMeshComponent.h"
 #include "UObject/ConstructorHelpers.h"
+#include "Core/SOWPlayerController.h"
 
 #include "Utilities/MapScriptLoader.h"
 #include "Misc/Paths.h"
@@ -59,11 +60,6 @@ void ASOWTileSpawner::BeginPlay()
 				}
 
 				FVector SpawnLocation = SOWTilePlacementHelper::GetTileWorldPosition(X, Y, TileWidth, TileHeight);
-
-				if (GridTiles[Index] && GridTiles[Index]->GetName().Contains(TEXT("2x2")))
-				{
-					SpawnLocation += FVector(0, TileHeight, 0.0f);
-				}
 
 				const FRotator Rotation = FRotator::ZeroRotator;
 
@@ -146,67 +142,77 @@ void ASOWTileSpawner::BeginPlay()
 
 void ASOWTileSpawner::SpawnIncomingRoutes()
 {
-	if (!EnemyIncomingRouteClass)
+	if (RoutesFromScript.Num() == 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("EnemyIncomingRouteClass is not set in ATileSpawner! Cannot spawn enemy routes."));
+		UE_LOG(LogTemp, Warning, TEXT("TileSpawner: [Routes] No routes defined in .ini; skipping."));
 		return;
 	}
 
-	SpawnedEnemyRoutes.Empty();
-
-	for (int32 RouteIndex = 0; RouteIndex < CustomIncomingRoutes.Num(); ++RouteIndex)
+	if (!EnemyIncomingRouteClass)
 	{
-		const FIncomingRouteDefinition& CurrentRouteDefinition = CustomIncomingRoutes[RouteIndex];
-		const TArray<int32>& CurrentRouteIndices = CurrentRouteDefinition.TileIndices;
-		TArray<FVector> CurrentRouteWorldLocations;
+		UE_LOG(LogTemp, Warning, TEXT("TileSpawner: [Routes] EnemyIncomingRouteClass is not set; cannot spawn routes. "));
+		return;
+	}
 
-		for (const int32 TileIndex : CurrentRouteIndices)
+	for (AEnemyIncomingRoute* R : SpawnedEnemyRoutes)
+	{
+		if (IsValid(R)) { R->Destroy(); }
+	}
+
+	SpawnedEnemyRoutes.Reset();
+
+	for (int32 RouteIndex = 0; RouteIndex < RoutesFromScript.Num(); ++RouteIndex)
+	{
+		const FIncomingRouteDefinition& Def = RoutesFromScript[RouteIndex];
+
+		TArray<FVector> Points;
+		Points.Reserve(Def.TileIndices.Num());
+
+		for (int32 TileIndex : Def.TileIndices)
 		{
-			if (SpawnedTileLocations.Contains(TileIndex))
+			if (const FVector* P = SpawnedTileLocations.Find(TileIndex))
 			{
-				// FVector SpawnLocation = FVector(SpawnedTileLocations[TileIndex].X, SpawnedTileLocations[TileIndex].Y, SpawnedTileLocations[TileIndex].Z + 5.f);
-				CurrentRouteWorldLocations.Add(SpawnedTileLocations[TileIndex]);
+				Points.Add(*P);
 			}
 			else
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Tile index %d for route %d was not found in SpawnedTileLocations. Route may be incomplete."), TileIndex, RouteIndex);
+				UE_LOG(LogTemp, Warning, TEXT("TileSpawner: [Routes] '%s': TileIndex %d not found in SpawnedTileLocations"),
+					*Def.RouteName, TileIndex);
 			}
 		}
 
-		if (CurrentRouteWorldLocations.Num() > 1) // at least two points for a spline
+		if (Points.Num() < 2)
 		{
-			FActorSpawnParameters SpawnParams;
-			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-			SpawnParams.Owner = this;
-
-			AEnemyIncomingRoute* NewRouteActor = GetWorld()->SpawnActor<AEnemyIncomingRoute>(
-				EnemyIncomingRouteClass,
-				FVector::ZeroVector, // Location doesn't matter much relative to spline points
-				FRotator::ZeroRotator,
-				SpawnParams
-			);
-
-			if (NewRouteActor)
-			{
-				NewRouteActor->SetSplinePointsFromLocations(CurrentRouteWorldLocations);
-				NewRouteActor->SetActorLabel(FString::Printf(TEXT("EnemyRoute_%d"), RouteIndex));
-				SpawnedEnemyRoutes.Add(NewRouteActor);
-				UE_LOG(LogTemp, Log, TEXT("Spawned EnemyIncomingRoute Actor for Route %d with %d points. Total routes: %d"),
-					RouteIndex, CurrentRouteWorldLocations.Num(), SpawnedEnemyRoutes.Num());
-			}
-			else
-			{
-				UE_LOG(LogTemp, Error, TEXT("Failed to spawn AEnemyIncomingRoute actor for Route %d."), RouteIndex);
-			}
+			UE_LOG(LogTemp, Warning, TEXT("TileSpawner: [Routes] '%s': has only %d point(s). Skipped."),
+				*Def.RouteName, Points.Num());
+			continue;
 		}
-		else if (CurrentRouteWorldLocations.Num() > 0)
+
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		SpawnParams.Owner = this;
+
+		AEnemyIncomingRoute* Route = GetWorld()->SpawnActor<AEnemyIncomingRoute>(
+			EnemyIncomingRouteClass,
+			FVector::ZeroVector, // Location doesn't matter much relative to spline points
+			FRotator::ZeroRotator,
+			SpawnParams
+		);
+
+		if (!Route)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Route %d has only %d point(s). Skipping spline creation (requires > 1 point)."), RouteIndex, CurrentRouteWorldLocations.Num());
+			UE_LOG(LogTemp, Error, TEXT("[Routes] Failed to spawn route actor for '%s'."), *Def.RouteName);
+			continue;
 		}
+
+		Route->SetSplinePointsFromLocations(Points);
+		Route->SetActorLabel(Def.RouteName.IsEmpty() ? FString::Printf(TEXT("EnemyRoute_%d"), RouteIndex) : Def.RouteName);
+		SpawnedEnemyRoutes.Add(Route);
+
 	}
 }
 
-TArray<AEnemyIncomingRoute*> ASOWTileSpawner::GetSpawnedEnemyRoutes() const
+TArray<TObjectPtr<AEnemyIncomingRoute>> ASOWTileSpawner::GetSpawnedEnemyRoutes() const
 {
 	return SpawnedEnemyRoutes;
 }
@@ -333,6 +339,8 @@ bool ASOWTileSpawner::LoadAndBuildFromScript(const FString& InFilePathRelOrAbs)
 	}
 
 	ClearSpawnedTiles();
+	RoutesFromScript.Reset();
+	RoutesFromScript.Reserve(Spec.EnemyRoutes.Num());
 
 	GridWidth = Spec.GridWidth;
 	GridHeight = Spec.GridHeight;
@@ -367,7 +375,7 @@ bool ASOWTileSpawner::LoadAndBuildFromScript(const FString& InFilePathRelOrAbs)
 			FActorSpawnParameters Params;
 			Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		
-			AActor* SpawnedTile = GetWorld()->SpawnActor<AActor>(TileClass, SpawnLocation, FRotator::ZeroRotator, Params);
+			AActor* SpawnedTile = GetWorld()->SpawnActor<AActor>(TileClass, SpawnLocation, FRotator::ZeroRotator);
 			if (!SpawnedTile) { continue; }
 
 			SpawnedTileActors.Add(SpawnedTile);
@@ -385,7 +393,27 @@ bool ASOWTileSpawner::LoadAndBuildFromScript(const FString& InFilePathRelOrAbs)
 		}
 	}
 
+	for (const FEnemyRoute& R : Spec.EnemyRoutes)
+	{
+		FIncomingRouteDefinition Def;
+		Def.RouteName = R.RouteName.IsEmpty() ? TEXT("Route") : R.RouteName;
+
+		for (const FIntPoint& P : R.Points)
+		{
+			const int32 X = P.X;
+			const int32 Y = P.Y;
+
+			const int32 TileIndex = Y * Spec.GridWidth + X;
+			Def.TileIndices.Add(TileIndex);
+		}
+		RoutesFromScript.Add(MoveTemp(Def));
+	}
+
 	UE_LOG(LogTemp, Log, TEXT("TileSpawner: [MapScript] Build %d x %d tiles from %s"), GridWidth, GridHeight, *AbsPath);
+
+	ASOWPlayerController* SOWPC = Cast<ASOWPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	SOWPC->InitTileMap(SpawnedTileActors);
+
 	return SpawnedTileActors.Num() > 0;
 }
 

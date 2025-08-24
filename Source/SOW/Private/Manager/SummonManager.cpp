@@ -3,174 +3,121 @@
 
 #include "Manager/SummonManager.h"
 
+#include "Engine/DataTable.h"
+#include "UObject/UnrealType.h"
+#include "Utilities/GatchaRNG.h"
+#include "Core/SOWPlayerController.h"
+#include "Kismet/GameplayStatics.h"
+#include "Tile/TileBase.h"
+#include "Engine/World.h"
+#include "SOWBlueprintFunctionLibrary.h"
+#include "Characters/Turrets/SOWCharacterTurretBase.h"
+
+static const TArray<int32> RarityWeights = { 83, 15, 2 }; // {common, rare, epic}
+
+bool FSummonData::operator==(const FSummonData& Other) const
+{
+	return TurretName == Other.TurretName
+		&& Rarity == Other.Rarity
+		&& TurretClass.Get() == Other.TurretClass.Get();
+}
+
 void USummonManager::Initialize()
 {
-	FGameplayTag NatureTag = FGameplayTag::RequestGameplayTag(FName("Shared.Element.Nature"));
-	FGameplayTag ElectroTag = FGameplayTag::RequestGameplayTag(FName("Shared.Element.Electro"));
-	FGameplayTag DeathTag = FGameplayTag::RequestGameplayTag(FName("Shared.Element.Death"));
-	FGameplayTag IceTag = FGameplayTag::RequestGameplayTag(FName("Shared.Element.Ice"));
-	FGameplayTag WaveTag = FGameplayTag::RequestGameplayTag(FName("Shared.Element.Wave"));
-	FGameplayTag DivinityTag = FGameplayTag::RequestGameplayTag(FName("Shared.Element.Dvinity"));
-	FGameplayTag MadnessTag = FGameplayTag::RequestGameplayTag(FName("Shared.Element.Madness"));
-	FGameplayTag FlameTag = FGameplayTag::RequestGameplayTag(FName("Shared.Element.Flame"));
+	DT_SummonTurretProb = LoadObject<UDataTable>(
+		nullptr,
+		TEXT("/Game/01Blueprints/DataTable/Turrets/DT_TurretSummonProb.DT_TurretSummonProb")
+	);
 
-	M_CircleLevel.Add(NatureTag, 0);
-	M_CircleLevel.Add(ElectroTag, 0);
-	M_CircleLevel.Add(DeathTag, 0);
-	M_CircleLevel.Add(IceTag, 0);
-	M_CircleLevel.Add(WaveTag, 0);
-	M_CircleLevel.Add(DivinityTag, 0);
-	M_CircleLevel.Add(MadnessTag, 0);
-	M_CircleLevel.Add(FlameTag, 0);
+	InitTurretArray();
 }
 
-uint8 USummonManager::GetCircle(FGameplayTag Element)
+void USummonManager::InitTurretArray()
 {
-	int32 TotalWeight = 0;
+	L_Common.Reset();
+	L_Rare.Reset();
+	L_Epic.Reset();
 
-	if (M_CircleLevel[Element] == 0) return 0;
-
-	for (int32 Weight : M_CircleProbability[M_CircleLevel[Element]])
+	if (!DT_SummonTurretProb)
 	{
-		TotalWeight += Weight;
+		UE_LOG(LogTemp, Warning, TEXT("SummonManager: DT_SummonTurretProb is null."));
+		return;
 	}
 
-	if (TotalWeight <= 0)
+	for (const auto& Pair : DT_SummonTurretProb->GetRowMap())
 	{
-		return 0;
-	}
+		const FName RowName = Pair.Key;
+		const FSummonData* Row = reinterpret_cast<const FSummonData*>(Pair.Value);
+		if(!Row) continue;
 
-	int32 RandomValue = FMath::RandRange(1, TotalWeight);
-	int32 Accumulated = 0;
-
-	for (int32 Index = 0; Index < M_CircleProbability[M_CircleLevel[Element]].Num(); ++Index)
-	{
-		Accumulated += M_CircleProbability[M_CircleLevel[Element]][Index];
-		if (RandomValue <= Accumulated)
+		switch (Row->Rarity)
 		{
-			return Index + 1;
+		case ERarity::Common:
+			L_Common.AddUnique(*Row);
+			break;
+		case ERarity::Rare:
+			L_Rare.AddUnique(*Row);
+			break;
+		case ERarity::Epic:
+			L_Epic.AddUnique(*Row);
+			break;
 		}
 	}
-
-	return 0;
 }
 
-uint8 USummonManager::GetCircleLevel(FGameplayTag Element)
+FSummonData USummonManager::RNG()
 {
-	return M_CircleLevel[Element];
+	int32 FullWeight = RarityWeights[0] + RarityWeights[1] + RarityWeights[2];
+
+	const int32 RarityIdx = GachaRNG::DrawWeightedIndex(RarityWeights);
+
+	const TArray<FSummonData>* Pool = nullptr;
+	switch (RarityIdx)
+	{
+	case 0: Pool = &L_Common; break;
+	case 1: Pool = &L_Rare; break;
+	case 2: Pool = &L_Epic; break;
+	}
+
+	const uint32 idx = GachaRNG::UniformIndex((uint32)Pool->Num());
+	return (*Pool)[(int32)idx];
 }
 
-void USummonManager::SetCircleLevel(FGameplayTag Element, uint8 CircleLevel)
+bool USummonManager::TurretSummon()
 {
-	M_CircleLevel[Element] = CircleLevel;
+	FSummonData TurretToSummon = RNG();
+
+	ASOWPlayerController* SOWPC = Cast<ASOWPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+
+	SOWPC->GetTileMap();
+
+	for (AActor* CurrentTile : SOWPC->GetTileMap())
+	{
+		ATileBase* CT = Cast<ATileBase>(CurrentTile);
+
+		if (CT->TileState == ETileSummonState::Available)
+		{
+			FVector SpawnLoc = CT->GetActorLocation();
+			SpawnLoc.Z += 65.f;
+
+			FRotator SpawnRotator(0.f, 180.f, 0.f);
+
+			FActorSpawnParameters Params;
+			Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+			Params.Owner = SOWPC;
+			Params.Instigator = SOWPC->GetPawn();
+
+			ASOWCharacterTurretBase* NewTurret = GetWorld()->SpawnActor<ASOWCharacterTurretBase>(TurretToSummon.TurretClass, SpawnLoc, SpawnRotator, Params);
+		
+			CT->TileState = ETileSummonState::Occupied;
+
+			return true;
+		}
+		else
+		{
+			continue;
+		}
+	}
+	return false;
 }
 
-TMap<uint8, TArray<uint8>>* USummonManager::GetSpellCompMap(EElementalType Element, uint8 Step)
-{
-	FString ElementName = StaticEnum<EElementalType>()->GetNameStringByValue(static_cast<int32>(Element));
-
-	UE_LOG(LogTemp, Warning, TEXT("[Element: %s] [Step: %d]"), *ElementName, Step);
-
-	switch (Element)
-	{
-	case EElementalType::Nature:
-	{
-		if (Step == 1)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("hrerere"));
-
-			return &M_NatureSpellComp_1;
-		}
-		else
-		{
-			return &M_NatureSpellComp_2;
-		}
-		break;
-	}
-	case EElementalType::Electro:
-	{
-		if (Step == 1)
-		{
-			return &M_ElectroSpellComp_1;
-		}
-		else
-		{
-			return &M_ElectroSpellComp_2;
-		}
-		break;
-	}
-	case EElementalType::Death:
-	{
-		if (Step == 1)
-		{
-			return &M_DeathSpellComp_1;
-		}
-		else
-		{
-			return &M_DeathSpellComp_2;
-		}
-		break;
-	}
-	case EElementalType::Ice:
-	{
-		if (Step == 1)
-		{
-			return &M_IceSpellComp_1;
-		}
-		else
-		{
-			return &M_IceSpellComp_2;
-		}
-		break;
-	}
-	case EElementalType::Wave:
-	{
-		if (Step == 1)
-		{
-			return &M_WaveSpellComp_1;
-		}
-		else
-		{
-			return &M_WaveSpellComp_2;
-		}
-		break;
-	}
-	case EElementalType::Divinity:
-	{
-		if (Step == 1)
-		{
-			return &M_DivinitySpellComp_1;
-		}
-		else
-		{
-			return &M_DivinitySpellComp_2;
-		}
-		break;
-	}
-	case EElementalType::Madness:
-	{
-		if (Step == 1)
-		{
-			return &M_MadnessSpellComp_1;
-		}
-		else
-		{
-			return &M_MadnessSpellComp_2;
-		}
-		break;
-	}
-	case EElementalType::Flame:
-	{
-		if (Step == 1)
-		{
-			return &M_FlameSpellComp_1;
-		}
-		else
-		{
-			return &M_FlameSpellComp_2;
-		}
-		break;
-	}
-	}
-	return &M_FlameSpellComp_1;
-}

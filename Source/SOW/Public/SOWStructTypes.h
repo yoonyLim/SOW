@@ -396,31 +396,3 @@ struct FSkillData : public FTableRowBase
 	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "EffectType==ESkillEffectType::CircleUpgrade"), Category = "CircleUpgrade")
 	uint8 CircleLevel;
 };
-
-struct FLoadedMapSpec
-{
-	int32 GridWidth = 0;
-
-	int32 GridHeight = 0;
-
-	float TileWidth = 100.f;
-
-	float TileHeight = 100.f;
-
-	FName DefaultToken = NAME_None;
-
-	//Token -> Soft Class
-	TMap<FName, TSoftClassPtr<AActor>> TokenToClass;
-
-	// Token Table
-	TArray<TArray<FName>> GridTokens;
-
-public:
-	bool IsValid() const
-	{
-		return GridWidth > 0 && GridHeight > 0
-			&& TileWidth > 0.f && TileHeight > 0.f
-			&& GridTokens.Num() == GridHeight
-			&& (GridTokens.IsEmpty() || GridTokens[0].Num() == GridWidth);
-	}
-};
