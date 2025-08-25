@@ -37,7 +37,10 @@ void AProjectileBase::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
 	if (TargetActor) {
-		ProjectileMoveComp->Velocity = (TargetActor->GetActorLocation() - GetActorLocation()).GetSafeNormal() * ProjectileMoveComp->InitialSpeed;
+		FVector DirVector = (TargetActor->GetActorLocation() - GetActorLocation()).GetSafeNormal();
+
+		ProjectileMoveComp->Velocity = DirVector * ProjectileMoveComp->InitialSpeed;
+		SetActorRotation(DirVector.Rotation());
 	}
 }
 

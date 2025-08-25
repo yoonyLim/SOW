@@ -255,7 +255,7 @@ void USOWTurretCombatComponent::RefreshTurretFunction()
 			&USOWTurretCombatComponent::AttackAbilityActivation,
 			NewCooldownTime,
 			true,
-			0.1f
+			NewCooldownTime
 		);
 
 		M_CachedCooldownTime = NewCooldownTime;
@@ -288,17 +288,7 @@ bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 	APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
 
 	FHitResult TileHit;
-	/*TArray<ATileBase*> Tiles;
-	if (GetWorld()->LineTraceSingleByChannel(TileHit, Start, End, ECC_Visibility))
-	{
-		Tiles = USOWBlueprintFunctionLibrary::GetTilesAsSquaredFromCenterLocation(
-			PC,
-			TileHit.ImpactPoint,
-			2 * CachedOwnerCharacter->GetDetectionRangeRadius() + 1,
-			83.f);
-	}*/
 
-	//UE_LOG(LogTemp, Warning, TEXT("tile count : %s"), *FString::FromInt(Tiles.Num()));
 	L_DetectableActors = USOWBlueprintFunctionLibrary::GetActorsOnTiles(DetectorTiles);
 
 	for (AActor* CurrentTarget : L_DetectableActors) {
@@ -313,7 +303,7 @@ bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 
 		AddActorMatchesTargetingPolicy(CurrentTarget, TargetType);
 	}
-	RefreshTurretFunction(); // -> Reactivate if cooldowntime has been updated.
+	
 	return bTargetFound = !DetectedTargetActors.IsEmpty() || 
 		TurretTargetSelectionPriority == ETurretTargetSelectionPriority::LocationFixed || 
 		TurretTargetSelectionPriority == ETurretTargetSelectionPriority::TargetFixed;
@@ -536,8 +526,10 @@ void USOWTurretCombatComponent::AttackAbilityActivation()
 		//UE_LOG(LogTemp, Warning, TEXT("No Valid Actor Found"));
 		return;
 	} 
-
+	
 	CachedOwnerCharacter->TryActivateAbilityWithTagOnASC(AbilityTagToActivation);
+
+	RefreshTurretFunction(); // -> Reactivate if cooldowntime has been updated.
 }
 
 bool USOWTurretCombatComponent::IsActorValidTarget(AActor* InActor)
