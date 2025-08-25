@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "UI/PlayerHUD.h"
 
 #include "AbilitySystem/SOWAttributeSet.h"
@@ -18,143 +17,145 @@
 
 void UPlayerHUD::NativeConstruct()
 {
-    Super::NativeConstruct();
+       Super::NativeConstruct();
 
-    SkillSelectWidget->SetVisibility(ESlateVisibility::Collapsed);
+       SkillSelectWidget->SetVisibility(ESlateVisibility::Collapsed);
 
-    USOWGameInstance* GI = Cast<USOWGameInstance>(GetWorld()->GetGameInstance());
-    UOneTimeCurrencyManager* OCM = GI->GetOneTimeCurrencyManager();
+       USOWGameInstance *GI = Cast<USOWGameInstance>(GetWorld()->GetGameInstance());
+       UOneTimeCurrencyManager *OCM = GI->GetOneTimeCurrencyManager();
 
-    OCM->OnOneTimeCurrencyChanged.AddDynamic(this, &UPlayerHUD::ChangeFragment);
-
-    TXT_Fragment->SetText(FText::AsNumber(OCM->GetCurrency(EElementalType::Nature)));
-
+       OCM->OnOneTimeCurrencyChanged.RemoveDynamic(this, &UPlayerHUD::ChangeFragment);
 }
 
 void UPlayerHUD::NativeDestruct()
 {
-    Super::NativeDestruct();
+       Super::NativeDestruct();
 
-    if (ASC)
+       if (ASC)
+    
     {
-        /* Unbind Delegate */
-        ASC->GetGameplayAttributeValueChangeDelegate(
-            USOWAttributeSet::GetCurrentHealthAttribute()
-        ).Remove(HealthChangedHandle);
+               /* Unbind Delegate */
+        ASC->GetGameplayAttributeValueChangeDelegate(
+            USOWAttributeSet::GetCurrentHealthAttribute()
+        ).Remove(HealthChangedHandle);
 
-        ASC->GetGameplayAttributeValueChangeDelegate(
-            USOWAttributeSet::GetCurrentManaAttribute()
-        ).Remove(ManaChangedHandle);
+               ASC->GetGameplayAttributeValueChangeDelegate(
+            USOWAttributeSet::GetCurrentManaAttribute()
+        ).Remove(ManaChangedHandle);
 
-        ASC->GetGameplayAttributeValueChangeDelegate(
-            USOWAttributeSet::GetCurrentStaminaAttribute()
-        ).Remove(StaminaChangedHandle);
+               ASC->GetGameplayAttributeValueChangeDelegate(
+            USOWAttributeSet::GetCurrentStaminaAttribute()
+        ).Remove(StaminaChangedHandle);
+           
+    }
+
+       USOWGameInstance *GI = Cast<USOWGameInstance>(GetWorld()->GetGameInstance());
+       UOneTimeCurrencyManager *OCM = GI->GetOneTimeCurrencyManager();
+
+       OCM->OnOneTimeCurrencyChanged.RemoveDynamic(this, &UPlayerHUD::ChangeFragment);
+}
+
+void UPlayerHUD::Init(USOWAbilitySystemComponent *InASC)
+{
+       checkf(InASC, TEXT("Ability System Component is Invalid in PlayerHUD"));
+       BindToASC(InASC);
+
+       if (AttributeSetRef)
+    
+    {
+               float MaxHealthBase = AttributeSetRef->GetMaxHealthBase();
+               float CurrentHealth = AttributeSetRef->GetCurrentHealth();
+               SetProgressBar(EStat::HP, MaxHealthBase, CurrentHealth);
+
+               float MaxManaBase = AttributeSetRef->GetMaxManaBase();
+               float CurrentMana = AttributeSetRef->GetCurrentMana();
+               SetProgressBar(EStat::MP, MaxManaBase, CurrentMana);
+
+               float MaxStaminaBase = AttributeSetRef->GetMaxStaminaBase();
+               float CurrentStamina = AttributeSetRef->GetCurrentStamina();
+               SetProgressBar(EStat::Stamina, MaxStaminaBase, CurrentStamina);
+           
     }
 }
 
-void UPlayerHUD::Init(USOWAbilitySystemComponent* InASC)
+void UPlayerHUD::BindToASC(USOWAbilitySystemComponent *InASC)
 {
-    checkf(InASC, TEXT("Ability System Component is Invalid in PlayerHUD"));
-    BindToASC(InASC);
+       ASC = InASC;
 
-    if (AttributeSetRef)
+       AttributeSetRef = Cast<USOWAttributeSet>(ASC->GetAttributeSet(USOWAttributeSet::StaticClass()));
+
+       if (ASC)
+    
     {
-        float MaxHealthBase = AttributeSetRef->GetMaxHealthBase();
-        float CurrentHealth = AttributeSetRef->GetCurrentHealth();
-        SetProgressBar(EStat::HP, MaxHealthBase, CurrentHealth);
+               HealthChangedHandle = ASC->GetGameplayAttributeValueChangeDelegate(
+            USOWAttributeSet::GetCurrentHealthAttribute()
+        ).AddUObject(this, &UPlayerHUD::OnHealthChanged);
 
-        float MaxManaBase = AttributeSetRef->GetMaxManaBase();
-        float CurrentMana = AttributeSetRef->GetCurrentMana();
-        SetProgressBar(EStat::MP, MaxManaBase, CurrentMana);
+               ManaChangedHandle = ASC->GetGameplayAttributeValueChangeDelegate(
+            USOWAttributeSet::GetCurrentManaAttribute()
+        ).AddUObject(this, &UPlayerHUD::OnManaChanged);
 
-        float MaxStaminaBase = AttributeSetRef->GetMaxStaminaBase();
-        float CurrentStamina = AttributeSetRef->GetCurrentStamina();
-        SetProgressBar(EStat::Stamina, MaxStaminaBase, CurrentStamina);
+               StaminaChangedHandle = ASC->GetGameplayAttributeValueChangeDelegate(
+            USOWAttributeSet::GetCurrentStaminaAttribute()
+        ).AddUObject(this, &UPlayerHUD::OnStaminaChanged);
+           
+    }
+
+       if (!AttributeSetRef)
+    
+    {
+               UE_LOG(LogTemp, Warning, TEXT("HUD : Fail to bind AttributeSet"));
+           
     }
 }
 
-void UPlayerHUD::BindToASC(USOWAbilitySystemComponent* InASC)
+void UPlayerHUD::OnHealthChanged(const FOnAttributeChangeData &Data)
 {
-    ASC = InASC;
+       if (!AttributeSetRef) return;
 
-    AttributeSetRef = Cast<USOWAttributeSet>(ASC->GetAttributeSet(USOWAttributeSet::StaticClass()));
+       float MaxHealth = AttributeSetRef->GetMaxHealthBase();
+       float NewHealth = Data.NewValue;
 
-    if (ASC)
-    {
-        HealthChangedHandle = ASC->GetGameplayAttributeValueChangeDelegate(
-            USOWAttributeSet::GetCurrentHealthAttribute()
-        ).AddUObject(this, &UPlayerHUD::OnHealthChanged);
-
-        ManaChangedHandle = ASC->GetGameplayAttributeValueChangeDelegate(
-            USOWAttributeSet::GetCurrentManaAttribute()
-        ).AddUObject(this, &UPlayerHUD::OnManaChanged);
-
-        StaminaChangedHandle = ASC->GetGameplayAttributeValueChangeDelegate(
-            USOWAttributeSet::GetCurrentStaminaAttribute()
-        ).AddUObject(this, &UPlayerHUD::OnStaminaChanged);
-    }
-
-    if (!AttributeSetRef)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("HUD : Fail to bind AttributeSet"));
-    }
+       SetProgressBar(EStat::HP, MaxHealth, NewHealth);
 }
 
-void UPlayerHUD::OnHealthChanged(const FOnAttributeChangeData& Data)
+void UPlayerHUD::OnManaChanged(const FOnAttributeChangeData &Data)
 {
-    if (!AttributeSetRef) return;
+       if (!AttributeSetRef) return;
 
-    float MaxHealth = AttributeSetRef->GetMaxHealthBase();
-    float NewHealth = Data.NewValue;
+       float MaxMana = AttributeSetRef->GetMaxManaBase();
+       float NewMana = Data.NewValue;
 
-    SetProgressBar(EStat::HP, MaxHealth, NewHealth);
+       SetProgressBar(EStat::MP, MaxMana, NewMana);
 }
 
-void UPlayerHUD::OnManaChanged(const FOnAttributeChangeData& Data)
+void UPlayerHUD::OnStaminaChanged(const FOnAttributeChangeData &Data)
 {
-    if (!AttributeSetRef) return;
+       if (!AttributeSetRef) return;
 
-    float MaxMana = AttributeSetRef->GetMaxManaBase();
-    float NewMana = Data.NewValue;
+       float MaxStamina = AttributeSetRef->GetMaxStaminaBase();
+       float NewMana = Data.NewValue;
 
-    SetProgressBar(EStat::MP, MaxMana, NewMana);
-}
-
-void UPlayerHUD::OnStaminaChanged(const FOnAttributeChangeData& Data)
-{
-    if (!AttributeSetRef) return;
-
-    float MaxStamina = AttributeSetRef->GetMaxStaminaBase();
-    float NewMana = Data.NewValue;
-
-    SetProgressBar(EStat::Stamina, MaxStamina, NewMana);
+       SetProgressBar(EStat::Stamina, MaxStamina, NewMana);
 }
 
 void UPlayerHUD::SetProgressBar(EStat ChangedStat, float Max, float Current)
 {
-    switch (ChangedStat)
+       switch (ChangedStat)
+    
     {
-    case EStat::HP:
-        HP_Bar->SetPercent(Current / Max);
-        break;
+       case EStat::HP:
+               HP_Bar->SetPercent(Current / Max);
+               break;
 
-    case EStat::MP:
-        MP_Bar->SetPercent(Current / Max);
-        break;
+       case EStat::MP:
+               MP_Bar->SetPercent(Current / Max);
+               break;
 
-    case EStat::Stamina:
-        Stamina_Bar->SetPercent(Current / Max);
-        break;
+       case EStat::Stamina:
+               Stamina_Bar->SetPercent(Current / Max);
+               break;
+           
     }
-    return;
-}
-
-void UPlayerHUD::ChangeFragment(int32 NewCurrency, EElementalType CurrencyType)
-{
-    UE_LOG(LogTemp, Warning, TEXT("%d"), NewCurrency);
-
-    USOWGameInstance* GI = Cast<USOWGameInstance>(GetWorld()->GetGameInstance());
-    UOneTimeCurrencyManager* OCM = GI->GetOneTimeCurrencyManager();
-
-    TXT_Fragment->SetText(FText::AsNumber(OCM->GetCurrency(EElementalType::Nature)));
+       return;
 }
