@@ -11,10 +11,13 @@
 #include "AbilitySystem/SOWAbilitySystemComponent.h"
 #include "Projectile/Turret/TurretProjectileBase.h"
 #include "AbilitySystem/SOWAttributeSet.h"
+#include "AbilitySystemBlueprintLibrary.h"
 
 #include "SOWBlueprintFunctionLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
 #include "SOWEnumTypes.h"
+#include "Tile/TileBase.h"
 
 
 USOWTurretCombatComponent::USOWTurretCombatComponent()
@@ -103,6 +106,20 @@ void USOWTurretCombatComponent::AddNewTargetPriority(ETurretTargetSelectionPrior
 {
 	TurretSettablePriority.AddUnique(NewPriority);
 	PriorityChange();
+}
+
+void USOWTurretCombatComponent::VisualizeTurretDetectionRange(bool bOn)
+{
+	if (bOn) {
+		for (ATileBase* Tile : DetectorTiles) {
+			Tile->ShowRange();
+		}
+	}
+	else {
+		for (ATileBase* Tile : DetectorTiles) {
+			Tile->HideRange();
+		}
+	}
 }
 
 float USOWTurretCombatComponent::GetProjectileLivingTime() const
@@ -199,6 +216,31 @@ void USOWTurretCombatComponent::SetNewTargetSelectCount(int32 NewCount)
 
 void USOWTurretCombatComponent::ActivateTurretFunction()
 {
+
+	APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
+	float Radius = 2 * CachedOwnerCharacter->GetDetectionRangeRadius() + 1;
+	float TileSize = 116.f;
+
+	FVector CPoint = USOWBlueprintFunctionLibrary::MakeCentralTileLocationFromAnyPoint(
+		PC,
+		CachedOwnerCharacter->GetActorLocation(),
+		ETileSelectType::SQUARED,
+		Radius,
+		TileSize,
+		true);
+
+	DetectorTiles = USOWBlueprintFunctionLibrary::GetTilesAsSquaredFromCenterLocation(
+		PC,
+		CPoint,
+		Radius,
+		TileSize);
+
+	UE_LOG(LogTemp, Warning, TEXT("Tile Count : %s"), *FString::FromInt(DetectorTiles.Num()));
+	RefreshTurretFunction();
+}
+
+void USOWTurretCombatComponent::RefreshTurretFunction()
+{
 	bool bIsFixedCooldown = (AbilityTagToActivation == SOWGameplayTags::Turret_Ability_Attack);
 
 	const float NewCooldownTime = bIsFixedCooldown ? GetAttackCooldownTimeFromOwner() : 3.f;
@@ -213,7 +255,7 @@ void USOWTurretCombatComponent::ActivateTurretFunction()
 			&USOWTurretCombatComponent::AttackAbilityActivation,
 			NewCooldownTime,
 			true,
-			0.1f
+			NewCooldownTime
 		);
 
 		M_CachedCooldownTime = NewCooldownTime;
@@ -239,26 +281,29 @@ bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 
 	if (!CachedOwnerCharacter) return (bTargetFound = false);
 
-	UKismetSystemLibrary::SphereOverlapActors(
-		GetWorld(),
-		CachedOwnerCharacter->GetActorLocation(),
-		CachedOwnerCharacter->GetDetectionRangeRadius(),
-		ObjectTypes,
-		nullptr,
-		TArray<AActor*>(),
-		L_DetectableActors
-	);
+	FVector TurretPosition = CachedOwnerCharacter->GetActorLocation();
+	FVector Start = TurretPosition + FVector(0, 0, 500.f);
+	FVector End = TurretPosition + FVector(0, 0, -500.f);
+
+	APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
+
+	FHitResult TileHit;
+
+	L_DetectableActors = USOWBlueprintFunctionLibrary::GetActorsOnTiles(DetectorTiles);
 
 	for (AActor* CurrentTarget : L_DetectableActors) {
 
-		if (!IsActorValidTarget(CurrentTarget)) continue;
+		if (!IsActorValidTarget(CurrentTarget) || 
+			!CurrentTarget->Implements<USOWCharacterTypeInterface>() || 
+			CurrentTarget == CachedOwnerCharacter) 
+			continue;
 		
 		ISOWCharacterTypeInterface* SOWCharacter = Cast<ISOWCharacterTypeInterface>(CurrentTarget);
 		ESOWCharacterType TargetType = SOWCharacter->GetSOWCharacterType();
 
 		AddActorMatchesTargetingPolicy(CurrentTarget, TargetType);
 	}
-	ActivateTurretFunction(); // -> Reactivate if cooldowntime has been updated.
+	
 	return bTargetFound = !DetectedTargetActors.IsEmpty() || 
 		TurretTargetSelectionPriority == ETurretTargetSelectionPriority::LocationFixed || 
 		TurretTargetSelectionPriority == ETurretTargetSelectionPriority::TargetFixed;
@@ -318,7 +363,7 @@ AActor* USOWTurretCombatComponent::GetSingleAttackTargetOnList(const TArray<AAct
 		//UE_LOG(LogTemp, Warning, TEXT("HighAttack / Target : %s"), *FinalTarget->GetActorNameOrLabel());
 		break;
 	case ETurretTargetSelectionPriority::Nearest:
-		CriticValue = CachedOwnerCharacter->GetDetectionRangeRadius() * 2.f;
+		CriticValue = 10000.f;
 
 		for (AActor* ATarget : InTargetList) {
 			TargetValue = FVector::Dist(TurretLocation, ATarget->GetActorLocation());
@@ -366,17 +411,23 @@ TArray<AActor*> USOWTurretCombatComponent::GetAllAttackTarget()
 		BaseActorList += DetectedTargetActors;
 	}
 
+	for (AActor* Actor : BaseActorList) {
+		UE_LOG(LogTemp, Warning, TEXT("Base Actor : %s"), *Actor->GetActorNameOrLabel());
+	}
+
 	for (int i = 0; i < TargetSelectCount; i++) {
 		if (BaseActorList.Num() <= 0) break;
 
 		AActor* CurrentTarget = GetSingleAttackTargetOnList(BaseActorList);
 		if (!CurrentTarget) break;
 
-		if (FVector::Distance(CurrentTarget->GetActorLocation(), CachedOwnerCharacter->GetActorLocation()) <= CachedOwnerCharacter->GetDetectionRangeRadius()) {
-			FinalTargetList.AddUnique(CurrentTarget);
-		}
+		FinalTargetList.AddUnique(CurrentTarget);
 		
 		BaseActorList.Remove(CurrentTarget); // 더 효율적인 제거 방식
+	}
+
+	for (AActor* Actor : FinalTargetList) {
+		UE_LOG(LogTemp, Warning, TEXT("Final Actor : %s"), *Actor->GetActorNameOrLabel());
 	}
 
 	return FinalTargetList;
@@ -475,30 +526,28 @@ void USOWTurretCombatComponent::AttackAbilityActivation()
 		//UE_LOG(LogTemp, Warning, TEXT("No Valid Actor Found"));
 		return;
 	} 
-
+	
 	CachedOwnerCharacter->TryActivateAbilityWithTagOnASC(AbilityTagToActivation);
+
+	RefreshTurretFunction(); // -> Reactivate if cooldowntime has been updated.
 }
 
 bool USOWTurretCombatComponent::IsActorValidTarget(AActor* InActor)
 {
 	// if target actor is equal to self or selection policy is uncertain, otherwise the actor has dead state, 
 	// then it can not be a target for the turret
+	if (!InActor->Implements<USOWCharacterTypeInterface>()) return false;
 
-	if (TurretTargetSelectionPolicy == ETurretTargetSelectionPolicy::Uncertain) {
-		return false;
-	} 
+	if (TurretTargetSelectionPolicy == ETurretTargetSelectionPolicy::Uncertain) return false;
+
 	// Case 1. Policy was not selected
 
-	if (InActor == GetOwner()) {
-		return false;
-	} 
+	if (InActor == GetOwner()) return false;
 	// Case 2. Detected target is itself
 
-	if (USOWBlueprintFunctionLibrary::NativeDoesActorHasTag(InActor, SOWGameplayTags::Shared_Status_Dead)) {
-		return false;
-	}
+	if (USOWBlueprintFunctionLibrary::NativeDoesActorHasTag(InActor, SOWGameplayTags::Shared_Status_Dead)) return false;
+	
 	// Case 3. Target actor has dead
-
 	return true;
 }
 

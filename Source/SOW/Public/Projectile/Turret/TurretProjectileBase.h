@@ -29,7 +29,11 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category = "Projectile")
 	bool IsHostileTarget(AActor* Target);
+
+	
 private:
+
+	
 
 #pragma region InternalProperties
 	TWeakObjectPtr<ASOWCharacterTurretBase> CachedInstigator;	// if projectile needs to check instigator several time, it must call GetInstigator() too.

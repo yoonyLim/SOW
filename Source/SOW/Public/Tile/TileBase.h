@@ -46,6 +46,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Summon")
 	ETileSummonState TileState;
 
+	///  added by pgh
+	void ShowRange();
+	void HideRange();
+	///  added by pgh
+
 protected:
 	virtual void BeginPlay() override;
 

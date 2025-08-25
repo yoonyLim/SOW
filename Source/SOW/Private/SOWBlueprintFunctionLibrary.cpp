@@ -11,8 +11,13 @@
 #include "AbilitySystem/SOWAbilitySystemComponent.h"
 #include "AIController.h"
 #include "SOWGameInstance.h"
+#include "Tile/TileBase.h"
+#include "Engine/OverlapResult.h"
 #include "Manager/GlobalCurrencyManager.h"
 #include "Manager/OneTimeCurrencyManager.h"
+#include "Components/BoxComponent.h"
+
+#include "DrawDebugHelpers.h"
 
 USOWAbilitySystemComponent* USOWBlueprintFunctionLibrary::NativeGetSOWAbilitySystemComponentFromActorInfo(AActor* InActor)
 {
@@ -185,4 +190,256 @@ EElementalType USOWBlueprintFunctionLibrary::TranslateElementTagToEnum(const FGa
         return EElementalType::Normal;
     }
 
+}
+
+TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAroundMouse(APlayerController* PlayerController, const ETileSelectType TileSelectionType, const int32 N, const float TileSize = 83.f)
+{
+    TArray<ATileBase*> SelectedTiles;
+
+    if (!PlayerController || N <= 0) return SelectedTiles;
+
+    float MouseX, MouseY;
+    if (!PlayerController->GetMousePosition(MouseX, MouseY)) return SelectedTiles;
+
+    FVector WorldOrigin, WorldDirection;
+    if (!PlayerController->DeprojectScreenPositionToWorld(MouseX, MouseY, WorldOrigin, WorldDirection)) return SelectedTiles;
+
+    FVector TraceStart = WorldOrigin;
+    FVector TraceEnd = TraceStart + (WorldDirection * 10000.f);
+
+    FHitResult Hit;
+    FCollisionQueryParams Params;
+    Params.bReturnPhysicalMaterial = false;
+
+    if (!PlayerController->GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_Camera, Params)) return SelectedTiles;
+
+    AActor* CenterTile = Hit.GetActor();
+    if (!CenterTile) return SelectedTiles;
+
+    FVector CenterLocation = Hit.GetActor()->GetActorLocation();
+
+    CenterLocation = MakeCentralTileLocationFromAnyPoint(PlayerController, CenterLocation, TileSelectionType, N, TileSize, true);
+   
+
+    switch (TileSelectionType)
+    {
+    case ETileSelectType::SQUARED:
+        return GetTilesAsSquaredFromCenterLocation(PlayerController, CenterLocation, N, TileSize);
+    case ETileSelectType::STRAIGHT:
+        return GetTilesAsStraightFromCenterLocation(PlayerController, CenterLocation, N, TileSize, true);
+    default:
+        break;
+    }
+    return TArray< ATileBase*>();
+}
+
+FVector USOWBlueprintFunctionLibrary::MakeCentralTileLocationFromAnyPoint(APlayerController* PlayerController, FVector AnyPoint, const ETileSelectType TileSelectionType, const int32 N, const float TileSize, bool bRot)
+{
+    FVector CenterLocation = FVector::ZeroVector;
+
+    FVector TraceStart = AnyPoint;
+    FVector TraceEnd = AnyPoint + (FVector(0,0,-1) * 10000.f);
+
+    FHitResult Hit;
+    FCollisionQueryParams Params;
+    Params.bReturnPhysicalMaterial = false;
+
+    if (!PlayerController->GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_Visibility, Params)) return FVector::ZeroVector;
+    CenterLocation = Hit.ImpactPoint;
+
+
+    switch (TileSelectionType)
+    {
+        case ETileSelectType::SQUARED:
+            if (N % 2 == 0) {
+                float DotMax = 0;
+                int32 dx[] = { -1,0,1,0 };
+                int32 dy[] = { 0,1,0,-1 };
+                FVector CenterPos;
+
+                for (int i = 0; i < 4; i++) {
+                    FVector Pivot = FVector(TileSize * dx[i], TileSize * dy[i], 0);
+                    float Dot = FVector::DotProduct(AnyPoint, Pivot);
+
+                    if (Dot >= DotMax) {
+                        DotMax = Dot;
+                        CenterPos = CenterLocation + Pivot;
+                    }
+                }
+                CenterLocation = CenterPos;
+            }
+            else {
+                CenterLocation = Hit.GetActor()->GetActorLocation();
+            }
+            break;
+
+        case ETileSelectType::STRAIGHT:
+            if (N % 2 == 0) {
+                float DotMax = 0;
+                int32 dx[2] ,dy[2];
+                FVector CenterPos;
+
+                if (bRot) {
+                    dx[0] = 1; dx[1] = -1;
+                    dy[0] = 1; dy[1] = -1;
+                }
+                else {
+                    dx[0] = -1; dx[1] = 1;
+                    dy[0] = 1; dy[1] = -1;
+                }
+
+                for (int i = 0; i < 2; i++) {
+                    FVector Pivot = FVector(TileSize * dx[i] / 2.f, TileSize * dy[i] / 2.f , 0);
+                    float Dot = FVector::DotProduct(AnyPoint, Pivot);
+
+                    if (Dot >= DotMax) {
+                        DotMax = Dot;
+                        CenterPos = CenterLocation + Pivot;
+                    }
+                }
+                CenterLocation = CenterPos;
+            }
+            else {
+                CenterLocation = Hit.GetActor()->GetActorLocation();
+            }
+            break;
+    }
+    UE_LOG(LogTemp, Warning, TEXT("Central Position : %s, %s, %s"), *FString::SanitizeFloat(CenterLocation.X), *FString::SanitizeFloat(CenterLocation.Y), *FString::SanitizeFloat(CenterLocation.Z));
+    return CenterLocation;
+}
+
+TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAsSquaredFromCenterLocation(APlayerController* PlayerController, FVector CenterPosition, const int32 N, const float TileSize)
+{
+    // Get Tiles Around Center Tile Location.
+    // If N is odd, center position must be the center coordinates of the tile.
+    // else, it should be the vertex closest to the center coordinates.
+
+    TArray<ATileBase*> SelectedTiles;
+
+    FCollisionQueryParams Params;
+    Params.bReturnPhysicalMaterial = false;
+
+    FVector RightOffset(0, TileSize, 0.f);
+    FVector DownOffset(-TileSize, 0, 0.f);
+    FVector OriginOffset = CenterPosition - N/2 * FVector(- TileSize , TileSize, 0);
+    if (N % 2 == 0) {
+        // 3-1. N이 짝수 일 경우 중심 위치 조정
+        OriginOffset += FVector(-TileSize/2, TileSize/2, 0);
+    }
+    FVector CurrentOffset = OriginOffset;
+
+    for (int32 X = 0; X < N; X++)
+    {
+        for (int32 Y = 0; Y < N; Y++)
+        {
+
+            FVector Start = CurrentOffset + FVector(0, 0, 500.f) + Y * RightOffset;
+            FVector End = CurrentOffset + FVector(0, 0, -500.f) + Y * RightOffset;
+
+            FHitResult TileHit;
+            if (PlayerController->GetWorld()->LineTraceSingleByChannel(TileHit, End, Start, ECC_Visibility, Params))
+            {
+                if (TileHit.GetActor() && !SelectedTiles.Contains(TileHit.GetActor()))
+                {
+                    SelectedTiles.AddUnique(Cast<ATileBase>(TileHit.GetActor()));
+                }
+            }
+        }
+        CurrentOffset += DownOffset;
+    }
+    return SelectedTiles;
+}
+
+TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAsStraightFromCenterLocation(APlayerController* PlayerController, FVector CenterPosition, const int32 N, const float TileSize, bool bRot)
+{
+    TArray<ATileBase*> SelectedTiles;
+    float SideLength = TileSize;
+
+    FCollisionQueryParams Params;
+    Params.bReturnPhysicalMaterial = false;
+
+    FVector CriticVector = FVector(TileSize, 0, 0) + (bRot ? 1 : -1) * FVector(0, TileSize, 0);
+
+    for (int32 X = 0; X <= N / 2; X++)
+    {
+        FVector StartRight = CenterPosition + FVector(0, 0, 500.f) + X * CriticVector - (N % 2 == 0 ? CriticVector/2 : FVector::ZeroVector);
+        FVector EndRight = CenterPosition + FVector(0, 0, -500.f) + X * CriticVector - (N % 2 == 0 ? CriticVector/2 : FVector::ZeroVector);
+
+        FHitResult TileHit;
+        if (PlayerController->GetWorld()->LineTraceSingleByChannel(TileHit, EndRight, StartRight, ECC_Visibility, Params))
+        {
+            if (TileHit.GetActor() && !SelectedTiles.Contains(TileHit.GetActor()))
+            {
+                SelectedTiles.AddUnique(Cast<ATileBase>(TileHit.GetActor()));
+            }
+        }
+
+        FVector StartLeft = CenterPosition + FVector(0, 0, 500.f) - X * CriticVector + (N % 2 == 0 ? CriticVector/2 : FVector::ZeroVector);
+        FVector EndLeft = CenterPosition + FVector(0, 0, -500.f) - X * CriticVector + (N % 2 == 0 ? CriticVector/2 : FVector::ZeroVector);
+
+        if (PlayerController->GetWorld()->LineTraceSingleByChannel(TileHit, EndLeft, StartLeft, ECC_Visibility, Params))
+        {
+            if (TileHit.GetActor() && !SelectedTiles.Contains(TileHit.GetActor()))
+            {
+                SelectedTiles.AddUnique(Cast<ATileBase>(TileHit.GetActor()));
+            }
+        }
+    }
+    return SelectedTiles;
+}
+
+TArray<AActor*> USOWBlueprintFunctionLibrary::GetActorsOnTiles(TArray<ATileBase*> Tiles)
+{
+    TArray<AActor*> OnTileActors;
+
+    for (ATileBase* tile : Tiles) {
+
+        if (!tile) continue;
+        TArray<AActor*> OverlappedActors;
+
+        FVector TileCenter = tile->GetActorLocation(); 
+        float HalfExtent = 25.f;                       
+        float Height = 100.f;                          
+        FCollisionShape BoxShape = FCollisionShape::MakeBox(FVector(HalfExtent, HalfExtent, Height));
+
+
+
+        TArray<FOverlapResult> Overlaps;
+
+        // 충돌 쿼리 수행
+        bool bHasOverlap = tile->GetWorld()->OverlapMultiByChannel(
+            Overlaps,
+            TileCenter,              
+            FQuat::Identity,         
+            ECC_GameTraceChannel1,                
+            BoxShape
+        );
+
+       /* DrawDebugBox(
+            tile->GetWorld(),
+            TileCenter,                        
+            FVector(HalfExtent, HalfExtent, Height),  
+            FQuat::Identity,                  
+            FColor::Green,                     
+            false,                            
+            2.0f,                              
+            0,                                 
+            2.0f                               
+        );*/
+
+        if (bHasOverlap)
+        {
+            for (auto& Result : Overlaps)
+            {
+                AActor* HitActor = Result.GetActor();
+                if (HitActor)
+                {
+                    OnTileActors.AddUnique(HitActor);
+                }
+
+                
+            }
+        }
+    }
+    return OnTileActors;
 }

@@ -8,6 +8,7 @@
 
 
 
+
 USOWProjectilePoolingComponent::USOWProjectilePoolingComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -41,7 +42,7 @@ void USOWProjectilePoolingComponent::CreateAndFixPool(TSubclassOf<AProjectileBas
 	
 }
 
-AProjectileBase* USOWProjectilePoolingComponent::SpawnProjectile(const FTransform& SpawnTransform, ETurretTargetSelectionPolicy InPolicy, FGameplayEffectSpecHandle InHandle, bool InMovement, float InSpeed, float InDuration, float InScale)
+AProjectileBase* USOWProjectilePoolingComponent::SpawnProjectile(const FTransform& SpawnTransform, ETurretTargetSelectionPolicy InPolicy, FGameplayEffectSpecHandle InHandle, bool InMovement, float InSpeed, float InDuration, float InScale, ASOWCharacter* InTargetActor)
 {
 	// if you want to spawn projectile from pool, just use this function. 
 	// you need to assign other properties from owner turret or enemy
@@ -63,7 +64,7 @@ AProjectileBase* USOWProjectilePoolingComponent::SpawnProjectile(const FTransfor
 
 	AProjectileBase* Projectile = Pool->Pop();
 
-	Projectile->InitProjectileProperties(SpawnTransform, InPolicy, InHandle, InMovement, InSpeed, InDuration, InScale);
+	Projectile->InitProjectileProperties(SpawnTransform, InPolicy, InHandle, InMovement, InSpeed, InDuration, InScale, InTargetActor);
 	Projectile->SetPoolNumber(PoolNumber);
 
 	Projectile->SetActorTransform(SpawnTransform);
