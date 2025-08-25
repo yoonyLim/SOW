@@ -179,3 +179,12 @@ enum class EElementalType : uint8
 	Flame,
 	Max		UMETA(Hidden),
 };
+
+UENUM(BlueprintType)
+enum class ETileSummonState : uint8
+{
+	// added by : HJY
+	Available,
+	Unavailable,
+	Occupied,
+};

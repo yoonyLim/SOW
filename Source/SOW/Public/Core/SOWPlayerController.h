@@ -36,6 +36,10 @@ public:
     UPROPERTY(BlueprintAssignable, Category = "Summon")
     FOnSummmonEnd SummonEnd;
 
+    void InitTileMap(TArray<AActor*> SpawnedTileActors);
+
+    TArray<AActor*> GetTileMap() { return L_Tiles; }
+
 protected:
     ASOWPlayerController();
 
@@ -51,4 +55,7 @@ protected:
     TSubclassOf<ASOWCharacterTurretBase> TurretClass;
 
     bool bIsPlacingTurret = false;
+
+    UPROPERTY(BlueprintReadOnly)
+    TArray<AActor*> L_Tiles;
 };

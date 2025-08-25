@@ -24,7 +24,7 @@ ATileBase::ATileBase()
 	OverlayPlane->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	OverlayPlane->SetCastShadow(false);
 	OverlayPlane->SetRelativeLocation(FVector(0, 0, 0.1f));    
-	OverlayPlane->SetRelativeRotation(FRotator(0.f, 45.f, 0.f));
+	OverlayPlane->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
 	OverlayPlane->SetVisibility(false);
 }
 
@@ -44,6 +44,15 @@ void ATileBase::BeginPlay()
 
 	PC->SummonEnd.AddDynamic(this, &ATileBase::DeActivateTileMask);
 	PC->SummonStart.AddDynamic(this, &ATileBase::ShowTileMask);
+
+	if (!bCanPlace)
+	{
+		TileState = ETileSummonState::Unavailable;
+	}
+	else
+	{
+		TileState = ETileSummonState::Available;
+	}
 }
 
 void ATileBase::OnTransformToAlternate() {}
