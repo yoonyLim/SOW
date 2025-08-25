@@ -10,56 +10,63 @@
 /**
  * 
  */
+
+class ASOWCharacterTurretBase;
+class UDataTable;
+
+
+UENUM(BlueprintType)
+enum class ERarity : uint8
+{
+	// added by : HYJ
+	Common,
+	Rare,
+	Epic,
+};
+
+USTRUCT(BlueprintType)
+struct FSummonData : public FTableRowBase {
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName TurretName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ERarity Rarity;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<ASOWCharacterTurretBase> TurretClass;
+
+	bool operator==(const FSummonData& Other) const;
+};
+
 UCLASS()
 class SOW_API USummonManager : public UObject
 {
 	GENERATED_BODY()
 
 public:
+	UPROPERTY()
+	UDataTable* DT_SummonTurretProb;
+
+	UPROPERTY()
+	TArray<FSummonData> L_Common;
+
+	UPROPERTY()
+	TArray<FSummonData> L_Rare;
+
+	UPROPERTY()
+	TArray<FSummonData> L_Epic;
+
+public:
 	void Initialize();
 
 	UFUNCTION(BlueprintCallable)
-	void SetCircleLevel(FGameplayTag Element, uint8 CircleLevel);
-
-	UFUNCTION(BlueprintCallable)
-	uint8 GetCircleLevel(FGameplayTag Element);
-
-	UFUNCTION(BlueprintCallable)
-	uint8 GetCircle(FGameplayTag Element);
-
-	TMap<uint8, TArray<uint8>>* GetSpellCompMap(EElementalType Element, uint8 Step);
+	bool TurretSummon();
 
 private:
-	TMap<FGameplayTag, uint8> M_CircleLevel;
+	void InitTurretArray();
 
-	TMap<uint8, TArray<uint8>> M_NatureSpellComp_1 = { {1, {1}}, {2, {2}}, {3, {4}}, {4, {1, 2, 4}} };
-	TMap<uint8, TArray<uint8>> M_NatureSpellComp_2 = { {11, {0}}, {22, {2, 4}}, {34, {0}}, {41, {2}}, {43, {4}}, {44, {1, 3}} };
-
-	TMap<uint8, TArray<uint8>> M_ElectroSpellComp_1 = { };
-	TMap<uint8, TArray<uint8>> M_ElectroSpellComp_2 = { };
-
-	TMap<uint8, TArray<uint8>> M_DeathSpellComp_1 = { };
-	TMap<uint8, TArray<uint8>> M_DeathSpellComp_2 = { };
-
-	TMap<uint8, TArray<uint8>> M_IceSpellComp_1 = { };
-	TMap<uint8, TArray<uint8>> M_IceSpellComp_2 = { };
-
-	TMap<uint8, TArray<uint8>> M_WaveSpellComp_1 = { };
-	TMap<uint8, TArray<uint8>> M_WaveSpellComp_2 = { };
-
-	TMap<uint8, TArray<uint8>> M_DivinitySpellComp_1 = { };
-	TMap<uint8, TArray<uint8>> M_DivinitySpellComp_2 = { };
-
-	TMap<uint8, TArray<uint8>> M_MadnessSpellComp_1 = { };
-	TMap<uint8, TArray<uint8>> M_MadnessSpellComp_2 = { };
-
-	TMap<uint8, TArray<uint8>> M_FlameSpellComp_1 = { };
-	TMap<uint8, TArray<uint8>> M_FlameSpellComp_2 = { };
-
-	TMap<uint8, TArray<uint8>> M_CircleProbability = { {1, {100, 0, 0, 0, 0}},
-													   {2, {75, 25, 0, 0, 0}},
-													   {3, {55, 30, 15, 0, 0}},
-													   {4, {30, 40, 25, 5, 0}},
-													   {5, {17, 24, 32, 24, 3}}
-	};
+	FSummonData RNG();
 };

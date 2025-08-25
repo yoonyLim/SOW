@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "GameFramework/Actor.h"
+#include "SOWEnumTypes.h"
 #include "TileBase.generated.h"
 
 UCLASS()
@@ -41,6 +42,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Summon")
 	bool bCanPlace = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Summon")
+	ETileSummonState TileState;
 
 protected:
 	virtual void BeginPlay() override;
