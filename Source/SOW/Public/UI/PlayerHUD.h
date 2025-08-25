@@ -14,63 +14,63 @@
 UCLASS()
 class SOW_API UPlayerHUD : public UUserWidget
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 	
 public:
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	class UProgressBar* HP_Bar;
+    UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+    class UProgressBar* HP_Bar;
 
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	class UProgressBar* MP_Bar;
+    UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+    class UProgressBar* MP_Bar;
 
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	class UProgressBar* Stamina_Bar;
+    UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+    class UProgressBar* Stamina_Bar;
 
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	class UImage* IMG_Selected_Skill_Icon;
+    UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+    class UImage* IMG_Selected_Skill_Icon;
 
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	class UHorizontalBox* Stacked_Buff_Icon_Box;
+    UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+    class UHorizontalBox* Stacked_Buff_Icon_Box;
 
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	class UHorizontalBox* Stacked_DeBuff_Icon_Box;
+    UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+    class UHorizontalBox* Stacked_DeBuff_Icon_Box;
 
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	class USkillSelectWidget* SkillSelectWidget;
+    UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+    class USkillSelectWidget* SkillSelectWidget;
 
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	class UTextBlock* TXT_Fragment;
+    UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+    class UTextBlock* TXT_Fragment;
 
 public:
-	void Init(class USOWAbilitySystemComponent* InASC);
+    void Init(class USOWAbilitySystemComponent* InASC);
 
-	FDelegateHandle HealthChangedHandle;
-	FDelegateHandle ManaChangedHandle;
-	FDelegateHandle StaminaChangedHandle;
+    FDelegateHandle HealthChangedHandle;
+    FDelegateHandle ManaChangedHandle;
+    FDelegateHandle StaminaChangedHandle;
 
 private:
-	void BindToASC(class USOWAbilitySystemComponent* InASC);
+    void BindToASC(class USOWAbilitySystemComponent* InASC);
 
-	void OnHealthChanged(const FOnAttributeChangeData& Data);
+    void OnHealthChanged(const FOnAttributeChangeData& Data);
 
-	void OnManaChanged(const FOnAttributeChangeData& Data);
+    void OnManaChanged(const FOnAttributeChangeData& Data);
 
-	void OnStaminaChanged(const FOnAttributeChangeData& Data);
+    void OnStaminaChanged(const FOnAttributeChangeData& Data);
 
-	void SetProgressBar(EStat ChangedStat, float Max, float Current);
+    void SetProgressBar(EStat ChangedStat, float Max, float Current);
 
-	UFUNCTION()
-	void ChangeFragment(int32 NewCurrency, EElementalType CurrencyType);
+    UFUNCTION()
+    void ChangeFragment(int32 NewCurrency, EElementalType CurrencyType);
 
 protected:
 
-	UPROPERTY()
-	const class USOWAttributeSet* AttributeSetRef;
+    UPROPERTY()
+    const class USOWAttributeSet* AttributeSetRef;
 
-	UPROPERTY()
-	class USOWAbilitySystemComponent* ASC;
+    UPROPERTY()
+    class USOWAbilitySystemComponent* ASC;
 
-	virtual void NativeConstruct();
+    virtual void NativeConstruct();
 
-	virtual void NativeDestruct();
+    virtual void NativeDestruct();
 };

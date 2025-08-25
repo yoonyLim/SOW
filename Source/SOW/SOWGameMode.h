@@ -14,6 +14,3 @@ class ASOWGameMode : public AGameModeBase
 public:
 	ASOWGameMode();
 };
-
-
-

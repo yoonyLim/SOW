@@ -1,8 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "SOWGameMode.h"
-#include "Characters/SOWCharacter.h"
 #include "UObject/ConstructorHelpers.h"
+#include "TimerManager.h"
 
 ASOWGameMode::ASOWGameMode()
 {
