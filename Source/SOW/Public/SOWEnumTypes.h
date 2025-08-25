@@ -190,3 +190,13 @@ enum class ETileSelectType : uint8 {
 	SQUARED		UMETA(DisplayName = "Squared"),
 	STRAIGHT	UMETA(DisplayName = "Straight")
 };
+};
+
+UENUM(BlueprintType)
+enum class ETileSummonState : uint8
+{
+	// added by : HJY
+	Available,
+	Unavailable,
+	Occupied,
+};
