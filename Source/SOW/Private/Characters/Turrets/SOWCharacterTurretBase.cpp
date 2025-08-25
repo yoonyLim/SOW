@@ -24,6 +24,7 @@
 
 #include "SOWEnumTypes.h"
 #include "SOWStructTypes.h"
+#include "AIController.h"
 
 #include "AbilitySystem/SOWAttributeSet.h"
 #include "Widget/SOWWidgetBase.h"
@@ -71,6 +72,21 @@ void ASOWCharacterTurretBase::BeginPlay()
 	if (USOWWidgetBase* HealthWidget = Cast<USOWWidgetBase>(HealthWidgetComponent->GetUserWidgetObject())) {
 		HealthWidget->InitTurretCreatedWidget(this);
 	}
+
+	/*UWorld* World = GetWorld();
+	if (World && !GetController())
+	{
+		AAIController* NewAIController = World->SpawnActor<AAIController>(
+			AIControllerClass,
+			GetActorLocation(),
+			GetActorRotation()
+		);
+
+		if (NewAIController)
+		{
+			NewAIController->Possess(this);
+		}
+	}*/
 }
 
 void ASOWCharacterTurretBase::PossessedBy(AController* NewController)
@@ -143,11 +159,13 @@ void ASOWCharacterTurretBase::OnGameplayTagChanged(const FGameplayTag Tag, int32
 
 void ASOWCharacterTurretBase::SwitchDetectionRangeDecal(bool On)
 {
-	DetectionRangeDecal->SetVisibility(false);
+	/*DetectionRangeDecal->SetVisibility(false);
 
 	float radius = GetDetectionRangeRadius();
 	DetectionRangeDecal->DecalSize = FVector(radius, radius, radius);
-	DetectionRangeDecal->SetVisibility(On);
+	DetectionRangeDecal->SetVisibility(On);*/
+
+	GetTurretCombatComponent()->VisualizeTurretDetectionRange(On);
 }
 
 

@@ -8,6 +8,7 @@
 #include "SOWProjectilePoolingComponent.generated.h"
 
 class AProjectileBase;
+class ASOWCharacter;
 struct FGameplayEffectSpecHandle;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -23,7 +24,7 @@ public:
 	void CreateAndFixPool(TSubclassOf<AProjectileBase> ProjectileClass, int32 PoolSize);
 
 	UFUNCTION(BlueprintCallable)
-	AProjectileBase* SpawnProjectile(const FTransform& SpawnTransform, ETurretTargetSelectionPolicy InPolicy, FGameplayEffectSpecHandle InHandle, bool InMovement, float InSpeed, float InDuration, float InScale);
+	AProjectileBase* SpawnProjectile(const FTransform& SpawnTransform, ETurretTargetSelectionPolicy InPolicy, FGameplayEffectSpecHandle InHandle, bool InMovement, float InSpeed, float InDuration, float InScale, ASOWCharacter* InTargetActor);
 
 	UFUNCTION(BlueprintCallable)
 	void ReturnProjectile(AProjectileBase* Projectile);

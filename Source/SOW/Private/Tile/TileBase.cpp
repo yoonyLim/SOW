@@ -28,6 +28,17 @@ ATileBase::ATileBase()
 	OverlayPlane->SetVisibility(false);
 }
 
+void ATileBase::ShowRange()
+{
+	OverlayMID->SetScalarParameterValue(TEXT("CanPlace"), bCanPlace ? 1.f : 0.f);
+	OverlayPlane->SetVisibility(true);
+}
+
+void ATileBase::HideRange()
+{
+	OverlayPlane->SetVisibility(false);
+}
+
 void ATileBase::BeginPlay()
 {
 	Super::BeginPlay();
