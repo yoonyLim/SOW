@@ -13,6 +13,7 @@ class UStaticMeshComponent;
 class UBoxComponent;
 class UProjectileMovementComponent;
 class UNiagaraComponent;
+class ASOWCharacter;
 
 UCLASS()
 class SOW_API AProjectileBase : public AActor
@@ -87,6 +88,9 @@ protected:
 	int PoolNumber;
 	bool InGame = false;
 
+
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile|Properties", meta = (ExposeOnSpawn = true))
+	AActor* TargetActor;
 #pragma endregion
 
 
@@ -102,6 +106,8 @@ protected:
 
 public:
 
+	virtual void Tick(float DeltaTime) override;
+
 #pragma region Getter
 	UFUNCTION(BlueprintPure, Category = "Projectile|Combat")
 	FGameplayEffectSpecHandle GetDamageSpecHandle() const;
@@ -113,7 +119,7 @@ public:
 	bool GetProjectileInGame() const;
 #pragma endregion
 	UFUNCTION(BlueprintCallable)
-	void InitProjectileProperties(FTransform InTransform, ETurretTargetSelectionPolicy InPolicy, FGameplayEffectSpecHandle InHandle, bool InMovement, float InSpeed, float InDuration, float InScale);
+	void InitProjectileProperties(FTransform InTransform, ETurretTargetSelectionPolicy InPolicy, FGameplayEffectSpecHandle InHandle, bool InMovement, float InSpeed, float InDuration, float InScale, ASOWCharacter* InTargetActor);
 
 	UFUNCTION(BlueprintCallable)
 	void SetPoolNumber(int InNumber);

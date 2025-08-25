@@ -11,6 +11,7 @@
 #include "AbilitySystem/SOWAbilitySystemComponent.h"
 #include "Projectile/Turret/TurretProjectileBase.h"
 #include "AbilitySystem/SOWAttributeSet.h"
+#include "AbilitySystemBlueprintLibrary.h"
 
 #include "SOWBlueprintFunctionLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -543,22 +544,18 @@ bool USOWTurretCombatComponent::IsActorValidTarget(AActor* InActor)
 {
 	// if target actor is equal to self or selection policy is uncertain, otherwise the actor has dead state, 
 	// then it can not be a target for the turret
+	if (!InActor->Implements<USOWCharacterTypeInterface>()) return false;
 
-	if (TurretTargetSelectionPolicy == ETurretTargetSelectionPolicy::Uncertain) {
-		return false;
-	} 
+	if (TurretTargetSelectionPolicy == ETurretTargetSelectionPolicy::Uncertain) return false;
+
 	// Case 1. Policy was not selected
 
-	if (InActor == GetOwner()) {
-		return false;
-	} 
+	if (InActor == GetOwner()) return false;
 	// Case 2. Detected target is itself
 
-	if (USOWBlueprintFunctionLibrary::NativeDoesActorHasTag(InActor, SOWGameplayTags::Shared_Status_Dead)) {
-		return false;
-	}
+	if (USOWBlueprintFunctionLibrary::NativeDoesActorHasTag(InActor, SOWGameplayTags::Shared_Status_Dead)) return false;
+	
 	// Case 3. Target actor has dead
-
 	return true;
 }
 

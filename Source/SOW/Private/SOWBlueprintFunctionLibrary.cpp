@@ -12,9 +12,12 @@
 #include "AIController.h"
 #include "SOWGameInstance.h"
 #include "Tile/TileBase.h"
+#include "Engine/OverlapResult.h"
 #include "Manager/GlobalCurrencyManager.h"
 #include "Manager/OneTimeCurrencyManager.h"
 #include "Components/BoxComponent.h"
+
+#include "DrawDebugHelpers.h"
 
 USOWAbilitySystemComponent* USOWBlueprintFunctionLibrary::NativeGetSOWAbilitySystemComponentFromActorInfo(AActor* InActor)
 {
@@ -214,6 +217,8 @@ TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAroundMouse(APlayerCont
     if (!CenterTile) return SelectedTiles;
 
     FVector CenterLocation = Hit.GetActor()->GetActorLocation();
+
+
     // Get Center Position
     /*if (N % 2 == 0) {
         float DotMax = 0;
@@ -409,38 +414,87 @@ TArray<AActor*> USOWBlueprintFunctionLibrary::GetActorsOnTiles(TArray<ATileBase*
     TArray<AActor*> OnTileActors;
 
     for (ATileBase* tile : Tiles) {
-        UBoxComponent* OverlapBox = NewObject<UBoxComponent>(tile);
-        
-        UE_LOG(LogTemp, Warning, TEXT("Component for %s : %s"), *tile ->GetActorNameOrLabel(), *OverlapBox->GetName());
-        // 크기 설정 (타일 변의 길이가 83*√2 라면 HalfExtent는 절반 값)
-        float ExtentSize = 50.f;
-        OverlapBox->SetBoxExtent(FVector(ExtentSize, ExtentSize, 20)); // Z는 임의 높이
-        OverlapBox->SetRelativeLocation(FVector(0, 0, 300.f)); // Z는 임의 높이
 
-        OverlapBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);        // 물리 충돌(Physics)은 안하고, 오버랩/트레이스만 감지
-        OverlapBox->SetCollisionObjectType(ECC_WorldDynamic);                // 객체 타입 설정 (보통 WorldDynamic)
-        OverlapBox->SetCollisionResponseToAllChannels(ECR_Ignore);           // 모든 채널 무시
-
-        OverlapBox->SetCollisionProfileName(TEXT("EnemyPawn"));
-        OverlapBox->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);    // Pawn에 대해서만 오버랩 감지
-        //OverlapBox->SetCollisionResponseToChannel(ECC_EnemyPawn, ECR_Overlap);    // Pawn에 대해서만 오버랩 감지
-
-        OverlapBox->bHiddenInGame = false;
-        //OverlapBox->SetRelativeRotation(FRotator(0.f, 45.f, 0.f));
-
-        // 활성화
-        OverlapBox->RegisterComponent();
-        OverlapBox->AttachToComponent(tile->GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-        // Overlap된 액터 가져오기
+        if (!tile) continue;
         TArray<AActor*> OverlappedActors;
-        OverlapBox->GetOverlappingActors(OverlappedActors, ASOWCharacter::StaticClass());
 
-        OverlapBox->DestroyComponent();
+        FVector TileCenter = tile->GetActorLocation(); // 타일 중심
+        float HalfExtent = 30.f;                       // 타일 반쪽 크기 (83√2/2 정도)
+        float Height = 100.f;                          // Z 높이 범위
+        FCollisionShape BoxShape = FCollisionShape::MakeBox(FVector(HalfExtent, HalfExtent, Height));
 
-        for (AActor* Actor : OverlappedActors) {
-            UE_LOG(LogTemp, Warning, TEXT("Detected Actor : %s"), *Actor->GetActorNameOrLabel());
-            OnTileActors.AddUnique(Actor);
+
+
+        TArray<FOverlapResult> Overlaps;
+
+        // 충돌 쿼리 수행
+        bool bHasOverlap = tile->GetWorld()->OverlapMultiByChannel(
+            Overlaps,
+            TileCenter,              // 중심 위치
+            FQuat::Identity,         // 회전 (마름모 형태라면 회전 필요)
+            ECC_GameTraceChannel1,                // 검사할 채널 (예: Pawn 또는 EnemyPawn 채널)
+            BoxShape
+        );
+
+        DrawDebugBox(
+            tile->GetWorld(),
+            TileCenter,                        // 중심 위치
+            FVector(HalfExtent, HalfExtent, Height),  // Box 크기
+            FQuat::Identity,                   // 회전 (마름모 회전 필요시 수정)
+            FColor::Green,                     // 색상
+            false,                             // 지속 여부 (true면 무한)
+            2.0f,                              // 지속 시간 (초 단위)
+            0,                                 // Depth Priority
+            2.0f                               // 선 두께
+        );
+
+        if (bHasOverlap)
+        {
+            for (auto& Result : Overlaps)
+            {
+                AActor* HitActor = Result.GetActor();
+                if (HitActor)
+                {
+                    UE_LOG(LogTemp, Warning, TEXT("Detected Actor on Tile %s : %s"),
+                        *tile->GetActorNameOrLabel(),
+                        *HitActor->GetActorNameOrLabel());
+                }
+
+                UE_LOG(LogTemp, Warning, TEXT("Detected Actor : %s"), *HitActor->GetActorNameOrLabel());
+                OnTileActors.AddUnique(HitActor);
+            }
         }
+
+        //UBoxComponent* OverlapBox = NewObject<UBoxComponent>(tile);
+        //UE_LOG(LogTemp, Warning, TEXT("Component for %s : %s"), *tile ->GetActorNameOrLabel(), *OverlapBox->GetName());
+        //// 크기 설정 (타일 변의 길이가 83*√2 라면 HalfExtent는 절반 값)
+        //float ExtentSize = 50.f;
+        //OverlapBox->SetBoxExtent(FVector(ExtentSize, ExtentSize, 20)); // Z는 임의 높이
+        //OverlapBox->SetRelativeLocation(FVector(0, 0, 300.f)); // Z는 임의 높이
+
+        //OverlapBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);        // 물리 충돌(Physics)은 안하고, 오버랩/트레이스만 감지
+        //OverlapBox->SetCollisionObjectType(ECC_WorldDynamic);                // 객체 타입 설정 (보통 WorldDynamic)
+        //OverlapBox->SetCollisionResponseToAllChannels(ECR_Ignore);           // 모든 채널 무시
+
+        //OverlapBox->SetCollisionProfileName(TEXT("EnemyPawn"));
+        //OverlapBox->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);    // Pawn에 대해서만 오버랩 감지
+        ////OverlapBox->SetCollisionResponseToChannel(ECC_EnemyPawn, ECR_Overlap);    // Pawn에 대해서만 오버랩 감지
+
+        //OverlapBox->bHiddenInGame = false;
+        ////OverlapBox->SetRelativeRotation(FRotator(0.f, 45.f, 0.f));
+
+        //// 활성화
+        //OverlapBox->RegisterComponent();
+        //OverlapBox->AttachToComponent(tile->GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+        //// Overlap된 액터 가져오기
+        //
+        //OverlapBox->GetOverlappingActors(OverlappedActors, ASOWCharacter::StaticClass());
+
+        //OverlapBox->DestroyComponent();
+
+        //for (AActor* Actor : OverlappedActors) {
+        //    OnTileActors.AddUnique(Actor);
+        //}
     }
     for (AActor* Actor : OnTileActors) {
         UE_LOG(LogTemp, Warning, TEXT("Final Actor : %s"), *Actor->GetActorNameOrLabel());

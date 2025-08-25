@@ -26,16 +26,20 @@ AProjectileBase::AProjectileBase()
 	ProjectileMeshComp->SetupAttachment(GetRootComponent());
 
 	ProjectileMoveComp = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile Movement"));
+	ProjectileMoveComp->bRotationFollowsVelocity = true;
+	//ProjectileMoveComp->bIsHomingProjectile = true;
 
 	ProjectileFxComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Projectile FX"));
 	ProjectileFxComp->SetupAttachment(GetRootComponent());
 }
 
-//void AProjectileBase::DeactivateMovement()
-//{
-//	ProjectileMoveComp->Deactivate();
-//	ProjectileFxComp->Deactivate();
-//}
+void AProjectileBase::Tick(float DeltaTime) {
+	Super::Tick(DeltaTime);
+
+	if (TargetActor) {
+		ProjectileMoveComp->Velocity = (TargetActor->GetActorLocation() - GetActorLocation()).GetSafeNormal() * ProjectileMoveComp->InitialSpeed;
+	}
+}
 
 void AProjectileBase::ActivateMovement()
 {
@@ -51,6 +55,9 @@ void AProjectileBase::ActivateMovement()
 void AProjectileBase::ResetProjectile()
 {
 	OverlappedActors.Empty();
+	/*ProjectileMoveComp->HomingTargetComponent = nullptr;
+	ProjectileMoveComp->bIsHomingProjectile = false;*/
+	TargetActor = nullptr;
 
 	if (ProjectileMoveComp)
 	{
@@ -79,17 +86,6 @@ void AProjectileBase::BP_DestroyProjectile()
 void AProjectileBase::BeginPlay()
 {
 	Super::BeginPlay();
-	FVector ScaledCollisionExtent = ProjectileHitCollisionComp->GetUnscaledBoxExtent() * ScaleRatio;
-	ProjectileHitCollisionComp->SetBoxExtent(ScaledCollisionExtent);
-	//ProjectileMoveComp->SetVelocityInLocalSpace(GetActorForwardVector() * Speed);
-	ProjectileMoveComp->InitialSpeed = Speed;
-	ProjectileMoveComp->MaxSpeed = Speed;
-	ProjectileMoveComp->SetVelocityInLocalSpace(FVector::ForwardVector * ProjectileMoveComp->InitialSpeed);
-
-	FVector ScaledMeshExtent = ProjectileMeshComp->GetRelativeScale3D() * ScaleRatio;
-	ProjectileMeshComp->SetWorldScale3D(FVector(ScaledMeshExtent.X, ScaledMeshExtent.Y, ScaledMeshExtent.Z));
-
-	//ProjectileMoveComp->bRotationFollowsVelocity = true;
 }
 
 FGameplayEffectSpecHandle AProjectileBase::GetDamageSpecHandle() const
@@ -107,11 +103,14 @@ bool AProjectileBase::GetProjectileInGame() const
 	return InGame;
 }
 
-void AProjectileBase::InitProjectileProperties(FTransform InTransform, ETurretTargetSelectionPolicy InPolicy, FGameplayEffectSpecHandle InHandle, bool InMovement, float InSpeed, float InDuration, float InScale)
+void AProjectileBase::InitProjectileProperties(FTransform InTransform, ETurretTargetSelectionPolicy InPolicy, FGameplayEffectSpecHandle InHandle, bool InMovement, float InSpeed, float InDuration, float InScale, ASOWCharacter* InTargetActor)
 {
 	OwnerPolicy = InPolicy;
 	OwnerDamageEffectSpecHandle = InHandle;
+	TargetActor = InTargetActor;
+
 	
+
 	if (OriginScaledCollisionExtent == FVector::ZeroVector) {
 		OriginScaledCollisionExtent = ProjectileHitCollisionComp->GetUnscaledBoxExtent();
 	}
@@ -122,6 +121,10 @@ void AProjectileBase::InitProjectileProperties(FTransform InTransform, ETurretTa
 	ProjectileMoveComp->InitialSpeed = InSpeed;
 	ProjectileMoveComp->MaxSpeed = InSpeed;
 	ProjectileMoveComp->Velocity = InTransform.GetRotation().GetForwardVector() * ProjectileMoveComp->InitialSpeed;
+
+	//ProjectileMoveComp->bIsHomingProjectile = true;
+	//ProjectileMoveComp->HomingTargetComponent = TargetActor->GetRootComponent();
+	ProjectileMoveComp->HomingAccelerationMagnitude = 100.f;
 
 	if (OriginScaledMeshExtent == FVector::ZeroVector) {
 		OriginScaledMeshExtent = ProjectileMeshComp->GetRelativeScale3D();
