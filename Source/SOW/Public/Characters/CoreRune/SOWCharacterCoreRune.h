@@ -6,10 +6,10 @@
 #include "Characters/SOWCharacter.h"
 #include "SOWCharacterCoreRune.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCoreDestroyed);
+
 class UWidgetComponent;
 class USOWAttributeSet;
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCoreDestroyed);
 
 UCLASS()
 class SOW_API ASOWCharacterCoreRune : public ASOWCharacter
@@ -37,8 +37,7 @@ protected:
 	const USOWAttributeSet *ASCAttributes;
 
 	// 체력 변화 콜백 (ASC 바인딩)
-	UFUNCTION()
-	void OnHealthChanged(const FOnAttributeChangeData &Data);
+	void OnHealthChanged(const FOnAttributeChangeData& Data);
 
 	// 체력바 퍼센트 갱신
 	virtual void UpdateHealthBarValue(float NewHealth, float MaxHealth);

@@ -9,12 +9,13 @@
 #include "PlayerHUD.generated.h"
 
 /**
- * */
+ * 
+ */
 UCLASS()
 class SOW_API UPlayerHUD : public UUserWidget
 {
     GENERATED_BODY()
-    
+	
 public:
     UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
     class UProgressBar* HP_Bar;
@@ -37,6 +38,9 @@ public:
     UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
     class USkillSelectWidget* SkillSelectWidget;
 
+    UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+    class UTextBlock* TXT_Fragment;
+
 public:
     void Init(class USOWAbilitySystemComponent* InASC);
 
@@ -55,15 +59,18 @@ private:
 
     void SetProgressBar(EStat ChangedStat, float Max, float Current);
 
+    UFUNCTION()
+    void ChangeFragment(int32 NewCurrency, EElementalType CurrencyType);
+
 protected:
 
     UPROPERTY()
     const class USOWAttributeSet* AttributeSetRef;
 
     UPROPERTY()
-    class USOWAbilitySystemComponent* ASC
+    class USOWAbilitySystemComponent* ASC;
 
-	virtual void NativeConstruct();
+    virtual void NativeConstruct();
 
     virtual void NativeDestruct();
 };
