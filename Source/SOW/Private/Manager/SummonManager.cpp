@@ -111,6 +111,8 @@ bool USummonManager::TurretSummon()
 		
 			CT->TileState = ETileSummonState::Occupied;
 
+			OnSummonTurret.Broadcast(TurretToSummon);
+
 			return true;
 		}
 		else

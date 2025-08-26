@@ -9,70 +9,84 @@
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Components/StaticMeshComponent.h"
 #include "UObject/ConstructorHelpers.h"
+#include "Core/SOWPlayerController.h"
+
+#include "Utilities/MapScriptLoader.h"
+#include "Misc/Paths.h"
+#include "Misc/FileHelper.h"
 
 void ATileSpawner::BeginPlay()
 {
-	if (DefaultTileClass)
-	{
-		if (GridTiles.Num() < GridWidth * GridHeight)
-		{
-			GridTiles.SetNum(GridWidth * GridHeight);
-		}
-		for (int32 i = 0; i < GridTiles.Num(); ++i)
-		{
-			if (!GridTiles[i])
-			{
-				GridTiles[i] = DefaultTileClass;
-			}
-		}
-	}
 	Super::BeginPlay();
 
 	SpawnedTileLocations.Empty();
 	SpawnedEnemyRoutes.Empty();
+	SpawnedTileActors.Empty();
 
-	int32 EnemySpawnerIndexToSpawn = 0;
+	bool bBuiltOk = false;
 
-	for (int32 X = 0; X < GridWidth; ++X)
+	if (bUseExternalMapScript)
 	{
-		for (int32 Y = 0; Y < GridHeight; ++Y)
+		bBuiltOk = LoadAndBuildFromScript(MapScriptFile.FilePath);
+	}
+	else
+	{
+		if (DefaultTileClass)
 		{
-			const int32 Index = Y * GridWidth + X;
-
-			if (!GridTiles.IsValidIndex(Index) || !GridTiles[Index])
+			if (GridTiles.Num() < GridWidth * GridHeight)
 			{
-				continue;
+				GridTiles.SetNum(GridWidth * GridHeight);
 			}
-
-			FVector SpawnLocation = SOWTilePlacementHelper::GetTileWorldPosition(X, Y, TileWidth, TileHeight);
-			
-			if (GridTiles[Index] && GridTiles[Index]->GetName().Contains(TEXT("2x2")))
+			for (int32 i = 0; i < GridTiles.Num(); ++i)
 			{
-				SpawnLocation += FVector( 0, TileHeight, 0.0f);
-			}
-			
-			FRotator Rotation = FRotator(0.0f, 0.0f, 0.0f);
-
-			if (AActor* SpawnedTile = GetWorld()->SpawnActor<AActor>(GridTiles[Index], SpawnLocation, Rotation))
-			{
-				SpawnedTileActors.Add(SpawnedTile);
-				SpawnedTileLocations.Add(Index, SpawnLocation);
-
-				if (SpawnedTile->Implements<UGridTileInterface>())
+				if (!GridTiles[i])
 				{
-					if (EnemySpawnerIndexToSpawn < EnemySpawnerIndexInOrder.Num() && GridTiles[Index]->GetName().Contains(TEXT("Enemy")))
+					GridTiles[i] = DefaultTileClass;
+				}
+			}
+		}
+
+		int32 EnemySpawnerIndexToSpawn = 0;
+
+		for (int32 X = 0; X < GridWidth; ++X)
+		{
+			for (int32 Y = 0; Y < GridHeight; ++Y)
+			{
+				const int32 Index = Y * GridWidth + X;
+
+				if (!GridTiles.IsValidIndex(Index) || !GridTiles[Index])
+				{
+					continue;
+				}
+
+				FVector SpawnLocation = SOWTilePlacementHelper::GetTileWorldPosition(X, Y, TileWidth, TileHeight);
+
+				const FRotator Rotation = FRotator::ZeroRotator;
+
+				if (AActor* SpawnedTile = GetWorld()->SpawnActor<AActor>(GridTiles[Index], SpawnLocation, Rotation))
+				{
+					SpawnedTileActors.Add(SpawnedTile);
+					SpawnedTileLocations.Add(Index, SpawnLocation);
+
+					if (SpawnedTile->Implements<UGridTileInterface>())
 					{
-						IGridTileInterface::Execute_SetTileEnemySpawnerIndex(SpawnedTile, EnemySpawnerIndexInOrder[EnemySpawnerIndexToSpawn]); // Call the interface function
-						// UE_LOG(LogTemp, Error, TEXT("Enemy Spawner '%d' set."), EnemySpawnerIndexInOrder[EnemySpawnerIndexToSpawn]);
-						EnemySpawnerIndexToSpawn++;
-					}
-					else
-					{
-						UE_LOG(LogTemp, Error, TEXT("Enemy Spawner failed to set."));
+						if (EnemySpawnerIndexToSpawn < EnemySpawnerIndexInOrder.Num() && GridTiles[Index]->GetName().Contains(TEXT("Enemy")))
+						{
+							IGridTileInterface::Execute_SetTileEnemySpawnerIndex(SpawnedTile, EnemySpawnerIndexInOrder[EnemySpawnerIndexToSpawn]);
+							EnemySpawnerIndexToSpawn++;
+						}
 					}
 				}
 			}
 		}
+
+		bBuiltOk = (SpawnedTileActors.Num() > 0);
+	}
+
+	if (!bBuiltOk)
+	{
+		UE_LOG(LogTemp, Error, TEXT("TileSpawner: Tile build failed."));
+		return;
 	}
 
 	SpawnIncomingRoutes();
@@ -90,6 +104,7 @@ void ATileSpawner::BeginPlay()
 	{
 		SetupGradientPlaneAndMaterial(CenterWS, HalfSizeWorldXY);
 	}
+
 	const FVector Center = SOWTilePlacementHelper::GetTileWorldPosition((GridWidth - 1) / 2.0f, (GridHeight - 1) / 2.0f, TileWidth, TileHeight);
 	const FVector Extent = FVector(
 		(GridWidth * TileWidth * 0.5f) + TileWidth,
@@ -114,7 +129,7 @@ void ATileSpawner::BeginPlay()
 	{
 		Volume->SetActorLocation(Center);
 		Volume->SetActorScale3D(FVector(1.0f));
-		
+
 		if (Volume->GetRootComponent())
 			Volume->GetRootComponent()->SetWorldScale3D(Extent);
 	}
@@ -127,132 +142,138 @@ void ATileSpawner::BeginPlay()
 
 void ATileSpawner::SpawnIncomingRoutes()
 {
-	if (!EnemyIncomingRouteClass)
+	if (RoutesFromScript.Num() == 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("EnemyIncomingRouteClass is not set in ATileSpawner! Cannot spawn enemy routes."));
+		UE_LOG(LogTemp, Warning, TEXT("TileSpawner: [Routes] No routes defined in .ini; skipping."));
 		return;
 	}
-	
-	SpawnedEnemyRoutes.Empty(); 
 
-	for (int32 RouteIndex = 0; RouteIndex < CustomIncomingRoutes.Num(); ++RouteIndex)
+	if (!EnemyIncomingRouteClass)
 	{
-		const FIncomingRouteDefinition& CurrentRouteDefinition = CustomIncomingRoutes[RouteIndex];
-		const TArray<int32>& CurrentRouteIndices = CurrentRouteDefinition.TileIndices;
-		TArray<FVector> CurrentRouteWorldLocations;
+		UE_LOG(LogTemp, Warning, TEXT("TileSpawner: [Routes] EnemyIncomingRouteClass is not set; cannot spawn routes. "));
+		return;
+	}
 
-		for (const int32 TileIndex : CurrentRouteIndices)
+	for (AEnemyIncomingRoute* R : SpawnedEnemyRoutes)
+	{
+		if (IsValid(R)) { R->Destroy(); }
+	}
+
+	SpawnedEnemyRoutes.Reset();
+
+	for (int32 RouteIndex = 0; RouteIndex < RoutesFromScript.Num(); ++RouteIndex)
+	{
+		const FIncomingRouteDefinition& Def = RoutesFromScript[RouteIndex];
+
+		TArray<FVector> Points;
+		Points.Reserve(Def.TileIndices.Num());
+
+		for (int32 TileIndex : Def.TileIndices)
 		{
-			if (SpawnedTileLocations.Contains(TileIndex))
+			if (const FVector* P = SpawnedTileLocations.Find(TileIndex))
 			{
-				// FVector SpawnLocation = FVector(SpawnedTileLocations[TileIndex].X, SpawnedTileLocations[TileIndex].Y, SpawnedTileLocations[TileIndex].Z + 5.f);
-				CurrentRouteWorldLocations.Add(SpawnedTileLocations[TileIndex]);
+				Points.Add(*P);
 			}
 			else
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Tile index %d for route %d was not found in SpawnedTileLocations. Route may be incomplete."), TileIndex, RouteIndex);
+				UE_LOG(LogTemp, Warning, TEXT("TileSpawner: [Routes] '%s': TileIndex %d not found in SpawnedTileLocations"),
+					*Def.RouteName, TileIndex);
 			}
 		}
 
-		if (CurrentRouteWorldLocations.Num() > 1) // at least two points for a spline
+		if (Points.Num() < 2)
 		{
-			FActorSpawnParameters SpawnParams;
-			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-			SpawnParams.Owner = this;
-
-			AEnemyIncomingRoute* NewRouteActor = GetWorld()->SpawnActor<AEnemyIncomingRoute>(
-				EnemyIncomingRouteClass, 
-				FVector::ZeroVector, // Location doesn't matter much relative to spline points
-				FRotator::ZeroRotator, 
-				SpawnParams
-			);
-
-			if (NewRouteActor)
-			{
-				NewRouteActor->SetSplinePointsFromLocations(CurrentRouteWorldLocations);
-				// NewRouteActor->SetActorLabel(FString::Printf(TEXT("EnemyRoute_%d"), RouteIndex));
-				SpawnedEnemyRoutes.Add(NewRouteActor);
-				UE_LOG(LogTemp, Log, TEXT("Spawned EnemyIncomingRoute Actor for Route %d with %d points. Total routes: %d"), 
-					RouteIndex, CurrentRouteWorldLocations.Num(), SpawnedEnemyRoutes.Num());
-			}
-			else
-			{
-				UE_LOG(LogTemp, Error, TEXT("Failed to spawn AEnemyIncomingRoute actor for Route %d."), RouteIndex);
-			}
+			UE_LOG(LogTemp, Warning, TEXT("TileSpawner: [Routes] '%s': has only %d point(s). Skipped."),
+				*Def.RouteName, Points.Num());
+			continue;
 		}
-		else if (CurrentRouteWorldLocations.Num() > 0)
+
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		SpawnParams.Owner = this;
+
+		AEnemyIncomingRoute* Route = GetWorld()->SpawnActor<AEnemyIncomingRoute>(
+			EnemyIncomingRouteClass,
+			FVector::ZeroVector, // Location doesn't matter much relative to spline points
+			FRotator::ZeroRotator,
+			SpawnParams
+		);
+
+		if (!Route)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Route %d has only %d point(s). Skipping spline creation (requires > 1 point)."), RouteIndex, CurrentRouteWorldLocations.Num());
+			UE_LOG(LogTemp, Error, TEXT("[Routes] Failed to spawn route actor for '%s'."), *Def.RouteName);
+			continue;
 		}
+
+		Route->SetSplinePointsFromLocations(Points);
+		Route->SetActorLabel(Def.RouteName.IsEmpty() ? FString::Printf(TEXT("EnemyRoute_%d"), RouteIndex) : Def.RouteName);
+		SpawnedEnemyRoutes.Add(Route);
+
 	}
 }
 
-TArray<AEnemyIncomingRoute*> ATileSpawner::GetSpawnedEnemyRoutes() const
+TArray<TObjectPtr<AEnemyIncomingRoute>> ATileSpawner::GetSpawnedEnemyRoutes() const
 {
 	return SpawnedEnemyRoutes;
 }
 
 
-// 평면 자동 세팅 + 머티리얼 파라미터 주입
+// === 평면 자동 세팅 + 머티리얼 파라미터 주입 ===
+// 선언부(.h)도 함께 변경:
+// void SetupGradientPlaneAndMaterial(const FVector& CenterWS, float MapW, float MapH);
 void ATileSpawner::SetupGradientPlaneAndMaterial(const FVector& CenterWS, const FVector2D& HalfSizeWorldXY)
 {
-    UWorld* World = GetWorld();
-    if (!World) return;
+	UWorld* World = GetWorld();
+	if (!World) return;
 
-    if (!GradientPlaneMesh) {
-        static ConstructorHelpers::FObjectFinder<UStaticMesh> PlaneSM(TEXT("/Engine/BasicShapes/Plane.Plane"));
-        if (PlaneSM.Succeeded()) GradientPlaneMesh = PlaneSM.Object;
-    }
-    if (!GradientPlaneMesh) { UE_LOG(LogTemp, Warning, TEXT("GradientPlaneMesh is null.")); return; }
-    if (!GradientMaterial)  { UE_LOG(LogTemp, Warning, TEXT("GradientMaterial is null."));  return; }
+	if (!GradientPlaneMesh) {
+		static ConstructorHelpers::FObjectFinder<UStaticMesh> PlaneSM(TEXT("/Engine/BasicShapes/Plane.Plane"));
+		if (PlaneSM.Succeeded()) GradientPlaneMesh = PlaneSM.Object;
+	}
+	if (!GradientPlaneMesh) { UE_LOG(LogTemp, Warning, TEXT("GradientPlaneMesh is null.")); return; }
+	if (!GradientMaterial) { UE_LOG(LogTemp, Warning, TEXT("GradientMaterial is null."));  return; }
 
-    FActorSpawnParameters Params;
-    Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	FActorSpawnParameters Params;
+	Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-    // const FRotator PlaneRot = GetActorRotation() + FRotator(0.f, 45.f, 0.f); // 다이아 맵
-    const FVector PlaneLoc = CenterWS + FVector(0.f, 0.f, PlaneZOffset);
+	const FRotator PlaneRot = GetActorRotation() + FRotator(0.f, 45.f, 0.f); // 다이아 맵
+	const FVector  PlaneLoc = CenterWS + FVector(0.f, 0.f, PlaneZOffset);
 
-    GradientPlaneActor = World->SpawnActor<AStaticMeshActor>(AStaticMeshActor::StaticClass(), PlaneLoc, GetActorRotation(), Params);
-    if (!GradientPlaneActor) { UE_LOG(LogTemp, Error, TEXT("Failed to spawn GradientPlaneActor")); return; }
+	GradientPlaneActor = World->SpawnActor<AStaticMeshActor>(AStaticMeshActor::StaticClass(), PlaneLoc, PlaneRot, Params);
+	if (!GradientPlaneActor) { UE_LOG(LogTemp, Error, TEXT("Failed to spawn GradientPlaneActor")); return; }
 
-    UStaticMeshComponent* PlaneMC = GradientPlaneActor->GetStaticMeshComponent();
-    PlaneMC->SetStaticMesh(GradientPlaneMesh);
-    PlaneMC->SetMobility(EComponentMobility::Movable);
-    PlaneMC->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
-    PlaneMC->CastShadow = false;
-    PlaneMC->bRenderCustomDepth = false;
-    PlaneMC->SetMaterial(0, GradientMaterial);
+	UStaticMeshComponent* PlaneMC = GradientPlaneActor->GetStaticMeshComponent();
+	PlaneMC->SetStaticMesh(GradientPlaneMesh);
+	PlaneMC->SetMobility(EComponentMobility::Movable);
+	PlaneMC->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
+	PlaneMC->CastShadow = false;
+	PlaneMC->bRenderCustomDepth = false;
+	PlaneMC->SetMaterial(0, GradientMaterial);
 
-    // 평면 목표 크기 = 맵 + 양쪽 Softness 여유
-    const float TargetW = HalfSizeWorldXY.X * 5.f + 2.f * GradientSoftnessWorld;
-    const float TargetH = HalfSizeWorldXY.Y * 5.f + 2.f * GradientSoftnessWorld;
+	// 평면 목표 크기 = 맵 + 양쪽 Softness 여유
+	const float TargetW = HalfSizeWorldXY.X * 5.f + 2.f * GradientSoftnessWorld;
+	const float TargetH = HalfSizeWorldXY.Y * 5.f + 2.f * GradientSoftnessWorld;
 
-    const FVector SMSize = GradientPlaneMesh->GetBounds().BoxExtent * 2.f; // 로컬
-    const FVector NewScale(
-        TargetW / FMath::Max(1.f, SMSize.X),
-        TargetH / FMath::Max(1.f, SMSize.Y),
-        1.f
-    );
-    PlaneMC->SetWorldScale3D(NewScale);
+	const FVector SMSize = GradientPlaneMesh->GetBounds().BoxExtent * 2.f; // 로컬
+	const FVector NewScale(
+		TargetW / FMath::Max(1.f, SMSize.X),
+		TargetH / FMath::Max(1.f, SMSize.Y),
+		1.f
+	);
+	PlaneMC->SetWorldScale3D(NewScale);
 
-    // MID 생성 + 파라미터
-    UMaterialInstanceDynamic* Dyn =
-        PlaneMC->CreateAndSetMaterialInstanceDynamicFromMaterial(0, GradientMaterial);
-    if (!Dyn) { UE_LOG(LogTemp, Error, TEXT("Failed to create MID for GradientPlane.")); return; }
+	// MID 생성 + 파라미터
+	UMaterialInstanceDynamic* Dyn =
+		PlaneMC->CreateAndSetMaterialInstanceDynamicFromMaterial(0, GradientMaterial);
+	if (!Dyn) { UE_LOG(LogTemp, Error, TEXT("Failed to create MID for GradientPlane.")); return; }
 
-    // 머티리얼 내부에서 World→Local + ObjectScale 보정 사용 가정
-    Dyn->SetVectorParameterValue(TEXT("HalfSizeWorld"),
-        FLinearColor(HalfSizeWorldXY.X, HalfSizeWorldXY.Y, 0, 0));
-    Dyn->SetScalarParameterValue(TEXT("SoftnessWorld"), GradientSoftnessWorld);
+	// 머티리얼 내부에서 World→Local + ObjectScale 보정 사용 가정
+	Dyn->SetVectorParameterValue(TEXT("HalfSizeWorld"),
+		FLinearColor(HalfSizeWorldXY.X, HalfSizeWorldXY.Y, 0, 0));
+	Dyn->SetScalarParameterValue(TEXT("SoftnessWorld"), GradientSoftnessWorld);
 	Dyn->SetVectorParameterValue(TEXT("MapCenterWS"), FLinearColor(CenterWS.X, CenterWS.Y, CenterWS.Z, 0));
-	
-	// 머티리얼 내부 innerColor 나타나는 범위
-	Dyn->SetScalarParameterValue(TEXT("InnerRadiusColor"), GradientInnerRadius);
-	
-	// innercolor, outercolor 색상 지정
-	Dyn->SetVectorParameterValue(TEXT("InnerColor"), GradientInnerColor);
-	Dyn->SetVectorParameterValue(TEXT("OuterColor"), GradientOuterColor);
-	
+
+
 }
 
 
@@ -265,8 +286,8 @@ void ATileSpawner::ComputeMapBoundsFromTiles(
 {
 	if (TileCenters.Num() == 0) { OutCenterWS = FVector::ZeroVector; OutHalfSizeWorldXY = FVector2D::ZeroVector; return; }
 
-	float minX =  FLT_MAX, maxX = -FLT_MAX;
-	float minY =  FLT_MAX, maxY = -FLT_MAX;
+	float minX = FLT_MAX, maxX = -FLT_MAX;
+	float minY = FLT_MAX, maxY = -FLT_MAX;
 
 	for (const auto& It : TileCenters)
 	{
@@ -275,7 +296,7 @@ void ATileSpawner::ComputeMapBoundsFromTiles(
 		minY = FMath::Min(minY, P.Y);  maxY = FMath::Max(maxY, P.Y);
 	}
 
-	const float halfTileX = TileWidth  * 0.5f;   // 외곽 타일의 반쪽까지 포함
+	const float halfTileX = TileWidth * 0.5f;   // 외곽 타일의 반쪽까지 포함
 	const float halfTileY = TileHeight * 0.5f;
 
 	OutCenterWS.X = 0.5f * (minX + maxX);
@@ -283,4 +304,140 @@ void ATileSpawner::ComputeMapBoundsFromTiles(
 
 	OutHalfSizeWorldXY.X = 0.5f * (maxX - minX) + halfTileX;
 	OutHalfSizeWorldXY.Y = 0.5f * (maxY - minY) + halfTileY;
+}
+
+bool ATileSpawner::ResolveMapScriptPath(const FString& Input, FString& OutAbsPath)
+{
+	const FString BaseName = FPaths::GetCleanFilename(Input);
+
+	const FString NameNoExt = FPaths::GetBaseFilename(BaseName, false);
+	const FString FinalName = NameNoExt + TEXT(".ini");
+
+	OutAbsPath = FPaths::ConvertRelativePathToFull(
+		FPaths::ProjectContentDir() / TEXT("04Scripts/Map") / FinalName
+	);
+
+	return FPaths::FileExists(OutAbsPath);
+}
+
+bool ATileSpawner::LoadAndBuildFromScript(const FString& InFilePathRelOrAbs)
+{
+	FString AbsPath;
+	if (!ResolveMapScriptPath(InFilePathRelOrAbs, AbsPath))
+	{
+		UE_LOG(LogTemp, Error, TEXT("TileSpawner: [MapScript] File not found under Content/04Scripts/Map: %s"), *InFilePathRelOrAbs);
+		return false;
+	}
+
+	FLoadedMapSpec Spec;
+	FString Err;
+
+	if (!MapScriptLoader::LoadFromFile(AbsPath, Spec, Err))
+	{
+		UE_LOG(LogTemp, Error, TEXT("TileSpawner: [MapScript] Load failed: %s (%s)"), *Err, *AbsPath);
+		return false;
+	}
+
+	ClearSpawnedTiles();
+	RoutesFromScript.Reset();
+	RoutesFromScript.Reserve(Spec.EnemyRoutes.Num());
+
+	GridWidth = Spec.GridWidth;
+	GridHeight = Spec.GridHeight;
+	TileWidth = Spec.TileWidth;
+	TileHeight = Spec.TileHeight;
+
+	int32 EnemySpawnerIndexToSpawn = 0;
+
+	for (int32 Y = 0; Y < Spec.GridHeight; ++Y)
+	{
+		for (int32 X = 0; X < Spec.GridWidth; ++X)
+		{
+			const FName RawToken = Spec.GridTokens[Y][X];
+			const FName UseToken = RawToken.IsNone() ? Spec.DefaultToken : RawToken;
+
+			const TSoftClassPtr<AActor>* Found = Spec.TokenToClass.Find(UseToken);
+			const TSoftClassPtr<AActor>* Fallback = Spec.TokenToClass.Find(Spec.DefaultToken);
+
+			TSubclassOf<AActor> TileClass = nullptr;
+			if (Found && !Found->IsNull()) TileClass = Found->LoadSynchronous();
+			else if (Fallback && !Fallback->IsNull()) TileClass = Fallback->LoadSynchronous();
+
+			if (!TileClass)
+			{
+				UE_LOG(LogTemp, Error, TEXT("TileSpawner: [MapScript] Missing class '%s' (no default). Skip. "), *UseToken.ToString());
+				continue;
+			}
+
+			const int32 Index = Y * Spec.GridWidth + X;
+			const FVector SpawnLocation = SOWTilePlacementHelper::GetTileWorldPosition(X, Y, Spec.TileWidth, Spec.TileHeight);
+
+			FActorSpawnParameters Params;
+			Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+			AActor* SpawnedTile = GetWorld()->SpawnActor<AActor>(TileClass, SpawnLocation, FRotator::ZeroRotator);
+			if (!SpawnedTile) { continue; }
+
+			SpawnedTileActors.Add(SpawnedTile);
+			SpawnedTileLocations.Add(Index, SpawnLocation);
+
+			if (SpawnedTile->Implements<UGridTileInterface>() && UseToken == FName("ENEMY"))
+			{
+				if (EnemySpawnerIndexToSpawn < EnemySpawnerIndexInOrder.Num())
+				{
+					IGridTileInterface::Execute_SetTileEnemySpawnerIndex(
+						SpawnedTile, EnemySpawnerIndexInOrder[EnemySpawnerIndexToSpawn++]
+					);
+				}
+			}
+		}
+	}
+
+	for (const FEnemyRoute& R : Spec.EnemyRoutes)
+	{
+		FIncomingRouteDefinition Def;
+		Def.RouteName = R.RouteName.IsEmpty() ? TEXT("Route") : R.RouteName;
+
+		for (const FIntPoint& P : R.Points)
+		{
+			const int32 X = P.X;
+			const int32 Y = P.Y;
+
+			const int32 TileIndex = Y * Spec.GridWidth + X;
+			Def.TileIndices.Add(TileIndex);
+		}
+		RoutesFromScript.Add(MoveTemp(Def));
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("TileSpawner: [MapScript] Build %d x %d tiles from %s"), GridWidth, GridHeight, *AbsPath);
+
+	ASOWPlayerController* SOWPC = Cast<ASOWPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	SOWPC->InitTileMap(SpawnedTileActors);
+
+	return SpawnedTileActors.Num() > 0;
+}
+
+void ATileSpawner::ClearSpawnedTiles()
+{
+	if (GradientPlaneActor && IsValid(GradientPlaneActor))
+	{
+		GradientPlaneActor->Destroy();
+		GradientPlaneActor = nullptr;
+	}
+
+	for (AActor* A : SpawnedTileActors)
+	{
+		if (IsValid(A)) { A->Destroy(); }
+	}
+	SpawnedTileActors.Reset();
+	SpawnedTileLocations.Reset();
+}
+
+void ATileSpawner::ClearSpawnedRoutes()
+{
+	for (AEnemyIncomingRoute* R : SpawnedEnemyRoutes)
+	{
+		if (IsValid(R)) { R->Destroy(); }
+	}
+	SpawnedEnemyRoutes.Reset();
 }
