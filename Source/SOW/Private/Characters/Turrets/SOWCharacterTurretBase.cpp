@@ -45,48 +45,21 @@ ASOWCharacterTurretBase::ASOWCharacterTurretBase()
 
 	ProjectilePoolingComponent = CreateDefaultSubobject<USOWProjectilePoolingComponent>(TEXT("TurretProjectilePoolingComponent"));
 
-	HealthWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthWidgetComponent"));
-	HealthWidgetComponent->SetupAttachment(RootComponent);
-
 	CharacterType = ESOWCharacterType::Turret;
 
 	TurretUIComponent = CreateDefaultSubobject<USOWTurretUIComponent>(TEXT("TurretUIComponent"));
 
-	DetectionRangeDecal = CreateDefaultSubobject<UDecalComponent>(TEXT("DetectionRangeDecal"));
-	DetectionRangeDecal->SetupAttachment(RootComponent);
-	DetectionRangeDecal->SetRelativeRotation(FRotator(-90.f, 0.f, 0.f));
+	// for test
+	GetCapsuleComponent()->SetNotifyRigidBodyCollision(true);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+	GetCapsuleComponent()->OnBeginCursorOver.AddDynamic(this, &ASOWCharacterTurretBase::OnActorBeginCursorOver);
+	GetCapsuleComponent()->OnEndCursorOver.AddDynamic(this, &ASOWCharacterTurretBase::OnActorEndCursorOver);
 
-	ConstructorHelpers::FObjectFinder<UMaterialInterface> DecalMat(TEXT("/Game/03Materials/M_Range_Decal_Turret.M_Range_Decal_Turret"));
-	if (DecalMat.Succeeded())
-	{
-		DetectionRangeDecal->SetDecalMaterial(DecalMat.Object);
-	}
-	DetectionRangeDecal->SetVisibility(false);
-	
 }
 
 void ASOWCharacterTurretBase::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if (USOWWidgetBase* HealthWidget = Cast<USOWWidgetBase>(HealthWidgetComponent->GetUserWidgetObject())) {
-		HealthWidget->InitTurretCreatedWidget(this);
-	}
-
-	/*UWorld* World = GetWorld();
-	if (World && !GetController())
-	{
-		AAIController* NewAIController = World->SpawnActor<AAIController>(
-			AIControllerClass,
-			GetActorLocation(),
-			GetActorRotation()
-		);
-
-		if (NewAIController)
-		{
-			NewAIController->Possess(this);
-		}
-	}*/
 }
 
 void ASOWCharacterTurretBase::PossessedBy(AController* NewController)
@@ -149,6 +122,29 @@ void ASOWCharacterTurretBase::InitFromDataAsset()
 
 
 
+///  test
+void ASOWCharacterTurretBase::OnActorBeginCursorOver(UPrimitiveComponent* TouchedComponent)
+{
+	if (TurretUIComponent->OnMouseOver.IsBound())
+	{
+		TurretUIComponent->OnMouseOver.Broadcast(true);
+	}
+	UE_LOG(LogTemp, Log, TEXT("Mouse Over Character!"));
+}
+
+void ASOWCharacterTurretBase::OnActorEndCursorOver(UPrimitiveComponent* TouchedComponent)
+{
+	if (TurretUIComponent->OnMouseOver.IsBound())
+	{
+		TurretUIComponent->OnMouseOver.Broadcast(false);
+	}
+	UE_LOG(LogTemp, Log, TEXT("Mouse Leave Character!"));
+}
+///////////////
+
+
+
+
 void ASOWCharacterTurretBase::OnGameplayTagChanged(const FGameplayTag Tag, int32 NewCount)
 {
 	if (TurretUIComponent->OnTagChanged.IsBound()) {
@@ -159,12 +155,6 @@ void ASOWCharacterTurretBase::OnGameplayTagChanged(const FGameplayTag Tag, int32
 
 void ASOWCharacterTurretBase::SwitchDetectionRangeDecal(bool On)
 {
-	/*DetectionRangeDecal->SetVisibility(false);
-
-	float radius = GetDetectionRangeRadius();
-	DetectionRangeDecal->DecalSize = FVector(radius, radius, radius);
-	DetectionRangeDecal->SetVisibility(On);*/
-
 	GetTurretCombatComponent()->VisualizeTurretDetectionRange(On);
 }
 
@@ -223,7 +213,7 @@ FWidgetDescAtt ASOWCharacterTurretBase::GetWidgetAttributeChangeDelegate(const F
 
 void ASOWCharacterTurretBase::OnDetectionRangeChanged(const FOnAttributeChangeData& Data)
 {
-	SwitchDetectionRangeDecal(DetectionRangeDecal->GetVisibleFlag());
+	//SwitchDetectionRangeDecal(DetectionRangeDecal->GetVisibleFlag());
 }
 
 void ASOWCharacterTurretBase::Tick(float DeltaTime) {

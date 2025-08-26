@@ -112,18 +112,13 @@ protected:
 	USOWProjectilePoolingComponent* ProjectilePoolingComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
-	UWidgetComponent* HealthWidgetComponent;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
-	UWidgetComponent* ManaWidgetComponent;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
 	USOWTurretUIComponent* TurretUIComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Decal")
-	UDecalComponent* DetectionRangeDecal;
 
-
+	// for test
+	void OnActorBeginCursorOver(UPrimitiveComponent* TouchedComponent);
+	void OnActorEndCursorOver(UPrimitiveComponent* TouchedComponent);
+	// ////////////
 
 private:
 
