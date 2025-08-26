@@ -24,6 +24,14 @@ enum class ERarity : uint8
 	Epic,
 };
 
+UENUM(BlueprintType)
+enum class ETurretAttackType : uint8
+{
+	Melee,
+	Range,
+	Support,
+};
+
 USTRUCT(BlueprintType)
 struct FSummonData : public FTableRowBase {
 	GENERATED_BODY()
@@ -36,10 +44,15 @@ public:
 	ERarity Rarity;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ETurretAttackType TurretAttackType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<ASOWCharacterTurretBase> TurretClass;
 
 	bool operator==(const FSummonData& Other) const;
 };
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSummonTurret, const FSummonData&, TurretToSummon);
 
 UCLASS()
 class SOW_API USummonManager : public UObject
@@ -58,6 +71,9 @@ public:
 
 	UPROPERTY()
 	TArray<FSummonData> L_Epic;
+
+	UPROPERTY(BlueprintAssignable, Category = "Delegate")
+	FOnSummonTurret OnSummonTurret;
 
 public:
 	void Initialize();
