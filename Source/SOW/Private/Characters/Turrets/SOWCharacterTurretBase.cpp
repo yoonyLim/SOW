@@ -49,12 +49,6 @@ ASOWCharacterTurretBase::ASOWCharacterTurretBase()
 
 	TurretUIComponent = CreateDefaultSubobject<USOWTurretUIComponent>(TEXT("TurretUIComponent"));
 
-	// for test
-	GetCapsuleComponent()->SetNotifyRigidBodyCollision(true);
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
-	GetCapsuleComponent()->OnBeginCursorOver.AddDynamic(this, &ASOWCharacterTurretBase::OnActorBeginCursorOver);
-	GetCapsuleComponent()->OnEndCursorOver.AddDynamic(this, &ASOWCharacterTurretBase::OnActorEndCursorOver);
-
 }
 
 void ASOWCharacterTurretBase::BeginPlay()
@@ -119,31 +113,6 @@ void ASOWCharacterTurretBase::InitFromDataAsset()
 		)
 	);
 }
-
-
-
-///  test
-void ASOWCharacterTurretBase::OnActorBeginCursorOver(UPrimitiveComponent* TouchedComponent)
-{
-	if (TurretUIComponent->OnMouseOver.IsBound())
-	{
-		TurretUIComponent->OnMouseOver.Broadcast(true);
-	}
-	UE_LOG(LogTemp, Log, TEXT("Mouse Over Character!"));
-}
-
-void ASOWCharacterTurretBase::OnActorEndCursorOver(UPrimitiveComponent* TouchedComponent)
-{
-	if (TurretUIComponent->OnMouseOver.IsBound())
-	{
-		TurretUIComponent->OnMouseOver.Broadcast(false);
-	}
-	UE_LOG(LogTemp, Log, TEXT("Mouse Leave Character!"));
-}
-///////////////
-
-
-
 
 void ASOWCharacterTurretBase::OnGameplayTagChanged(const FGameplayTag Tag, int32 NewCount)
 {

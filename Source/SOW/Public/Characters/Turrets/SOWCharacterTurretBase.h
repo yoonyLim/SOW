@@ -114,12 +114,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
 	USOWTurretUIComponent* TurretUIComponent;
 
-
-	// for test
-	void OnActorBeginCursorOver(UPrimitiveComponent* TouchedComponent);
-	void OnActorEndCursorOver(UPrimitiveComponent* TouchedComponent);
-	// ////////////
-
 private:
 
 	UFUNCTION()
