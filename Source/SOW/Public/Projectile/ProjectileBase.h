@@ -89,6 +89,8 @@ protected:
 	bool InGame = false;
 
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile|Properties", meta = (ExposeOnSpawn = true))
+	bool bHitOnce = true;
 	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile|Properties", meta = (ExposeOnSpawn = true))
 	AActor* TargetActor;
 #pragma endregion
@@ -101,6 +103,7 @@ protected:
 
 	FVector OriginScaledCollisionExtent;
 	FVector OriginScaledMeshExtent;
+	
 #pragma endregion
 
 
