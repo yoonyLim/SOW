@@ -47,6 +47,9 @@ ASOWCharacterEnemyBase::ASOWCharacterEnemyBase()
 	// EnemyIncomingRouteComponent
 	EnemyIncomingRouteComponent = CreateDefaultSubobject<UEnemyIncomingRouteComponent>(TEXT("EnemyIncomingRouteComponent"));
 
+	GetCharacterMovement()->BrakingSubStepTime = 0.f;
+	GetCharacterMovement()->BrakingDecelerationWalking = 0.f;
+
 	// Set Healthbar Widget
 	HealthBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBar"));
 
