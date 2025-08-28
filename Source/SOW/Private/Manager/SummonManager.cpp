@@ -13,6 +13,8 @@
 #include "SOWBlueprintFunctionLibrary.h"
 #include "Characters/Turrets/SOWCharacterTurretBase.h"
 
+#include "AIController.h" // added by pgh
+
 static const TArray<int32> RarityWeights = { 83, 15, 2 }; // {common, rare, epic}
 
 bool FSummonData::operator==(const FSummonData& Other) const
@@ -109,6 +111,28 @@ bool USummonManager::TurretSummon()
 
 			ASOWCharacterTurretBase* NewTurret = GetWorld()->SpawnActor<ASOWCharacterTurretBase>(TurretToSummon.TurretClass, SpawnLoc, SpawnRotator, Params);
 		
+
+			// added by pgh
+			// possess AIController to Summoning Turret
+			if (NewTurret)
+			{
+				// AIController를 스폰하고 빙의
+				if (!NewTurret->GetController())
+				{
+					AAIController* AIController = GetWorld()->SpawnActor<AAIController>(
+						AAIController::StaticClass(),
+						SpawnLoc,
+						SpawnRotator
+					);
+
+					if (AIController)
+					{
+						AIController->Possess(NewTurret);
+					}
+				}
+			}
+			// end possessing code
+
 			CT->TileState = ETileSummonState::Occupied;
 
 			OnSummonTurret.Broadcast(TurretToSummon);
