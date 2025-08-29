@@ -55,8 +55,8 @@ void AProjectileBase::ResetProjectile()
 
 	if (ProjectileMoveComp)
 	{
-		ProjectileMoveComp->StopMovementImmediately();
-		ProjectileMoveComp->Velocity = FVector::ZeroVector;
+		//ProjectileMoveComp->StopMovementImmediately();
+		//ProjectileMoveComp->Velocity = FVector::ZeroVector;
 	}
 
 	// 콜리전 초기화

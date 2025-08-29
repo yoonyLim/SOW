@@ -51,4 +51,7 @@ public:
 
     UFUNCTION(BlueprintCallable)
     UOneTimeCurrencyManager* GetOneTimeCurrencyManager() { return OneTimeCurrencyManager; }
+
+    UFUNCTION(Exec)
+    void SummonTurret(FName TurretName);
 };

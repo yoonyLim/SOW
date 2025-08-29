@@ -42,6 +42,7 @@ bool USOWBlueprintFunctionLibrary::NativeDoesActorHasTag(AActor* InActor, FGamep
 
 bool USOWBlueprintFunctionLibrary::DoesActorHasTag(AActor* InActor, FGameplayTag InActorTag)
 {
+    if (!InActor) return false;
     if (!InActor->Implements<USOWCharacterTypeInterface>()) return false;
     return NativeDoesActorHasTag(InActor, InActorTag);
 }
@@ -444,3 +445,5 @@ TArray<AActor*> USOWBlueprintFunctionLibrary::GetActorsOnTiles(TArray<ATileBase*
     }
     return OnTileActors;
 }
+
+

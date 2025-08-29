@@ -35,11 +35,13 @@ void ATurretProjectileBase::Tick(float DeltaTime) {
 	if (!GetProjectileInGame()) return;
 
 	if (HasMovement) {
-		if (!TargetActor && bHitOnce) {
+		if ((!TargetActor || USOWBlueprintFunctionLibrary::DoesActorHasTag(TargetActor, SOWGameplayTags::Shared_Status_Dead)) && bHitOnce) {
 			BP_DestroyProjectile();
 		}
-
-		FaceToTargetActor();
+		else { 
+			FaceToTargetActor(); 
+		}
+		
 	}
 }
 
