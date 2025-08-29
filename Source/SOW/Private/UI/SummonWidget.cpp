@@ -14,10 +14,10 @@
 #include "UObject/UObjectGlobals.h" 
 #include "Animation/WidgetAnimation.h"
 #include "TimerManager.h"
-#include "Manager/SummonManager.h"
 #include "SOWGameInstance.h"
 #include "Core/SOWPlayerController.h"
 #include "Kismet/GameplayStatics.h"
+#include "UI/ToastStackWidget.h"
 
 
 void USummonWidget::NativeConstruct()
@@ -36,6 +36,29 @@ void USummonWidget::NativeConstruct()
 	}
 
 	if (BTN_Summon) BTN_Summon->OnClicked.AddDynamic(this, &USummonWidget::SummonTurret);
+
+	W_SummonNotiBox->OnBecameEmpty.AddLambda([this]()
+		{
+			W_SummonNotiBox->SetVisibility(ESlateVisibility::Collapsed);
+		});
+
+	if (USummonManager* SM = Cast<USOWGameInstance>(GetGameInstance())->GetSummonManager())
+	{
+		SM->OnSummonTurret.AddDynamic(this, &USummonWidget::OnTurretSummoned);
+	}
+}
+
+void USummonWidget::NativeDestruct()
+{
+	if (USOWGameInstance* GI = Cast<USOWGameInstance>(GetGameInstance()))
+	{
+		if (USummonManager* SM = GI->GetSummonManager())
+		{
+			SM->OnSummonTurret.RemoveDynamic(this, &USummonWidget::OnTurretSummoned);
+		}
+	}
+
+	Super::NativeDestruct();
 }
 
 void  USummonWidget::SummonTurret()
@@ -48,6 +71,21 @@ void  USummonWidget::SummonTurret()
 	{
 		UE_LOG(LogTemp, Error, TEXT("SummongWidget: Fail to Summon Turret"));
 	}
+}
+
+void USummonWidget::OnTurretSummoned(const FSummonData& TurretToSummon)
+{
+	if (!W_SummonNotiBox)
+	{
+		UE_LOG(LogTemp, Error, TEXT("SummongWidget: No SummonNotiBox"));
+		return;
+	}
+
+	if (W_SummonNotiBox->GetVisibility() == ESlateVisibility::Collapsed)
+	{
+		W_SummonNotiBox->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	}
+	W_SummonNotiBox->PushToast(TurretToSummon);
 }
 
 

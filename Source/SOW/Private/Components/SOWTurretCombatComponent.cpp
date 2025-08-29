@@ -127,7 +127,7 @@ float USOWTurretCombatComponent::GetProjectileLivingTime() const
 	float Duration;
 
 	if (HasProjectileMovement) {
-		Duration = ProjectileMoveSpeed / CachedOwnerCharacter->GetDetectionRangeRadius();
+		Duration = 0.5f;
 	}
 	else {
 		Duration = ProjectileLivingTime;
@@ -455,7 +455,23 @@ void USOWTurretCombatComponent::AddNewFixedLocation(const FVector NewLocation, E
 {
 	float Dist = FVector::Distance(NewLocation, CachedOwnerCharacter->GetActorLocation());
 
-	if (Dist > CachedOwnerCharacter->GetDetectionRangeRadius()) {
+	FVector TraceStart = NewLocation;
+	FVector TraceEnd = TraceStart + (FVector(0,0,-1) * 10000.f);
+
+	FHitResult Hit;
+	FCollisionQueryParams Params;
+	Params.bReturnPhysicalMaterial = false;
+
+	if (!GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_Camera, Params)) 
+	{
+		Error = ETargetFixErrorType::INVALID_TARGET;
+		return;
+	}
+
+	ATileBase* CenterTile = Cast<ATileBase>(Hit.GetActor());
+
+
+	if (DetectorTiles.Find(CenterTile) == -1) {
 		Error = ETargetFixErrorType::OUT_OF_RANGE;
 		return;
 	}
