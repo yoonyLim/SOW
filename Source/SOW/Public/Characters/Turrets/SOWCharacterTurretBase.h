@@ -54,6 +54,7 @@ public:
 	float GetAttackCooldownTime() const;										// Get Attack Delay From Attribute Set in Turret Base
 	int32 GetCircleCount() const { return CircleCount; };						// Get Circle Count when Turret Spawning Time
 	FName GetTurretName() const;												// Get Turret Name (enum) to FName
+	FName GetTurretRank() const;
 	FGameplayTag GetTurretElementTag() const;
 
 #pragma endregion
@@ -63,6 +64,9 @@ public:
 
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Turret Name"))
 	FName BP_GetTurretName() const;												// Get Turret Name in FName at Blueprint
+
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Turret Rank"))
+	FName BP_GetTurretRank() const;
 
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Turret Detection Range"))
 	float BP_GetDetectionRangeRadius() const;

@@ -3,8 +3,10 @@
 
 #include "Components/SOWProjectilePoolingComponent.h"
 #include "GameplayEffectTypes.h"
+#include "SOWBlueprintFunctionLibrary.h"
 #include "Projectile/ProjectileBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "SOWGameplayTags.h"
 
 
 
@@ -62,8 +64,9 @@ AProjectileBase* USOWProjectilePoolingComponent::SpawnProjectile(const FTransfor
 	}
 	
 
-	AProjectileBase* Projectile = Pool->Pop();
+	if (!InTargetActor) return nullptr;
 
+	AProjectileBase* Projectile = Pool->Pop();
 	Projectile->InitProjectileProperties(SpawnTransform, InPolicy, InHandle, InMovement, InSpeed, InDuration, InScale, InTargetActor);
 	Projectile->SetPoolNumber(PoolNumber);
 

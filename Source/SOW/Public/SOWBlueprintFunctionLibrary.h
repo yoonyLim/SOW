@@ -69,6 +69,7 @@ public:
 	static TArray<ATileBase*> GetTilesAsStraightFromCenterLocation(APlayerController* PlayerController, FVector CenterPosition, const int32 N, const float TileSize, bool bRot);
 
 	static TArray<AActor*> GetActorsOnTiles(TArray<ATileBase*> Tiles);
+
 };
 
 template <typename T>
