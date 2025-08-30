@@ -9,6 +9,14 @@
 #include "Manager/SummonManager.h"
 #include "UObject/ConstructorHelpers.h"
 
+#include "SOWStructTypes.h"
+#include "Core/SOWPlayerController.h"
+#include "AIController.h"
+#include "Characters/Turrets/SOWCharacterTurretBase.h"
+#include "Tile/TileBase.h"
+#include "Kismet/GameplayStatics.h"
+
+
 void USOWGameInstance::Init()
 {
 	Super::Init();
@@ -39,5 +47,76 @@ void USOWGameInstance::Init()
     if (SummonManager)
     {
         SummonManager->Initialize();
+    }
+}
+
+void USOWGameInstance::SummonTurret(FName TurretType)
+{
+    UDataTable* TurretTable = LoadObject<UDataTable>(
+        nullptr,
+        TEXT("/Game/01Blueprints/DataTable/Turrets/DT_TurretSummonProb.DT_TurretSummonProb")
+    );
+
+    if (!TurretTable) return;
+
+    FSummonData* TurretToSummon = TurretTable->FindRow<FSummonData>(TurretType, TEXT(""));
+
+
+    if (!TurretToSummon) return;
+
+
+    ASOWPlayerController* SOWPC = Cast<ASOWPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+
+    SOWPC->GetTileMap();
+
+    for (AActor* CurrentTile : SOWPC->GetTileMap())
+    {
+        ATileBase* CT = Cast<ATileBase>(CurrentTile);
+
+        if (CT->TileState == ETileSummonState::Available)
+        {
+            FVector SpawnLoc = CT->GetActorLocation();
+            SpawnLoc.Z += 65.f;
+
+            FRotator SpawnRotator(0.f, 180.f, 0.f);
+
+            FActorSpawnParameters Params;
+            Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+            Params.Owner = SOWPC;
+            Params.Instigator = SOWPC->GetPawn();
+
+            ASOWCharacterTurretBase* NewTurret = GetWorld()->SpawnActor<ASOWCharacterTurretBase>(TurretToSummon->TurretClass, SpawnLoc, SpawnRotator, Params);
+
+
+            // added by pgh
+            // possess AIController to Summoning Turret
+            if (NewTurret)
+            {
+                // AIController를 스폰하고 빙의
+                if (!NewTurret->GetController())
+                {
+                    AAIController* AIController = GetWorld()->SpawnActor<AAIController>(
+                        AAIController::StaticClass(),
+                        SpawnLoc,
+                        SpawnRotator
+                    );
+
+                    if (AIController)
+                    {
+                        AIController->Possess(NewTurret);
+                    }
+                }
+            }
+            // end possessing code
+
+            CT->TileState = ETileSummonState::Occupied;
+            return;
+            //OnSummonTurret.Broadcast(TurretToSummon);
+            // No Any Broadcast. this is just for debugging with random spawn
+        }
+        else
+        {
+            continue;
+        }
     }
 }

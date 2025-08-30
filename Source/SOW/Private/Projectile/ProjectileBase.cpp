@@ -35,13 +35,6 @@ AProjectileBase::AProjectileBase()
 
 void AProjectileBase::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
-
-	if (TargetActor) {
-		FVector DirVector = (TargetActor->GetActorLocation() - GetActorLocation()).GetSafeNormal();
-
-		ProjectileMoveComp->Velocity = DirVector * ProjectileMoveComp->InitialSpeed;
-		SetActorRotation(DirVector.Rotation());
-	}
 }
 
 void AProjectileBase::ActivateMovement()
@@ -58,14 +51,12 @@ void AProjectileBase::ActivateMovement()
 void AProjectileBase::ResetProjectile()
 {
 	OverlappedActors.Empty();
-	/*ProjectileMoveComp->HomingTargetComponent = nullptr;
-	ProjectileMoveComp->bIsHomingProjectile = false;*/
 	TargetActor = nullptr;
 
 	if (ProjectileMoveComp)
 	{
-		ProjectileMoveComp->StopMovementImmediately();
-		ProjectileMoveComp->Velocity = FVector::ZeroVector;
+		//ProjectileMoveComp->StopMovementImmediately();
+		//ProjectileMoveComp->Velocity = FVector::ZeroVector;
 	}
 
 	// 콜리전 초기화
