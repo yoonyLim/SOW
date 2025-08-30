@@ -8,6 +8,7 @@
 #include "Interface/EnemyActionsInterface.h"
 #include "SOWCharacterEnemyBase.generated.h"
 
+class UGameplayEffect;
 class UNiagaraSystem;
 class UNiagaraComponent;
 class UEnemyIncomingRouteComponent;
@@ -70,6 +71,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
 	bool bShouldKeepHealthbarOn = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GameplayAbilitySystem | DamageEffect")
+	TSubclassOf<UGameplayEffect> DamageEffect;
 
 protected:
 	// Called when the game starts or when spawned
