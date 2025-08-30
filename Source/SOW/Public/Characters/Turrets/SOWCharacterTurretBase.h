@@ -49,7 +49,7 @@ public:
 #pragma region NativeGetter
 
 	float GetAttackPower() const;
-	float GetCurrentHealth() const;
+	float GetAttackSpeed() const;
 	float GetDetectionRangeRadius() const;										// Get Attack Radius From Attribute Set in Turret Base 
 	float GetAttackCooldownTime() const;										// Get Attack Delay From Attribute Set in Turret Base
 	int32 GetCircleCount() const { return CircleCount; };						// Get Circle Count when Turret Spawning Time
@@ -72,7 +72,7 @@ public:
 	float BP_GetDetectionRangeRadius() const;
 
 	UFUNCTION(BlueprintPure, Category = "UI")
-	float GetHealthRatio() const;												// Get Health Ratio From Attribute Set in Turret Base for setting UI
+	float BP_GetAttackSpeed() const;												// Get Health Ratio From Attribute Set in Turret Base for setting UI
 
 	UFUNCTION(BlueprintPure)
 	USOWTurretCombatComponent* GetTurretCombatComponent() const;				// Get Combat Component at other classes

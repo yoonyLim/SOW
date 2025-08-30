@@ -30,12 +30,15 @@ ATileBase::ATileBase()
 
 void ATileBase::ShowRange()
 {
+	if (!OverlayMID || !OverlayPlane) return;
+
 	OverlayMID->SetScalarParameterValue(TEXT("CanPlace"), bCanPlace ? 1.f : 0.f);
 	OverlayPlane->SetVisibility(true);
 }
 
 void ATileBase::HideRange()
 {
+	if (!OverlayMID || !OverlayPlane) return;
 	OverlayPlane->SetVisibility(false);
 }
 
