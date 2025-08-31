@@ -55,7 +55,6 @@ void ASOWCharacterTurretBase::BeginPlay()
 {
 	Super::BeginPlay();
 }
-
 void ASOWCharacterTurretBase::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
@@ -237,6 +236,13 @@ FName ASOWCharacterTurretBase::GetTurretName() const
 	return USOWBlueprintFunctionLibrary::EnumToFName<ETurretName>(TurretCombatComponent->GetTurretNameByEnum());
 }
 
+FName ASOWCharacterTurretBase::GetTurretRank() const
+{
+	ETurretRarity tr = TurretCombatComponent->GetTurretRarity();
+
+	return USOWBlueprintFunctionLibrary::EnumToFName<ETurretRarity>(tr);
+}
+
 FGameplayTag ASOWCharacterTurretBase::GetTurretElementTag() const
 {
 	//    else if (InTag.MatchesTag(FGameplayTag::RequestGameplayTag(TEXT("Shared.Element.Ice")))) {
@@ -263,6 +269,11 @@ FGameplayTag ASOWCharacterTurretBase::GetTurretElementTag() const
 FName ASOWCharacterTurretBase::BP_GetTurretName() const
 {
 	return GetTurretName();
+}
+
+FName ASOWCharacterTurretBase::BP_GetTurretRank() const
+{
+	return GetTurretRank();
 }
 
 float ASOWCharacterTurretBase::BP_GetDetectionRangeRadius() const

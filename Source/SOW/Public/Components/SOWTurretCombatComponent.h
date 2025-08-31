@@ -59,6 +59,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Turret|TargetDetection")
 	ETurretTargetSelectionPriority GetTargetPriority() const { return TurretTargetSelectionPriority; }
 
+	UFUNCTION(BlueprintPure, Category = "Turret|TargetDetection")
+	ETurretRarity GetTurretRarity() const { return TurretRarity; };
+
 	UFUNCTION(BlueprintCallable, Category = "Turret|TargetDetection")
 	float GetAttackCooldownTimeFromOwner() const;
 
@@ -166,11 +169,7 @@ protected:
 
 	
 #pragma region TargetManagement
-	/*UFUNCTION(BlueprintPure, Category = "Turret|TargetDetection")
-	AActor* GetSingleAttackTarget();*/
-	UFUNCTION(BlueprintPure, Category = "Turret|TargetDetection")
-	ETurretRarity GetTurretRarity() const { return TurretRarity;  };
-
+	
 	UFUNCTION(BlueprintPure, Category = "Turret|TargetDetection")
 	AActor* GetSingleAttackTargetOnList(const TArray<AActor*> InTargetList);
 

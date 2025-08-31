@@ -29,7 +29,37 @@ void ATurretProjectileBase::BeginPlay()
 	CachedInstigator = CastChecked<ASOWCharacterTurretBase>(GetInstigator());
 }
 
+void ATurretProjectileBase::Tick(float DeltaTime) {
+	Super::Tick(DeltaTime);
 
+	if (!GetProjectileInGame()) return;
+
+	if (HasMovement) {
+		if ((!TargetActor || USOWBlueprintFunctionLibrary::DoesActorHasTag(TargetActor, SOWGameplayTags::Shared_Status_Dead)) && bHitOnce) {
+			BP_DestroyProjectile();
+		}
+		else { 
+			FaceToTargetActor(); 
+		}
+		
+	}
+}
+
+void ATurretProjectileBase::FaceToTargetActor() {
+	if (!TargetActor) return;
+
+	bool bValidTarget = TargetActor->Implements<USOWCharacterTypeInterface>();
+	if (!bValidTarget) return;
+
+	bool bTargetAlive = !USOWBlueprintFunctionLibrary::DoesActorHasTag(TargetActor, SOWGameplayTags::Shared_Status_Dead);
+
+	if (bTargetAlive) {
+		FVector DirVector = (TargetActor->GetActorLocation() - GetActorLocation()).GetSafeNormal();
+
+		ProjectileMoveComp->Velocity = DirVector * ProjectileMoveComp->InitialSpeed;
+		SetActorRotation(DirVector.Rotation());
+	}
+}
 void ATurretProjectileBase::OnCollisionHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	// Overlapping Callback Function
@@ -42,11 +72,6 @@ void ATurretProjectileBase::OnCollisionHit(UPrimitiveComponent* OverlappedCompon
 	if (!Cast<ASOWCharacter>(OtherActor) || Cast<ASOWCharacterPlayer>(OtherActor)) return;
 
 	if (CachedInstigator.Get() == OtherActor || OverlappedActors.Contains(OtherActor)) return;
-
-	/*if (!OtherActor->Implements<USOWCharacterTypeInterface>()) return;
-
-	ESOWCharacterType TargetType = Cast<ISOWCharacterTypeInterface>(OtherActor)->GetSOWCharacterType();
-	if (!USOWBlueprintFunctionLibrary::IsTarget(OwnerPolicy, TargetType)) return;*/
 
 	OverlappedActors.AddUnique(OtherActor);
 
