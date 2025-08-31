@@ -22,6 +22,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
 
 	// Hit Callback
 	virtual void OnCollisionHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) override;
@@ -30,6 +31,7 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Projectile")
 	bool IsHostileTarget(AActor* Target);
 
+	void FaceToTargetActor();
 	
 private:
 

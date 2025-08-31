@@ -46,26 +46,37 @@ void USOWTurretEvolutionComponent::TryEvolution(EEvolutionType Type)
 
 	if (USOWAbilitySystemComponent* ASC = CachedOwnerCharacter->GetSOWAbilitySystemComponent()) {
 		
-
-
 		if (!EvolutionDataRow || EvolutionLevel >= 4) {
 			return;
 		}
 
-		if (UCurveTable* PriceData = LoadObject<UCurveTable>(nullptr, TEXT("/Game/01Blueprints/Turret/CT_TurretEvolutionPrices.CT_TurretEvolutionPrices"))) {
-			FName TName = CachedOwnerCharacter->GetTurretName();
-			FGameplayTag ETag = CachedOwnerCharacter->GetTurretElementTag();
-			FRealCurve* FoundCurve = PriceData->FindCurve(TName, TEXT(""));
+		UCurveTable* PriceData = LoadObject<UCurveTable>(nullptr, TEXT("/Game/01Blueprints/Turret/CT_TurretEvolutionPricesByRank.CT_TurretEvolutionPricesByRank"));
+		UCurveTable* PercentData = LoadObject<UCurveTable>(nullptr, TEXT("/Game/01Blueprints/Turret/CT_TurretEvolutionPercenttage.CT_TurretEvolutionPercenttage"));
+		if (!PriceData || !PercentData) return;
 
-			if (!FoundCurve) return;
+		FName TRank = CachedOwnerCharacter->GetTurretRank();
+		FGameplayTag ETag = CachedOwnerCharacter->GetTurretElementTag();
+		FRealCurve* FoundCurve_Price = PriceData->FindCurve(TRank, TEXT(""));
+		FRealCurve* FoundCurve_Percent = PriceData->FindCurve(TRank, TEXT(""));
 
-			float PriceValue = FoundCurve->Eval(EvolutionLevel + 1);
-			if (!USOWBlueprintFunctionLibrary::QueryForCurrencyCountSufficient(CachedOwnerCharacter, ETag, PriceValue)) {
-				UE_LOG(LogTemp, Warning, TEXT("Not Enough Currency"));
-				return;
-			}
+		if (!FoundCurve_Price || !FoundCurve_Percent) return;
+
+		float PriceValue = FoundCurve_Price->Eval(EvolutionLevel + 1);
+		float PercentValue = FoundCurve_Percent->Eval(EvolutionLevel + 1);
+
+		if (!USOWBlueprintFunctionLibrary::QueryForCurrencyCountSufficient(CachedOwnerCharacter, ETag, PriceValue)) {
+			UE_LOG(LogTemp, Warning, TEXT("Not Enough Currency"));
+			return;
 		}
 
+		FRandomStream FS;
+
+		if (FS.RandRange(1, 100) > PercentValue) {
+			// Notify about failed evolution
+			return;
+		}
+
+		// executes after all conditions are met
 		if (EvolutionState == EEvolutionType::EVO_NONE) {
 			EvolutionState = Type;
 		}

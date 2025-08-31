@@ -5,6 +5,7 @@
 
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
+#include "SOWBlueprintFunctionLibrary.h"
 #include "SOWGameInstance.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/WidgetComponent.h"
@@ -12,7 +13,6 @@
 #include "SOWGameplayTags.h"
 #include "AbilitySystem/SOWAbilitySystemComponent.h"
 #include "AbilitySystem/SOWAttributeSet.h"
-#include "Characters/Enemies/SOWEnemyCombatComponent.h"
 
 #include "Characters/Enemies/AI/EnemyBaseAIController.h"
 #include "Components/Enemies/EnemyIncomingRouteComponent.h"
@@ -22,7 +22,6 @@
 #include "Utilities/EnemyIncomingRoute.h"
 #include "Widget/Enemy/EnemyHealthBarWidget.h"
 
-#include "AbilitySystem/GA_Enemy_RangedAttack.h"
 #include "Characters/CoreRune/SOWCharacterCoreRune.h"
 #include "Components/CapsuleComponent.h"
 #include "Manager/OneTimeCurrencyManager.h"
@@ -46,6 +45,9 @@ ASOWCharacterEnemyBase::ASOWCharacterEnemyBase()
 
 	// EnemyIncomingRouteComponent
 	EnemyIncomingRouteComponent = CreateDefaultSubobject<UEnemyIncomingRouteComponent>(TEXT("EnemyIncomingRouteComponent"));
+
+	GetCharacterMovement()->BrakingSubStepTime = 0.f;
+	GetCharacterMovement()->BrakingDecelerationWalking = 0.f;
 
 	// Set Healthbar Widget
 	HealthBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBar"));
@@ -300,6 +302,23 @@ void ASOWCharacterEnemyBase::OnBeginOverlap(UPrimitiveComponent* OverlappedComp,
 	if (ASOWCharacterCoreRune* Rune = Cast<ASOWCharacterCoreRune>(OtherActor))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Rune Overlapped"))
+		
+		FGameplayEffectContextHandle EffectContext = USOWBlueprintFunctionLibrary::NativeGetSOWAbilitySystemComponentFromActorInfo(this)->MakeEffectContext();
+		EffectContext.AddSourceObject(this);
+
+		ISOWCharacterTypeInterface* SOWCharacter = Cast<ISOWCharacterTypeInterface>(OtherActor);
+		if (!SOWCharacter) return;
+	
+		ESOWCharacterType TargetType = SOWCharacter->GetSOWCharacterType();
+	
+		if (TargetType == ESOWCharacterType::CoreRune)
+		{
+			USOWBlueprintFunctionLibrary::NativeGetSOWAbilitySystemComponentFromActorInfo(this)->ApplyGameplayEffectSpecToTarget(
+				*USOWBlueprintFunctionLibrary::NativeGetSOWAbilitySystemComponentFromActorInfo(this)->MakeOutgoingSpec(DamageEffect, 1.f, EffectContext).Data.Get(), // GameEffectSpec
+				USOWBlueprintFunctionLibrary::NativeGetSOWAbilitySystemComponentFromActorInfo(OtherActor) // Target
+			);
+		}
+		
 		Destroy();
 	}
 }
