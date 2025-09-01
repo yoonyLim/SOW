@@ -46,8 +46,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Turret|TargetDetection")
 	void ClearTargetDetectionAsDead();
 
-	//UFUNCTION(BlueprintPure, Category = "Turret|TargetDetection")
-	//FVector FindActualTargetLocation();
 #pragma endregion
 
 

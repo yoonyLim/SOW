@@ -54,4 +54,7 @@ public:
 
     UFUNCTION(Exec)
     void SummonTurret(FName TurretName);
+
+    UFUNCTION(Exec)
+    void GetResource(float Count);
 };
