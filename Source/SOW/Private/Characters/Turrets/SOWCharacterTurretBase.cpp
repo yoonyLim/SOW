@@ -212,11 +212,12 @@ float ASOWCharacterTurretBase::GetAttackPower() const
 	return AttributeSet->GetAttackPowerBase();
 }
 
-float ASOWCharacterTurretBase::GetCurrentHealth() const
+float ASOWCharacterTurretBase::GetAttackSpeed() const
 {
 	checkf(AttributeSet, TEXT("AttributeSet not Found / Check point : SOWCharacterTurretBase.cpp"));
-	return AttributeSet->GetCurrentHealth();
+	return AttributeSet->GetAttackSpeedBase();
 }
+
 
 float ASOWCharacterTurretBase::GetDetectionRangeRadius() const
 {
@@ -281,10 +282,10 @@ float ASOWCharacterTurretBase::BP_GetDetectionRangeRadius() const
 	return GetDetectionRangeRadius();
 }
 
-float ASOWCharacterTurretBase::GetHealthRatio() const
+float ASOWCharacterTurretBase::BP_GetAttackSpeed() const
 {
 	checkf(AttributeSet, TEXT("AttributeSet not Found / Check point : SOWCharacterTurretBase.cpp"));
-	return AttributeSet->GetCurrentHealth() / AttributeSet->GetMaxHealthBase();
+	return GetAttackSpeed();
 }
 
 USOWTurretCombatComponent* ASOWCharacterTurretBase::GetTurretCombatComponent() const
