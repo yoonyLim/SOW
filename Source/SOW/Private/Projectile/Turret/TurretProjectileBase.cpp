@@ -46,6 +46,8 @@ void ATurretProjectileBase::Tick(float DeltaTime) {
 }
 
 void ATurretProjectileBase::FaceToTargetActor() {
+	if (!HasMovement) return;
+
 	if (!TargetActor) return;
 
 	bool bValidTarget = TargetActor->Implements<USOWCharacterTypeInterface>();

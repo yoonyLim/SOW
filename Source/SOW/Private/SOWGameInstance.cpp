@@ -16,6 +16,8 @@
 #include "Tile/TileBase.h"
 #include "Kismet/GameplayStatics.h"
 
+#include "SOWBlueprintFunctionLibrary.h"
+
 
 void USOWGameInstance::Init()
 {
@@ -119,4 +121,10 @@ void USOWGameInstance::SummonTurret(FName TurretType)
             continue;
         }
     }
+}
+
+void USOWGameInstance::GetResource(float Count)
+{
+    USOWBlueprintFunctionLibrary::RequestToGenerateOnTimeCurrency(GetWorld(), FGameplayTag::RequestGameplayTag("Shared.Element.Nature"), Count);
+    
 }
