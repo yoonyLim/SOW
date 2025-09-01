@@ -71,7 +71,7 @@ public:
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Turret Detection Range"))
 	float BP_GetDetectionRangeRadius() const;
 
-	UFUNCTION(BlueprintPure, Category = "UI")
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Turret Attack Speed"))
 	float BP_GetAttackSpeed() const;												// Get Health Ratio From Attribute Set in Turret Base for setting UI
 
 	UFUNCTION(BlueprintPure)

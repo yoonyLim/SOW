@@ -30,7 +30,7 @@ ATileBase::ATileBase()
 
 void ATileBase::ShowRange()
 {
-	if (!OverlayMID || !OverlayPlane) return;
+	if (!IsValid(OverlayMID) || !IsValid(OverlayPlane)) return;
 
 	OverlayMID->SetScalarParameterValue(TEXT("CanPlace"), bCanPlace ? 1.f : 0.f);
 	OverlayPlane->SetVisibility(true);
@@ -38,7 +38,7 @@ void ATileBase::ShowRange()
 
 void ATileBase::HideRange()
 {
-	if (!OverlayMID || !OverlayPlane) return;
+	if (!IsValid(OverlayMID) || !IsValid(OverlayPlane)) return;
 	OverlayPlane->SetVisibility(false);
 }
 
