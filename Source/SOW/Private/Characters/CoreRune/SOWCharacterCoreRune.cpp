@@ -101,6 +101,10 @@ void ASOWCharacterCoreRune::OnHealthChanged(const FOnAttributeChangeData &Data)
 	{
 		WaveGM->RuneUpdateHUD(NewHealth, MaxHealth);
 	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Game Mode Doesnt Match"));
+	}
 
 	// 표시/페이드 처리 (EnemyBase의 위젯 표시 로직 참조, )
 	if (!bShouldKeepHealthbarOn && HealthBarWidget)

@@ -16,9 +16,9 @@ class SOW_API AWaveGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
+protected:
 	int32 Currency = 0;
 
-protected:
 	virtual void BeginPlay() override;
 
 public:

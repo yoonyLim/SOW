@@ -191,7 +191,7 @@ void ASOWCharacterEnemyBase::OnHealthChanged(const FOnAttributeChangeData& Data)
 	float MaxHealth = ASCAttributes->GetMaxHealthBase();
 
 	if (NewHealth <= 0)
-		BroadcastEnemyDeath(0);
+		BroadcastEnemyDeath();
 
 	UpdateHealthBarValue(NewHealth, MaxHealth);
 
@@ -301,7 +301,7 @@ void ASOWCharacterEnemyBase::OnBeginOverlap(UPrimitiveComponent* OverlappedComp,
 {
 	if (ASOWCharacterCoreRune* Rune = Cast<ASOWCharacterCoreRune>(OtherActor))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Rune Overlapped"))
+		// UE_LOG(LogTemp, Warning, TEXT("Rune Overlapped"))
 		
 		FGameplayEffectContextHandle EffectContext = USOWBlueprintFunctionLibrary::NativeGetSOWAbilitySystemComponentFromActorInfo(this)->MakeEffectContext();
 		EffectContext.AddSourceObject(this);
@@ -333,7 +333,7 @@ void ASOWCharacterEnemyBase::Attack(const ASOWCharacter* TargetActor)
 	}
 }
 
-void ASOWCharacterEnemyBase::BroadcastEnemyDeath(int GoldAmount)
+void ASOWCharacterEnemyBase::BroadcastEnemyDeath()
 {
 	int ShardAmount = FMath::Clamp(FMath::RandRange(ShardDropAmount - ShardDropAmountVariation, ShardDropAmount + ShardDropAmountVariation) , 0, ShardDropAmount + ShardDropAmountVariation);
 	
