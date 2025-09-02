@@ -141,5 +141,5 @@ public:
 	virtual void Attack(const ASOWCharacter* TargetActor) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Enemy Event")
-	void BroadcastEnemyDeath(int GoldAmount);
+	void BroadcastEnemyDeath();
 };
