@@ -123,6 +123,8 @@ void ASOWCharacterTurretBase::OnGameplayTagChanged(const FGameplayTag Tag, int32
 
 void ASOWCharacterTurretBase::SwitchDetectionRangeDecal(bool On)
 {
+	if (!GetTurretCombatComponent()) return;
+
 	GetTurretCombatComponent()->VisualizeTurretDetectionRange(On);
 }
 
@@ -303,7 +305,6 @@ bool ASOWCharacterTurretBase::IsActiveTurret() const
 USOWTurretSkillComponent* ASOWCharacterTurretBase::GetTurretSkillComponent() const
 {
 	checkf(TurretSkillComponent, TEXT("TurretSkillComponent not Found / Check point : SOWCharacterTurretBase.cpp"));
-
 	return TurretSkillComponent;
 }
 
