@@ -5,6 +5,7 @@
 
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
+#include "SOWBlueprintFunctionLibrary.h"
 #include "SOWGameInstance.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/WidgetComponent.h"
@@ -12,7 +13,6 @@
 #include "SOWGameplayTags.h"
 #include "AbilitySystem/SOWAbilitySystemComponent.h"
 #include "AbilitySystem/SOWAttributeSet.h"
-#include "Characters/Enemies/SOWEnemyCombatComponent.h"
 
 #include "Characters/Enemies/AI/EnemyBaseAIController.h"
 #include "Components/Enemies/EnemyIncomingRouteComponent.h"
@@ -22,7 +22,6 @@
 #include "Utilities/EnemyIncomingRoute.h"
 #include "Widget/Enemy/EnemyHealthBarWidget.h"
 
-#include "AbilitySystem/GA_Enemy_RangedAttack.h"
 #include "Characters/CoreRune/SOWCharacterCoreRune.h"
 #include "Components/CapsuleComponent.h"
 #include "Manager/OneTimeCurrencyManager.h"
@@ -46,6 +45,9 @@ ASOWCharacterEnemyBase::ASOWCharacterEnemyBase()
 
 	// EnemyIncomingRouteComponent
 	EnemyIncomingRouteComponent = CreateDefaultSubobject<UEnemyIncomingRouteComponent>(TEXT("EnemyIncomingRouteComponent"));
+
+	GetCharacterMovement()->BrakingSubStepTime = 0.f;
+	GetCharacterMovement()->BrakingDecelerationWalking = 0.f;
 
 	// Set Healthbar Widget
 	HealthBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBar"));
@@ -189,7 +191,7 @@ void ASOWCharacterEnemyBase::OnHealthChanged(const FOnAttributeChangeData& Data)
 	float MaxHealth = ASCAttributes->GetMaxHealthBase();
 
 	if (NewHealth <= 0)
-		BroadcastEnemyDeath(0);
+		BroadcastEnemyDeath();
 
 	UpdateHealthBarValue(NewHealth, MaxHealth);
 
@@ -288,7 +290,7 @@ void ASOWCharacterEnemyBase::UpdateHealthBarValue(float NewHealth, float MaxHeal
 void ASOWCharacterEnemyBase::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	FVector NormalImpulse, const FHitResult& HitResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Others Hit?"))
+	UE_LOG(LogTemp, Warning, TEXT("Others Hit? %s"), *OtherActor->GetName())
 	
 	if (ASOWCharacterCoreRune* Rune = Cast<ASOWCharacterCoreRune>(OtherActor))
 		UE_LOG(LogTemp, Warning, TEXT("Rune Hit?"))
@@ -299,7 +301,24 @@ void ASOWCharacterEnemyBase::OnBeginOverlap(UPrimitiveComponent* OverlappedComp,
 {
 	if (ASOWCharacterCoreRune* Rune = Cast<ASOWCharacterCoreRune>(OtherActor))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Rune Overlapped"))
+		// UE_LOG(LogTemp, Warning, TEXT("Rune Overlapped"))
+		
+		FGameplayEffectContextHandle EffectContext = USOWBlueprintFunctionLibrary::NativeGetSOWAbilitySystemComponentFromActorInfo(this)->MakeEffectContext();
+		EffectContext.AddSourceObject(this);
+
+		ISOWCharacterTypeInterface* SOWCharacter = Cast<ISOWCharacterTypeInterface>(OtherActor);
+		if (!SOWCharacter) return;
+	
+		ESOWCharacterType TargetType = SOWCharacter->GetSOWCharacterType();
+	
+		if (TargetType == ESOWCharacterType::CoreRune)
+		{
+			USOWBlueprintFunctionLibrary::NativeGetSOWAbilitySystemComponentFromActorInfo(this)->ApplyGameplayEffectSpecToTarget(
+				*USOWBlueprintFunctionLibrary::NativeGetSOWAbilitySystemComponentFromActorInfo(this)->MakeOutgoingSpec(DamageEffect, 1.f, EffectContext).Data.Get(), // GameEffectSpec
+				USOWBlueprintFunctionLibrary::NativeGetSOWAbilitySystemComponentFromActorInfo(OtherActor) // Target
+			);
+		}
+		
 		Destroy();
 	}
 }
@@ -314,7 +333,7 @@ void ASOWCharacterEnemyBase::Attack(const ASOWCharacter* TargetActor)
 	}
 }
 
-void ASOWCharacterEnemyBase::BroadcastEnemyDeath(int GoldAmount)
+void ASOWCharacterEnemyBase::BroadcastEnemyDeath()
 {
 	int ShardAmount = FMath::Clamp(FMath::RandRange(ShardDropAmount - ShardDropAmountVariation, ShardDropAmount + ShardDropAmountVariation) , 0, ShardDropAmount + ShardDropAmountVariation);
 	

@@ -35,10 +35,10 @@ struct SOW_API FEnemyAttributeData : public FTableRowBase
 	float DefensePowerBase;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int ShardDropAmount;
+	int32 ShardDropAmount;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int ShardDropAmountVariation;
+	int32 ShardDropAmountVariation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EEnemyTargetPriority TargetPriority;

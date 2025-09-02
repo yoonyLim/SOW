@@ -91,12 +91,12 @@ void ASOWTileSpawner::BeginPlay()
 
 	SpawnIncomingRoutes();
 
-	// ¸Ê Áß½É & Å©±â °è»ê
+	// ï¿½ï¿½ ï¿½ß½ï¿½ & Å©ï¿½ï¿½ ï¿½ï¿½ï¿½
 	FVector CenterWS = FVector::ZeroVector;
 	FVector2D HalfSizeWorldXY = FVector2D::ZeroVector;
 	ComputeMapBoundsFromTiles(SpawnedTileLocations, TileWidth, TileHeight, CenterWS, HalfSizeWorldXY);
 
-	// ¿ø·¡ ¾²´ø Z¸¦ À¯ÁöÇÏ°í ½Í´Ù¸é:
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Zï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½Í´Ù¸ï¿½:
 	CenterWS.Z = SOWTilePlacementHelper::GetTileWorldPosition(
 		(GridWidth - 1) / 2.0f, (GridHeight - 1) / 2.0f, TileWidth, TileHeight).Z;
 
@@ -206,7 +206,7 @@ void ASOWTileSpawner::SpawnIncomingRoutes()
 		}
 
 		Route->SetSplinePointsFromLocations(Points);
-		Route->SetActorLabel(Def.RouteName.IsEmpty() ? FString::Printf(TEXT("EnemyRoute_%d"), RouteIndex) : Def.RouteName);
+		
 		SpawnedEnemyRoutes.Add(Route);
 
 	}
@@ -218,8 +218,8 @@ TArray<TObjectPtr<AEnemyIncomingRoute>> ASOWTileSpawner::GetSpawnedEnemyRoutes()
 }
 
 
-// === Æò¸é ÀÚµ¿ ¼¼ÆÃ + ¸ÓÆ¼¸®¾ó ÆÄ¶ó¹ÌÅÍ ÁÖÀÔ ===
-// ¼±¾ðºÎ(.h)µµ ÇÔ²² º¯°æ:
+// === ï¿½ï¿½ï¿½ ï¿½Úµï¿½ ï¿½ï¿½ï¿½ï¿½ + ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½ ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ===
+// ï¿½ï¿½ï¿½ï¿½ï¿½(.h)ï¿½ï¿½ ï¿½Ô²ï¿½ ï¿½ï¿½ï¿½ï¿½:
 // void SetupGradientPlaneAndMaterial(const FVector& CenterWS, float MapW, float MapH);
 void ASOWTileSpawner::SetupGradientPlaneAndMaterial(const FVector& CenterWS, const FVector2D& HalfSizeWorldXY)
 {
@@ -236,7 +236,7 @@ void ASOWTileSpawner::SetupGradientPlaneAndMaterial(const FVector& CenterWS, con
 	FActorSpawnParameters Params;
 	Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-	const FRotator PlaneRot = GetActorRotation() + FRotator(0.f, 45.f, 0.f); // ´ÙÀÌ¾Æ ¸Ê
+	const FRotator PlaneRot = GetActorRotation() + FRotator(0.f, 45.f, 0.f); // ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½
 	const FVector  PlaneLoc = CenterWS + FVector(0.f, 0.f, PlaneZOffset);
 
 	GradientPlaneActor = World->SpawnActor<AStaticMeshActor>(AStaticMeshActor::StaticClass(), PlaneLoc, PlaneRot, Params);
@@ -250,11 +250,11 @@ void ASOWTileSpawner::SetupGradientPlaneAndMaterial(const FVector& CenterWS, con
 	PlaneMC->bRenderCustomDepth = false;
 	PlaneMC->SetMaterial(0, GradientMaterial);
 
-	// Æò¸é ¸ñÇ¥ Å©±â = ¸Ê + ¾çÂÊ Softness ¿©À¯
+	// ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ Å©ï¿½ï¿½ = ï¿½ï¿½ + ï¿½ï¿½ï¿½ï¿½ Softness ï¿½ï¿½ï¿½ï¿½
 	const float TargetW = HalfSizeWorldXY.X * 5.f + 2.f * GradientSoftnessWorld;
 	const float TargetH = HalfSizeWorldXY.Y * 5.f + 2.f * GradientSoftnessWorld;
 
-	const FVector SMSize = GradientPlaneMesh->GetBounds().BoxExtent * 2.f; // ·ÎÄÃ
+	const FVector SMSize = GradientPlaneMesh->GetBounds().BoxExtent * 2.f; // ï¿½ï¿½ï¿½ï¿½
 	const FVector NewScale(
 		TargetW / FMath::Max(1.f, SMSize.X),
 		TargetH / FMath::Max(1.f, SMSize.Y),
@@ -262,12 +262,12 @@ void ASOWTileSpawner::SetupGradientPlaneAndMaterial(const FVector& CenterWS, con
 	);
 	PlaneMC->SetWorldScale3D(NewScale);
 
-	// MID »ý¼º + ÆÄ¶ó¹ÌÅÍ
+	// MID ï¿½ï¿½ï¿½ï¿½ + ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½
 	UMaterialInstanceDynamic* Dyn =
 		PlaneMC->CreateAndSetMaterialInstanceDynamicFromMaterial(0, GradientMaterial);
 	if (!Dyn) { UE_LOG(LogTemp, Error, TEXT("Failed to create MID for GradientPlane.")); return; }
 
-	// ¸ÓÆ¼¸®¾ó ³»ºÎ¿¡¼­ World¡æLocal + ObjectScale º¸Á¤ »ç¿ë °¡Á¤
+	// ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î¿ï¿½ï¿½ï¿½ Worldï¿½ï¿½Local + ObjectScale ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	Dyn->SetVectorParameterValue(TEXT("HalfSizeWorld"),
 		FLinearColor(HalfSizeWorldXY.X, HalfSizeWorldXY.Y, 0, 0));
 	Dyn->SetScalarParameterValue(TEXT("SoftnessWorld"), GradientSoftnessWorld);
@@ -277,12 +277,12 @@ void ASOWTileSpawner::SetupGradientPlaneAndMaterial(const FVector& CenterWS, con
 }
 
 
-// ½ºÆùµÈ Å¸ÀÏ À§Ä¡µé(Áß½É)·ÎºÎÅÍ ½ÇÁ¦ ¸Ê °æ°è¸¦ °è»ê
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½(ï¿½ß½ï¿½)ï¿½Îºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½è¸¦ ï¿½ï¿½ï¿½
 void ASOWTileSpawner::ComputeMapBoundsFromTiles(
 	const TMap<int32, FVector>& TileCenters,
 	float TileWidth, float TileHeight,
-	FVector& OutCenterWS,            // XY Áß½É (Z´Â È£ÃâºÎ¿¡¼­ ¿øÇÏ´Â °ªÀ¸·Î º¸Á¤)
-	FVector2D& OutHalfSizeWorldXY)   // XY ¹Ý°æ (¿ùµå ´ÜÀ§)
+	FVector& OutCenterWS,            // XY ï¿½ß½ï¿½ (Zï¿½ï¿½ È£ï¿½ï¿½Î¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
+	FVector2D& OutHalfSizeWorldXY)   // XY ï¿½Ý°ï¿½ (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
 {
 	if (TileCenters.Num() == 0) { OutCenterWS = FVector::ZeroVector; OutHalfSizeWorldXY = FVector2D::ZeroVector; return; }
 
@@ -291,12 +291,12 @@ void ASOWTileSpawner::ComputeMapBoundsFromTiles(
 
 	for (const auto& It : TileCenters)
 	{
-		const FVector& P = It.Value;   // Å¸ÀÏ Áß½É ÁÂÇ¥
+		const FVector& P = It.Value;   // Å¸ï¿½ï¿½ ï¿½ß½ï¿½ ï¿½ï¿½Ç¥
 		minX = FMath::Min(minX, P.X);  maxX = FMath::Max(maxX, P.X);
 		minY = FMath::Min(minY, P.Y);  maxY = FMath::Max(maxY, P.Y);
 	}
 
-	const float halfTileX = TileWidth * 0.5f;   // ¿Ü°û Å¸ÀÏÀÇ ¹ÝÂÊ±îÁö Æ÷ÇÔ
+	const float halfTileX = TileWidth * 0.5f;   // ï¿½Ü°ï¿½ Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	const float halfTileY = TileHeight * 0.5f;
 
 	OutCenterWS.X = 0.5f * (minX + maxX);
