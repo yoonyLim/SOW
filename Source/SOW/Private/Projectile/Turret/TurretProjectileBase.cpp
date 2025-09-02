@@ -92,7 +92,7 @@ void ATurretProjectileBase::OnCollisionOut(UPrimitiveComponent* OverlappedCompon
 
 bool ATurretProjectileBase::IsHostileTarget(AActor* Target)
 {
-	if (!Target->Implements<USOWCharacterTypeInterface>()) return false;
+	if (!Target || !Target->Implements<USOWCharacterTypeInterface>()) return false;
 
 	ESOWCharacterType TargetType = Cast<ISOWCharacterTypeInterface>(Target)->GetSOWCharacterType();
 	return USOWBlueprintFunctionLibrary::IsTarget(OwnerPolicy, TargetType);
@@ -102,6 +102,8 @@ bool ATurretProjectileBase::IsHostileTarget(AActor* Target)
 void ATurretProjectileBase::BP_DestroyProjectile()
 {
 	//checkf(CachedInstigator.Get()->GetProjectilePoolingComponent(), TEXT("No Pool Found For %s"), *CachedInstigator.Get()->GetActorNameOrLabel());
+
+	if (!CachedInstigator.Get() || !CachedInstigator.Get()->GetProjectilePoolingComponent()) Destroy();
 
 	CachedInstigator.Get()->GetProjectilePoolingComponent()->ReturnProjectile(this);
 	UE_LOG(LogTemp, Warning, TEXT("Return to Pool : %s"), *this->GetActorNameOrLabel());

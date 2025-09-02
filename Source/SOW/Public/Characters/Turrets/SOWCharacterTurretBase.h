@@ -44,7 +44,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void FindTurretByElementTarget();
 
-	void SetManaConsumption(float value);
+	UFUNCTION(BlueprintCallable)
+	void SellTurret(float Price);
+
+	void SwitchCollision(bool bActive);
+
+
 
 #pragma region NativeGetter
 

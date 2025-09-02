@@ -68,6 +68,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Tile")
 	static TArray<ATileBase*> GetTilesAsStraightFromCenterLocation(APlayerController* PlayerController, FVector CenterPosition, const int32 N, const float TileSize, bool bRot);
 
+	UFUNCTION(BlueprintCallable, Category = "Tile")
 	static TArray<AActor*> GetActorsOnTiles(TArray<ATileBase*> Tiles);
 
 };
