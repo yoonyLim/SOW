@@ -7,7 +7,7 @@
 #include "Characters/Enemies/SOWCharacterEnemyBase.h"
 #include "Structures/Enemies/EnemyStructs.h"
 
-struct FAttributeCaptures
+struct FEnemyAttributeCaptures
 {
 	DECLARE_ATTRIBUTE_CAPTUREDEF(MaxHealthBase);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(CurrentHealth);
@@ -15,7 +15,7 @@ struct FAttributeCaptures
 	DECLARE_ATTRIBUTE_CAPTUREDEF(AttackPowerBase);
 	// DECLARE_ATTRIBUTE_CAPTUREDEF(DefensePowerBase);
 
-	FAttributeCaptures()
+	FEnemyAttributeCaptures()
 	{
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, MaxHealthBase, Source, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, CurrentHealth, Source, false);
@@ -25,9 +25,9 @@ struct FAttributeCaptures
 	}
 };
 
-static const FAttributeCaptures& GetCapturedEnemyAttributes()
+static const FEnemyAttributeCaptures& GetCapturedEnemyAttributes()
 {
-	static FAttributeCaptures EnemyAttributeCaptures;
+	static FEnemyAttributeCaptures EnemyAttributeCaptures;
 	return EnemyAttributeCaptures;
 }
 
