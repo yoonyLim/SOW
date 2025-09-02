@@ -110,6 +110,8 @@ void USOWTurretCombatComponent::AddNewTargetPriority(ETurretTargetSelectionPrior
 
 void USOWTurretCombatComponent::VisualizeTurretDetectionRange(bool bOn)
 {
+	if (DetectorTiles.Num() <= 0) return;
+
 	if (bOn) {
 		for (ATileBase* Tile : DetectorTiles) {
 			if (!Tile) continue;
