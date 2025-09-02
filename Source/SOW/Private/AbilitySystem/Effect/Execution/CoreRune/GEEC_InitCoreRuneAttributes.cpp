@@ -5,13 +5,13 @@
 #include "AbilitySystem/SOWAttributeSet.h"
 #include "Characters/CoreRune/SOWCharacterCoreRune.h"
 
-struct FAttributeCaptures
+struct FCoreRuneAttributeCaptures
 {
 	DECLARE_ATTRIBUTE_CAPTUREDEF(MaxHealthBase);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(CurrentHealth);
 	// DECLARE_ATTRIBUTE_CAPTUREDEF(DefensePowerBase);
 
-	FAttributeCaptures()
+	FCoreRuneAttributeCaptures()
 	{
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, MaxHealthBase, Source, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, CurrentHealth, Source, false);
@@ -19,9 +19,9 @@ struct FAttributeCaptures
 	}
 };
 
-static const FAttributeCaptures& GetCapturedCoreRuneAttributes()
+static const FCoreRuneAttributeCaptures& GetCapturedCoreRuneAttributes()
 {
-	static FAttributeCaptures CoreRuneAttributeCaptures;
+	static FCoreRuneAttributeCaptures CoreRuneAttributeCaptures;
 	return CoreRuneAttributeCaptures;
 }
 
