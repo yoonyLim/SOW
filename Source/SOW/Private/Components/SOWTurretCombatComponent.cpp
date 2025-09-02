@@ -60,7 +60,7 @@ float USOWTurretCombatComponent::GetAttackCooldownTimeFromOwner() const
 	}
 
 	if (!bTargetFound) {
-		CooldownBase = 0.5f;
+		CooldownBase = 0.25f;
 	}
 
 	return CooldownBase;
@@ -236,7 +236,18 @@ void USOWTurretCombatComponent::ActivateTurretFunction()
 		TileSize);
 
 	UE_LOG(LogTemp, Warning, TEXT("Tile Count : %s"), *FString::FromInt(DetectorTiles.Num()));
+	CachedOwnerCharacter->SwitchCollision(true);
 	RefreshTurretFunction();
+}
+
+void USOWTurretCombatComponent::PauseTurretFunction()
+{
+	DetectorTiles.Empty();
+	GetWorld()->GetTimerManager().ClearTimer(AttackTimerHandle);
+	bActive = false;
+	M_CachedCooldownTime = -1.f;
+
+	CachedOwnerCharacter->SwitchCollision(false);
 }
 
 void USOWTurretCombatComponent::RefreshTurretFunction()

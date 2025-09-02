@@ -21,6 +21,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDetectionRangeChangedDelegate);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChanged, FWidgetDescAtt, AttData);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTurretSelled);
+
 /**
  * 
  */
@@ -62,6 +64,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnAttributeChanged OnSpeedChanged;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnTurretSelled OnSelled;
 
 	UFUNCTION(BlueprintPure)
 	ASOWCharacterTurretBase* GetOwnerTurret() const;

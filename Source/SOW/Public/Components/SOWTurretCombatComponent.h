@@ -114,6 +114,9 @@ public:
 	void ActivateTurretFunction();
 
 	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
+	void PauseTurretFunction();
+
+	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
 	void RefreshTurretFunction();
 
 	void SetManaConsumptionValue(float value);
