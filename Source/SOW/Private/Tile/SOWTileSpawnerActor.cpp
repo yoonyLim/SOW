@@ -236,7 +236,7 @@ void ATileSpawner::SetupGradientPlaneAndMaterial(const FVector& CenterWS, const 
 	FActorSpawnParameters Params;
 	Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-	const FRotator PlaneRot = GetActorRotation() + FRotator(0.f, 45.f, 0.f); // 다이아 맵
+	const FRotator PlaneRot = GetActorRotation() + FRotator(0.f, 0.f, 0.f); // 다이아 맵
 	const FVector  PlaneLoc = CenterWS + FVector(0.f, 0.f, PlaneZOffset);
 
 	GradientPlaneActor = World->SpawnActor<AStaticMeshActor>(AStaticMeshActor::StaticClass(), PlaneLoc, PlaneRot, Params);

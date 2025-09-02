@@ -112,11 +112,13 @@ void USOWTurretCombatComponent::VisualizeTurretDetectionRange(bool bOn)
 {
 	if (bOn) {
 		for (ATileBase* Tile : DetectorTiles) {
+			if (!Tile) continue;
 			Tile->ShowRange();
 		}
 	}
 	else {
 		for (ATileBase* Tile : DetectorTiles) {
+			if (!Tile) continue;
 			Tile->HideRange();
 		}
 	}
