@@ -239,6 +239,7 @@ FName ASOWCharacterTurretBase::GetTurretName() const
 
 FName ASOWCharacterTurretBase::GetTurretRank() const
 {
+	checkf(TurretCombatComponent, TEXT("Invalid Component : TurretCombatComponent"));
 	ETurretRarity tr = TurretCombatComponent->GetTurretRarity();
 
 	return USOWBlueprintFunctionLibrary::EnumToFName<ETurretRarity>(tr);
@@ -296,6 +297,7 @@ USOWTurretCombatComponent* ASOWCharacterTurretBase::GetTurretCombatComponent() c
 
 bool ASOWCharacterTurretBase::IsActiveTurret() const 
 {
+	checkf(TurretCombatComponent, TEXT("TurretCombatComponent not Found / Check point : SOWCharacterTurretBase.cpp"));
 	return TurretCombatComponent->GetActiveBool();
 }
 USOWTurretSkillComponent* ASOWCharacterTurretBase::GetTurretSkillComponent() const
@@ -352,9 +354,25 @@ void ASOWCharacterTurretBase::FindTurretByElementTarget()
 	}
 }
 
-void ASOWCharacterTurretBase::SetManaConsumption(float value)
+void ASOWCharacterTurretBase::SellTurret(float Price)
 {
-	GetTurretCombatComponent()->SetManaConsumptionValue(value);
+	if (!AbilitySystemComponent) return;
+
+	AbilitySystemComponent->AddLooseGameplayTag(SOWGameplayTags::Shared_Status_Dead);
+	USOWBlueprintFunctionLibrary::RequestToGenerateOnTimeCurrency(this, FGameplayTag::RequestGameplayTag("Shared.Element.Nature"), Price);
+}
+
+
+void ASOWCharacterTurretBase::SwitchCollision(bool bActive)
+{
+	if (!GetCapsuleComponent()) return;
+
+	if (bActive) {
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	}
+	else {
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
 }
 
 	
