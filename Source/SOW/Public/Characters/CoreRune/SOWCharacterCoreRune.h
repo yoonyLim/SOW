@@ -43,9 +43,6 @@ protected:
 	virtual void UpdateHealthBarValue(float NewHealth, float MaxHealth);
 
 public:
-	virtual void Tick(float DeltaTime) override;
-	virtual void SetupPlayerInputComponent(class UInputComponent *PlayerInputComponent) override;
-
 	// 코어 파괴 알림 (게임오버 트리거 등 외부에서 바인딩해서 사용)
 	UPROPERTY(BlueprintAssignable, Category = "Event Dispatcher")
 	FOnCoreDestroyed OnCoreDestroyed;

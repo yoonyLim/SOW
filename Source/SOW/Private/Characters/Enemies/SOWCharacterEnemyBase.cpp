@@ -290,7 +290,7 @@ void ASOWCharacterEnemyBase::UpdateHealthBarValue(float NewHealth, float MaxHeal
 void ASOWCharacterEnemyBase::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	FVector NormalImpulse, const FHitResult& HitResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Others Hit?"))
+	UE_LOG(LogTemp, Warning, TEXT("Others Hit? %s"), *OtherActor->GetName())
 	
 	if (ASOWCharacterCoreRune* Rune = Cast<ASOWCharacterCoreRune>(OtherActor))
 		UE_LOG(LogTemp, Warning, TEXT("Rune Hit?"))

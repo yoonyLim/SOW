@@ -9,6 +9,8 @@
 // 위젯
 #include "Components/WidgetComponent.h"
 #include "Blueprint/UserWidget.h"
+#include "GameModes/WaveGameMode.h"
+#include "Kismet/GameplayStatics.h"
 #include "Widget/Enemy/EnemyHealthBarWidget.h" // 퍼센트 세터 재사용
 
 // Sets default values
@@ -95,6 +97,11 @@ void ASOWCharacterCoreRune::OnHealthChanged(const FOnAttributeChangeData &Data)
 	// 체력바 갱신 (EnemyBase의 UpdateHealthBarValue 로직과 동일, )
 	UpdateHealthBarValue(NewHealth, MaxHealth);
 
+	if (AWaveGameMode* WaveGM = Cast<AWaveGameMode>(UGameplayStatics::GetGameMode(GetWorld())))
+	{
+		WaveGM->RuneUpdateHUD(NewHealth, MaxHealth);
+	}
+
 	// 표시/페이드 처리 (EnemyBase의 위젯 표시 로직 참조, )
 	if (!bShouldKeepHealthbarOn && HealthBarWidget)
 	{
@@ -137,14 +144,4 @@ void ASOWCharacterCoreRune::HandleCoreDestroyed()
 	// 여기서 게임 오버 처리/이펙트/사운드 등을 호출하거나,
 	// 코어를 파괴하지 않고 남겨둘 수도 있음. 필요하다면 Destroy() 호출:
 	// K2_DestroyActor();
-}
-
-void ASOWCharacterCoreRune::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
-void ASOWCharacterCoreRune::SetupPlayerInputComponent(UInputComponent *PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }

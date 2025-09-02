@@ -18,7 +18,7 @@ class UWidgetComponent;
 class UBehaviorTree;
 class USOWEnemyCombatComponent;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyDeath, int, GoldAmount);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyDeath, int32, ShardAmount);
 
 UCLASS()
 class SOW_API ASOWCharacterEnemyBase : public ASOWCharacter, public IEnemyActionsInterface
@@ -47,8 +47,8 @@ class SOW_API ASOWCharacterEnemyBase : public ASOWCharacter, public IEnemyAction
 
 	float AttackRadius = 0.f;
 	float AttackSpeed = 0.f;
-	int ShardDropAmount = 0;
-	int ShardDropAmountVariation = 0;
+	int32 ShardDropAmount = 0;
+	int32 ShardDropAmountVariation = 0;
 
 public:
 	// Sets default values for this character's properties
