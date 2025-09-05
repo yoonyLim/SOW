@@ -89,8 +89,10 @@ protected:
 	bool InGame = false;
 
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile|Properties", meta = (ExposeOnSpawn = true))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile|Properties", meta = (ExposeOnSpawn = true))
 	bool bHitOnce = true;
+
+	bool bHitDone = false;
 	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile|Properties", meta = (ExposeOnSpawn = true))
 	AActor* TargetActor;
 #pragma endregion

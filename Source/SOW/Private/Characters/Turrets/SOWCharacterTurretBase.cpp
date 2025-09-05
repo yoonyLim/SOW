@@ -67,17 +67,8 @@ void ASOWCharacterTurretBase::PossessedBy(AController* NewController)
 			AttributeSet->GetDetectionRangeAttribute())
 			.AddUObject(this, &ASOWCharacterTurretBase::OnDetectionRangeChanged);
 
-
-		ASC->GetGameplayAttributeValueChangeDelegate(
-			AttributeSet->GetMaxHealthBaseAttribute())
-			.AddUObject(this, &ASOWCharacterTurretBase::OnWidgetAttributeChanged);
-
 		ASC->GetGameplayAttributeValueChangeDelegate(
 			AttributeSet->GetAttackPowerBaseAttribute())
-			.AddUObject(this, &ASOWCharacterTurretBase::OnWidgetAttributeChanged);
-
-		ASC->GetGameplayAttributeValueChangeDelegate(
-			AttributeSet->GetDefensePowerBaseAttribute())
 			.AddUObject(this, &ASOWCharacterTurretBase::OnWidgetAttributeChanged);
 
 		ASC->GetGameplayAttributeValueChangeDelegate(
@@ -136,34 +127,21 @@ void ASOWCharacterTurretBase::OnWidgetAttributeChanged(const FOnAttributeChangeD
 	if (Data.Attribute == USOWAttributeSet::GetAttackPowerBaseAttribute())
 	{
 		// For AttackPower
-		TurretUIComponent->OnAttackChanged.Broadcast(GetWidgetAttributeChangeDelegate(AttributeSet->AttackPowerBase, BaseAtts.AttackPowerBaseValue, BaseAtts.AttackPowerRatioValue));
+		TurretUIComponent->OnAttackChanged.Broadcast(GetWidgetAttributeChangeDelegate(AttributeSet->AttackPowerBase, BaseAtts.AttackPowerBaseValue,0));
 		
 	}
 	else if (Data.Attribute == USOWAttributeSet::GetAttackSpeedBaseAttribute())
 	{
 		// For AttackSpeed
-		TurretUIComponent->OnSpeedChanged.Broadcast(GetWidgetAttributeChangeDelegate(AttributeSet->AttackSpeedBase, BaseAtts.AttackSpeedBaseValue, BaseAtts.AttackSpeedRatioValue));
-	}
-	else if (Data.Attribute == USOWAttributeSet::GetMaxHealthBaseAttribute())
-	{
-		// For Health
-		TurretUIComponent->OnHealthChanged.Broadcast(GetWidgetAttributeChangeDelegate(AttributeSet->MaxHealthBase, BaseAtts.MaxHealthBaseValue, BaseAtts.MaxHealthRatioValue));
-	}
-	else if (Data.Attribute == USOWAttributeSet::GetDefensePowerBaseAttribute())
-	{
-		// For Defense
-		TurretUIComponent->OnDefenseChanged.Broadcast(GetWidgetAttributeChangeDelegate(AttributeSet->DefensePowerBase, BaseAtts.DefensePowerBaseValue, BaseAtts.DefensePowerRatioValue));
+		TurretUIComponent->OnSpeedChanged.Broadcast(GetWidgetAttributeChangeDelegate(AttributeSet->AttackSpeedBase, BaseAtts.AttackSpeedBaseValue, 0));
 	}
 }
 
 void ASOWCharacterTurretBase::InitWidgetAttributeChange()
 {
 	FWidgetDesciptableTurretAttribute BaseAtts = TurretCombatComponent->GetWidgetDesciptableTurretAttribute();
-
-	TurretUIComponent->OnHealthChanged.Broadcast(GetWidgetAttributeChangeDelegate(AttributeSet->MaxHealthBase, BaseAtts.MaxHealthBaseValue, BaseAtts.MaxHealthRatioValue));
-	TurretUIComponent->OnAttackChanged.Broadcast(GetWidgetAttributeChangeDelegate(AttributeSet->AttackPowerBase, BaseAtts.AttackPowerBaseValue, BaseAtts.AttackPowerRatioValue));
-	TurretUIComponent->OnDefenseChanged.Broadcast(GetWidgetAttributeChangeDelegate(AttributeSet->DefensePowerBase, BaseAtts.DefensePowerBaseValue, BaseAtts.DefensePowerRatioValue));
-	TurretUIComponent->OnSpeedChanged.Broadcast(GetWidgetAttributeChangeDelegate(AttributeSet->AttackSpeedBase, BaseAtts.AttackSpeedBaseValue, BaseAtts.AttackSpeedRatioValue));
+	TurretUIComponent->OnAttackChanged.Broadcast(GetWidgetAttributeChangeDelegate(AttributeSet->AttackPowerBase, BaseAtts.AttackPowerBaseValue,0));
+	TurretUIComponent->OnSpeedChanged.Broadcast(GetWidgetAttributeChangeDelegate(AttributeSet->AttackSpeedBase, BaseAtts.AttackSpeedBaseValue, 0));
 }
 
 

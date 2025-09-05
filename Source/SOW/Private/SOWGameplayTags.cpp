@@ -114,7 +114,8 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Element_Flame_Minor, "Shared.Element.Flame.Minor");
 
 	UE_DEFINE_GAMEPLAY_TAG(Tile_Forest_Normal, "Tile.Forest.Normal")
-	
+		
+	//UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditiveAttackPower, "Shared.SetByCaller.AdditiveAttackPower");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditiveDamage, "Shared.SetByCaller.AdditiveDamage");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_MultipleDamage, "Shared.SetByCaller.MultipleDamage");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditinalDamageRatio_SinAlpha, "Shared.SetByCaller.AdditinalDamageRatio.SinAlpha");

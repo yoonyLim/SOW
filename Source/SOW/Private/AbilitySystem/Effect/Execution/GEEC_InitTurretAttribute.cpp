@@ -8,25 +8,21 @@
 #include "AbilitySystem/SOWAttributeSet.h"
 
 struct FAttributeCapturesTurretData {
-	DECLARE_ATTRIBUTE_CAPTUREDEF(MaxHealthBase);
-	DECLARE_ATTRIBUTE_CAPTUREDEF(MaxHealthRatio);
-	DECLARE_ATTRIBUTE_CAPTUREDEF(DefensePowerBase);
-	DECLARE_ATTRIBUTE_CAPTUREDEF(DefensePowerRatio);
+
+
 	DECLARE_ATTRIBUTE_CAPTUREDEF(AttackPowerBase);
-	DECLARE_ATTRIBUTE_CAPTUREDEF(AttackPowerRatio);
+
 	DECLARE_ATTRIBUTE_CAPTUREDEF(AttackSpeedBase);
-	DECLARE_ATTRIBUTE_CAPTUREDEF(AttackSpeedRatio);
+
 	DECLARE_ATTRIBUTE_CAPTUREDEF(DetectionRange);
 
 	FAttributeCapturesTurretData() {
-		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, MaxHealthBase, Target, false);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, MaxHealthRatio, Target, false);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, DefensePowerBase, Target, false);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, DefensePowerRatio, Target, false);
+
+
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, AttackPowerBase, Target, false);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, AttackPowerRatio, Target, false);
+
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, AttackSpeedBase, Target, false);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, AttackSpeedRatio, Target, false);
+
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, DetectionRange, Target, false);
 	}
 };
@@ -48,14 +44,10 @@ UGEEC_InitTurretAttribute::UGEEC_InitTurretAttribute()
 		AttributeData = nullptr;
 	}
 
-	RelevantAttributesToCapture.Add(GetCapturedTurretData().MaxHealthBaseDef);
-	RelevantAttributesToCapture.Add(GetCapturedTurretData().MaxHealthRatioDef);
-	RelevantAttributesToCapture.Add(GetCapturedTurretData().DefensePowerBaseDef);
-	RelevantAttributesToCapture.Add(GetCapturedTurretData().DefensePowerRatioDef);
+
+
 	RelevantAttributesToCapture.Add(GetCapturedTurretData().AttackPowerBaseDef);
-	RelevantAttributesToCapture.Add(GetCapturedTurretData().AttackPowerRatioDef);
 	RelevantAttributesToCapture.Add(GetCapturedTurretData().AttackSpeedBaseDef);
-	RelevantAttributesToCapture.Add(GetCapturedTurretData().AttackSpeedRatioDef);
 	RelevantAttributesToCapture.Add(GetCapturedTurretData().DetectionRangeDef);
 }
 
@@ -85,35 +77,6 @@ void UGEEC_InitTurretAttribute::Execute_Implementation(const FGameplayEffectCust
 		//UE_LOG(LogTemp, Error, TEXT("[ %s ] is not exist Turret Name. Please use another name or add name."), TurretName);
 		return;
 	}
-
-	OutExecutionOutput.AddOutputModifier(
-		FGameplayModifierEvaluatedData(
-			GetCapturedTurretData().MaxHealthBaseDef.AttributeToCapture,
-			EGameplayModOp::Override,
-			ResistanceDataRow->MaxHealthBase)
-	);
-
-	OutExecutionOutput.AddOutputModifier(
-		FGameplayModifierEvaluatedData(
-			GetCapturedTurretData().MaxHealthRatioDef.AttributeToCapture,
-			EGameplayModOp::Override,
-			ResistanceDataRow->MaxHealthRatio)
-	);
-
-	OutExecutionOutput.AddOutputModifier(
-		FGameplayModifierEvaluatedData(
-			GetCapturedTurretData().DefensePowerBaseDef.AttributeToCapture,
-			EGameplayModOp::Override,
-			ResistanceDataRow->DefensePowerBase)
-	);
-
-	OutExecutionOutput.AddOutputModifier(
-		FGameplayModifierEvaluatedData(
-			GetCapturedTurretData().DefensePowerRatioDef.AttributeToCapture,
-			EGameplayModOp::Override,
-			ResistanceDataRow->DefensePowerRatio)
-	);
-
 	OutExecutionOutput.AddOutputModifier(
 		FGameplayModifierEvaluatedData(
 			GetCapturedTurretData().AttackPowerBaseDef.AttributeToCapture,
@@ -123,23 +86,9 @@ void UGEEC_InitTurretAttribute::Execute_Implementation(const FGameplayEffectCust
 
 	OutExecutionOutput.AddOutputModifier(
 		FGameplayModifierEvaluatedData(
-			GetCapturedTurretData().AttackPowerRatioDef.AttributeToCapture,
-			EGameplayModOp::Override,
-			ResistanceDataRow->AttackPowerRatio)
-	);
-
-	OutExecutionOutput.AddOutputModifier(
-		FGameplayModifierEvaluatedData(
 			GetCapturedTurretData().AttackSpeedBaseDef.AttributeToCapture,
 			EGameplayModOp::Override,
 			ResistanceDataRow->AttackSpeedBase)
-	);
-
-	OutExecutionOutput.AddOutputModifier(
-		FGameplayModifierEvaluatedData(
-			GetCapturedTurretData().AttackSpeedRatioDef.AttributeToCapture,
-			EGameplayModOp::Override,
-			ResistanceDataRow->AttackSpeedRatio)
 	);
 
 	OutExecutionOutput.AddOutputModifier(

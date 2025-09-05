@@ -50,6 +50,8 @@ void ATurretProjectileBase::FaceToTargetActor() {
 
 	if (!TargetActor) return;
 
+	if (bHitDone) return;
+
 	bool bValidTarget = TargetActor->Implements<USOWCharacterTypeInterface>();
 	if (!bValidTarget) return;
 
@@ -78,6 +80,7 @@ void ATurretProjectileBase::OnCollisionHit(UPrimitiveComponent* OverlappedCompon
 	OverlappedActors.AddUnique(OtherActor);
 
 	// Apply Damage or Process After Effect like Gradual reinforcement
+	bHitDone = true;
 	BP_PostProjectileHit(OtherActor);
 }
 

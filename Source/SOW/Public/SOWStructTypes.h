@@ -6,6 +6,7 @@
 #include "AbilitySystem/Ability/SOWPlayerGameplayAbility.h"
 #include "AbilitySystem/Ability/SOWTurretGameplayAbility.h"
 #include "DataAsset/DA_TurretEvolutionData.h"
+#include "GameplayEffect.h"
 
 #include "SOWEnumTypes.h"
 #include "SOWStructTypes.generated.h"
@@ -68,29 +69,12 @@ struct FTurretAttributeData : public FTableRowBase {
 public:
 	FTurretAttributeData();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Unusing Value"))
-	float MaxHealthBase;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Unusing Value"))
-	float MaxHealthRatio;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Unusing Value"))
-	float DefensePowerBase;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Unusing Value"))
-	float DefensePowerRatio;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Attribute Value"))
 	float AttackPowerBase;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Unusing Value"))
-	float AttackPowerRatio;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Attribute Value"))
 	float AttackSpeedBase;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Unusing Value"))
-	float AttackSpeedRatio;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Attribute Value"))
 	float DetectionRange;
@@ -202,25 +186,13 @@ struct FWidgetDesciptableTurretAttribute {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	float MaxHealthBaseValue = 0.f;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	float MaxHealthRatioValue = 0.f;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	float DefensePowerBaseValue = 0.f;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	float DefensePowerRatioValue = 0.f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	float AttackPowerBaseValue = 0.f;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	float AttackPowerRatioValue = 0.f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	float AttackSpeedBaseValue = 0.f;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	float AttackSpeedRatioValue = 0.f;
+
 };
 
 USTRUCT(BlueprintType)
@@ -271,7 +243,7 @@ public:
 
 USTRUCT(BlueprintType)
 struct FTurretEvolutionData : public FTableRowBase {
-
+	// legacys
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -279,6 +251,36 @@ struct FTurretEvolutionData : public FTableRowBase {
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FTurretEvolutionItem> EvolutionBeta;
+};
+
+USTRUCT(BlueprintType)
+struct FEvolutionData : public FTableRowBase {
+
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<UGameplayEffect> EvolutionStatusEffectA;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<UGameplayEffect> EvolutionStatusEffectB;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FTurretEvolutionItem> EvolutionPropertyArray;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 StatusMaxLevel;
+};
+
+USTRUCT(BlueprintType)
+struct FEvolutionResourceData : public FTableRowBase {
+
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSoftObjectPtr<UCurveTable> PropertyResourceData;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSoftObjectPtr<UCurveTable> StatusResourceData;
 };
 
 USTRUCT(BlueprintType)

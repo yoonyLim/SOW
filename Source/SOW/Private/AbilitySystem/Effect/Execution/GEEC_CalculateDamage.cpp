@@ -94,6 +94,7 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 	L_AttackPower += Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_AdditiveDamage, false, 0.0f);
 	L_AttackPower *= Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_MultipleDamage, false, 1.0f);
 	float DamageReduction = Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_ReductedDamage, false, 1.0f);
+	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] AttackPower Final : Value: %f"), L_AttackPower); // 로그추가
 
 	
 	// Elemantal Damage
@@ -123,6 +124,7 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 
 	// Calculate Final Damage
 	float L_FinalDamage = (L_AttackPower - FMath::Log2(2 + L_DefensePower)) * ElementalResistance * DamageReduction * AdditinalDamageRatio;
+	L_FinalDamage = FMath::Floor(L_FinalDamage);
 	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] FinalDamage calculated: %f"), L_FinalDamage); // 로그추가
 
 	// Send HitReact Event To Target
