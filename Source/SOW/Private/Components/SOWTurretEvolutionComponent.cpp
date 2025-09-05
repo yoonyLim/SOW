@@ -22,13 +22,22 @@ USOWTurretEvolutionComponent::USOWTurretEvolutionComponent()
 
 void USOWTurretEvolutionComponent::GetPropertyDescriptString(FString& OutString)
 {
-	OutString = PropertyData[EvolutionPropertyLevel].EvolutionDescription;
+	if (EvolutionPropertyLevel >= PropertyMaxLevel) {
+		OutString = "강화 완료";
+	}
+	else {
+		OutString = PropertyData[EvolutionPropertyLevel].EvolutionDescription;
+	}
+	
 }
 
 void USOWTurretEvolutionComponent::GetPropertyResourceString(FString& OutCurrency, FString& OutPercentage)
 {
 	//checkf(PropertyResourceData, TEXT("PropertyResourceData not Assigned. Please check DataAsset"));
 	if (!PropertyResourceData) return;
+	if (EvolutionPropertyLevel >= PropertyMaxLevel) {
+		OutCurrency = "Max"; OutPercentage = ""; return;
+	}
 
 	FRealCurve* FoundCurve_Price = PropertyResourceData->FindCurve("Currency", TEXT(""));
 	FRealCurve* FoundCurve_Percent = PropertyResourceData->FindCurve("Prob", TEXT(""));
@@ -36,13 +45,16 @@ void USOWTurretEvolutionComponent::GetPropertyResourceString(FString& OutCurrenc
 	float PriceValue = FoundCurve_Price->Eval(EvolutionPropertyLevel + 1);
 	float PercentValue = FoundCurve_Percent->Eval(EvolutionPropertyLevel + 1);
 
-	OutCurrency = EvolutionPropertyLevel < PropertyMaxLevel ? FString::FromInt(PriceValue) : "Max";
-	OutPercentage = EvolutionPropertyLevel < PropertyMaxLevel ? TEXT("강화 확률") " : " + FString::FromInt(PercentValue) + "%" : "";
+	OutCurrency = FString::FromInt(PriceValue);
+	OutPercentage = TEXT("강화 확률") " : " + FString::FromInt(PercentValue) + "%";
 }
 
 void USOWTurretEvolutionComponent::GetStatusResourceString(FString& OutCurrency, FString& OutPercentage)
 {
 	if (!StatusResourceData) return;
+	if (EvolutionStatusLevel >= StatusMaxLevel) {
+		OutCurrency = "Max"; OutPercentage = ""; return;
+	}
 	//checkf(StatusResourceData, TEXT("StatusResourceData not Assigned. Please check DataAsset"));
 	FRealCurve* FoundCurve_Price = StatusResourceData->FindCurve("Currency", TEXT(""));
 	FRealCurve* FoundCurve_Percent = StatusResourceData->FindCurve("Prob", TEXT(""));
@@ -50,13 +62,16 @@ void USOWTurretEvolutionComponent::GetStatusResourceString(FString& OutCurrency,
 	float PriceValue = FoundCurve_Price->Eval(EvolutionStatusLevel + 1);
 	float PercentValue = FoundCurve_Percent->Eval(EvolutionStatusLevel + 1);
 
-	OutCurrency = EvolutionStatusLevel < StatusMaxLevel ? FString::FromInt(PriceValue) : "Max";
-	OutPercentage = EvolutionStatusLevel < StatusMaxLevel ? TEXT("강화 확률") " : "+ FString::FromInt(PercentValue) + "%" : "";
+	OutCurrency = FString::FromInt(PriceValue);
+	OutPercentage = TEXT("강화 확률") " : "+ FString::FromInt(PercentValue) + "%";
 }
 
 void USOWTurretEvolutionComponent::GetStatusNextValueString(FString& OutAtk, FString& OutSpd)
 {
 	if (!StatusResourceData) return;
+	if (EvolutionStatusLevel >= StatusMaxLevel) {
+		OutAtk = ""; OutSpd = ""; return;
+	}
 	//checkf(StatusResourceData, TEXT("StatusResourceData not Assigned. Please check DataAsset"));
 	FRealCurve* FoundCurve_Atk = StatusResourceData->FindCurve("AttackUp", TEXT(""));
 	FRealCurve* FoundCurve_Spd = StatusResourceData->FindCurve("SpeedUp", TEXT(""));
@@ -64,8 +79,8 @@ void USOWTurretEvolutionComponent::GetStatusNextValueString(FString& OutAtk, FSt
 	float AtkValue = FoundCurve_Atk->Eval(EvolutionStatusLevel + 1);
 	float SpdValue = FoundCurve_Spd->Eval(EvolutionStatusLevel + 1);
 
-	OutAtk = EvolutionStatusLevel < StatusMaxLevel ? "+" + FString::FromInt(AtkValue): "";
-	OutSpd = EvolutionStatusLevel < StatusMaxLevel ? "+" + FString::SanitizeFloat(SpdValue) : "";
+	OutAtk = "+" + FString::FromInt(AtkValue);
+	OutSpd = "+" + FString::SanitizeFloat(SpdValue);
 
 }
 
@@ -159,7 +174,6 @@ void USOWTurretEvolutionComponent::TryEvolution(EEvolutionType Type)
 
 bool USOWTurretEvolutionComponent::CheckResourceAndProb(EEvolutionType Type)
 {
-	FRandomStream FS;
 
 	if (Type == EEvolutionType::EVO_PROP) {
 		checkf(PropertyResourceData, TEXT("PropertyResourceData not Assigned. Please check DataAsset"));
@@ -175,9 +189,10 @@ bool USOWTurretEvolutionComponent::CheckResourceAndProb(EEvolutionType Type)
 			UE_LOG(LogTemp, Error, TEXT("PriceValue Condition Failed"));
 			return false;
 		}
-		if (FS.RandRange(1, 100) > PercentValue) {
-			UE_LOG(LogTemp, Error, TEXT("PercentValue Condition Failed"));
-			return false; 
+		int32 value = FMath::RandRange(1, 100);
+		if (value > PercentValue) {
+			UE_LOG(LogTemp, Error, TEXT("PercentValue Condition Failed : %s"), *FString::FromInt(value));
+			return false;
 		}
 	}
 	else {
@@ -194,8 +209,10 @@ bool USOWTurretEvolutionComponent::CheckResourceAndProb(EEvolutionType Type)
 			UE_LOG(LogTemp, Error, TEXT("PriceValue Condition Failed"));
 			return false;
 		}
-		if (FS.RandRange(1, 100) > PercentValue) { 
-			UE_LOG(LogTemp, Error, TEXT("PercentValue Condition Failed"));
+
+		int32 value = FMath::RandRange(1, 100);
+		if (value > PercentValue) {
+			UE_LOG(LogTemp, Error, TEXT("PercentValue Condition Failed : %s"), *FString::FromInt(value));
 			return false; 
 		}
 	}

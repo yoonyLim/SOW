@@ -53,6 +53,7 @@ void AProjectileBase::ResetProjectile()
 	OverlappedActors.Empty();
 	TargetActor = nullptr;
 	bHitDone = false;
+	InGame = false;
 
 	// 콜리전 초기화
 	if (ProjectileHitCollisionComp)
