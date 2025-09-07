@@ -82,7 +82,7 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 	EvalParams.TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();
 
 
-	
+
 	// Base Attack Power
 	float L_AttackPower = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
@@ -90,13 +90,13 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 		EvalParams,
 		L_AttackPower
 	);
-	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] AttackPower captured: Value: %f"),  L_AttackPower); // 로그추가
+	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] AttackPower captured: Value: %f"), L_AttackPower); // 로그추가
 	L_AttackPower += Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_AdditiveDamage, false, 0.0f);
 	L_AttackPower *= Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_MultipleDamage, false, 1.0f);
 	float DamageReduction = Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_ReductedDamage, false, 1.0f);
 	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] AttackPower Final : Value: %f"), L_AttackPower); // 로그추가
 
-	
+
 	// Elemantal Damage
 	float ElementalResistance = GetElementalResistanceCost(ExecutionParams, EvalParams);
 	ElementalResistance = ElementalResistance > 0.2f ? ElementalResistance : 0.2f;
@@ -141,7 +141,7 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 	OutExecutionOutput.AddOutputModifier(
 		FGameplayModifierEvaluatedData(
 			GetCapturedPropertiesDamage().CurrentHealthDef.AttributeToCapture,
-			EGameplayModOp::Additive, 
+			EGameplayModOp::Additive,
 			-L_FinalDamage)
 	);
 }

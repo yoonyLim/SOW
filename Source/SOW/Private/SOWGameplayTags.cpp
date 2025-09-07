@@ -28,8 +28,8 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Poison, "Enemy.Status.Debuff.Poison");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_SpiderWeb, "Enemy.Status.Debuff.SpiderWeb");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Slow, "Enemy.Status.Debuff.Slow");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_RestoreMovement, "Enemy.Status.Debuff.RestoreMovement");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Rooted, "Enemy.Status.Debuff.Rooted"); 
-	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Shadow, "Enemy.Status.Debuff.Shadow");
 
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sin_Alpha, "Enemy.Status.Debuff.Sin.Alpha");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sin_Beta, "Enemy.Status.Debuff.Sin.Beta");
@@ -127,6 +127,8 @@ namespace SOWGameplayTags
 
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditiveBuffValue, "Shared.SetByCaller.AdditiveBuffValue");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_ReductedDamage, "Shared.SetByCaller.ReductedDamage");
+	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_RestoreMovement, "Shared.SetByCaller.RestoreMovement");
+	
 
 	UE_DEFINE_GAMEPLAY_TAG(World_Event_WaveStart, "World.Event.WaveStart");
 	UE_DEFINE_GAMEPLAY_TAG(World_Event_Gen_Nature, "World.Event.Gen.Nature");
@@ -140,7 +142,8 @@ namespace SOWGameplayTags
 	
 	UE_DEFINE_GAMEPLAY_TAG(Data_ManaCost, "Data.ManaCost");
 	UE_DEFINE_GAMEPLAY_TAG(Data_ModValue, "Data.ModValue");
-
+	UE_DEFINE_GAMEPLAY_TAG(Data_RestoreMovement, "Data.RestoreMovement");
+	
 	/* Player Skill Tag */
 	/* Nature Skills*/
 	UE_DEFINE_GAMEPLAY_TAG(Player_Skill_Nature_l, "Player.Skill.Nature.l");
