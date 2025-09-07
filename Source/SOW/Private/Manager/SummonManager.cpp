@@ -28,7 +28,7 @@ void USummonManager::Initialize()
 {
 	DT_SummonTurretProb = LoadObject<UDataTable>(
 		nullptr,
-		TEXT("/Game/01Blueprints/DataTable/Turrets/DT_TurretSummonProb.DT_TurretSummonProb")
+		TEXT("/Game/01Blueprints/DataTable/Turrets/DT_TurretSummonProb_Implemented.DT_TurretSummonProb_Implemented") // Testable Turret Only
 	);
 
 	InitTurretArray();
