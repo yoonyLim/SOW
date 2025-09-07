@@ -137,10 +137,13 @@ void AProjectileBase::SendTargetDeadEventToInstigator(AActor* InCheckingTarget)
 	if (USOWBlueprintFunctionLibrary::DoesActorHasTag(InCheckingTarget, SOWGameplayTags::Shared_Status_Dead)) {
 		ASOWCharacter* SOWInstigator = Cast<ASOWCharacter>(GetInstigator());
 
+		FGameplayEventData Data;
+		Data.Target = InCheckingTarget;
+
 		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
 			SOWInstigator,
 			SOWGameplayTags::Shared_Event_TargetDead,
-			FGameplayEventData()
+			Data
 		);
 
 		UE_LOG(LogTemp, Warning, TEXT("Sended Target Dead Event"));
