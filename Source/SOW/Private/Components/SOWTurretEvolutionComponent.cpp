@@ -23,7 +23,7 @@ USOWTurretEvolutionComponent::USOWTurretEvolutionComponent()
 void USOWTurretEvolutionComponent::GetPropertyDescriptString(FString& OutString)
 {
 	if (EvolutionPropertyLevel >= PropertyMaxLevel) {
-		OutString = "강화 완료";
+		OutString = TEXT("강화 완료");
 	}
 	else {
 		OutString = PropertyData[EvolutionPropertyLevel].EvolutionDescription;

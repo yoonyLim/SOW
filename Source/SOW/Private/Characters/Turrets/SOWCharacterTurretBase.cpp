@@ -161,6 +161,11 @@ FWidgetDescAtt ASOWCharacterTurretBase::GetWidgetAttributeChangeDelegate(const F
 
 void ASOWCharacterTurretBase::OnDetectionRangeChanged(const FOnAttributeChangeData& Data)
 {
+	if (!GetTurretCombatComponent()) return;
+
+	GetTurretCombatComponent()->MakeDetectableTileArea();
+	TurretUIComponent->OnRangeChanged.Broadcast();
+	//SwitchDetectionRangeDecal(true);
 	//SwitchDetectionRangeDecal(DetectionRangeDecal->GetVisibleFlag());
 }
 

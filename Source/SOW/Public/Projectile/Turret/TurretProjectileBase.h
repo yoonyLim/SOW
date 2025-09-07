@@ -34,7 +34,7 @@ protected:
 	void FaceToTargetActor();
 	
 private:
-
+	bool CheckOutOfRange();
 	
 
 #pragma region InternalProperties

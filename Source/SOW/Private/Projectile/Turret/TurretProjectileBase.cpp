@@ -35,6 +35,10 @@ void ATurretProjectileBase::Tick(float DeltaTime) {
 	if (!GetProjectileInGame()) return;
 
 	if (HasMovement) {
+		if (CheckOutOfRange()) {
+			BP_DestroyProjectile();
+		}
+
 		if (bHitOnce && (!TargetActor || (Cast<ASOWCharacter>(TargetActor) && USOWBlueprintFunctionLibrary::DoesActorHasTag(TargetActor, SOWGameplayTags::Shared_Status_Dead)))) {
 			BP_DestroyProjectile();
 		}
@@ -64,6 +68,24 @@ void ATurretProjectileBase::FaceToTargetActor() {
 		SetActorRotation(DirVector.Rotation());
 	}
 }
+
+bool ATurretProjectileBase::CheckOutOfRange()
+{
+	float range = CachedInstigator->GetDetectionRangeRadius();
+	float criticValue = (range + 0.5f) * 116.f; // Tile Size : 116 -> Hard Coding / 한 변의 길이
+	
+	FVector VLeft = FVector::LeftVector;
+	FVector VForward = FVector::ForwardVector;
+
+	FVector PosVector = GetActorLocation() - CachedInstigator->GetActorLocation();
+
+	float LeftProj = FMath::Abs(FVector::DotProduct(VLeft, PosVector));
+	float ForwardProj = FMath::Abs(FVector::DotProduct(VForward, PosVector));
+
+	return (LeftProj >= criticValue) || (ForwardProj >= criticValue);
+
+}
+
 void ATurretProjectileBase::OnCollisionHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	// Overlapping Callback Function
