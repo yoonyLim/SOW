@@ -5,6 +5,9 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "SOWEnumTypes.h"
+
+class UCurrencyGainLogger;
+
 #include "OneTimeCurrencyManager.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnOneTiemCurrencyChanged, int32, NewCurrency, EElementalType, CurrencyType);
@@ -33,8 +36,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Currency")
 	bool SpentCurrency(EElementalType CurrencyType, int32 Amount);
 
+	// 새 오버로드: 소스/컨텍스트 포함 (BP에서도 사용 가능)
+	UFUNCTION(BlueprintCallable, Category = "Currency")
+	bool AddCurrencyWithSource(EElementalType CurrencyType, int32 Amount, FName SourceTag, const FString& Context);
+
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Currency")
 	TMap<EElementalType, int32> CurrentCurrency;
-
+	
+private:
+	UPROPERTY()
+	UCurrencyGainLogger* GainLogger = nullptr;
 };
