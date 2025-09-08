@@ -2,6 +2,8 @@
 
 
 #include "Manager/OneTimeCurrencyManager.h"
+#include "Log/CurrencyGainLogger.h"
+#include "Log/CurrencyLog.h"
 
 void UOneTimeCurrencyManager::Initialize()
 {
@@ -12,6 +14,13 @@ void UOneTimeCurrencyManager::Initialize()
 		{
 			CurrentCurrency.Add(CurrencyType, 0);
 		}
+	}
+
+	// 로거 준비
+	if (!GainLogger)
+	{
+		GainLogger = NewObject<UCurrencyGainLogger>(this);
+		GainLogger->Init();
 	}
 }
 
@@ -33,12 +42,27 @@ bool UOneTimeCurrencyManager::AddCurrency(EElementalType CurrencyType, int32 Amo
 	{
 		CurrentCurrency[CurrencyType] += Amount;
 		OnOneTimeCurrencyChanged.Broadcast(CurrentCurrency[CurrencyType], CurrencyType);
+
+		if (GainLogger && Amount > 0)
+		{
+			GainLogger->LogGain(CurrencyType, Amount, /*Source*/NAME_None, /*Context*/TEXT(""));
+		}
 		return true;
 	}
 	else
 	{
 		return false;
 	}
+}
+
+bool UOneTimeCurrencyManager::AddCurrencyWithSource(EElementalType CurrencyType, int32 Amount, FName SourceTag, const FString& Context)
+{
+	const bool bOk = AddCurrency(CurrencyType, Amount);
+	if (bOk && GainLogger && Amount > 0)
+	{
+		GainLogger->LogGain(CurrencyType, Amount, SourceTag, Context);
+	}
+	return bOk;
 }
 
 bool UOneTimeCurrencyManager::SpentCurrency(EElementalType CurrencyType, int32 Amount)
