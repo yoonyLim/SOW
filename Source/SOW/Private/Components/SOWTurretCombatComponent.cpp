@@ -126,6 +126,27 @@ void USOWTurretCombatComponent::VisualizeTurretDetectionRange(bool bOn)
 	}
 }
 
+void USOWTurretCombatComponent::MakeDetectableTileArea()
+{
+	APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
+	float Radius = 2 * CachedOwnerCharacter->GetDetectionRangeRadius() + 1;
+	float TileSize = 116.f;
+
+	FVector CPoint = USOWBlueprintFunctionLibrary::MakeCentralTileLocationFromAnyPoint(
+		PC,
+		CachedOwnerCharacter->GetActorLocation(),
+		ETileSelectType::SQUARED,
+		Radius,
+		TileSize,
+		true);
+
+	DetectorTiles = USOWBlueprintFunctionLibrary::GetTilesAsSquaredFromCenterLocation(
+		PC,
+		CPoint,
+		Radius,
+		TileSize);
+}
+
 float USOWTurretCombatComponent::GetProjectileLivingTime() const
 {
 	float Duration;
@@ -220,25 +241,7 @@ void USOWTurretCombatComponent::SetNewTargetSelectCount(int32 NewCount)
 
 void USOWTurretCombatComponent::ActivateTurretFunction()
 {
-
-	APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
-	float Radius = 2 * CachedOwnerCharacter->GetDetectionRangeRadius() + 1;
-	float TileSize = 116.f;
-
-	FVector CPoint = USOWBlueprintFunctionLibrary::MakeCentralTileLocationFromAnyPoint(
-		PC,
-		CachedOwnerCharacter->GetActorLocation(),
-		ETileSelectType::SQUARED,
-		Radius,
-		TileSize,
-		true);
-
-	DetectorTiles = USOWBlueprintFunctionLibrary::GetTilesAsSquaredFromCenterLocation(
-		PC,
-		CPoint,
-		Radius,
-		TileSize);
-
+	MakeDetectableTileArea();
 	UE_LOG(LogTemp, Warning, TEXT("Tile Count : %s"), *FString::FromInt(DetectorTiles.Num()));
 	CachedOwnerCharacter->SwitchCollision(true);
 	RefreshTurretFunction();
@@ -416,6 +419,8 @@ AActor* USOWTurretCombatComponent::GetSingleAttackTargetOnList(const TArray<AAct
 
 TArray<AActor*> USOWTurretCombatComponent::GetAllAttackTarget()
 {
+	// Get all attack targets that match the target selection count
+
 	TArray<AActor*> BaseActorList;
 	TArray<AActor*> FinalTargetList;
 

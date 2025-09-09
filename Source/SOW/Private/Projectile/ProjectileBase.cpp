@@ -52,18 +52,13 @@ void AProjectileBase::ResetProjectile()
 {
 	OverlappedActors.Empty();
 	TargetActor = nullptr;
-
-	if (ProjectileMoveComp)
-	{
-		//ProjectileMoveComp->StopMovementImmediately();
-		//ProjectileMoveComp->Velocity = FVector::ZeroVector;
-	}
+	bHitDone = false;
+	InGame = false;
 
 	// 콜리전 초기화
 	if (ProjectileHitCollisionComp)
 	{
 		ProjectileHitCollisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		//ProjectileHitCollisionComp->IgnoreActorWhenMoving(nullptr, false);
 	}
 	ProjectileMoveComp->Deactivate();
 	ProjectileFxComp->Deactivate();
@@ -142,10 +137,13 @@ void AProjectileBase::SendTargetDeadEventToInstigator(AActor* InCheckingTarget)
 	if (USOWBlueprintFunctionLibrary::DoesActorHasTag(InCheckingTarget, SOWGameplayTags::Shared_Status_Dead)) {
 		ASOWCharacter* SOWInstigator = Cast<ASOWCharacter>(GetInstigator());
 
+		FGameplayEventData Data;
+		Data.Target = InCheckingTarget;
+
 		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
 			SOWInstigator,
 			SOWGameplayTags::Shared_Event_TargetDead,
-			FGameplayEventData()
+			Data
 		);
 
 		UE_LOG(LogTemp, Warning, TEXT("Sended Target Dead Event"));

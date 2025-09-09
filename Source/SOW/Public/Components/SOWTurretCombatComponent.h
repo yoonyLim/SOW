@@ -37,6 +37,7 @@ public:
 
 	void VisualizeTurretDetectionRange(bool bOn);
 
+	void MakeDetectableTileArea();
 #pragma endregion
 
 #pragma region DetectingFunction

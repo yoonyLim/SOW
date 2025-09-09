@@ -16,13 +16,14 @@
 #include "Manager/GlobalCurrencyManager.h"
 #include "Manager/OneTimeCurrencyManager.h"
 #include "Components/BoxComponent.h"
+#include "AbilitySystem/SOWAttributeSet.h"
 
 #include "DrawDebugHelpers.h"
 
 USOWAbilitySystemComponent* USOWBlueprintFunctionLibrary::NativeGetSOWAbilitySystemComponentFromActorInfo(AActor* InActor)
 {
-    check(InActor);
-    USOWAbilitySystemComponent* ASC = CastChecked<USOWAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(InActor));
+    checkf(InActor, TEXT("Invalid Actor has passed"));
+    USOWAbilitySystemComponent* ASC = Cast<USOWAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(InActor));
 
     return ASC;
 }
@@ -154,6 +155,7 @@ bool USOWBlueprintFunctionLibrary::QueryForCurrencyCountSufficient(UObject* Worl
 
     return false;
 }
+
 
 EElementalType USOWBlueprintFunctionLibrary::TranslateElementTagToEnum(const FGameplayTag& InTag){
 

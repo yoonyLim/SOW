@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Components/SOWTurretEvolutionComponent.h"
@@ -20,107 +20,205 @@ USOWTurretEvolutionComponent::USOWTurretEvolutionComponent()
 }
 
 
+void USOWTurretEvolutionComponent::GetPropertyDescriptString(FString& OutString)
+{
+	if (EvolutionPropertyLevel >= PropertyMaxLevel) {
+		OutString = TEXT("강화 완료");
+	}
+	else {
+		OutString = PropertyData[EvolutionPropertyLevel].EvolutionDescription;
+	}
+	
+}
+
+void USOWTurretEvolutionComponent::GetPropertyResourceString(FString& OutCurrency, FString& OutPercentage)
+{
+	//checkf(PropertyResourceData, TEXT("PropertyResourceData not Assigned. Please check DataAsset"));
+	if (!PropertyResourceData) return;
+	if (EvolutionPropertyLevel >= PropertyMaxLevel) {
+		OutCurrency = "Max"; OutPercentage = ""; return;
+	}
+
+	FRealCurve* FoundCurve_Price = PropertyResourceData->FindCurve("Currency", TEXT(""));
+	FRealCurve* FoundCurve_Percent = PropertyResourceData->FindCurve("Prob", TEXT(""));
+
+	float PriceValue = FoundCurve_Price->Eval(EvolutionPropertyLevel + 1);
+	float PercentValue = FoundCurve_Percent->Eval(EvolutionPropertyLevel + 1);
+
+	OutCurrency = FString::FromInt(PriceValue);
+	OutPercentage = TEXT("강화 확률") " : " + FString::FromInt(PercentValue) + "%";
+}
+
+void USOWTurretEvolutionComponent::GetStatusResourceString(FString& OutCurrency, FString& OutPercentage)
+{
+	if (!StatusResourceData) return;
+	if (EvolutionStatusLevel >= StatusMaxLevel) {
+		OutCurrency = "Max"; OutPercentage = ""; return;
+	}
+	//checkf(StatusResourceData, TEXT("StatusResourceData not Assigned. Please check DataAsset"));
+	FRealCurve* FoundCurve_Price = StatusResourceData->FindCurve("Currency", TEXT(""));
+	FRealCurve* FoundCurve_Percent = StatusResourceData->FindCurve("Prob", TEXT(""));
+
+	float PriceValue = FoundCurve_Price->Eval(EvolutionStatusLevel + 1);
+	float PercentValue = FoundCurve_Percent->Eval(EvolutionStatusLevel + 1);
+
+	OutCurrency = FString::FromInt(PriceValue);
+	OutPercentage = TEXT("강화 확률") " : "+ FString::FromInt(PercentValue) + "%";
+}
+
+void USOWTurretEvolutionComponent::GetStatusNextValueString(FString& OutAtk, FString& OutSpd)
+{
+	if (!StatusResourceData) return;
+	if (EvolutionStatusLevel >= StatusMaxLevel) {
+		OutAtk = ""; OutSpd = ""; return;
+	}
+	//checkf(StatusResourceData, TEXT("StatusResourceData not Assigned. Please check DataAsset"));
+	FRealCurve* FoundCurve_Atk = StatusResourceData->FindCurve("AttackUp", TEXT(""));
+	FRealCurve* FoundCurve_Spd = StatusResourceData->FindCurve("SpeedUp", TEXT(""));
+
+	float AtkValue = FoundCurve_Atk->Eval(EvolutionStatusLevel + 1);
+	float SpdValue = FoundCurve_Spd->Eval(EvolutionStatusLevel + 1);
+
+	OutAtk = "+" + FString::FromInt(AtkValue);
+	OutSpd = "+" + FString::SanitizeFloat(SpdValue);
+
+}
+
 // Called when the game starts
 void USOWTurretEvolutionComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
 	CachedOwnerCharacter = Cast<ASOWCharacterTurretBase>(GetOwner());
-	// ...
+	if (!CachedOwnerCharacter) {
+		UE_LOG(LogTemp, Error, TEXT("Turret is Invalid"));
+	}
+
+	FName TurretName = CachedOwnerCharacter->GetTurretName();
+	if (UDataTable* EvolutionData = LoadObject<UDataTable>(nullptr, TEXT("/Game/01Blueprints/DataTable/TurretEvolutionInfo.TurretEvolutionInfo"))) {
+
+		FEvolutionData* EvolutionDataRow = EvolutionData->FindRow<FEvolutionData>(TurretName, TEXT(""));
+
+		checkf(EvolutionDataRow, TEXT("No RowData found from TurretEvolutionInfo. Please check RowName : %s"), *TurretName.ToString());
+
+		AlphaData = EvolutionDataRow->EvolutionStatusEffectA;
+		BetaData = EvolutionDataRow->EvolutionStatusEffectB;
+		PropertyData = EvolutionDataRow->EvolutionPropertyArray;
+		StatusMaxLevel = EvolutionDataRow->StatusMaxLevel;
+
+		UE_LOG(LogTemp, Warning, TEXT("[EvolutionComponent] %s : EvolutionData Loading Complete."), *TurretName.ToString());
+	}
 	
 
-	
-	if (UDataTable* EvolutionData = LoadObject<UDataTable>(nullptr, TEXT("/Game/01Blueprints/DataTable/TurretEvolutionData.TurretEvolutionData"))) {
-		FName TurretName = CachedOwnerCharacter->GetTurretName();
-		EvolutionDataRow = EvolutionData->FindRow<FTurretEvolutionData>(TurretName, TEXT(""));
-		InitEvolutionItems();
+	if (UDataTable* ResourceData = LoadObject<UDataTable>(nullptr, TEXT("/Game/01Blueprints/DataTable/TurretEvolutionResourceCurve.TurretEvolutionResourceCurve"))) {
+		
+		FEvolutionResourceData* ResourceDataRow = ResourceData->FindRow<FEvolutionResourceData>(TurretName, TEXT(""));
+
+		checkf(ResourceDataRow, TEXT("No RowData found from TurretEvolutionInfo. Please check RowName : %s"), *TurretName.ToString());
+		PropertyResourceData = ResourceDataRow->PropertyResourceData.LoadSynchronous();
+		StatusResourceData = ResourceDataRow->StatusResourceData.LoadSynchronous();
+
+		checkf(PropertyResourceData, TEXT("No PropertyResourceData found from TurretEvolutionInfo. Please check RowName : %s"), *TurretName.ToString());
+		checkf(StatusResourceData, TEXT("No StatusResourceData found from TurretEvolutionInfo. Please check RowName : %s"), *TurretName.ToString());
+
+
+		UE_LOG(LogTemp, Warning, TEXT("[EvolutionComponent] %s : EvolutionResourceData Loading Complete."), *TurretName.ToString());
 	}
+	
 	USOWTurretUIComponent* UIComponent = Cast< USOWTurretUIComponent>(CachedOwnerCharacter->GetCharacterUIComponent());
+
+	if(!UIComponent) {
+		UE_LOG(LogTemp, Error, TEXT("UIComponent is Invalid"));
+	}
 	UIComponent->OnTryToEvolveWith.AddDynamic(this, &USOWTurretEvolutionComponent::TryEvolution);
 }
 
 void USOWTurretEvolutionComponent::TryEvolution(EEvolutionType Type)
 {
-	
-	
+	//UE_LOG(LogTemp, Warning, TEXT("TryEvolution"));
 
-	if (USOWAbilitySystemComponent* ASC = CachedOwnerCharacter->GetSOWAbilitySystemComponent()) {
-		
-		if (!EvolutionDataRow || EvolutionLevel >= 4) {
-			return;
+	USOWAbilitySystemComponent* ASC = CachedOwnerCharacter->GetSOWAbilitySystemComponent();
+	if (!ASC) return;
+	FGameplayEffectContextHandle CH;
+	FGameplayEffectSpecHandle ESH;
+
+	if (!CheckResourceAndProb(Type)) {
+		// 강화 실패 시 UI Floating을 대비
+		UE_LOG(LogTemp, Error, TEXT("Evolution Failed"));
+		return;
+	} 
+	switch (Type)
+	{
+		// A,B의 경우 커브 테이블 값이 1부터 시작하므로 미리 증가시킨 뒤 수행
+	case EEvolutionType::EVO_ALPHA:
+		ESH = ASC->MakeOutgoingSpec(AlphaData, ++EvolutionStatusLevel, CH);
+		ASC->ApplyGameplayEffectSpecToSelf(*ESH.Data.Get());
+		break;
+	case EEvolutionType::EVO_BETA:
+		ESH = ASC->MakeOutgoingSpec(BetaData, ++EvolutionStatusLevel, CH);
+		ASC->ApplyGameplayEffectSpecToSelf(*ESH.Data.Get());
+		break;
+	case EEvolutionType::EVO_PROP:
+		// P의 경우 배열 인덱스가 0부터 시작하므로 받은 뒤 증가
+		if (UDA_TurretEvolutionData* Data = PropertyData[EvolutionPropertyLevel].EvolutionDataAsset.LoadSynchronous()) {
+			Data->GiveToAbilitySystemComponent(ASC);
+			EvolutionPropertyLevel++;
 		}
-
-		UCurveTable* PriceData = LoadObject<UCurveTable>(nullptr, TEXT("/Game/01Blueprints/Turret/CT_TurretEvolutionPricesByRank.CT_TurretEvolutionPricesByRank"));
-		UCurveTable* PercentData = LoadObject<UCurveTable>(nullptr, TEXT("/Game/01Blueprints/Turret/CT_TurretEvolutionPercenttage.CT_TurretEvolutionPercenttage"));
-		if (!PriceData || !PercentData) return;
-
-		FName TRank = CachedOwnerCharacter->GetTurretRank();
-		FGameplayTag ETag = CachedOwnerCharacter->GetTurretElementTag();
-		FRealCurve* FoundCurve_Price = PriceData->FindCurve(TRank, TEXT(""));
-		FRealCurve* FoundCurve_Percent = PriceData->FindCurve(TRank, TEXT(""));
-
-		if (!FoundCurve_Price || !FoundCurve_Percent) return;
-
-		float PriceValue = FoundCurve_Price->Eval(EvolutionLevel + 1);
-		float PercentValue = FoundCurve_Percent->Eval(EvolutionLevel + 1);
-
-		if (!USOWBlueprintFunctionLibrary::QueryForCurrencyCountSufficient(CachedOwnerCharacter, ETag, PriceValue)) {
-			UE_LOG(LogTemp, Warning, TEXT("Not Enough Currency"));
-			return;
-		}
-
-		FRandomStream FS;
-
-		if (FS.RandRange(1, 100) > PercentValue) {
-			// Notify about failed evolution
-			return;
-		}
-
-		// executes after all conditions are met
-		if (EvolutionState == EEvolutionType::EVO_NONE) {
-			EvolutionState = Type;
-		}
-
-		TSoftObjectPtr<UDA_TurretEvolutionData> Data;
-		
-		switch (Type)
-		{
-			case EEvolutionType::EVO_ALPHA:
-				Data = Alpha.EvolutionDataAsset;
-				break;
-			case EEvolutionType::EVO_BETA:
-				Data = Beta.EvolutionDataAsset;
-				break;
-			default:
-				UE_LOG(LogTemp, Warning, TEXT("Type is invalid"));
-				break;
-		}
-
-		if (UDA_TurretEvolutionData* LoadData = Data.LoadSynchronous()) {
-			LoadData->GiveToAbilitySystemComponent(ASC);
-			EvolutionLevel++;
-			InitEvolutionItems();
-		}
+		break;
+	default:
+		UE_LOG(LogTemp, Error, TEXT("Invalid Evolution Type"));
+		break;
 	}
+	UE_LOG(LogTemp, Error, TEXT("Evolution Successed"));
 }
 
-void USOWTurretEvolutionComponent::GetTurretEvolutionDescriptions(FString& AlphaDesc, FString& BetaDesc) {
-	AlphaDesc = Alpha.EvolutionDescription;
-	BetaDesc = Beta.EvolutionDescription;
-}
-
-void USOWTurretEvolutionComponent::InitEvolutionItems()
+bool USOWTurretEvolutionComponent::CheckResourceAndProb(EEvolutionType Type)
 {
-	if (EvolutionLevel >= EvolutionDataRow->EvolutionAlpha.Num()) {
-		Alpha.EvolutionDataAsset = nullptr;
-		Alpha.EvolutionDescription = "Evolution Complete";
 
-		Beta.EvolutionDataAsset = nullptr;
-		Beta.EvolutionDescription = "Evolution Complete";
+	if (Type == EEvolutionType::EVO_PROP) {
+		checkf(PropertyResourceData, TEXT("PropertyResourceData not Assigned. Please check DataAsset"));
+		if (EvolutionPropertyLevel >= PropertyMaxLevel) return false; // Max LV : 4
+
+		FRealCurve* FoundCurve_Price = PropertyResourceData->FindCurve("Currency", TEXT(""));
+		FRealCurve* FoundCurve_Percent = PropertyResourceData->FindCurve("Prob", TEXT(""));
+
+		float PriceValue = FoundCurve_Price->Eval(EvolutionPropertyLevel + 1);
+		float PercentValue = FoundCurve_Percent->Eval(EvolutionPropertyLevel + 1);
+
+		if (!USOWBlueprintFunctionLibrary::QueryForCurrencyCountSufficient(this, FGameplayTag::RequestGameplayTag("Shared.Element.Nature"), PriceValue)) {
+			UE_LOG(LogTemp, Error, TEXT("PriceValue Condition Failed"));
+			return false;
+		}
+		int32 value = FMath::RandRange(1, 100);
+		if (value > PercentValue) {
+			UE_LOG(LogTemp, Error, TEXT("PercentValue Condition Failed : %s"), *FString::FromInt(value));
+			return false;
+		}
 	}
 	else {
-		Alpha = EvolutionDataRow->EvolutionAlpha[EvolutionLevel];
-		Beta = EvolutionDataRow->EvolutionBeta[EvolutionLevel];
+		checkf(StatusResourceData, TEXT("PropertyResourceData not Assigned. Please check DataAsset"));
+		if (EvolutionStatusLevel >= StatusMaxLevel) return false; // Max LV : 10
+
+		FRealCurve* FoundCurve_Price = StatusResourceData->FindCurve("Currency", TEXT(""));
+		FRealCurve* FoundCurve_Percent = StatusResourceData->FindCurve("Prob", TEXT(""));
+
+		float PriceValue = FoundCurve_Price->Eval(EvolutionStatusLevel + 1);
+		float PercentValue = FoundCurve_Percent->Eval(EvolutionStatusLevel + 1);
+
+		if (!USOWBlueprintFunctionLibrary::QueryForCurrencyCountSufficient(this, FGameplayTag::RequestGameplayTag("Shared.Element.Nature"), PriceValue)) {
+			UE_LOG(LogTemp, Error, TEXT("PriceValue Condition Failed"));
+			return false;
+		}
+
+		int32 value = FMath::RandRange(1, 100);
+		if (value > PercentValue) {
+			UE_LOG(LogTemp, Error, TEXT("PercentValue Condition Failed : %s"), *FString::FromInt(value));
+			return false; 
+		}
 	}
-	
+
+	return true;
 }
+
+
+

@@ -20,11 +20,15 @@ struct FAttributeCapturesDamage {
 	DECLARE_ATTRIBUTE_CAPTUREDEF(DefensePowerBase);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(CurrentHealth);
 
+	DECLARE_ATTRIBUTE_CAPTUREDEF(ExtraDamageRatio);
+
 
 	FAttributeCapturesDamage() {
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, AttackPowerBase, Source, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, DefensePowerBase, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, CurrentHealth, Target, false);
+
+		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, ExtraDamageRatio, Target, false);
 	}
 };
 
@@ -70,6 +74,8 @@ UGEEC_CalculateDamage::UGEEC_CalculateDamage()
 	RelevantAttributesToCapture.Add(GetCapturedPropertiesDamage().AttackPowerBaseDef);
 	RelevantAttributesToCapture.Add(GetCapturedPropertiesDamage().DefensePowerBaseDef);
 	RelevantAttributesToCapture.Add(GetCapturedPropertiesDamage().CurrentHealthDef);
+
+	RelevantAttributesToCapture.Add(GetCapturedPropertiesDamage().ExtraDamageRatioDef);
 }
 
 void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
@@ -82,7 +88,7 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 	EvalParams.TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();
 
 
-	
+
 	// Base Attack Power
 	float L_AttackPower = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
@@ -90,26 +96,33 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 		EvalParams,
 		L_AttackPower
 	);
-	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] AttackPower captured: Value: %f"),  L_AttackPower); // 로그추가
+	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] AttackPower captured: Value: %f"), L_AttackPower); // 로그추가
 	L_AttackPower += Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_AdditiveDamage, false, 0.0f);
 	L_AttackPower *= Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_MultipleDamage, false, 1.0f);
-	float DamageReduction = Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_ReductedDamage, false, 1.0f);
+	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] AttackPower Final : Value: %f"), L_AttackPower); // 로그추가
 
+	float L_ExtraRatio = 0.f;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
+		GetCapturedPropertiesDamage().ExtraDamageRatioDef,
+		EvalParams,
+		L_ExtraRatio
+	);
 	
 	// Elemantal Damage
-	float ElementalResistance = GetElementalResistanceCost(ExecutionParams, EvalParams);
-	ElementalResistance = ElementalResistance > 0.2f ? ElementalResistance : 0.2f;
-	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] ElementalResistance: %f"), ElementalResistance); //로그추가
+	float ElementalResistance = 1.f;
+	//float ElementalResistance = GetElementalResistanceCost(ExecutionParams, EvalParams);
+	//ElementalResistance = ElementalResistance > 0.2f ? ElementalResistance : 0.2f;
+	//UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] ElementalResistance: %f"), ElementalResistance); //로그추가
 
 
 	// Additinal Damage By Sine Debuff
-	float AdditinalDamageRatio = 1.0f;
+	float AdditinalDamageRatio = 0.f;
 	AdditinalDamageRatio += Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_AdditinalDamageRatio_SinAlpha, false, 0.f);
 	AdditinalDamageRatio += Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_AdditinalDamageRatio_SinBeta, false, 0.f);
 	AdditinalDamageRatio += Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_AdditinalDamageRatio_SinGamma, false, 0.f);
 	AdditinalDamageRatio += Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_AdditinalDamageRatio_SinDelta, false, 0.f);
-	UE_LOG(LogTemp, Warning, TEXT("Additional Damage Ratio : %s"), *FString::SanitizeFloat(AdditinalDamageRatio, 2));
-	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] AdditionalDamageRatio: %f"), AdditinalDamageRatio); //로그추가
+	//UE_LOG(LogTemp, Warning, TEXT("Additional Damage Ratio : %s"), *FString::SanitizeFloat(AdditinalDamageRatio, 2));
+	//UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] AdditionalDamageRatio: %f"), AdditinalDamageRatio); //로그추가
 
 	// Base Defense Power
 	float L_DefensePower = 0.f;
@@ -120,9 +133,14 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 	);
 	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] DefensePower captured Value: %f"), L_DefensePower); //로그추가
 
+	float BasicDamageFormal = (L_AttackPower - FMath::Log2(2 + L_DefensePower));
+	float ElementalExtraDamage = ElementalResistance;
+	float FinalExtraDamage = (1.0f + L_ExtraRatio + AdditinalDamageRatio);
 
+	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] FinalExtraDamage : Value: %f"), FinalExtraDamage); // 로그추가
 	// Calculate Final Damage
-	float L_FinalDamage = (L_AttackPower - FMath::Log2(2 + L_DefensePower)) * ElementalResistance * DamageReduction * AdditinalDamageRatio;
+	float L_FinalDamage = BasicDamageFormal * ElementalExtraDamage * FinalExtraDamage;
+	L_FinalDamage = FMath::Floor(L_FinalDamage);
 	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] FinalDamage calculated: %f"), L_FinalDamage); // 로그추가
 
 	// Send HitReact Event To Target
@@ -139,7 +157,7 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 	OutExecutionOutput.AddOutputModifier(
 		FGameplayModifierEvaluatedData(
 			GetCapturedPropertiesDamage().CurrentHealthDef.AttributeToCapture,
-			EGameplayModOp::Additive, 
+			EGameplayModOp::Additive,
 			-L_FinalDamage)
 	);
 }
