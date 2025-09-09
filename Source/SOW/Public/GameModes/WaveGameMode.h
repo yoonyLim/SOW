@@ -8,6 +8,9 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnOneTimeCurrencyChanged, int32, TotalCurrency);
 
+// 전방 선언: 로거는 헤더 의존 최소화
+class UCurrencyGainLogger;
+
 /**
  * 
  */
@@ -16,12 +19,17 @@ class SOW_API AWaveGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
-protected:
+private:
+	// 재화 합계
 	int32 Currency = 0;
 
-	virtual void BeginPlay() override;
+	// 통화 획득 로거 인스턴스
+	UPROPERTY() // GC 보호
+	TObjectPtr<UCurrencyGainLogger> CurrencyLogger;
 
 public:
+	virtual void BeginPlay() override;
+
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Event Dispatcher")
 	FOnOneTimeCurrencyChanged OnOneTimeCurrencyChanged;
 

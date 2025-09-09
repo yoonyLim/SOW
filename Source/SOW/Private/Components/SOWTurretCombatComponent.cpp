@@ -419,6 +419,8 @@ AActor* USOWTurretCombatComponent::GetSingleAttackTargetOnList(const TArray<AAct
 
 TArray<AActor*> USOWTurretCombatComponent::GetAllAttackTarget()
 {
+	// Get all attack targets that match the target selection count
+
 	TArray<AActor*> BaseActorList;
 	TArray<AActor*> FinalTargetList;
 
