@@ -145,11 +145,13 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 
 	// Send HitReact Event To Target
 	AActor* Target = ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor();
+	FGameplayEventData Data;
+	Data.EventMagnitude = L_FinalDamage;
 
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
 		Target,
 		SOWGameplayTags::Shared_Event_HitReact,
-		FGameplayEventData()
+		Data
 	);
 
 
