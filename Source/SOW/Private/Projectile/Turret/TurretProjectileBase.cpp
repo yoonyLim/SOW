@@ -8,6 +8,7 @@
 #include "Components/BoxComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "Characters/Player/SOWCharacterPlayer.h"
 #include "Characters/Turrets/SOWCharacterTurretBase.h"
 #include "Interface/SOWCharacterTypeInterface.h"
@@ -127,6 +128,8 @@ bool ATurretProjectileBase::IsHostileTarget(AActor* Target)
 void ATurretProjectileBase::BP_DestroyProjectile()
 {
 	//checkf(CachedInstigator.Get()->GetProjectilePoolingComponent(), TEXT("No Pool Found For %s"), *CachedInstigator.Get()->GetActorNameOrLabel());
+
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetOwner(), SOWGameplayTags::Turret_Event_Attack_Done, FGameplayEventData());
 
 	if (!CachedInstigator.Get() || !CachedInstigator.Get()->GetProjectilePoolingComponent()) Destroy();
 

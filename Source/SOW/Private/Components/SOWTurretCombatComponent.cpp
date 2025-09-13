@@ -471,7 +471,7 @@ TArray<AActor*> USOWTurretCombatComponent::GetAllDetectedTarget()
 {
 	return DetectedTargetActors;
 }
-void USOWTurretCombatComponent::AddNewFixedLocation(const FVector NewLocation, ETargetFixErrorType& Error)
+void USOWTurretCombatComponent::AddNewFixedLocation(ATileBase* HitTile, const FVector NewLocation, ETargetFixErrorType& Error)
 {
 	float Dist = FVector::Distance(NewLocation, CachedOwnerCharacter->GetActorLocation());
 
@@ -482,16 +482,13 @@ void USOWTurretCombatComponent::AddNewFixedLocation(const FVector NewLocation, E
 	FCollisionQueryParams Params;
 	Params.bReturnPhysicalMaterial = false;
 
-	if (!GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_Camera, Params)) 
+	if (!HitTile)
 	{
 		Error = ETargetFixErrorType::INVALID_TARGET;
 		return;
 	}
 
-	ATileBase* CenterTile = Cast<ATileBase>(Hit.GetActor());
-
-
-	if (DetectorTiles.Find(CenterTile) == -1) {
+	if (DetectorTiles.Find(HitTile) == -1) {
 		Error = ETargetFixErrorType::OUT_OF_RANGE;
 		return;
 	}

@@ -274,6 +274,12 @@ float ASOWCharacterTurretBase::BP_GetAttackSpeed() const
 	return GetAttackSpeed();
 }
 
+float ASOWCharacterTurretBase::BP_GetAttackPower() const
+{
+	checkf(AttributeSet, TEXT("AttributeSet not Found / Check point : SOWCharacterTurretBase.cpp"));
+	return GetAttackPower();
+}
+
 USOWTurretCombatComponent* ASOWCharacterTurretBase::GetTurretCombatComponent() const
 {
 	checkf(TurretCombatComponent, TEXT("TurretCombatComponent not Found / Check point : SOWCharacterTurretBase.cpp"));
