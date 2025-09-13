@@ -8,6 +8,7 @@
 #include "Components/BoxComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
+#include "Components/SOWTurretCombatComponent.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Characters/Player/SOWCharacterPlayer.h"
 #include "Characters/Turrets/SOWCharacterTurretBase.h"
@@ -103,7 +104,7 @@ void ATurretProjectileBase::OnCollisionHit(UPrimitiveComponent* OverlappedCompon
 	OverlappedActors.AddUnique(OtherActor);
 
 	// Apply Damage or Process After Effect like Gradual reinforcement
-	bHitDone = true;
+	//bHitDone = true;
 	BP_PostProjectileHit(OtherActor);
 }
 
@@ -122,6 +123,11 @@ bool ATurretProjectileBase::IsHostileTarget(AActor* Target)
 
 	ESOWCharacterType TargetType = Cast<ISOWCharacterTypeInterface>(Target)->GetSOWCharacterType();
 	return USOWBlueprintFunctionLibrary::IsTarget(OwnerPolicy, TargetType);
+}
+
+void ATurretProjectileBase::SetHitDone(bool bHit)
+{
+	bHitDone = bHit;
 }
 
 

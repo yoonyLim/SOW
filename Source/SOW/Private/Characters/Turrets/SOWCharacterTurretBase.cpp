@@ -75,15 +75,23 @@ void ASOWCharacterTurretBase::PossessedBy(AController* NewController)
 			AttributeSet->GetAttackSpeedBaseAttribute())
 			.AddUObject(this, &ASOWCharacterTurretBase::OnWidgetAttributeChanged);
 
+
+		FGameplayTagContainer TagsToWatch;
+		TagsToWatch.AddTag(FGameplayTag::RequestGameplayTag(TEXT("Turret.Status.Buff")));
+		TagsToWatch.AddTag(FGameplayTag::RequestGameplayTag(TEXT("Turret.Status.Debuff")));
+
+		/*ASC->RegisterGenericGameplayTagEvent()
+			.AddUObject(this, &ASOWCharacterTurretBase::OnGameplayTagChanged);*/
+
 		ASC->RegisterGameplayTagEvent(
 			FGameplayTag::RequestGameplayTag(TEXT("Turret.Status.Buff")),
-			EGameplayTagEventType::NewOrRemoved
-		).AddUObject(this, &ThisClass::OnGameplayTagChanged);
+			EGameplayTagEventType::AnyCountChange
+		).AddUObject(this, &ASOWCharacterTurretBase::OnGameplayTagChanged);
 
 		ASC->RegisterGameplayTagEvent(
 			FGameplayTag::RequestGameplayTag(TEXT("Turret.Status.Debuff")),
-			EGameplayTagEventType::NewOrRemoved
-		).AddUObject(this, &ThisClass::OnGameplayTagChanged);
+			EGameplayTagEventType::AnyCountChange
+		).AddUObject(this, &ASOWCharacterTurretBase::OnGameplayTagChanged);
 	}
 }
 
@@ -107,7 +115,7 @@ void ASOWCharacterTurretBase::InitFromDataAsset()
 void ASOWCharacterTurretBase::OnGameplayTagChanged(const FGameplayTag Tag, int32 NewCount)
 {
 	if (TurretUIComponent->OnTagChanged.IsBound()) {
-		TurretUIComponent->OnTagChanged.Broadcast();
+		TurretUIComponent->OnTagChanged.Broadcast(NewCount);
 	}
 }
 

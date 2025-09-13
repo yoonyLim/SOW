@@ -31,6 +31,9 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Projectile")
 	bool IsHostileTarget(AActor* Target);
 
+	UFUNCTION(BlueprintCallable, Category = "Projectile")
+	void SetHitDone(bool bHit);
+
 	void FaceToTargetActor();
 	
 private:
