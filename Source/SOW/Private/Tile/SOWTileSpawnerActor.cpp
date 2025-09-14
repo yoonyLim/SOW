@@ -206,7 +206,7 @@ void ATileSpawner::SpawnIncomingRoutes()
 		}
 
 		Route->SetSplinePointsFromLocations(Points);
-		Route->SetActorLabel(Def.RouteName.IsEmpty() ? FString::Printf(TEXT("EnemyRoute_%d"), RouteIndex) : Def.RouteName);
+		// Route->SetActorLabel(Def.RouteName.IsEmpty() ? FString::Printf(TEXT("EnemyRoute_%d"), RouteIndex) : Def.RouteName);
 		SpawnedEnemyRoutes.Add(Route);
 
 	}

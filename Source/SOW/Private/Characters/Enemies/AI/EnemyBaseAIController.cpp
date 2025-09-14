@@ -91,11 +91,11 @@ void AEnemyBaseAIController::OnPossess(APawn* PossessedPawn)
 			
 			UpdateCurrentState(EEnemyStates::FollowingIncomingRoute);
 			
-			//RunBehaviorTree(BehaviorTree);
+			RunBehaviorTree(BehaviorTree);
 			// Debugger
-			const bool bLaunched = RunBehaviorTree(BehaviorTree);
+			/*const bool bLaunched = RunBehaviorTree(BehaviorTree);
 			UE_LOG(LogTemp, Warning, TEXT("¢º [AIC] RunBehaviorTree returned %s"),
-			bLaunched ? TEXT("Success") : TEXT("Failure"));
+			bLaunched ? TEXT("Success") : TEXT("Failure"));*/
 		}
 	}
 }
