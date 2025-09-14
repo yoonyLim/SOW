@@ -187,8 +187,11 @@ void ASOWCharacterEnemyBase::OnHealthChanged(const FOnAttributeChangeData& Data)
 	float NewHealth = Data.NewValue;
 	float MaxHealth = GetSOWAttibuteSet()->GetMaxHealthBase();
 
-	if (NewHealth <= 0)
+	if (NewHealth <= 0 && !bIsDead)
+	{
 		BroadcastEnemyDeath();
+		bIsDead = true;
+	}
 
 	UpdateHealthBarValue(NewHealth, MaxHealth);
 
@@ -336,7 +339,7 @@ void ASOWCharacterEnemyBase::BroadcastEnemyDeath()
 	
 	OnEnemyDeath.Broadcast(ShardAmount);
 
-	USOWGameInstance* SOWGameInstance = Cast<USOWGameInstance>(GetWorld()->GetGameInstance());
+	/*USOWGameInstance* SOWGameInstance = Cast<USOWGameInstance>(GetWorld()->GetGameInstance());
 
-	SOWGameInstance->GetOneTimeCurrencyManager()->AddCurrency(EElementalType::Nature, ShardAmount);
+	SOWGameInstance->GetOneTimeCurrencyManager()->AddCurrency(EElementalType::Nature, ShardAmount);*/
 }

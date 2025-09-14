@@ -47,6 +47,8 @@ class SOW_API ASOWCharacterEnemyBase : public ASOWCharacter, public IEnemyAction
 	int32 ShardDropAmount = 0;
 	int32 ShardDropAmountVariation = 0;
 
+	bool bIsDead = false;
+
 public:
 	// Sets default values for this character's properties
 	ASOWCharacterEnemyBase();
