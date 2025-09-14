@@ -55,15 +55,17 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_BlessingOfRune, "Turret.Status.Buff.BlessingOfRune");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_SpiderWeb, "Turret.Status.Buff.SpiderWeb");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_NightEyes, "Turret.Status.Buff.NightEyes");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Mushroom, "Turret.Status.Buff.Mushroom");
 	
 
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Debuff_Slow, "Turret.Status.Debuff.Slow");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Debuff_Root, "Turret.Status.Debuff.Root");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Debuff_Shadow, "Turret.Status.Debuff.Shadow");
 
-	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Immunity_Shadow, "Turret.Status.Immunity.Shadow");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Immunity_Buff, "Turret.Status.Immunity.Buff");
 	
-	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_Attack_Basic, "Turret.Event.Attack.Basic");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_Attack_Basic, "Turret.Event.Attack.Basic"); ;
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_Attack_Done, "Turret.Event.Attack.Done");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_Attack_Double, "Turret.Event.Attack.Double"); 
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_EffectApplied, "Turret.Event.EffectApplied");
 
@@ -75,6 +77,9 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_ChangedFixedLocation, "Turret.Event.ChangedFixedLocation");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_ChangedFixedTarget, "Turret.Event.ChangedFixedTarget"); 
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_DebuffApplied, "Turret.Event.DebuffApplied");
+
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_TargetCharacterOut, "Turret.Event.TargetCharacterOut");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_TargetCharacterIn, "Turret.Event.TargetCharacterIn");
 
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Ability_Death, "Shared.Ability.Death");
 
@@ -124,9 +129,12 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditinalDamageRatio_SinGamma, "Shared.SetByCaller.AdditinalDamageRatio.SinGamma");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditinalDamageRatio_SinDelta, "Shared.SetByCaller.AdditinalDamageRatio.SinDelta");
 	
+	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_PercentageDamage, "Shared.SetByCaller.PercentageDamage");
 
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditiveBuffValue, "Shared.SetByCaller.AdditiveBuffValue");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_ReductedDamage, "Shared.SetByCaller.ReductedDamage");
+	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_MushroomExtraDamageCont, "Shared.SetByCaller.MushroomExtraDamageCont");
+	
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_RestoreMovement, "Shared.SetByCaller.RestoreMovement");
 	
 

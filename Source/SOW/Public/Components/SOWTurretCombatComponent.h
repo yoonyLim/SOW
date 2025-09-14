@@ -185,7 +185,7 @@ protected:
 	TArray<AActor*> GetAllDetectedTarget();
 
 	UFUNCTION(BlueprintCallable)
-	void AddNewFixedLocation(const FVector NewLocation, ETargetFixErrorType& Error);
+	void AddNewFixedLocation(ATileBase* HitTile,const FVector NewLocation, ETargetFixErrorType& Error);
 
 	UFUNCTION(BlueprintCallable)
 	void ClearFixedLocationList();
