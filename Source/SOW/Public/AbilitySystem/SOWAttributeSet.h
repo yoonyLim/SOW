@@ -34,14 +34,18 @@ public :
 	FGameplayAttributeData MaxHealthBase;
 	ATTRIBUTE_ACCESSORS(USOWAttributeSet, MaxHealthBase)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Health")
-	FGameplayAttributeData MaxHealthRatio;
-	ATTRIBUTE_ACCESSORS(USOWAttributeSet, MaxHealthRatio)
+	UPROPERTY(BlueprintReadOnly, Category = "Damage")
+	FGameplayAttributeData ExtraDamageRatio;
+	ATTRIBUTE_ACCESSORS(USOWAttributeSet, ExtraDamageRatio)
+
+	//UPROPERTY(BlueprintReadOnly, Category = "Health")
+	//FGameplayAttributeData MaxHealthRatio;
+	//ATTRIBUTE_ACCESSORS(USOWAttributeSet, MaxHealthRatio)
 
 		/* Don't Use */
-	UPROPERTY(BlueprintReadOnly, Category = "Health")
-	FGameplayAttributeData MaxHealth;
-	ATTRIBUTE_ACCESSORS(USOWAttributeSet, MaxHealth)
+	//UPROPERTY(BlueprintReadOnly, Category = "Health")
+	//FGameplayAttributeData MaxHealth;
+	//ATTRIBUTE_ACCESSORS(USOWAttributeSet, MaxHealth)
 
 	UPROPERTY(BlueprintReadOnly, Category = "Health")
 	FGameplayAttributeData CurrentHealth;
@@ -52,18 +56,18 @@ public :
 	FGameplayAttributeData AttackPowerBase;
 	ATTRIBUTE_ACCESSORS(USOWAttributeSet, AttackPowerBase)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Attack")
-	FGameplayAttributeData AttackPowerRatio;
-	ATTRIBUTE_ACCESSORS(USOWAttributeSet, AttackPowerRatio)
+	//UPROPERTY(BlueprintReadOnly, Category = "Attack")
+	//FGameplayAttributeData AttackPowerRatio;
+	//ATTRIBUTE_ACCESSORS(USOWAttributeSet, AttackPowerRatio)
 
 		/* Status Defense */
 	UPROPERTY(BlueprintReadOnly, Category = "Defense")
 	FGameplayAttributeData DefensePowerBase;
 	ATTRIBUTE_ACCESSORS(USOWAttributeSet, DefensePowerBase)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Defense")
-	FGameplayAttributeData DefensePowerRatio;
-	ATTRIBUTE_ACCESSORS(USOWAttributeSet, DefensePowerRatio)
+	//UPROPERTY(BlueprintReadOnly, Category = "Defense")
+	//FGameplayAttributeData DefensePowerRatio;
+	//ATTRIBUTE_ACCESSORS(USOWAttributeSet, DefensePowerRatio)
 
 		/* Status Interaction */
     UPROPERTY(BlueprintReadOnly, Category = "Range")
@@ -74,9 +78,9 @@ public :
 	FGameplayAttributeData AttackSpeedBase;
 	ATTRIBUTE_ACCESSORS(USOWAttributeSet, AttackSpeedBase)
 
-	UPROPERTY(BlueprintReadOnly, Category = "Speed")
-	FGameplayAttributeData AttackSpeedRatio;
-	ATTRIBUTE_ACCESSORS(USOWAttributeSet, AttackSpeedRatio)
+	//UPROPERTY(BlueprintReadOnly, Category = "Speed")
+	//FGameplayAttributeData AttackSpeedRatio;
+	//ATTRIBUTE_ACCESSORS(USOWAttributeSet, AttackSpeedRatio)
 
 	UPROPERTY(BlueprintReadOnly, Category = "Speed")
 	FGameplayAttributeData WalkSpeed;

@@ -87,12 +87,13 @@ void ASOWCharacter::OnWalkSpeedChanged(const FOnAttributeChangeData& Data)
 	float NewSpeed = Data.NewValue;
 	UE_LOG(LogTemp, Warning, TEXT("Move Speed Must be Changed"));
 	if (GetCharacterMovement()) {
-	
-		UE_LOG(LogTemp, Warning, TEXT("Move Speed Must be Changed"));
-
 		UCharacterMovementComponent* MoveComp = Cast<UCharacterMovementComponent>(GetCharacterMovement());
+		UE_LOG(LogTemp, Warning, TEXT("Move Speed Must be Changed Before : %s" ), *FString::SanitizeFloat(MoveComp->MaxWalkSpeed));
+
+		
 
 		MoveComp->MaxWalkSpeed = NewSpeed;
+		UE_LOG(LogTemp, Warning, TEXT("Move Speed Must be Changed After : %s"), *FString::SanitizeFloat(MoveComp->MaxWalkSpeed));
 
 	}
 	else {

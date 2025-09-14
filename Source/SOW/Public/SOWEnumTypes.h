@@ -85,9 +85,9 @@ UENUM(BlueprintType)
 enum class EEvolutionType : uint8 {
 	// added by : PGH
 	// determine turret evolution type 
-	EVO_NONE	UMETA(DisplayName = "None"),
 	EVO_ALPHA	UMETA(DisplayName = "Alpha"),
-	EVO_BETA	UMETA(DisplayName = "Beta")
+	EVO_BETA	UMETA(DisplayName = "Beta"),
+	EVO_PROP	UMETA(DisplayName = "Property")
 };
 
 

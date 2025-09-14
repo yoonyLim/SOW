@@ -24,6 +24,7 @@ USOWAttributeSet::USOWAttributeSet()
     InitMaxManaBase(200.f);
     InitCurrentMana(200.f);
     InitMaxStaminaBase(100.f);
+    InitExtraDamageRatio(0.f);
     InitCurrentStamina(GetMaxStaminaBase());
 }
 
@@ -79,7 +80,7 @@ void USOWAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbac
     if (GetCurrentHealth() == 0.f) {
         
         if (!ASC->HasMatchingGameplayTag(SOWGameplayTags::Shared_Status_Dead)) {
-            UE_LOG(LogTemp, Warning, TEXT("Actor has Dead : %f"), GetCurrentHealth());
+            UE_LOG(LogTemp, Warning, TEXT("%s was dead by %s"), *Data.Target.GetAvatarActor()->GetActorNameOrLabel(), *Data.EffectSpec.GetEffectContext().GetOriginalInstigator()->GetActorNameOrLabel());
             ASC->AddLooseGameplayTag(SOWGameplayTags::Shared_Status_Dead);
         }
     }

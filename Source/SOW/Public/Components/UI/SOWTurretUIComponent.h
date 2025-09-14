@@ -54,13 +54,7 @@ public:
 	FOnDetectionRangeChangedDelegate OnRangeChanged;
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
-	FOnAttributeChanged OnHealthChanged;
-
-	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnAttributeChanged OnAttackChanged;
-
-	UPROPERTY(BlueprintAssignable, BlueprintCallable)
-	FOnAttributeChanged OnDefenseChanged;
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnAttributeChanged OnSpeedChanged;

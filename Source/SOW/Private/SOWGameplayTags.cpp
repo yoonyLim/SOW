@@ -28,8 +28,8 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Poison, "Enemy.Status.Debuff.Poison");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_SpiderWeb, "Enemy.Status.Debuff.SpiderWeb");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Slow, "Enemy.Status.Debuff.Slow");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_RestoreMovement, "Enemy.Status.Debuff.RestoreMovement");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Rooted, "Enemy.Status.Debuff.Rooted"); 
-	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Shadow, "Enemy.Status.Debuff.Shadow");
 
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sin_Alpha, "Enemy.Status.Debuff.Sin.Alpha");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sin_Beta, "Enemy.Status.Debuff.Sin.Beta");
@@ -52,6 +52,7 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_Buff, "Turret.Ability.Buff"); 
 	
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Hoppy, "Turret.Status.Buff.Hoppy");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_BlessingOfRune, "Turret.Status.Buff.BlessingOfRune");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_SpiderWeb, "Turret.Status.Buff.SpiderWeb");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_NightEyes, "Turret.Status.Buff.NightEyes");
 	
@@ -114,7 +115,8 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Element_Flame_Minor, "Shared.Element.Flame.Minor");
 
 	UE_DEFINE_GAMEPLAY_TAG(Tile_Forest_Normal, "Tile.Forest.Normal")
-	
+		
+	//UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditiveAttackPower, "Shared.SetByCaller.AdditiveAttackPower");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditiveDamage, "Shared.SetByCaller.AdditiveDamage");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_MultipleDamage, "Shared.SetByCaller.MultipleDamage");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditinalDamageRatio_SinAlpha, "Shared.SetByCaller.AdditinalDamageRatio.SinAlpha");
@@ -125,6 +127,8 @@ namespace SOWGameplayTags
 
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditiveBuffValue, "Shared.SetByCaller.AdditiveBuffValue");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_ReductedDamage, "Shared.SetByCaller.ReductedDamage");
+	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_RestoreMovement, "Shared.SetByCaller.RestoreMovement");
+	
 
 	UE_DEFINE_GAMEPLAY_TAG(World_Event_WaveStart, "World.Event.WaveStart");
 	UE_DEFINE_GAMEPLAY_TAG(World_Event_Gen_Nature, "World.Event.Gen.Nature");
@@ -138,7 +142,8 @@ namespace SOWGameplayTags
 	
 	UE_DEFINE_GAMEPLAY_TAG(Data_ManaCost, "Data.ManaCost");
 	UE_DEFINE_GAMEPLAY_TAG(Data_ModValue, "Data.ModValue");
-
+	UE_DEFINE_GAMEPLAY_TAG(Data_RestoreMovement, "Data.RestoreMovement");
+	
 	/* Player Skill Tag */
 	/* Nature Skills*/
 	UE_DEFINE_GAMEPLAY_TAG(Player_Skill_Nature_l, "Player.Skill.Nature.l");

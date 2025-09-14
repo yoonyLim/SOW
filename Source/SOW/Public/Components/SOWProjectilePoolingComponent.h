@@ -21,10 +21,13 @@ public:
 	USOWProjectilePoolingComponent();
 
 	UFUNCTION(BlueprintCallable)
-	void CreateAndFixPool(TSubclassOf<AProjectileBase> ProjectileClass, int32 PoolSize);
+	void CreateAndFixPool(TSubclassOf<AProjectileBase> ProjectileClass, int32 NewPoolNumber , int32 PoolSize);
 
 	UFUNCTION(BlueprintCallable)
-	AProjectileBase* SpawnProjectile(const FTransform& SpawnTransform, ETurretTargetSelectionPolicy InPolicy, FGameplayEffectSpecHandle InHandle, bool InMovement, float InSpeed, float InDuration, float InScale, ASOWCharacter* InTargetActor);
+	void RemovePool(int32 PoolNumber);
+
+	UFUNCTION(BlueprintCallable)
+	AProjectileBase* SpawnProjectile(const FTransform& SpawnTransform, ETurretTargetSelectionPolicy InPolicy, FGameplayEffectSpecHandle InHandle, bool InMovement, float InSpeed, float InDuration, float InScale, ASOWCharacter* InTargetActor, int32 PoolNumber);
 
 	UFUNCTION(BlueprintCallable)
 	void ReturnProjectile(AProjectileBase* Projectile);
