@@ -40,9 +40,6 @@ class SOW_API ASOWCharacterEnemyBase : public ASOWCharacter, public IEnemyAction
 
 	FTimerHandle HideHealthBarHandle;
 
-	UPROPERTY()
-	const USOWAttributeSet* ASCAttributes;
-
 	void OnHealthChanged(const FOnAttributeChangeData& Data);
 
 	float AttackRadius = 0.f;
