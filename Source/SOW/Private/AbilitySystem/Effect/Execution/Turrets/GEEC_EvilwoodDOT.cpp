@@ -77,14 +77,15 @@ void UGEEC_EvilwoodDOT::Execute_Implementation(const FGameplayEffectCustomExecut
 	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] FinalDamage calculated: %f"), L_FinalDamage); // 로그추가
 
 	// Send HitReact Event To Target
-	/*AActor* Target = ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor();
+	AActor* Target = ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor();
+	FGameplayEventData Data;
+	Data.EventMagnitude = L_FinalDamage;
 
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
 		Target,
 		SOWGameplayTags::Shared_Event_HitReact,
-		FGameplayEventData()
-	);*/
-
+		Data
+	);
 
 	// Apply Final Damage
 	OutExecutionOutput.AddOutputModifier(

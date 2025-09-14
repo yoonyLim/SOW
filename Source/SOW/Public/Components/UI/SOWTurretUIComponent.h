@@ -15,7 +15,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClickEvolutionButton, EEvolutionT
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEffectAppliedDelegate, FEffectOrientedTurretAttribute, EffectData);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnBuffTagAddOrRemoved);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnBuffTagAddOrRemoved, int32, NewTagCount);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDetectionRangeChangedDelegate);
 

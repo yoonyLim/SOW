@@ -79,6 +79,9 @@ public:
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Turret Attack Speed"))
 	float BP_GetAttackSpeed() const;												// Get Health Ratio From Attribute Set in Turret Base for setting UI
 
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Turret Attack Power"))
+	float BP_GetAttackPower() const;
+
 	UFUNCTION(BlueprintPure)
 	USOWTurretCombatComponent* GetTurretCombatComponent() const;				// Get Combat Component at other classes
 
