@@ -40,15 +40,14 @@ class SOW_API ASOWCharacterEnemyBase : public ASOWCharacter, public IEnemyAction
 
 	FTimerHandle HideHealthBarHandle;
 
-	UPROPERTY()
-	const USOWAttributeSet* ASCAttributes;
-
 	void OnHealthChanged(const FOnAttributeChangeData& Data);
 
 	float AttackRadius = 0.f;
 	float AttackSpeed = 0.f;
 	int32 ShardDropAmount = 0;
 	int32 ShardDropAmountVariation = 0;
+
+	bool bIsDead = false;
 
 public:
 	// Sets default values for this character's properties

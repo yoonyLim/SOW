@@ -131,14 +131,11 @@ void ASOWCharacterEnemyBase::BeginPlay()
 		).AddUObject(this, &ASOWCharacterEnemyBase::OnHealthChanged);
 	}
 
-	// ASC Attributes Reference
-	ASCAttributes = Cast<USOWAttributeSet>(AbilitySystemComponent->GetAttributeSet(USOWAttributeSet::StaticClass()));
-
 	// To initialize Game Ability Attribute
 	//AbilitySystemComponent->AddLooseGameplayTag(SOWGameplayTags::Enemy_Ability_Initialize);
 
-	float NewHealth = ASCAttributes->GetMaxHealthBase();
-	float MaxHealth = ASCAttributes->GetMaxHealthBase();
+	float NewHealth = GetSOWAttibuteSet()->GetMaxHealthBase();
+	float MaxHealth = GetSOWAttibuteSet()->GetMaxHealthBase();
 
 	UpdateHealthBarValue(NewHealth, MaxHealth);
 
@@ -188,10 +185,13 @@ void ASOWCharacterEnemyBase::OnHealthChanged(const FOnAttributeChangeData& Data)
 	}
 	
 	float NewHealth = Data.NewValue;
-	float MaxHealth = ASCAttributes->GetMaxHealthBase();
+	float MaxHealth = GetSOWAttibuteSet()->GetMaxHealthBase();
 
-	if (NewHealth <= 0)
+	if (NewHealth <= 0 && !bIsDead)
+	{
 		BroadcastEnemyDeath();
+		bIsDead = true;
+	}
 
 	UpdateHealthBarValue(NewHealth, MaxHealth);
 
@@ -339,7 +339,7 @@ void ASOWCharacterEnemyBase::BroadcastEnemyDeath()
 	
 	OnEnemyDeath.Broadcast(ShardAmount);
 
-	USOWGameInstance* SOWGameInstance = Cast<USOWGameInstance>(GetWorld()->GetGameInstance());
+	/*USOWGameInstance* SOWGameInstance = Cast<USOWGameInstance>(GetWorld()->GetGameInstance());
 
-	SOWGameInstance->GetOneTimeCurrencyManager()->AddCurrency(EElementalType::Nature, ShardAmount);
+	SOWGameInstance->GetOneTimeCurrencyManager()->AddCurrency(EElementalType::Nature, ShardAmount);*/
 }

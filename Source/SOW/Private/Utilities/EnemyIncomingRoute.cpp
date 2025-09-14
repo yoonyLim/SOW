@@ -63,7 +63,7 @@ void AEnemyIncomingRoute::SetSplinePointsFromLocations(const TArray<FVector>& Lo
 		USplineMeshComponent* SplineMesh = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
 		if (!SplineMesh)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Failed to create Spline Mesh"));
+			// UE_LOG(LogTemp, Warning, TEXT("Failed to create Spline Mesh"));
 			continue;
 		}
 

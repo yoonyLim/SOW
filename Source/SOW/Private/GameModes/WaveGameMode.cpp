@@ -26,7 +26,7 @@ void AWaveGameMode::AddCurrency(int32 AddedCurrency)
 	OnOneTimeCurrencyChanged.Broadcast(Currency);
 
 	// 로깅 (타입이 명확하지 않으므로 None/Unknown 등 중립 타입 사용)
-	if (CurrencyLogger)
+	/*if (CurrencyLogger)
 	{
 		const FString Context = FString::Printf(
 			TEXT("Old=%d, Added=%d, Total=%d"),
@@ -36,5 +36,5 @@ void AWaveGameMode::AddCurrency(int32 AddedCurrency)
 		CurrencyLogger->LogGain(EElementalType::Nature, AddedCurrency,
 			FName(TEXT("WaveGameMode.AddCurrency")),
 			Context);
-	}
+	}*/
 }
