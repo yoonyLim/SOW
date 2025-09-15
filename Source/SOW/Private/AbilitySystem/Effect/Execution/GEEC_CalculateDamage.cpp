@@ -140,7 +140,7 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] FinalExtraDamage : Value: %f"), FinalExtraDamage); // 로그추가
 	// Calculate Final Damage
 	float L_FinalDamage = BasicDamageFormal * ElementalExtraDamage * FinalExtraDamage;
-	L_FinalDamage = FMath::Floor(L_FinalDamage) < 1.f ? 1.f : FMath::Floor(L_FinalDamage);
+	L_FinalDamage = FMath::CeilToInt(L_FinalDamage) < 1.f ? 1.f : FMath::CeilToInt(L_FinalDamage);
 	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] FinalDamage calculated: %f"), L_FinalDamage); // 로그추가
 
 	// Send HitReact Event To Target

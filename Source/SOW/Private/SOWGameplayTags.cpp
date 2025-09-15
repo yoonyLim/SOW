@@ -31,10 +31,10 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_RestoreMovement, "Enemy.Status.Debuff.RestoreMovement");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Rooted, "Enemy.Status.Debuff.Rooted"); 
 
-	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sin_Alpha, "Enemy.Status.Debuff.Sin.Alpha");
-	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sin_Beta, "Enemy.Status.Debuff.Sin.Beta");
-	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sin_Gamma, "Enemy.Status.Debuff.Sin.Gamma");
-	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sin_Delta, "Enemy.Status.Debuff.Sin.Delta");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sine_Alpha, "Enemy.Status.Debuff.Sine.Alpha");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sine_Beta, "Enemy.Status.Debuff.Sine.Beta");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sine_Gamma, "Enemy.Status.Debuff.Sine.Gamma");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sine_Delta, "Enemy.Status.Debuff.Sine.Delta");
 
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Confusing, "Enemy.Status.Debuff.Confusing");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Static, "Enemy.Status.Debuff.Static");
@@ -42,6 +42,12 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Balancing, "Enemy.Status.Debuff.Balancing");
 	
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Immunity_ShadowAdditionalDamage, "Enemy.Status.Immunity.ShadowAdditionalDamage");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Immunity_Sine_Stun, "Enemy.Status.Immunity.Sine.Stun");
+
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Immunity_Sine_Beta, "Enemy.Status.Immunity.Sine.Beta");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Immunity_Sine_Gamma, "Enemy.Status.Immunity.Sine.Gamma");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Immunity_Sine_Delta, "Enemy.Status.Immunity.Sine.Delta");
+	
 
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Event_Confusing, "Enemy.Event.Confusing"); 
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Event_Static, "Enemy.Event.Static");
