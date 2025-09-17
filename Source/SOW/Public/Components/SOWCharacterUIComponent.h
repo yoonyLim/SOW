@@ -18,8 +18,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributePercentChangedDelegate, 
 
 
 
-
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SOW_API USOWCharacterUIComponent : public UActorComponent
 {
