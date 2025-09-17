@@ -99,7 +99,7 @@ ASOWCharacterEnemyBase::ASOWCharacterEnemyBase()
 	if (SineDebuffWidget) {
 		SineDebuffWidget->SetupAttachment(RootComponent);
 		SineDebuffWidget->SetWidgetSpace(EWidgetSpace::Screen);
-		SineDebuffWidget->SetRelativeLocation(FVector(0.f, 0.f, 1.f));
+		SineDebuffWidget->SetRelativeLocation(FVector(0.f, 0.f, 0.5f));
 		static ConstructorHelpers::FClassFinder<UUserWidget> DebuffWidgetClass{ TEXT("/Game/01Blueprints/UI/Enemy/WBP_EnemySineVisualizer") };
 
 		if (DebuffWidgetClass.Succeeded())
