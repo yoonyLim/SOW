@@ -26,6 +26,9 @@
 #include "Components/CapsuleComponent.h"
 #include "Manager/OneTimeCurrencyManager.h"
 
+#include "Components/UI/SOWEnemyUIComponent.h"
+#include "Widget/SOWWidgetBase.h"
+
 // Sets default values
 ASOWCharacterEnemyBase::ASOWCharacterEnemyBase()
 {
@@ -86,12 +89,58 @@ ASOWCharacterEnemyBase::ASOWCharacterEnemyBase()
 	{
 		AuraEffect = NiagaraEffect.Object;
 	}
+
+
+	
+	// added by pgh below
+	EnemyUIComponent = CreateDefaultSubobject<USOWEnemyUIComponent>(TEXT("EnemyUIComponent"));
+
+	SineDebuffWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("SineDebuffPanel"));
+	if (SineDebuffWidget) {
+		SineDebuffWidget->SetupAttachment(RootComponent);
+		SineDebuffWidget->SetWidgetSpace(EWidgetSpace::Screen);
+		SineDebuffWidget->SetRelativeLocation(FVector(0.f, 0.f, 0.5f));
+		static ConstructorHelpers::FClassFinder<UUserWidget> DebuffWidgetClass{ TEXT("/Game/01Blueprints/UI/Enemy/WBP_EnemySineVisualizer") };
+
+		if (DebuffWidgetClass.Succeeded())
+			SineDebuffWidget->SetWidgetClass((DebuffWidgetClass.Class));
+	}
+	
+	
 }
 
 
 void ASOWCharacterEnemyBase::PossessedBy(AController* NewController) {
 	Super::PossessedBy(NewController);
 	AbilitySystemComponent->AddLooseGameplayTag(SOWGameplayTags::Enemy_Ability_Initialize);
+
+	// added by pgh
+	if (USOWAbilitySystemComponent* ASC = GetSOWAbilitySystemComponent()) {
+		/*ASC->RegisterGameplayTagEvent(
+			FGameplayTag::RequestGameplayTag(TEXT("Enemy.Status.Buff")),
+			EGameplayTagEventType::AnyCountChange
+		).AddUObject(this, &ASOWCharacterEnemyBase::OnGameplayTagChanged);*/
+
+		ASC->RegisterGameplayTagEvent(
+			FGameplayTag::RequestGameplayTag(TEXT("Enemy.Status.Debuff.Sine")),
+			EGameplayTagEventType::AnyCountChange
+		).AddUObject(this, &ASOWCharacterEnemyBase::OnGameplayTagChanged);
+
+		if (UUserWidget* WidgetInstance = SineDebuffWidget->GetUserWidgetObject()) {
+			if (USOWWidgetBase* SOWWidget = Cast<USOWWidgetBase>(WidgetInstance)) {
+				SOWWidget->InitEnemyCreatedWidget(this);
+			}
+		}
+	}
+}
+
+void ASOWCharacterEnemyBase::OnGameplayTagChanged(const FGameplayTag Tag, int32 NewCount)
+{
+	//added by pgh
+	if (EnemyUIComponent->OnTagChanged.IsBound()) {
+		UE_LOG(LogTemp, Warning, TEXT("Enemy Tag Changed"));
+		EnemyUIComponent->OnTagChanged.Broadcast();
+	}
 }
 
 // Called when the game starts or when spawned
@@ -167,6 +216,13 @@ void ASOWCharacterEnemyBase::BeginPlay()
 	
 		NiagaraComponent->Activate();
 	}
+}
+
+USOWEnemyUIComponent* ASOWCharacterEnemyBase::GetEnemyUIComponent() const
+{
+	// added by pgh
+	checkf(EnemyUIComponent, TEXT("EnemyUIComponent is not valid"));
+	return EnemyUIComponent;
 }
 
 void ASOWCharacterEnemyBase::OnHealthChanged(const FOnAttributeChangeData& Data)

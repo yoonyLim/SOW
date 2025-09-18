@@ -8,6 +8,7 @@
 #include "Manager/OneTimeCurrencyManager.h"
 #include "Manager/SummonManager.h"
 #include "UObject/ConstructorHelpers.h"
+#include "GameModes/WaveGameMode.h"
 
 #include "SOWStructTypes.h"
 #include "Core/SOWPlayerController.h"
@@ -125,6 +126,8 @@ void USOWGameInstance::SummonTurret(FName TurretType)
 
 void USOWGameInstance::GetResource(float Count)
 {
-    USOWBlueprintFunctionLibrary::RequestToGenerateOnTimeCurrency(GetWorld(), FGameplayTag::RequestGameplayTag("Shared.Element.Nature"), Count);
-    
+   // USOWBlueprintFunctionLibrary::RequestToGenerateOnTimeCurrency(GetWorld(), FGameplayTag::RequestGameplayTag("Shared.Element.Nature"), Count);
+    AWaveGameMode* GM = Cast<AWaveGameMode>(UGameplayStatics::GetGameMode(this));
+
+    GM->AddCurrency(Count);
 }

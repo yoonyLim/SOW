@@ -49,10 +49,10 @@ void UGEEC_ApplyTDOnSineCount::Execute_Implementation(const FGameplayEffectCusto
 
 	int32 L_SineCount = 0;
 	FGameplayTagContainer TagCont;
-	CheckDebuffStatus(TargetActor, SOWGameplayTags::Enemy_Status_Debuff_Sin_Alpha, TagCont, L_SineCount);
-	CheckDebuffStatus(TargetActor, SOWGameplayTags::Enemy_Status_Debuff_Sin_Beta, TagCont, L_SineCount);
-	CheckDebuffStatus(TargetActor, SOWGameplayTags::Enemy_Status_Debuff_Sin_Gamma, TagCont, L_SineCount);
-	CheckDebuffStatus(TargetActor, SOWGameplayTags::Enemy_Status_Debuff_Sin_Delta, TagCont, L_SineCount);
+	CheckDebuffStatus(TargetActor, SOWGameplayTags::Enemy_Status_Debuff_Sine_Alpha, TagCont, L_SineCount);
+	CheckDebuffStatus(TargetActor, SOWGameplayTags::Enemy_Status_Debuff_Sine_Beta, TagCont, L_SineCount);
+	CheckDebuffStatus(TargetActor, SOWGameplayTags::Enemy_Status_Debuff_Sine_Gamma, TagCont, L_SineCount);
+	CheckDebuffStatus(TargetActor, SOWGameplayTags::Enemy_Status_Debuff_Sine_Delta, TagCont, L_SineCount);
 	TargetASC->RemoveActiveEffectsWithTags(TagCont);
 
 	UE_LOG(LogTemp, Warning, TEXT("TD Count : %s"), *FString::FromInt(L_SineCount));
