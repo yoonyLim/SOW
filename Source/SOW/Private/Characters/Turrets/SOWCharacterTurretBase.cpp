@@ -21,6 +21,8 @@
 #include "GameplayEffectTypes.h"
 #include "SOWBlueprintFunctionLibrary.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "Kismet/GameplayStatics.h"
+#include "GameModes/WaveGameMode.h"
 
 #include "SOWEnumTypes.h"
 #include "SOWStructTypes.h"
@@ -357,7 +359,10 @@ void ASOWCharacterTurretBase::SellTurret(float Price)
 	if (!AbilitySystemComponent) return;
 
 	AbilitySystemComponent->AddLooseGameplayTag(SOWGameplayTags::Shared_Status_Dead);
-	USOWBlueprintFunctionLibrary::RequestToGenerateOnTimeCurrency(this, FGameplayTag::RequestGameplayTag("Shared.Element.Nature"), Price);
+
+	AWaveGameMode* GM = Cast<AWaveGameMode>(UGameplayStatics::GetGameMode(this));
+	GM->AddCurrency(Price);
+	//USOWBlueprintFunctionLibrary::RequestToGenerateOnTimeCurrency(this, FGameplayTag::RequestGameplayTag("Shared.Element.Nature"), Price);
 }
 
 
