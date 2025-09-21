@@ -597,6 +597,8 @@ void USOWTurretCombatComponent::AddActorMatchesTargetingPolicy(AActor* CurrentAc
 	// check target type that matches to target selection policy.
 	// if matched, insert the target to DetectedTargetActors
 
+	
+
 	if (TurretTargetSelectionPolicy == ETurretTargetSelectionPolicy::OnPlayer) {
 		if (Type == ESOWCharacterType::Player) {
 			DetectedTargetActors.AddUnique(CurrentActor);
@@ -611,6 +613,9 @@ void USOWTurretCombatComponent::AddActorMatchesTargetingPolicy(AActor* CurrentAc
 
 	else if (TurretTargetSelectionPolicy == ETurretTargetSelectionPolicy::OnEnemy) {
 		if (Type == ESOWCharacterType::Enemy) {
+			//USOWBlueprintFunctionLibrary::DoesActorHasTag(CurrentActor, SOWGameplayTags::Veiled)
+			//USOWBlueprintFunctionLibrary::DoesActorHasTag(CurrentActor, SOWGameplayTags::Enemy_Status_Debuff_Detected);
+
 			DetectedTargetActors.AddUnique(CurrentActor);
 		}
 	}

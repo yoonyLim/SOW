@@ -22,26 +22,34 @@ namespace SOWGameplayTags
 
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Ability_Initialize, "Enemy.Ability.Initialize");
 
-	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Taunted, "Enemy.Status.Taunted");
-	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Poison, "Enemy.Status.Poison");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Taunted, "Enemy.Status.Debuff.Taunted");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Poison, "Enemy.Status.Debuff.Poison");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_SpiderWeb, "Enemy.Status.Debuff.SpiderWeb");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Slow, "Enemy.Status.Debuff.Slow");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_RestoreMovement, "Enemy.Status.Debuff.RestoreMovement");
-	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Rooted, "Enemy.Status.Debuff.Rooted"); 
-
-	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sin_Alpha, "Enemy.Status.Debuff.Sin.Alpha");
-	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sin_Beta, "Enemy.Status.Debuff.Sin.Beta");
-	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sin_Gamma, "Enemy.Status.Debuff.Sin.Gamma");
-	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sin_Delta, "Enemy.Status.Debuff.Sin.Delta");
-
-	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Confusing, "Enemy.Status.Debuff.Confusing");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Rooted, "Enemy.Status.Debuff.Rooted");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Detected, "Enemy.Status.Debuff.Detected"); 
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Static, "Enemy.Status.Debuff.Static");
-	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sharp, "Enemy.Status.Debuff.Sharp");
-	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Balancing, "Enemy.Status.Debuff.Balancing");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sine_Alpha, "Enemy.Status.Debuff.Sine.Alpha");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sine_Beta, "Enemy.Status.Debuff.Sine.Beta");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sine_Gamma, "Enemy.Status.Debuff.Sine.Gamma");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sine_Delta, "Enemy.Status.Debuff.Sine.Delta");
+
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sine_Stun, "Enemy.Status.Debuff.Sine.Stun");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sine_Chellenger, "Enemy.Status.Debuff.Sine.Chellenger");
+
+	//UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sharp, "Enemy.Status.Debuff.Sharp");
+	//UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Balancing, "Enemy.Status.Debuff.Balancing");
 	
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Immunity_ShadowAdditionalDamage, "Enemy.Status.Immunity.ShadowAdditionalDamage");
+
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Immunity_Sine_Stun, "Enemy.Status.Immunity.Sine.Stun");
+
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Immunity_Sine_Alpha, "Enemy.Status.Immunity.Sine.Alpha");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Immunity_Sine_Beta, "Enemy.Status.Immunity.Sine.Beta");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Immunity_Sine_Gamma, "Enemy.Status.Immunity.Sine.Gamma");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Immunity_Sine_Delta, "Enemy.Status.Immunity.Sine.Delta");
+	
 
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Event_Confusing, "Enemy.Event.Confusing"); 
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Event_Static, "Enemy.Event.Static");
@@ -124,10 +132,7 @@ namespace SOWGameplayTags
 	//UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditiveAttackPower, "Shared.SetByCaller.AdditiveAttackPower");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditiveDamage, "Shared.SetByCaller.AdditiveDamage");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_MultipleDamage, "Shared.SetByCaller.MultipleDamage");
-	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditinalDamageRatio_SinAlpha, "Shared.SetByCaller.AdditinalDamageRatio.SinAlpha");
-	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditinalDamageRatio_SinBeta, "Shared.SetByCaller.AdditinalDamageRatio.SinBeta");
-	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditinalDamageRatio_SinGamma, "Shared.SetByCaller.AdditinalDamageRatio.SinGamma");
-	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditinalDamageRatio_SinDelta, "Shared.SetByCaller.AdditinalDamageRatio.SinDelta");
+	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditinalDamageRatio_Pulse, "Shared.SetByCaller.AdditinalDamageRatio.Pulse");
 	
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_PercentageDamage, "Shared.SetByCaller.PercentageDamage");
 

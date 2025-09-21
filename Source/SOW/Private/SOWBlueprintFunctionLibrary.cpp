@@ -17,6 +17,7 @@
 #include "Manager/OneTimeCurrencyManager.h"
 #include "Components/BoxComponent.h"
 #include "AbilitySystem/SOWAttributeSet.h"
+#include "GameModes/WaveGameMode.h"
 
 #include "DrawDebugHelpers.h"
 
@@ -136,7 +137,8 @@ void USOWBlueprintFunctionLibrary::RequestToGenerateOnTimeCurrency(UObject* Worl
 
     USOWGameInstance* SOWGameInstance = Cast<USOWGameInstance>(WorldContextObject->GetWorld()->GetGameInstance());
 
-    SOWGameInstance->GetOneTimeCurrencyManager()->AddCurrency(TranslateElementTagToEnum(InTag), InCount);
+    //SOWGameInstance->GetOneTimeCurrencyManager()->AddCurrency(TranslateElementTagToEnum(InTag), InCount);
+    SOWGameInstance->GetResource(InCount);
     
     UE_LOG(LogTemp, Warning, TEXT("Currency : %s"), *FString::FromInt(SOWGameInstance->GetOneTimeCurrencyManager()->GetCurrency(TranslateElementTagToEnum(InTag))));
 }
@@ -146,7 +148,9 @@ bool USOWBlueprintFunctionLibrary::QueryForCurrencyCountSufficient(UObject* Worl
     // Has Enough Currency Count?
     USOWGameInstance* SOWGameInstance = Cast<USOWGameInstance>(WorldContextObject->GetWorld()->GetGameInstance());
 
-    int32 Currency = SOWGameInstance->GetOneTimeCurrencyManager()->GetCurrency(TranslateElementTagToEnum(InTag));
+    AWaveGameMode* GM = Cast<AWaveGameMode>(UGameplayStatics::GetGameMode(WorldContextObject->GetWorld()));
+
+    int32 Currency = GM->GetCurrency();
 
     if (Currency >= InCount) {
         RequestToGenerateOnTimeCurrency(WorldContextObject, InTag, -InCount);

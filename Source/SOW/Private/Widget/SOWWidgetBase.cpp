@@ -22,3 +22,14 @@ void USOWWidgetBase::InitTurretCreatedWidget(AActor* OwningActor)
 		BP_OnTurretOwningUIComponentInitialized(UIComponent);
 	}
 }
+
+void USOWWidgetBase::InitEnemyCreatedWidget(AActor* OwningActor)
+{
+	if (ISOWCharacterUIInterface* UIInterface = Cast<ISOWCharacterUIInterface>(OwningActor)) {
+		USOWEnemyUIComponent* UIComponent = UIInterface->GetEnemyUIComponent();
+
+		checkf(UIComponent, TEXT("Failed to Extract UI Component for %s"), *OwningActor->GetActorNameOrLabel());
+
+		BP_OnEnemyOwningUIComponentInitialized(UIComponent);
+	}
+}

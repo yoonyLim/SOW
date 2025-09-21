@@ -5,7 +5,10 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystem/SOWAttributeSet.h"
 #include "GameplayEffect.h"
+#include "Widget/DamageLogger.h"
 #include "SOWGameplayTags.h"
+
+#include "Log/DamageLoggingManager.h"
 // TO-DO
 /*
 
@@ -117,10 +120,8 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 
 	// Additinal Damage By Sine Debuff
 	float AdditinalDamageRatio = 0.f;
-	AdditinalDamageRatio += Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_AdditinalDamageRatio_SinAlpha, false, 0.f);
-	AdditinalDamageRatio += Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_AdditinalDamageRatio_SinBeta, false, 0.f);
-	AdditinalDamageRatio += Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_AdditinalDamageRatio_SinGamma, false, 0.f);
-	AdditinalDamageRatio += Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_AdditinalDamageRatio_SinDelta, false, 0.f);
+	AdditinalDamageRatio += Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_AdditinalDamageRatio_Pulse, false, 0.f);
+
 	//UE_LOG(LogTemp, Warning, TEXT("Additional Damage Ratio : %s"), *FString::SanitizeFloat(AdditinalDamageRatio, 2));
 	//UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] AdditionalDamageRatio: %f"), AdditinalDamageRatio); //로그추가
 
@@ -140,12 +141,16 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] FinalExtraDamage : Value: %f"), FinalExtraDamage); // 로그추가
 	// Calculate Final Damage
 	float L_FinalDamage = BasicDamageFormal * ElementalExtraDamage * FinalExtraDamage;
-	L_FinalDamage = FMath::Floor(L_FinalDamage) < 1.f ? 1.f : FMath::Floor(L_FinalDamage);
+	L_FinalDamage = FMath::CeilToInt(L_FinalDamage) < 1.f ? 1.f : FMath::CeilToInt(L_FinalDamage);
 	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] FinalDamage calculated: %f"), L_FinalDamage); // 로그추가
 
 	// Send HitReact Event To Target
 	AActor* Target = ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor();
 	FGameplayEventData Data;
+	Data.Instigator = ExecutionParams.GetSourceAbilitySystemComponent()->GetAvatarActor();
+	UDamageLogger* Logger = NewObject<UDamageLogger>();
+	Logger->SetLoggerValue(FMath::CeilToInt(BasicDamageFormal), FMath::CeilToInt(L_FinalDamage));
+	Data.OptionalObject = Logger;
 	Data.EventMagnitude = L_FinalDamage;
 
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
@@ -161,5 +166,39 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 			GetCapturedPropertiesDamage().CurrentHealthDef.AttributeToCapture,
 			EGameplayModOp::Additive,
 			-L_FinalDamage)
+	);
+
+	//////////
+
+	AActor* TargetActor = ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor();
+	FVector TargetPos = TargetActor ? TargetActor->GetActorLocation() : FVector::ZeroVector;
+
+	// 예: 터렛 관련 ID (터렛 Actor에서 가져오는 방식에 맞게 수정 필요)
+	FString TurretInstanceID = FString::FromInt(reinterpret_cast<int64>(ExecutionParams.GetSourceAbilitySystemComponent()));
+	FString TurretID = ExecutionParams.GetSourceAbilitySystemComponent()->GetAvatarActor()->GetName();
+	FString TargetID = TargetActor ? TargetActor->GetName() : TEXT("Unknown");
+
+	// 잔여 HP (AttributeSet에서 가져오기)
+	float TargetHP = 0.f;
+	if (const UAbilitySystemComponent* TargetASC = ExecutionParams.GetTargetAbilitySystemComponent())
+	{
+		if (const USOWAttributeSet* TargetAttributes = Cast<USOWAttributeSet>(TargetASC->GetAttributeSet(USOWAttributeSet::StaticClass())))
+		{
+			TargetHP = TargetAttributes->GetCurrentHealth();
+		}
+	}
+
+	// CSV 기록
+	UDamageLoggingManager::LogDamageToCSV(
+		TurretInstanceID,
+		TurretID,
+		TargetID,
+		FMath::CeilToInt(BasicDamageFormal),
+		FMath::CeilToInt(L_FinalDamage),
+		TargetHP,
+		TargetPos,
+		0, // 웨이브/라운드 번호
+		ExecutionParams.GetSourceAbilitySystemComponent()->GetAvatarActor(),
+		ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor()
 	);
 }

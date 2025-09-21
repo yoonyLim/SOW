@@ -18,6 +18,8 @@ class UWidgetComponent;
 class UBehaviorTree;
 class USOWEnemyCombatComponent;
 
+class USOWEnemyUIComponent;
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyDeath, int32, ShardAmount);
 
 UCLASS()
@@ -35,6 +37,12 @@ class SOW_API ASOWCharacterEnemyBase : public ASOWCharacter, public IEnemyAction
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widgets", meta = (AllowPrivateAccess = "true"))
 	UWidgetComponent* HealthBarWidget;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI", meta = (AllowPrivateAccess = "true"))
+	USOWEnemyUIComponent* EnemyUIComponent; // added by pgh
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widgets", meta = (AllowPrivateAccess = "true"))
+	UWidgetComponent* SineDebuffWidget; // added by pgh
 
 	FVector2D HealthBarWidgetSize;
 
@@ -78,6 +86,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void BeginPlay() override;
+	virtual USOWEnemyUIComponent* GetEnemyUIComponent() const override;
 
 	virtual void UpdateHealthBarValue(float NewHealth, float MaxHealth);
 
@@ -114,6 +123,9 @@ protected:
 	// =====================================================
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Incoming Route Component")
 	UEnemyIncomingRouteComponent* EnemyIncomingRouteComponent;
+
+	UFUNCTION()
+	void OnGameplayTagChanged(const FGameplayTag Tag, int32 NewCount);
 
 public:
 	// GETTERS
