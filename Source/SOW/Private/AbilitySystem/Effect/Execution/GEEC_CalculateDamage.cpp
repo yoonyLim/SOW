@@ -198,6 +198,7 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 		TargetHP,
 		TargetPos,
 		0, // 웨이브/라운드 번호
-		ExecutionParams.GetSourceAbilitySystemComponent()->GetAvatarActor()
+		ExecutionParams.GetSourceAbilitySystemComponent()->GetAvatarActor(),
+		ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor()
 	);
 }

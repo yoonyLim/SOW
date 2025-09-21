@@ -14,7 +14,8 @@ void UDamageLoggingManager::LogDamageToCSV(
     float TargetRemainingHP,
     const FVector& TargetPos,
     int32 Stage,
-    AActor* AttackerActor   // 추가
+    AActor* AttackerActor,   // 추가
+    AActor* DamagedActor
 )
 {
     FString SessionID = GetCurrentSessionID();
@@ -31,16 +32,17 @@ void UDamageLoggingManager::LogDamageToCSV(
     // 첫 실행 시 헤더 추가
     if (!PlatformFile.FileExists(*FileName))
     {
-        FString Header = TEXT("SessionID,Timestamp,TurretInstanceID,TurretID,TargetID,BaseDamage,FinalDamage,TargetRemainingHP,TargetPosX,TargetPosY,TargetPosZ,Stage,BuffTags\n");
+        FString Header = TEXT("SessionID,Timestamp,TurretInstanceID,TurretID,TargetID,BaseDamage,FinalDamage,TargetRemainingHP,TargetPosX,TargetPosY,TargetPosZ,Stage,BuffTags,EnemyTags\n");
         FFileHelper::SaveStringToFile(Header, *FileName);
     }
 
     FString Timestamp = FDateTime::Now().ToString(TEXT("%H:%M:%S.%s"));
 
     FString AttackerTags = GetActiveTagsAsString(AttackerActor);
+    FString DamagedTags = GetActiveTagsAsString(DamagedActor);
 
     FString Line = FString::Printf(
-        TEXT("%s,%s,%s,%s,%s,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%d,%s\n"),
+        TEXT("%s,%s,%s,%s,%s,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%d,%s,%s\n"),
         *SessionID,
         *Timestamp,
         *TurretInstanceID,
@@ -51,7 +53,8 @@ void UDamageLoggingManager::LogDamageToCSV(
         TargetRemainingHP,
         TargetPos.X, TargetPos.Y, TargetPos.Z,
         Stage,
-        *AttackerTags
+        *AttackerTags,
+        *DamagedTags
     );
 
     FFileHelper::SaveStringToFile(Line, *FileName, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), FILEWRITE_Append);
@@ -77,7 +80,10 @@ FString UDamageLoggingManager::GetActiveTagsAsString(AActor* Actor)
 			const FString TagName = Tag.ToString();
 
 			if (TagName.StartsWith(TEXT("Turret.Status.Buff")) ||
-				TagName.StartsWith(TEXT("Turret.Status.Debuff")))
+				TagName.StartsWith(TEXT("Turret.Status.Debuff")) || 
+                TagName.StartsWith(TEXT("Enemy.Status.Buff")) ||
+                TagName.StartsWith(TEXT("Enemy.Status.Debuff"))||
+                TagName.StartsWith(TEXT("Enemy.Status.Debuff.Sine")))
 			{
 				TagStrings.Add(TagName);
 			}

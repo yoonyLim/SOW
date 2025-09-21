@@ -25,11 +25,14 @@ public:
 		float TargetRemainingHP,
 		const FVector& TargetPos,
 		int32 Stage = 0,
-		AActor* AttackerActor = nullptr
+		AActor* AttackerActor = nullptr,
+		AActor* DamagedActor = nullptr
 	);
 
 private:
 	static FString GetActiveTagsAsString(AActor* Actor);
+
+	//static FString GetDamagedTagsAsString(AActor* Actor);
 
 	static FString GetCurrentSessionID();
 };
