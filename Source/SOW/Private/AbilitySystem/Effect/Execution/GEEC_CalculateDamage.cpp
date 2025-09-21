@@ -5,6 +5,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystem/SOWAttributeSet.h"
 #include "GameplayEffect.h"
+#include "Widget/DamageLogger.h"
 #include "SOWGameplayTags.h"
 // TO-DO
 /*
@@ -145,6 +146,9 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 	AActor* Target = ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor();
 	FGameplayEventData Data;
 	Data.Instigator = ExecutionParams.GetSourceAbilitySystemComponent()->GetAvatarActor();
+	UDamageLogger* Logger = NewObject<UDamageLogger>();
+	Logger->SetLoggerValue(FMath::CeilToInt(BasicDamageFormal), FMath::CeilToInt(L_FinalDamage));
+	Data.OptionalObject = Logger;
 	Data.EventMagnitude = L_FinalDamage;
 
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(

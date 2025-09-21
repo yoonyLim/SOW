@@ -5,6 +5,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystem/SOWAttributeSet.h"
 #include "GameplayEffect.h"
+#include "Widget/DamageLogger.h"
 #include "SOWGameplayTags.h"
 
 
@@ -71,6 +72,7 @@ void UGEEC_CalculatePercentageDamage::Execute_Implementation(const FGameplayEffe
 	// Send HitReact Event To Target
 	AActor* Target = ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor();
 	FGameplayEventData Data;
+	//Data.OptionalObject = UDamageLogger(L_FinalDamage);
 	Data.EventMagnitude = L_FinalDamage;
 
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
