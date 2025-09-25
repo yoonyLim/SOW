@@ -200,3 +200,27 @@ namespace SOWGameplayTags {
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Skill_Creation_l);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Skill_Creation_ll);
 }
+
+
+namespace SOWSynergyTags {
+	// Need to Implement Turret Synergy System only
+	// When a turret is summoned, the synergy that matches the turret's Element reacts to grant a special effect to all turrets of the same Element that the instance is monitoring.
+
+	// Nature Synergy
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Synergy_Nature_III);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Synergy_Nature_V);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Synergy_Nature_VI);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Synergy_Nature_VII);
+
+	// Electro Synergy
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Synergy_Electro_I);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Synergy_Electro_II);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Synergy_Electro_III);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Synergy_Electro_IV);
+
+	// Ice Synergy
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Synergy_Ice_II);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Synergy_Ice_III);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Synergy_Ice_IV);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Synergy_Ice_V);
+}

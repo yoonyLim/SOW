@@ -179,3 +179,23 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Player_Skill_Creation_l, "Player.Skill.Creation.l");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Skill_Creation_ll, "Player.Skill.Creation.ll");
 }
+
+
+
+
+namespace SOWSynergyTags {
+	UE_DEFINE_GAMEPLAY_TAG(Synergy_Nature_III, "Synergy.Nature.III");
+	UE_DEFINE_GAMEPLAY_TAG(Synergy_Nature_V, "Synergy.Nature.V");
+	UE_DEFINE_GAMEPLAY_TAG(Synergy_Nature_VI, "Synergy.Nature.VI");
+	UE_DEFINE_GAMEPLAY_TAG(Synergy_Nature_VII, "Synergy.Nature.VII");
+
+	UE_DEFINE_GAMEPLAY_TAG(Synergy_Electro_I, "Synergy.Electro.I");
+	UE_DEFINE_GAMEPLAY_TAG(Synergy_Electro_II, "Synergy.Electro.II");
+	UE_DEFINE_GAMEPLAY_TAG(Synergy_Electro_III, "Synergy.Electro.III");
+	UE_DEFINE_GAMEPLAY_TAG(Synergy_Electro_IV, "Synergy.Electro.IV");
+
+	UE_DEFINE_GAMEPLAY_TAG(Synergy_Ice_II, "Synergy.Ice.II");
+	UE_DEFINE_GAMEPLAY_TAG(Synergy_Ice_III, "Synergy.Ice.III");
+	UE_DEFINE_GAMEPLAY_TAG(Synergy_Ice_IV, "Synergy.Ice.IV");
+	UE_DEFINE_GAMEPLAY_TAG(Synergy_Ice_V, "Synergy.Ice.V");
+}

@@ -398,3 +398,13 @@ struct FSkillData : public FTableRowBase
 	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "EffectType==ESkillEffectType::CircleUpgrade"), Category = "CircleUpgrade")
 	uint8 CircleLevel;
 };
+
+
+USTRUCT(BlueprintType)
+struct FTurretSynergyTag : public FTableRowBase {
+	// legacys
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FGameplayTag> SynergyTag;
+};
