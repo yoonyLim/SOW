@@ -77,7 +77,12 @@ enum class ETurretName : uint8 {
 	DesertBat		UMETA(DisplayName = "DesertBat"),
 	DesertWizard	UMETA(DisplayName = "DesertWizard"),
 	DesertCactus	UMETA(DisplayName = "DesertCactus"),
-	DesertGolem		UMETA(DisplayName = "DesertGolem")
+	DesertGolem		UMETA(DisplayName = "DesertGolem"),
+
+	// Ice
+	IceCitizen		UMETA(DisplayName = "IceCitizen"),
+	IceGolem		UMETA(DisplayName = "IceGolem"),
+	Yetti			UMETA(DisplayName = "Yetti")
 	
 };
 

@@ -25,12 +25,14 @@ ASOWPlayerController::ASOWPlayerController()
 void ASOWPlayerController::BeginPlay()
 {
     Super::BeginPlay();
+    bEnableClickEvents = true; 
+    bEnableMouseOverEvents = true;
 }
 
 void ASOWPlayerController::SetupInputComponent()
 {
     Super::SetupInputComponent();
-    InputComponent->BindKey(EKeys::LeftMouseButton, IE_Pressed, this, &ASOWPlayerController::ConfirmTurretPlacement);
+    //InputComponent->BindKey(EKeys::LeftMouseButton, IE_Pressed, this, &ASOWPlayerController::ConfirmTurretPlacement);
 }
 
 void ASOWPlayerController::Tick(float DeltaTime)
