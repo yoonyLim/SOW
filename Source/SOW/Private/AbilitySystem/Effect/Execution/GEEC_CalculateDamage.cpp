@@ -7,14 +7,15 @@
 #include "GameplayEffect.h"
 #include "Widget/DamageLogger.h"
 #include "SOWGameplayTags.h"
+#include "SOWLogFunctionLibrary.h"
 
-#include "Log/DamageLoggingManager.h"
+
 // TO-DO
 /*
 
-	SOWAttributeSetÀ¸·ÎºÎÅÍ Ä¸Ã³ÇØ¾ß ÇÒ °¢ ½ºÅÝÀ» Á¤ÀÇÇÔ.
-	Ä¸Ã³ÇÒ ½ºÅÝµéÀÇ ÃâÃ³ (°ø°Ý : ÀÌÆåÆ® Á¦°øÀÚ / ¹æ¾î : ÀÌÆåÆ® ´ë»óÀÚ etc)¸¦ Á¤ÀÇÇÔ.
-	±âÈ¹¾È¿¡ µû¸¥ µ¥¹ÌÁö ·ÎÁ÷À» ±¸ÇöÇÔ.
+	SOWAttributeSetï¿½ï¿½ï¿½Îºï¿½ï¿½ï¿½ Ä¸Ã³ï¿½Ø¾ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
+	Ä¸Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½Ýµï¿½ï¿½ï¿½ ï¿½ï¿½Ã³ (ï¿½ï¿½ï¿½ï¿½ : ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ / ï¿½ï¿½ï¿½ : ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ etc)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
+	ï¿½ï¿½È¹ï¿½È¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
 
 */
 
@@ -49,13 +50,13 @@ float UGEEC_CalculateDamage::GetElementalResistanceCost(const FGameplayEffectCus
 	{
 		for (const FGameplayTag& Tag : *EvalParams.SourceTags)
 		{
-			if (Tag.MatchesTag(RootTag)) // "Shared.Element" ÇÏÀ§ ÅÂ±× Æ÷ÇÔ ÇÊÅÍ
+			if (Tag.MatchesTag(RootTag)) // "Shared.Element" ï¿½ï¿½ï¿½ï¿½ ï¿½Â±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			{
 				MatchedElementTags.Add(Tag);
 			}
 		}
 	}
-	/* Å¸°ÙÀÇ ¼Ó¼º ÀúÇ×Ä¡¸¦ ºÒ·¯¿À±â À§ÇÑ ÄÚµå */
+	/* Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½Ó¼ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½Ò·ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½ */
 	const UAbilitySystemComponent* TargetASC = ExecutionParams.GetTargetAbilitySystemComponent();
 	const AActor* TargetActor = TargetASC ? TargetASC->GetAvatarActor() : nullptr;
 	float ElementalResistance = 0.f;
@@ -83,7 +84,7 @@ UGEEC_CalculateDamage::UGEEC_CalculateDamage()
 
 void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
 {
-	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] Execute_Implementation called.")); //·Î±× Ãß°¡, ³ªÁß¿¡ Áö¿ï°Í.
+	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] Execute_Implementation called.")); //ï¿½Î±ï¿½ ï¿½ß°ï¿½, ï¿½ï¿½ï¿½ß¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½.
 	const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();
 
 	FAggregatorEvaluateParameters EvalParams;
@@ -99,10 +100,10 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 		EvalParams,
 		L_AttackPower
 	);
-	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] AttackPower captured: Value: %f"), L_AttackPower); // ·Î±×Ãß°¡
+	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] AttackPower captured: Value: %f"), L_AttackPower); // ï¿½Î±ï¿½ï¿½ß°ï¿½
 	L_AttackPower += Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_AdditiveDamage, false, 0.0f);
 	L_AttackPower *= Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_MultipleDamage, false, 1.0f);
-	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] AttackPower Final : Value: %f"), L_AttackPower); // ·Î±×Ãß°¡
+	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] AttackPower Final : Value: %f"), L_AttackPower); // ï¿½Î±ï¿½ï¿½ß°ï¿½
 
 	float L_ExtraRatio = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
@@ -115,7 +116,7 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 	float ElementalResistance = 1.f;
 	//float ElementalResistance = GetElementalResistanceCost(ExecutionParams, EvalParams);
 	//ElementalResistance = ElementalResistance > 0.2f ? ElementalResistance : 0.2f;
-	//UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] ElementalResistance: %f"), ElementalResistance); //·Î±×Ãß°¡
+	//UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] ElementalResistance: %f"), ElementalResistance); //ï¿½Î±ï¿½ï¿½ß°ï¿½
 
 
 	// Additinal Damage By Sine Debuff
@@ -123,7 +124,7 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 	AdditinalDamageRatio += Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_AdditinalDamageRatio_Pulse, false, 0.f);
 
 	//UE_LOG(LogTemp, Warning, TEXT("Additional Damage Ratio : %s"), *FString::SanitizeFloat(AdditinalDamageRatio, 2));
-	//UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] AdditionalDamageRatio: %f"), AdditinalDamageRatio); //·Î±×Ãß°¡
+	//UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] AdditionalDamageRatio: %f"), AdditinalDamageRatio); //ï¿½Î±ï¿½ï¿½ß°ï¿½
 
 	// Base Defense Power
 	float L_DefensePower = 0.f;
@@ -132,17 +133,17 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 		EvalParams,
 		L_DefensePower
 	);
-	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] DefensePower captured Value: %f"), L_DefensePower); //·Î±×Ãß°¡
+	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] DefensePower captured Value: %f"), L_DefensePower); //ï¿½Î±ï¿½ï¿½ß°ï¿½
 
 	float BasicDamageFormal = (L_AttackPower - FMath::Log2(2 + L_DefensePower));
 	float ElementalExtraDamage = ElementalResistance;
 	float FinalExtraDamage = (1.0f + L_ExtraRatio + AdditinalDamageRatio);
 
-	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] FinalExtraDamage : Value: %f"), FinalExtraDamage); // ·Î±×Ãß°¡
+	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] FinalExtraDamage : Value: %f"), FinalExtraDamage); // ï¿½Î±ï¿½ï¿½ß°ï¿½
 	// Calculate Final Damage
 	float L_FinalDamage = BasicDamageFormal * ElementalExtraDamage * FinalExtraDamage;
 	L_FinalDamage = FMath::CeilToInt(L_FinalDamage) < 1.f ? 1.f : FMath::CeilToInt(L_FinalDamage);
-	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] FinalDamage calculated: %f"), L_FinalDamage); // ·Î±×Ãß°¡
+	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] FinalDamage calculated: %f"), L_FinalDamage); // ï¿½Î±ï¿½ï¿½ß°ï¿½
 
 	// Send HitReact Event To Target
 	AActor* Target = ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor();
@@ -173,12 +174,12 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 	AActor* TargetActor = ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor();
 	FVector TargetPos = TargetActor ? TargetActor->GetActorLocation() : FVector::ZeroVector;
 
-	// ¿¹: ÅÍ·¿ °ü·Ã ID (ÅÍ·¿ Actor¿¡¼­ °¡Á®¿À´Â ¹æ½Ä¿¡ ¸Â°Ô ¼öÁ¤ ÇÊ¿ä)
+	// ï¿½ï¿½: ï¿½Í·ï¿½ ï¿½ï¿½ï¿½ï¿½ ID (ï¿½Í·ï¿½ Actorï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¿ï¿½ ï¿½Â°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½)
 	FString TurretInstanceID = FString::FromInt(reinterpret_cast<int64>(ExecutionParams.GetSourceAbilitySystemComponent()));
 	FString TurretID = ExecutionParams.GetSourceAbilitySystemComponent()->GetAvatarActor()->GetName();
 	FString TargetID = TargetActor ? TargetActor->GetName() : TEXT("Unknown");
 
-	// ÀÜ¿© HP (AttributeSet¿¡¼­ °¡Á®¿À±â)
+	// ï¿½Ü¿ï¿½ HP (AttributeSetï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
 	float TargetHP = 0.f;
 	if (const UAbilitySystemComponent* TargetASC = ExecutionParams.GetTargetAbilitySystemComponent())
 	{
@@ -188,8 +189,8 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 		}
 	}
 
-	// CSV ±â·Ï
-	UDamageLoggingManager::LogDamageToCSV(
+	// CSV ï¿½ï¿½ï¿½
+	USOWLogFunctionLibrary::LogDamageToCSV(
 		TurretInstanceID,
 		TurretID,
 		TargetID,
@@ -197,7 +198,7 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 		FMath::CeilToInt(L_FinalDamage),
 		TargetHP,
 		TargetPos,
-		0, // ¿þÀÌºê/¶ó¿îµå ¹øÈ£
+		0, // ï¿½ï¿½ï¿½Ìºï¿½/ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È£
 		ExecutionParams.GetSourceAbilitySystemComponent()->GetAvatarActor(),
 		ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor()
 	);
