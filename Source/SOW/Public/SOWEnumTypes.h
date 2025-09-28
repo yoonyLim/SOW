@@ -210,3 +210,13 @@ enum class ETileSummonState : uint8
 	Unavailable,
 	Occupied,
 };
+
+UENUM(BlueprintType)
+enum class EGlacioStatType : uint8
+{
+	AttackPower,
+	AttackSpeed,
+	DetectionRange,
+	DebuffCount,
+	ExtraDamage
+};

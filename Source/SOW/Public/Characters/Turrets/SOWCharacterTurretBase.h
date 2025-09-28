@@ -112,6 +112,9 @@ protected:
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void InitFromDataAsset() override;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widgets", meta = (AllowPrivateAccess = "true"))
+	UWidgetComponent* CustomTurretStatusfWidget; 
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	USOWTurretCombatComponent* TurretCombatComponent;
 

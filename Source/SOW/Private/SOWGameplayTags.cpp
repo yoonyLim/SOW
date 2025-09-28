@@ -72,6 +72,8 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_NightEyes, "Turret.Status.Buff.NightEyes");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Mushroom, "Turret.Status.Buff.Mushroom");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Snowball, "Turret.Status.Buff.Snowball");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_GlassyAura, "Turret.Status.Buff.GlassyAura");
+	
 
 
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Debuff_Slow, "Turret.Status.Debuff.Slow");

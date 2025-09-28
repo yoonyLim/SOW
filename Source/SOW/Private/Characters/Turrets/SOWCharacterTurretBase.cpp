@@ -52,6 +52,17 @@ ASOWCharacterTurretBase::ASOWCharacterTurretBase()
 
 	TurretUIComponent = CreateDefaultSubobject<USOWTurretUIComponent>(TEXT("TurretUIComponent"));
 
+	CustomTurretStatusfWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("CustomTurretStatusfWidget"));
+	if (CustomTurretStatusfWidget) {
+		CustomTurretStatusfWidget->SetupAttachment(RootComponent);
+		CustomTurretStatusfWidget->SetWidgetSpace(EWidgetSpace::Screen);
+		CustomTurretStatusfWidget->SetRelativeLocation(FVector(0.f, 0.f, 1.f));
+		static ConstructorHelpers::FClassFinder<UUserWidget> CustomTurretStatusfWidgetClass{ TEXT("/Game/01Blueprints/Turret/UI/WBP_YettiSnowball") };
+
+		if (CustomTurretStatusfWidgetClass.Succeeded())
+			CustomTurretStatusfWidget->SetWidgetClass((CustomTurretStatusfWidgetClass.Class));
+	}
+
 }
 
 void ASOWCharacterTurretBase::BeginPlay()
