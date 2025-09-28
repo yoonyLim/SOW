@@ -10,6 +10,7 @@ bool USOWAbilitySystemComponent::TryActivateAbilityWithTag(FGameplayTag InAbilit
 
 	TArray<FGameplayAbilitySpec*> FoundAbilitySpecs;
 	GetActivatableGameplayAbilitySpecsByAllMatchingTags(InAbilityTag.GetSingleTagContainer(), FoundAbilitySpecs);
+	UE_LOG(LogTemp, Warning, TEXT("Abilit Tag Count : %s"), *FString::FromInt(FoundAbilitySpecs.Num()));
 
 	if (!FoundAbilitySpecs.IsEmpty()) {
 		const int32 RandomAbilityIndex = FMath::RandRange(0, FoundAbilitySpecs.Num() - 1);

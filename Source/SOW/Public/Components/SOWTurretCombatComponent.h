@@ -35,7 +35,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Turret|Properties")
 	void AddNewTargetPriority(ETurretTargetSelectionPriority NewPriority);
 
-	void VisualizeTurretDetectionRange(bool bOn);
+	void VisualizeTurretDetectionRange(bool bOn, TArray<ATileBase*>& OutTiles);
 
 	void MakeDetectableTileArea();
 #pragma endregion
