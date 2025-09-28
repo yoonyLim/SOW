@@ -12,6 +12,9 @@ class UOneTimeCurrencyManager;
 class USummonManager;
 class UDataTable;
 
+class UTurretSynergyManager;
+
+
 /**
  * 
  */
@@ -34,6 +37,10 @@ public:
     UPROPERTY(BlueprintReadOnly)
     TObjectPtr<USummonManager> SummonManager;
 
+    UPROPERTY(BlueprintReadOnly)
+    TObjectPtr<UTurretSynergyManager> TurretSynergyManager;
+
+
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Skill")
     TObjectPtr<UDataTable> SkillDataTable;
 
@@ -52,6 +59,8 @@ public:
     UFUNCTION(BlueprintCallable)
     UOneTimeCurrencyManager* GetOneTimeCurrencyManager() { return OneTimeCurrencyManager; }
 
+    UFUNCTION(BlueprintCallable)
+    UTurretSynergyManager* GetTurretSynergyManager() { return TurretSynergyManager; }
     UFUNCTION(Exec)
     void SummonTurret(FName TurretName);
 

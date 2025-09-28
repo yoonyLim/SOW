@@ -108,10 +108,13 @@ void USOWTurretCombatComponent::AddNewTargetPriority(ETurretTargetSelectionPrior
 	PriorityChange();
 }
 
-void USOWTurretCombatComponent::VisualizeTurretDetectionRange(bool bOn)
+void USOWTurretCombatComponent::VisualizeTurretDetectionRange(bool bOn, TArray<ATileBase*>& OutTiles)
 {
 
-	if (DetectorTiles.Num() <= 0) return;
+	if (DetectorTiles.Num() <= 0) {
+		OutTiles = TArray<ATileBase*>();
+		return;
+	} 
 
 	if (bOn) {
 		for (ATileBase* Tile : DetectorTiles) {
@@ -125,11 +128,16 @@ void USOWTurretCombatComponent::VisualizeTurretDetectionRange(bool bOn)
 			Tile->HideRange();
 		}
 	}
+
+	OutTiles = DetectorTiles;
 }
 
 void USOWTurretCombatComponent::MakeDetectableTileArea()
 {
 	APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
+
+	if (!PC || !CachedOwnerCharacter) return;
+
 	float Radius = 2 * CachedOwnerCharacter->GetDetectionRangeRadius() + 1;
 	float TileSize = 116.f;
 

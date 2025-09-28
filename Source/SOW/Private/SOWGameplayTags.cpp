@@ -23,13 +23,16 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Ability_Initialize, "Enemy.Ability.Initialize");
 
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Taunted, "Enemy.Status.Debuff.Taunted");
-	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Poison, "Enemy.Status.Debuff.Poison");
-	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_SpiderWeb, "Enemy.Status.Debuff.SpiderWeb");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Slow, "Enemy.Status.Debuff.Slow");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_RestoreMovement, "Enemy.Status.Debuff.RestoreMovement");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Rooted, "Enemy.Status.Debuff.Rooted");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Detected, "Enemy.Status.Debuff.Detected"); 
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Static, "Enemy.Status.Debuff.Static");
+
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Chill, "Enemy.Status.Debuff.Chill");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Freezing, "Enemy.Status.Debuff.Freezing");
+
+
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sine_Alpha, "Enemy.Status.Debuff.Sine.Alpha");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sine_Beta, "Enemy.Status.Debuff.Sine.Beta");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sine_Gamma, "Enemy.Status.Debuff.Sine.Gamma");
@@ -38,12 +41,11 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sine_Stun, "Enemy.Status.Debuff.Sine.Stun");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sine_Chellenger, "Enemy.Status.Debuff.Sine.Chellenger");
 
-	//UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sharp, "Enemy.Status.Debuff.Sharp");
-	//UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Balancing, "Enemy.Status.Debuff.Balancing");
 	
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Immunity_ShadowAdditionalDamage, "Enemy.Status.Immunity.ShadowAdditionalDamage");
 
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Immunity_Sine_Stun, "Enemy.Status.Immunity.Sine.Stun");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Immunity_Chill, "Enemy.Status.Immunity.Chill");
 
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Immunity_Sine_Alpha, "Enemy.Status.Immunity.Sine.Alpha");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Immunity_Sine_Beta, "Enemy.Status.Immunity.Sine.Beta");
@@ -58,13 +60,21 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_Attack_Melee, "Turret.Ability.Attack.Melee");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_Attack_Ranged, "Turret.Ability.Attack.Ranged");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_Buff, "Turret.Ability.Buff"); 
+
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_MeleeAttack, "Turret.Ability.MeleeAttack");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_RangedAttack, "Turret.Ability.RangedAttack");
+
+
 	
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Hoppy, "Turret.Status.Buff.Hoppy");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_BlessingOfRune, "Turret.Status.Buff.BlessingOfRune");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_SpiderWeb, "Turret.Status.Buff.SpiderWeb");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_NightEyes, "Turret.Status.Buff.NightEyes");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Mushroom, "Turret.Status.Buff.Mushroom");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Snowball, "Turret.Status.Buff.Snowball");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_GlassyAura, "Turret.Status.Buff.GlassyAura");
 	
+
 
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Debuff_Slow, "Turret.Status.Debuff.Slow");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Debuff_Root, "Turret.Status.Debuff.Root");
@@ -141,6 +151,8 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_MushroomExtraDamageCont, "Shared.SetByCaller.MushroomExtraDamageCont");
 	
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_RestoreMovement, "Shared.SetByCaller.RestoreMovement");
+
+	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_ChillSlow, "Shared.SetByCaller.ChillSlow");
 	
 
 	UE_DEFINE_GAMEPLAY_TAG(World_Event_WaveStart, "World.Event.WaveStart");
@@ -178,4 +190,24 @@ namespace SOWGameplayTags
 
 	UE_DEFINE_GAMEPLAY_TAG(Player_Skill_Creation_l, "Player.Skill.Creation.l");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Skill_Creation_ll, "Player.Skill.Creation.ll");
+}
+
+
+
+
+namespace SOWSynergyTags {
+	UE_DEFINE_GAMEPLAY_TAG(Synergy_Nature_III, "Synergy.Nature.III");
+	UE_DEFINE_GAMEPLAY_TAG(Synergy_Nature_V, "Synergy.Nature.V");
+	UE_DEFINE_GAMEPLAY_TAG(Synergy_Nature_VI, "Synergy.Nature.VI");
+	UE_DEFINE_GAMEPLAY_TAG(Synergy_Nature_VII, "Synergy.Nature.VII");
+
+	UE_DEFINE_GAMEPLAY_TAG(Synergy_Electro_I, "Synergy.Electro.I");
+	UE_DEFINE_GAMEPLAY_TAG(Synergy_Electro_II, "Synergy.Electro.II");
+	UE_DEFINE_GAMEPLAY_TAG(Synergy_Electro_III, "Synergy.Electro.III");
+	UE_DEFINE_GAMEPLAY_TAG(Synergy_Electro_IV, "Synergy.Electro.IV");
+
+	UE_DEFINE_GAMEPLAY_TAG(Synergy_Ice_II, "Synergy.Ice.II");
+	UE_DEFINE_GAMEPLAY_TAG(Synergy_Ice_III, "Synergy.Ice.III");
+	UE_DEFINE_GAMEPLAY_TAG(Synergy_Ice_IV, "Synergy.Ice.IV");
+	UE_DEFINE_GAMEPLAY_TAG(Synergy_Ice_V, "Synergy.Ice.V");
 }

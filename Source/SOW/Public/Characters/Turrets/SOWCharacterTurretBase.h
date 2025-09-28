@@ -15,6 +15,7 @@ class UWidgetComponent;
 struct FEffectOrientedTurretAttribute;
 struct FWidgetDescAtt;
 class UDecalComponent;
+class ATileBase;
 
 
 
@@ -39,7 +40,7 @@ public:
 	/* End ISOWCharacterUIInterface implement */
 
 	UFUNCTION(BlueprintCallable)
-	void SwitchDetectionRangeDecal(bool On);
+	void SwitchDetectionRangeDecal(bool On, TArray<ATileBase*>& OutTiles);
 
 	UFUNCTION(BlueprintCallable)
 	void FindTurretByElementTarget();
@@ -110,6 +111,9 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void InitFromDataAsset() override;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widgets", meta = (AllowPrivateAccess = "true"))
+	UWidgetComponent* CustomTurretStatusfWidget; 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	USOWTurretCombatComponent* TurretCombatComponent;

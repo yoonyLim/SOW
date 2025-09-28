@@ -33,6 +33,7 @@
 #include "Interface/SOWCharacterTypeInterface.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "DataAsset/DA_StartupDataTurret.h"
+#include "Tile/TileBase.h"
 
 
 ASOWCharacterTurretBase::ASOWCharacterTurretBase()
@@ -50,6 +51,17 @@ ASOWCharacterTurretBase::ASOWCharacterTurretBase()
 	CharacterType = ESOWCharacterType::Turret;
 
 	TurretUIComponent = CreateDefaultSubobject<USOWTurretUIComponent>(TEXT("TurretUIComponent"));
+
+	CustomTurretStatusfWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("CustomTurretStatusfWidget"));
+	if (CustomTurretStatusfWidget) {
+		CustomTurretStatusfWidget->SetupAttachment(RootComponent);
+		CustomTurretStatusfWidget->SetWidgetSpace(EWidgetSpace::Screen);
+		CustomTurretStatusfWidget->SetRelativeLocation(FVector(0.f, 0.f, 1.f));
+		static ConstructorHelpers::FClassFinder<UUserWidget> CustomTurretStatusfWidgetClass{ TEXT("/Game/01Blueprints/Turret/UI/WBP_YettiSnowball") };
+
+		if (CustomTurretStatusfWidgetClass.Succeeded())
+			CustomTurretStatusfWidget->SetWidgetClass((CustomTurretStatusfWidgetClass.Class));
+	}
 
 }
 
@@ -122,11 +134,14 @@ void ASOWCharacterTurretBase::OnGameplayTagChanged(const FGameplayTag Tag, int32
 }
 
 
-void ASOWCharacterTurretBase::SwitchDetectionRangeDecal(bool On)
+void ASOWCharacterTurretBase::SwitchDetectionRangeDecal(bool On, TArray<ATileBase*>& OutTiles)
 {
-	if (!GetTurretCombatComponent()) return;
+	if (!GetTurretCombatComponent()) {
+		OutTiles = TArray<ATileBase*>();
+		return;
+	} 
 
-	GetTurretCombatComponent()->VisualizeTurretDetectionRange(On);
+	GetTurretCombatComponent()->VisualizeTurretDetectionRange(On, OutTiles);
 }
 
 
