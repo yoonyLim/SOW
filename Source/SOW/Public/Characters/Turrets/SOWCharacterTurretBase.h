@@ -15,6 +15,7 @@ class UWidgetComponent;
 struct FEffectOrientedTurretAttribute;
 struct FWidgetDescAtt;
 class UDecalComponent;
+class ATileBase;
 
 
 
@@ -39,7 +40,7 @@ public:
 	/* End ISOWCharacterUIInterface implement */
 
 	UFUNCTION(BlueprintCallable)
-	void SwitchDetectionRangeDecal(bool On);
+	void SwitchDetectionRangeDecal(bool On, TArray<ATileBase*>& OutTiles);
 
 	UFUNCTION(BlueprintCallable)
 	void FindTurretByElementTarget();

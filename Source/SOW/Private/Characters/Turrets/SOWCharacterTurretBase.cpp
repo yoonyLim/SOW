@@ -33,6 +33,7 @@
 #include "Interface/SOWCharacterTypeInterface.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "DataAsset/DA_StartupDataTurret.h"
+#include "Tile/TileBase.h"
 
 
 ASOWCharacterTurretBase::ASOWCharacterTurretBase()
@@ -122,11 +123,14 @@ void ASOWCharacterTurretBase::OnGameplayTagChanged(const FGameplayTag Tag, int32
 }
 
 
-void ASOWCharacterTurretBase::SwitchDetectionRangeDecal(bool On)
+void ASOWCharacterTurretBase::SwitchDetectionRangeDecal(bool On, TArray<ATileBase*>& OutTiles)
 {
-	if (!GetTurretCombatComponent()) return;
+	if (!GetTurretCombatComponent()) {
+		OutTiles = TArray<ATileBase*>();
+		return;
+	} 
 
-	GetTurretCombatComponent()->VisualizeTurretDetectionRange(On);
+	GetTurretCombatComponent()->VisualizeTurretDetectionRange(On, OutTiles);
 }
 
 

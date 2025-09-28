@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "SOWEnumTypes.h"
+#include "SOWStructTypes.h"
 #include "SOWGameplayTags.h"
 #include "TurretSynergyManager.generated.h"
 
@@ -22,10 +23,16 @@ class SOW_API UTurretSynergyManager : public UObject
 private:
 
 	TMap<EElementalType, TArray<ASOWCharacterTurretBase*>> SynergyMonitor;
-	TMap<EElementalType, FGameplayTagContainer> SynergyTagContainer;
+	TMap <EElementalType, TMap<ETurretRarity, int>> SynergyRarityMonitor;
 
+	TMap<EElementalType, FGameplayTagContainer> SynergyTagContainer;
 	UDataTable* SynergyTagData;
 	// etc...
+
+	bool CheckRarityCondition(const TMap<ETurretRarity, int> Monitor, const FSynergyCondition& SynergyContidion);
+
+	void UpdateSynergyTagContainer(ASOWCharacterTurretBase* InTurret, EElementalType ElementType, bool bAdd);
+
 
 public :
 	//FOnNewTurretSummonedDelegate OnNewTurretSummmoned;

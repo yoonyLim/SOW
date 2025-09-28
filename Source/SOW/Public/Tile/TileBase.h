@@ -47,7 +47,9 @@ public:
 	ETileSummonState TileState;
 
 	///  added by pgh
+	UFUNCTION(BlueprintCallable)
 	void ShowRange();
+	UFUNCTION(BlueprintCallable)
 	void HideRange();
 	///  added by pgh
 

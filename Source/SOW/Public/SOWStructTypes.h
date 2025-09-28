@@ -399,12 +399,36 @@ struct FSkillData : public FTableRowBase
 	uint8 CircleLevel;
 };
 
-
 USTRUCT(BlueprintType)
-struct FTurretSynergyTag : public FTableRowBase {
+struct FSynergyCondition {
 	// legacys
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FGameplayTag> SynergyTag;
+	ETurretRarity SynergyConditionRarity;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int SynergyConditionCount;
+};
+
+USTRUCT(BlueprintType)
+struct FTurretSynergyTagItem {
+	// legacys
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGameplayTag SynergyTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FSynergyCondition SynergyCondition;
+};
+
+USTRUCT(BlueprintType)
+struct FTurretSynergyTagData : public FTableRowBase {
+	// legacys
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FTurretSynergyTagItem> SynergyTagItems;
+
 };

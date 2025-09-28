@@ -6,38 +6,92 @@
 #include "Characters/Turrets/SOWCharacterTurretBase.h"
 #include "SOWBlueprintFunctionLibrary.h"
 #include "AbilitySystem/SOWAbilitySystemComponent.h"
-#include "SOWStructTypes.h"
-#include "SOWGameplayTags.h"
+#include "Components/SOWTurretCombatComponent.h"
 
+
+bool UTurretSynergyManager::CheckRarityCondition(const TMap<ETurretRarity, int> Monitor, const FSynergyCondition& SynergyContidion)
+{
+	//SynergyContidion.GetKeys();
+	ETurretRarity TargetRarity = SynergyContidion.SynergyConditionRarity;
+	int TargetCount = SynergyContidion.SynergyConditionCount;
+
+	UE_LOG(LogTemp, Warning, TEXT("Rarity : %s, TargetCount : %s"), *USOWBlueprintFunctionLibrary::EnumToFName<ETurretRarity>(TargetRarity).ToString(), *FString::FromInt(TargetCount));
+
+	return TargetCount == 0 || (Monitor.Contains(TargetRarity) && Monitor[TargetRarity] >= TargetCount);
+}
+
+void UTurretSynergyManager::UpdateSynergyTagContainer(ASOWCharacterTurretBase* InTurret, EElementalType ElementType, bool bAdd)
+{
+	if (bAdd) {
+		ETurretRarity InTurretRarity = InTurret->GetTurretCombatComponent()->GetTurretRarity();
+
+		TMap<ETurretRarity, int>& CurrentMonitor = SynergyRarityMonitor[ElementType];
+		if (!CurrentMonitor.Contains(InTurretRarity)) {
+			CurrentMonitor.Add(InTurretRarity, 1);
+		}
+		else {
+			int count = CurrentMonitor[InTurretRarity] + 1;
+			CurrentMonitor.Add(InTurretRarity, count);
+		}
+		
+	}
+
+	else {
+		ETurretRarity InTurretRarity = InTurret->GetTurretCombatComponent()->GetTurretRarity();
+
+		TMap<ETurretRarity, int>& CurrentMonitor = SynergyRarityMonitor[ElementType];
+		int count = CurrentMonitor[InTurretRarity] - 1;
+
+		if (count == 0) {
+			CurrentMonitor.Remove(InTurretRarity);
+		}
+		else {
+			CurrentMonitor.Add(InTurretRarity, count);
+		}
+	}
+	
+}
 
 void UTurretSynergyManager::AddNewTurretDataForSynergy(ASOWCharacterTurretBase* SummonedTurret, EElementalType ElementType)
 {
 	TArray<ASOWCharacterTurretBase*>& MonitoringTurrets = SynergyMonitor[ElementType];
-	int SynergyTurretCount = MonitoringTurrets.Num() + 1;
+	MonitoringTurrets.AddUnique(SummonedTurret);
+
+	UpdateSynergyTagContainer(SummonedTurret, ElementType, true);
+
+	int SynergyTurretCount = MonitoringTurrets.Num();
 	UE_LOG(LogTemp, Warning, TEXT("SynergyTurretCount : %s"), *FString::FromInt(SynergyTurretCount));
 
 
 	const FName ElementName = USOWBlueprintFunctionLibrary::EnumToFName<EElementalType>(ElementType);
-	const FTurretSynergyTag* ResistanceDataRow = SynergyTagData->FindRow<FTurretSynergyTag>(ElementName, TEXT(""));
-	const TArray<FGameplayTag> SynergyTagArray = ResistanceDataRow->SynergyTag;
+	const FTurretSynergyTagData* SynergyDataRow = SynergyTagData->FindRow<FTurretSynergyTagData>(ElementName, TEXT(""));
 
-	FGameplayTag NewTag = SynergyTagArray[SynergyTurretCount];
+	const TArray<FTurretSynergyTagItem> SynergyTagItems = SynergyDataRow->SynergyTagItems;
 
-	if (NewTag.IsValid()) {
-		for (ASOWCharacterTurretBase* Turret : MonitoringTurrets) {
-			if (USOWBlueprintFunctionLibrary::DoesActorHasTag(Turret, NewTag)) return;
+
+	for (ASOWCharacterTurretBase* Turret : MonitoringTurrets) {
+		if (!Turret) continue;
+
+		for (int i = 1; i <= SynergyTurretCount && i < SynergyTagItems.Num(); i++) {
+			//const FGameplayTag InTag = TagItem.SynergyTag;
+			const FGameplayTag InTag = SynergyTagItems[i].SynergyTag;
+			if (!InTag.IsValid()) continue;
+			//const FSynergyCondition InCondition = TagItem.SynergyCondition;
+			const FSynergyCondition InCondition = SynergyTagItems[i].SynergyCondition;
+			//if (InCondition.SynergyConditionCount == 0) continue;
+
+			
+			if (USOWBlueprintFunctionLibrary::DoesActorHasTag(Turret, InTag)) continue;
+			UE_LOG(LogTemp, Warning, TEXT("%s not have the tag"), *Turret->GetActorNameOrLabel());
+			
+			if (!CheckRarityCondition(SynergyRarityMonitor[ElementType], InCondition)) continue;
+			UE_LOG(LogTemp, Warning, TEXT("%s meet the condition"), *Turret->GetActorNameOrLabel());
 
 			USOWAbilitySystemComponent* TurretASC = USOWBlueprintFunctionLibrary::GetSOWAbilitySystemComponentFromActorInfo(Turret);
-			TurretASC->AddLooseGameplayTag(NewTag);
-
-			UE_LOG(LogTemp, Warning, TEXT("New Synergy Tag added to %s"), *Turret->GetActorNameOrLabel());
-
+			TurretASC->AddLooseGameplayTag(InTag);
+			UE_LOG(LogTemp, Warning, TEXT("%s got tag"), *Turret->GetActorNameOrLabel());
 		}
-	} 
-
-	SynergyTagContainer[ElementType].AddTag(NewTag);
-	UAbilitySystemBlueprintLibrary::AddLooseGameplayTags(SummonedTurret, SynergyTagContainer[ElementType]);
-	MonitoringTurrets.AddUnique(SummonedTurret);
+	}
 }
 
 void UTurretSynergyManager::RemoveTurratDataFromSynergy(ASOWCharacterTurretBase* SummonedTurret, EElementalType ElementType)
@@ -45,29 +99,46 @@ void UTurretSynergyManager::RemoveTurratDataFromSynergy(ASOWCharacterTurretBase*
 	TArray<ASOWCharacterTurretBase*>& MonitoringTurrets = SynergyMonitor[ElementType];
 	int SynergyTurretCount = MonitoringTurrets.Num();
 
+	UpdateSynergyTagContainer(SummonedTurret, ElementType, false);
+	MonitoringTurrets.Remove(SummonedTurret);
 
 	const FName ElementName = USOWBlueprintFunctionLibrary::EnumToFName<EElementalType>(ElementType);
-	const FTurretSynergyTag* ResistanceDataRow = SynergyTagData->FindRow<FTurretSynergyTag>(ElementName, TEXT(""));
-	const TArray<FGameplayTag> SynergyTagArray = ResistanceDataRow->SynergyTag;
+	const FTurretSynergyTagData* SynergyDataRow = SynergyTagData->FindRow<FTurretSynergyTagData>(ElementName, TEXT(""));
+
+	const TArray<FTurretSynergyTagItem> SynergyTagItems = SynergyDataRow->SynergyTagItems;
 
 
-	FGameplayTag InTag = SynergyTagArray[SynergyTurretCount];
-	if (InTag.IsValid()) {
-		for (ASOWCharacterTurretBase* Turret : MonitoringTurrets) {
-			if (!USOWBlueprintFunctionLibrary::DoesActorHasTag(Turret, InTag)) return;
+	for (ASOWCharacterTurretBase* Turret : MonitoringTurrets) {
+		if (!Turret) continue;
+		//UE_LOG(LogTemp, Warning, TEXT("Tagging Target : %s"), *Turret->GetActorNameOrLabel());
+
+		int i = 1;
+		while (i < SynergyTurretCount && i < SynergyTagItems.Num()) {
+			const FGameplayTag InTag = SynergyTagItems[i].SynergyTag;
+			if (!InTag.IsValid()) {i++; continue;}
+			const FSynergyCondition InCondition = SynergyTagItems[i].SynergyCondition;
+			//if (InCondition.SynergyConditionCount == 0) continue;
+
+			if (!USOWBlueprintFunctionLibrary::DoesActorHasTag(Turret, InTag)) { i++; continue; }
+			//UE_LOG(LogTemp, Warning, TEXT("Untagging Target : %s not has  the tag"), *Turret->GetActorNameOrLabel());
+			if (CheckRarityCondition(SynergyRarityMonitor[ElementType], InCondition)) { i++; continue; }
+			//UE_LOG(LogTemp, Warning, TEXT("Untagging Target : %s no unmet condition"), *Turret->GetActorNameOrLabel());
 
 			USOWAbilitySystemComponent* TurretASC = USOWBlueprintFunctionLibrary::GetSOWAbilitySystemComponentFromActorInfo(Turret);
 			TurretASC->RemoveLooseGameplayTag(InTag);
-
-			UE_LOG(LogTemp, Warning, TEXT("Synergy Tag removed from %s"), *Turret->GetActorNameOrLabel());
+			//UE_LOG(LogTemp, Warning, TEXT("Untagging Target : %s successful"), *Turret->GetActorNameOrLabel());
+			i++;
 		}
-
-		SynergyTagContainer[ElementType].RemoveTag(InTag);
+		if (SynergyTagItems[i].SynergyTag.IsValid()) {
+			USOWAbilitySystemComponent* TurretASC = USOWBlueprintFunctionLibrary::GetSOWAbilitySystemComponentFromActorInfo(Turret);
+			TurretASC->RemoveLooseGameplayTag(SynergyTagItems[i].SynergyTag);
+		}
+		
 	}
 
 
-	MonitoringTurrets.Remove(SummonedTurret);	
-	UE_LOG(LogTemp, Warning, TEXT("SynergyTurretCount : %s"), *FString::FromInt(SynergyTurretCount));
+	
+	//UE_LOG(LogTemp, Warning, TEXT("SynergyTurretCount : %s"), *FString::FromInt(SynergyTurretCount));
 }
 
 void UTurretSynergyManager::Initialize() {
@@ -78,6 +149,10 @@ void UTurretSynergyManager::Initialize() {
 	SynergyTagContainer.Add(EElementalType::Nature);
 	SynergyTagContainer.Add(EElementalType::Electro);
 	SynergyTagContainer.Add(EElementalType::Ice);
+
+	SynergyRarityMonitor.Add(EElementalType::Nature);
+	SynergyRarityMonitor.Add(EElementalType::Electro);
+	SynergyRarityMonitor.Add(EElementalType::Ice);
 
 	FString CharacterDataPath = TEXT("DataTable'/Game/01Blueprints/DataTable/TurretSynergyTagData.TurretSynergyTagData'");
 	SynergyTagData = LoadObject<UDataTable>(nullptr, *CharacterDataPath);

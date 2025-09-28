@@ -288,6 +288,8 @@ FVector USOWBlueprintFunctionLibrary::MakeCentralTileLocationFromAnyPoint(APlaye
     Params.bReturnPhysicalMaterial = false;
 
     if (!PlayerController->GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_GameTraceChannel1, Params)) return FVector::ZeroVector;
+    if(!Hit.GetActor()) return FVector::ZeroVector;
+
     CenterLocation = Hit.GetActor()->GetActorLocation();
     FVector CriticVector = AnyPoint - CenterLocation;
 
