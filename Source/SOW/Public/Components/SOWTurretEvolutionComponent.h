@@ -65,8 +65,13 @@ private:
 	int32 PropertyMaxLevel = 4;
 	int32 StatusMaxLevel = 1;
 
+	int32 CurrencySpentForProp = 0;
+	int32 CurrencySpentForStat = 0;
+
 	UFUNCTION()
 	void TryEvolution(EEvolutionType Type);
 
 	bool CheckResourceAndProb(EEvolutionType Type);
+
+	void MakeAndSendEvolutionLog();
 };

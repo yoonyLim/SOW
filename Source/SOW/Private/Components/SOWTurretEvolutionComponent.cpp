@@ -153,15 +153,18 @@ void USOWTurretEvolutionComponent::TryEvolution(EEvolutionType Type)
 	case EEvolutionType::EVO_ALPHA:
 		ESH = ASC->MakeOutgoingSpec(AlphaData, ++EvolutionStatusLevel, CH);
 		ASC->ApplyGameplayEffectSpecToSelf(*ESH.Data.Get());
+		CurrencySpentForStat = 0;
 		break;
 	case EEvolutionType::EVO_BETA:
 		ESH = ASC->MakeOutgoingSpec(BetaData, ++EvolutionStatusLevel, CH);
 		ASC->ApplyGameplayEffectSpecToSelf(*ESH.Data.Get());
+		CurrencySpentForStat = 0;
 		break;
 	case EEvolutionType::EVO_PROP:
 		// P의 경우 배열 인덱스가 0부터 시작하므로 받은 뒤 증가
 		if (UDA_TurretEvolutionData* Data = PropertyData[EvolutionPropertyLevel].EvolutionDataAsset.LoadSynchronous()) {
 			Data->GiveToAbilitySystemComponent(ASC);
+			CurrencySpentForProp = 0;
 			EvolutionPropertyLevel++;
 		}
 		break;
@@ -187,11 +190,13 @@ bool USOWTurretEvolutionComponent::CheckResourceAndProb(EEvolutionType Type)
 
 		if (!USOWBlueprintFunctionLibrary::QueryForCurrencyCountSufficient(this, FGameplayTag::RequestGameplayTag("Shared.Element.Nature"), PriceValue)) {
 			UE_LOG(LogTemp, Error, TEXT("PriceValue Condition Failed"));
+			//CurrencySpentForProp += PriceValue;
 			return false;
 		}
 		int32 value = FMath::RandRange(1, 100);
 		if (value > PercentValue) {
 			UE_LOG(LogTemp, Error, TEXT("PercentValue Condition Failed : %s"), *FString::FromInt(value));
+			CurrencySpentForProp += PriceValue;
 			return false;
 		}
 	}
@@ -213,11 +218,16 @@ bool USOWTurretEvolutionComponent::CheckResourceAndProb(EEvolutionType Type)
 		int32 value = FMath::RandRange(1, 100);
 		if (value > PercentValue) {
 			UE_LOG(LogTemp, Error, TEXT("PercentValue Condition Failed : %s"), *FString::FromInt(value));
+			CurrencySpentForStat += PriceValue;
 			return false; 
 		}
 	}
 
 	return true;
+}
+
+void USOWTurretEvolutionComponent::MakeAndSendEvolutionLog()
+{
 }
 
 
