@@ -255,6 +255,20 @@ FName ASOWCharacterTurretBase::GetTurretRank() const
 	return USOWBlueprintFunctionLibrary::EnumToFName<ETurretRarity>(tr);
 }
 
+float ASOWCharacterTurretBase::GetAffectStatValue() const
+{
+	checkf(TurretCombatComponent, TEXT("Invalid Component : TurretCombatComponent"));
+
+	return TurretCombatComponent->GetAffectStatValue();
+}
+
+EGlacioStatType ASOWCharacterTurretBase::GetAffectStatType() const
+{
+	checkf(TurretCombatComponent, TEXT("Invalid Component : TurretCombatComponent"));
+
+	return TurretCombatComponent->GetAffectStatType();
+}
+
 FGameplayTag ASOWCharacterTurretBase::GetTurretElementTag() const
 {
 	//    else if (InTag.MatchesTag(FGameplayTag::RequestGameplayTag(TEXT("Shared.Element.Ice")))) {
@@ -286,6 +300,16 @@ FName ASOWCharacterTurretBase::BP_GetTurretName() const
 FName ASOWCharacterTurretBase::BP_GetTurretRank() const
 {
 	return GetTurretRank();
+}
+
+EGlacioStatType ASOWCharacterTurretBase::BP_GetAffectStatType() const
+{
+	return GetAffectStatType();
+}
+
+float ASOWCharacterTurretBase::BP_GetAffectStatValue() const
+{
+	return GetAffectStatValue();
 }
 
 float ASOWCharacterTurretBase::BP_GetDetectionRangeRadius() const

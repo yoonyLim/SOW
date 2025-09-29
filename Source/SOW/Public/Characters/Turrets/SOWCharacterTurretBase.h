@@ -10,6 +10,7 @@
 class UCapsuleComponent;
 class USOWTurretCombatComponent;
 class USOWTurretEvolutionComponent;
+class USOWTurretSkillComponent;
 class USOWProjectilePoolingComponent;
 class UWidgetComponent;
 struct FEffectOrientedTurretAttribute;
@@ -63,6 +64,9 @@ public:
 	FName GetTurretRank() const;
 	FGameplayTag GetTurretElementTag() const;
 
+	float GetAffectStatValue() const;
+	EGlacioStatType GetAffectStatType() const;
+
 #pragma endregion
 
 
@@ -73,6 +77,11 @@ public:
 
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Turret Rank"))
 	FName BP_GetTurretRank() const;
+
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Affect Stat Type"))
+	EGlacioStatType BP_GetAffectStatType() const;
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Affect Stat Value"))
+	float BP_GetAffectStatValue() const;
 
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Turret Detection Range"))
 	float BP_GetDetectionRangeRadius() const;
