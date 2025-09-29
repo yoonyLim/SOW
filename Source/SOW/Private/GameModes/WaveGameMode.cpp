@@ -2,7 +2,7 @@
 
 
 #include "GameModes/WaveGameMode.h"
-#include "Log/CurrencyGainLogger.h" // 로거 연결
+#include "SOWLogFunctionLibrary.h"
 #include "SOWGameInstance.h" // EElementalType 사용 
 
 void AWaveGameMode::BeginPlay()
@@ -10,10 +10,10 @@ void AWaveGameMode::BeginPlay()
 	Super::BeginPlay();
 
 	// 로거 생성 및 초기화
-	CurrencyLogger = NewObject<UCurrencyGainLogger>(this);
+	CurrencyLogger = NewObject<USOWLogFunctionLibrary>(this);
 	if (CurrencyLogger)
 	{
-		CurrencyLogger->Init();
+		CurrencyLogger->WaveInitialize();
 	}
 }
 
