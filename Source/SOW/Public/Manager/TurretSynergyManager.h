@@ -10,6 +10,7 @@
 #include "TurretSynergyManager.generated.h"
 
 class ASOWCharacterTurretBase;
+class USpecialTurretManager;
 
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParam(FOnNewTurretSummonedDelegate, ASOWCharacterTurretBase*, SummonedTurret, EElementalType, ElementType);
 /**
@@ -27,6 +28,8 @@ private:
 
 	TMap<EElementalType, FGameplayTagContainer> SynergyTagContainer;
 	UDataTable* SynergyTagData;
+
+	USpecialTurretManager* GlacioTurretManager;
 	// etc...
 
 	bool CheckRarityCondition(const TMap<ETurretRarity, int> Monitor, const FSynergyCondition& SynergyContidion);

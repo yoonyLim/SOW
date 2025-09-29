@@ -7,6 +7,7 @@
 #include "SOWBlueprintFunctionLibrary.h"
 #include "AbilitySystem/SOWAbilitySystemComponent.h"
 #include "Components/SOWTurretCombatComponent.h"
+#include "Characters/Turrets/SpecialTurretManager.h"
 
 
 bool UTurretSynergyManager::CheckRarityCondition(const TMap<ETurretRarity, int> Monitor, const FSynergyCondition& SynergyContidion)
@@ -120,25 +121,18 @@ void UTurretSynergyManager::RemoveTurratDataFromSynergy(ASOWCharacterTurretBase*
 			//if (InCondition.SynergyConditionCount == 0) continue;
 
 			if (!USOWBlueprintFunctionLibrary::DoesActorHasTag(Turret, InTag)) { i++; continue; }
-			//UE_LOG(LogTemp, Warning, TEXT("Untagging Target : %s not has  the tag"), *Turret->GetActorNameOrLabel());
 			if (CheckRarityCondition(SynergyRarityMonitor[ElementType], InCondition)) { i++; continue; }
-			//UE_LOG(LogTemp, Warning, TEXT("Untagging Target : %s no unmet condition"), *Turret->GetActorNameOrLabel());
 
 			USOWAbilitySystemComponent* TurretASC = USOWBlueprintFunctionLibrary::GetSOWAbilitySystemComponentFromActorInfo(Turret);
 			TurretASC->RemoveLooseGameplayTag(InTag);
-			//UE_LOG(LogTemp, Warning, TEXT("Untagging Target : %s successful"), *Turret->GetActorNameOrLabel());
 			i++;
 		}
-		if (SynergyTagItems[i].SynergyTag.IsValid()) {
+		if (i < SynergyTagItems.Num() && SynergyTagItems[i].SynergyTag.IsValid()) {
 			USOWAbilitySystemComponent* TurretASC = USOWBlueprintFunctionLibrary::GetSOWAbilitySystemComponentFromActorInfo(Turret);
 			TurretASC->RemoveLooseGameplayTag(SynergyTagItems[i].SynergyTag);
 		}
 		
 	}
-
-
-	
-	//UE_LOG(LogTemp, Warning, TEXT("SynergyTurretCount : %s"), *FString::FromInt(SynergyTurretCount));
 }
 
 void UTurretSynergyManager::Initialize() {
@@ -159,6 +153,12 @@ void UTurretSynergyManager::Initialize() {
 	
 	checkf(SynergyTagData, TEXT("%s is not valid directory"), *CharacterDataPath);
 
+
+	GlacioTurretManager = NewObject<USpecialTurretManager>(this);
+	if (GlacioTurretManager)
+	{
+		GlacioTurretManager->Initialize();
+	}
 	//// etc
 	//SynergyMonitor.Add(EElementalType::Nature);
 	//SynergyMonitor.Add(EElementalType::Nature);
