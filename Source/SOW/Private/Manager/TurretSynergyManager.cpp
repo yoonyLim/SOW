@@ -21,36 +21,78 @@ bool UTurretSynergyManager::CheckRarityCondition(const TMap<ETurretRarity, int> 
 	return TargetCount == 0 || (Monitor.Contains(TargetRarity) && Monitor[TargetRarity] >= TargetCount);
 }
 
-void UTurretSynergyManager::UpdateSynergyTagContainer(ASOWCharacterTurretBase* InTurret, EElementalType ElementType, bool bAdd)
+void UTurretSynergyManager::UpdateSynergyTagContainer(ETurretRarity TurretRarity, EElementalType ElementType, bool bAdd)
 {
-	if (bAdd) {
-		ETurretRarity InTurretRarity = InTurret->GetTurretCombatComponent()->GetTurretRarity();
 
-		TMap<ETurretRarity, int>& CurrentMonitor = SynergyRarityMonitor[ElementType];
-		if (!CurrentMonitor.Contains(InTurretRarity)) {
-			CurrentMonitor.Add(InTurretRarity, 1);
+
+	TMap<ETurretRarity, int>& CurrentMonitor = SynergyRarityMonitor[ElementType];
+	if (bAdd) {
+		if (!CurrentMonitor.Contains(TurretRarity)) {
+			CurrentMonitor.Add(TurretRarity, 1);
 		}
 		else {
-			int count = CurrentMonitor[InTurretRarity] + 1;
-			CurrentMonitor.Add(InTurretRarity, count);
+			int count = CurrentMonitor[TurretRarity] + 1;
+			CurrentMonitor.Add(TurretRarity, count);
 		}
 		
 	}
-
 	else {
-		ETurretRarity InTurretRarity = InTurret->GetTurretCombatComponent()->GetTurretRarity();
-
-		TMap<ETurretRarity, int>& CurrentMonitor = SynergyRarityMonitor[ElementType];
-		int count = CurrentMonitor[InTurretRarity] - 1;
+		int count = CurrentMonitor[TurretRarity] - 1;
 
 		if (count == 0) {
-			CurrentMonitor.Remove(InTurretRarity);
+			CurrentMonitor.Remove(TurretRarity);
 		}
 		else {
-			CurrentMonitor.Add(InTurretRarity, count);
+			CurrentMonitor.Add(TurretRarity, count);
 		}
 	}
 	
+}
+
+void UTurretSynergyManager::GrantSynergyTagToMonitoringTurrets(ASOWCharacterTurretBase* Turret, int SynergyTurretCount, const TArray<FTurretSynergyTagItem> SynergyTagItems, EElementalType ElementType)
+{
+	if (!Turret) return;
+
+	for (int i = 1; i <= SynergyTurretCount && i < SynergyTagItems.Num(); i++) {
+
+		const FGameplayTag InTag = SynergyTagItems[i].SynergyTag;
+		if (!InTag.IsValid()) continue;
+
+		const FSynergyCondition InCondition = SynergyTagItems[i].SynergyCondition;
+
+		if (USOWBlueprintFunctionLibrary::DoesActorHasTag(Turret, InTag)) continue;
+		//UE_LOG(LogTemp, Warning, TEXT("%s not have the tag"), *Turret->GetActorNameOrLabel());
+
+		if (!CheckRarityCondition(SynergyRarityMonitor[ElementType], InCondition)) continue;
+		//UE_LOG(LogTemp, Warning, TEXT("%s meet the condition"), *Turret->GetActorNameOrLabel());
+
+		USOWAbilitySystemComponent* TurretASC = USOWBlueprintFunctionLibrary::GetSOWAbilitySystemComponentFromActorInfo(Turret);
+		TurretASC->AddLooseGameplayTag(InTag);
+		//UE_LOG(LogTemp, Warning, TEXT("%s got tag"), *Turret->GetActorNameOrLabel());
+	}
+}
+
+void UTurretSynergyManager::RemoveSynergyTagFromMonitoringTurrets(ASOWCharacterTurretBase* Turret, int SynergyTurretCount, const TArray<FTurretSynergyTagItem> SynergyTagItems, EElementalType ElementType)
+{
+	if (!Turret) return;
+
+	int i = 1;
+	while (i < SynergyTurretCount && i < SynergyTagItems.Num()) {
+		const FGameplayTag InTag = SynergyTagItems[i].SynergyTag;
+		if (!InTag.IsValid()) { i++; continue; }
+		const FSynergyCondition InCondition = SynergyTagItems[i].SynergyCondition;
+
+		if (!USOWBlueprintFunctionLibrary::DoesActorHasTag(Turret, InTag)) { i++; continue; }
+		if (CheckRarityCondition(SynergyRarityMonitor[ElementType], InCondition)) { i++; continue; }
+
+		USOWAbilitySystemComponent* TurretASC = USOWBlueprintFunctionLibrary::GetSOWAbilitySystemComponentFromActorInfo(Turret);
+		TurretASC->RemoveLooseGameplayTag(InTag);
+		i++;
+	}
+	if (i < SynergyTagItems.Num() && SynergyTagItems[i].SynergyTag.IsValid()) {
+		USOWAbilitySystemComponent* TurretASC = USOWBlueprintFunctionLibrary::GetSOWAbilitySystemComponentFromActorInfo(Turret);
+		TurretASC->RemoveLooseGameplayTag(SynergyTagItems[i].SynergyTag);
+	}
 }
 
 void UTurretSynergyManager::AddNewTurretDataForSynergy(ASOWCharacterTurretBase* SummonedTurret, EElementalType ElementType)
@@ -58,7 +100,8 @@ void UTurretSynergyManager::AddNewTurretDataForSynergy(ASOWCharacterTurretBase* 
 	TArray<ASOWCharacterTurretBase*>& MonitoringTurrets = SynergyMonitor[ElementType];
 	MonitoringTurrets.AddUnique(SummonedTurret);
 
-	UpdateSynergyTagContainer(SummonedTurret, ElementType, true);
+	ETurretRarity InTurretRarity = SummonedTurret->GetTurretCombatComponent()->GetTurretRarity();
+	UpdateSynergyTagContainer(InTurretRarity, ElementType, true);
 
 	int SynergyTurretCount = MonitoringTurrets.Num();
 	UE_LOG(LogTemp, Warning, TEXT("SynergyTurretCount : %s"), *FString::FromInt(SynergyTurretCount));
@@ -71,28 +114,18 @@ void UTurretSynergyManager::AddNewTurretDataForSynergy(ASOWCharacterTurretBase* 
 
 
 	for (ASOWCharacterTurretBase* Turret : MonitoringTurrets) {
-		if (!Turret) continue;
-
-		for (int i = 1; i <= SynergyTurretCount && i < SynergyTagItems.Num(); i++) {
-			//const FGameplayTag InTag = TagItem.SynergyTag;
-			const FGameplayTag InTag = SynergyTagItems[i].SynergyTag;
-			if (!InTag.IsValid()) continue;
-			//const FSynergyCondition InCondition = TagItem.SynergyCondition;
-			const FSynergyCondition InCondition = SynergyTagItems[i].SynergyCondition;
-			//if (InCondition.SynergyConditionCount == 0) continue;
-
-			
-			if (USOWBlueprintFunctionLibrary::DoesActorHasTag(Turret, InTag)) continue;
-			UE_LOG(LogTemp, Warning, TEXT("%s not have the tag"), *Turret->GetActorNameOrLabel());
-			
-			if (!CheckRarityCondition(SynergyRarityMonitor[ElementType], InCondition)) continue;
-			UE_LOG(LogTemp, Warning, TEXT("%s meet the condition"), *Turret->GetActorNameOrLabel());
-
-			USOWAbilitySystemComponent* TurretASC = USOWBlueprintFunctionLibrary::GetSOWAbilitySystemComponentFromActorInfo(Turret);
-			TurretASC->AddLooseGameplayTag(InTag);
-			UE_LOG(LogTemp, Warning, TEXT("%s got tag"), *Turret->GetActorNameOrLabel());
-		}
+		GrantSynergyTagToMonitoringTurrets(Turret, SynergyTurretCount, SynergyTagItems, ElementType);
 	}
+
+	// Glacio 전용 코드
+	/*if (ElementType == EElementalType::Ice) {
+		GlacioTurretManager->OnSynergyChanged.Broadcast(SynergyTurretCount);
+
+		if (ASOWCharacterTurretBase* Glacio = GetGlacioInstance()) {
+			GrantSynergyTagToMonitoringTurrets(Glacio, SynergyTurretCount, SynergyTagItems, ElementType);
+		}
+	}*/
+	
 }
 
 void UTurretSynergyManager::RemoveTurratDataFromSynergy(ASOWCharacterTurretBase* SummonedTurret, EElementalType ElementType)
@@ -100,7 +133,9 @@ void UTurretSynergyManager::RemoveTurratDataFromSynergy(ASOWCharacterTurretBase*
 	TArray<ASOWCharacterTurretBase*>& MonitoringTurrets = SynergyMonitor[ElementType];
 	int SynergyTurretCount = MonitoringTurrets.Num();
 
-	UpdateSynergyTagContainer(SummonedTurret, ElementType, false);
+	ETurretRarity InTurretRarity = SummonedTurret->GetTurretCombatComponent()->GetTurretRarity();
+	UpdateSynergyTagContainer(InTurretRarity, ElementType, true);
+
 	MonitoringTurrets.Remove(SummonedTurret);
 
 	const FName ElementName = USOWBlueprintFunctionLibrary::EnumToFName<EElementalType>(ElementType);
@@ -110,29 +145,18 @@ void UTurretSynergyManager::RemoveTurratDataFromSynergy(ASOWCharacterTurretBase*
 
 
 	for (ASOWCharacterTurretBase* Turret : MonitoringTurrets) {
-		if (!Turret) continue;
-		//UE_LOG(LogTemp, Warning, TEXT("Tagging Target : %s"), *Turret->GetActorNameOrLabel());
-
-		int i = 1;
-		while (i < SynergyTurretCount && i < SynergyTagItems.Num()) {
-			const FGameplayTag InTag = SynergyTagItems[i].SynergyTag;
-			if (!InTag.IsValid()) {i++; continue;}
-			const FSynergyCondition InCondition = SynergyTagItems[i].SynergyCondition;
-			//if (InCondition.SynergyConditionCount == 0) continue;
-
-			if (!USOWBlueprintFunctionLibrary::DoesActorHasTag(Turret, InTag)) { i++; continue; }
-			if (CheckRarityCondition(SynergyRarityMonitor[ElementType], InCondition)) { i++; continue; }
-
-			USOWAbilitySystemComponent* TurretASC = USOWBlueprintFunctionLibrary::GetSOWAbilitySystemComponentFromActorInfo(Turret);
-			TurretASC->RemoveLooseGameplayTag(InTag);
-			i++;
-		}
-		if (i < SynergyTagItems.Num() && SynergyTagItems[i].SynergyTag.IsValid()) {
-			USOWAbilitySystemComponent* TurretASC = USOWBlueprintFunctionLibrary::GetSOWAbilitySystemComponentFromActorInfo(Turret);
-			TurretASC->RemoveLooseGameplayTag(SynergyTagItems[i].SynergyTag);
-		}
-		
+		RemoveSynergyTagFromMonitoringTurrets(Turret, SynergyTurretCount, SynergyTagItems, ElementType);
 	}
+
+	// Glacio 전용 코드
+	/*if (ElementType == EElementalType::Ice) {
+		GlacioTurretManager->OnSynergyChanged.Broadcast(SynergyTurretCount - 1);
+
+		if (ASOWCharacterTurretBase* Glacio = GetGlacioInstance()) {
+			RemoveSynergyTagFromMonitoringTurrets(Glacio, SynergyTurretCount, SynergyTagItems, ElementType);
+		}
+	}
+	*/
 }
 
 void UTurretSynergyManager::Initialize() {
@@ -164,4 +188,9 @@ void UTurretSynergyManager::Initialize() {
 	//SynergyMonitor.Add(EElementalType::Nature);
 	//SynergyMonitor.Add(EElementalType::Nature);
 	//SynergyMonitor.Add(EElementalType::Nature);
+}
+
+ASOWCharacterTurretBase* UTurretSynergyManager::GetGlacioInstance()
+{
+	return GlacioTurretManager->GetGlacio();
 }

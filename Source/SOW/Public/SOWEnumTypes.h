@@ -218,5 +218,6 @@ enum class EGlacioStatType : uint8
 	AttackSpeed,
 	DetectionRange,
 	DebuffCount,
-	ExtraDamage
+	ExtraDamage,
+	None
 };

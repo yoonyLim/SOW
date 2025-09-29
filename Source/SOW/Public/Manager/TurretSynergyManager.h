@@ -29,14 +29,17 @@ private:
 	TMap<EElementalType, FGameplayTagContainer> SynergyTagContainer;
 	UDataTable* SynergyTagData;
 
+	// 얼음 시너지 2개 이상 추가 시, 여기로 터렛 생성 델리게이트를 전송합니다.
 	USpecialTurretManager* GlacioTurretManager;
 	// etc...
 
 	bool CheckRarityCondition(const TMap<ETurretRarity, int> Monitor, const FSynergyCondition& SynergyContidion);
 
-	void UpdateSynergyTagContainer(ASOWCharacterTurretBase* InTurret, EElementalType ElementType, bool bAdd);
+	void UpdateSynergyTagContainer(ETurretRarity TurretRarity, EElementalType ElementType, bool bAdd);
 
+	void GrantSynergyTagToMonitoringTurrets(ASOWCharacterTurretBase* Turret, int SynergyTurretCount, const TArray<FTurretSynergyTagItem> SynergyTagItems, EElementalType ElementType);
 
+	void RemoveSynergyTagFromMonitoringTurrets(ASOWCharacterTurretBase* Turret, int SynergyTurretCount, const TArray<FTurretSynergyTagItem> SynergyTagItems, EElementalType ElementType);
 public :
 	//FOnNewTurretSummonedDelegate OnNewTurretSummmoned;
 	UFUNCTION(BlueprintCallable, category = "Turret|Synergy")
@@ -47,4 +50,5 @@ public :
 
 	void Initialize();
 
+	ASOWCharacterTurretBase* GetGlacioInstance();
 };

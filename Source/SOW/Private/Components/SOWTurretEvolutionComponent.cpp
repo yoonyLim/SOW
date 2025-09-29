@@ -25,6 +25,9 @@ void USOWTurretEvolutionComponent::GetPropertyDescriptString(FString& OutString)
 	if (EvolutionPropertyLevel >= PropertyMaxLevel) {
 		OutString = TEXT("강화 완료");
 	}
+	else if (PropertyData.Num() == 0) {
+		OutString = TEXT("강화 불가");
+	}
 	else {
 		OutString = PropertyData[EvolutionPropertyLevel].EvolutionDescription;
 	}
@@ -37,6 +40,9 @@ void USOWTurretEvolutionComponent::GetPropertyResourceString(FString& OutCurrenc
 	if (!PropertyResourceData) return;
 	if (EvolutionPropertyLevel >= PropertyMaxLevel) {
 		OutCurrency = "Max"; OutPercentage = ""; return;
+	}
+	if (PropertyData.Num() == 0) {
+		OutCurrency = "Disabled"; OutPercentage = ""; return;
 	}
 
 	FRealCurve* FoundCurve_Price = PropertyResourceData->FindCurve("Currency", TEXT(""));
@@ -55,6 +61,9 @@ void USOWTurretEvolutionComponent::GetStatusResourceString(FString& OutCurrency,
 	if (EvolutionStatusLevel >= StatusMaxLevel) {
 		OutCurrency = "Max"; OutPercentage = ""; return;
 	}
+	if (StatusMaxLevel == 0) {
+		OutCurrency = "Disabled"; OutPercentage = ""; return;
+	}
 	//checkf(StatusResourceData, TEXT("StatusResourceData not Assigned. Please check DataAsset"));
 	FRealCurve* FoundCurve_Price = StatusResourceData->FindCurve("Currency", TEXT(""));
 	FRealCurve* FoundCurve_Percent = StatusResourceData->FindCurve("Prob", TEXT(""));
@@ -70,6 +79,9 @@ void USOWTurretEvolutionComponent::GetStatusNextValueString(FString& OutAtk, FSt
 {
 	if (!StatusResourceData) return;
 	if (EvolutionStatusLevel >= StatusMaxLevel) {
+		OutAtk = ""; OutSpd = ""; return;
+	}
+	if (StatusMaxLevel == 0) {
 		OutAtk = ""; OutSpd = ""; return;
 	}
 	//checkf(StatusResourceData, TEXT("StatusResourceData not Assigned. Please check DataAsset"));
