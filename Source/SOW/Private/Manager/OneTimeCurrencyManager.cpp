@@ -2,8 +2,7 @@
 
 
 #include "Manager/OneTimeCurrencyManager.h"
-#include "Log/CurrencyGainLogger.h"
-#include "Log/CurrencyLog.h"
+#include "SOWLogFunctionLibrary.h"
 
 void UOneTimeCurrencyManager::Initialize()
 {
@@ -19,8 +18,8 @@ void UOneTimeCurrencyManager::Initialize()
 	// 로거 준비
 	if (!GainLogger)
 	{
-		GainLogger = NewObject<UCurrencyGainLogger>(this);
-		GainLogger->Init();
+		GainLogger = NewObject<USOWLogFunctionLibrary>(this);
+		GainLogger->WaveInitialize();
 	}
 }
 
@@ -45,7 +44,7 @@ bool UOneTimeCurrencyManager::AddCurrency(EElementalType CurrencyType, int32 Amo
 
 		if (GainLogger && Amount > 0)
 		{
-			GainLogger->LogGain(CurrencyType, Amount, /*Source*/NAME_None, /*Context*/TEXT(""));
+			GainLogger->LogWaveToCSV(CurrencyType, Amount, /*Source*/NAME_None, /*Context*/TEXT(""));
 		}
 		return true;
 	}
@@ -60,7 +59,7 @@ bool UOneTimeCurrencyManager::AddCurrencyWithSource(EElementalType CurrencyType,
 	const bool bOk = AddCurrency(CurrencyType, Amount);
 	if (bOk && GainLogger && Amount > 0)
 	{
-		GainLogger->LogGain(CurrencyType, Amount, SourceTag, Context);
+		GainLogger->LogWaveToCSV(CurrencyType, Amount, SourceTag, Context);
 	}
 	return bOk;
 }

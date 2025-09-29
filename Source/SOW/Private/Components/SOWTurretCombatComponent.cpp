@@ -218,13 +218,13 @@ bool USOWTurretCombatComponent::SetFixedTarget(AActor* InActor)
 			PreviousTarget->OnTargetDead.RemoveAll(CachedOwnerCharacter);
 		}
 
-		if (FixedTarget) {
+		/*if (FixedTarget) {
 			UE_LOG(LogTemp, Warning, TEXT("Cur : %s, Target : %s"), *FixedTarget->GetActorNameOrLabel(), *InActor->GetActorNameOrLabel());
-		}
+		}*/
 		
 		FixedTarget = InActor;
 		AttackTarget = FixedTarget;
-		UE_LOG(LogTemp, Warning, TEXT("Target : %s"), *FixedTarget->GetActorNameOrLabel());
+		//UE_LOG(LogTemp, Warning, TEXT("Target : %s"), *FixedTarget->GetActorNameOrLabel());
 		CachedOwnerCharacter->BP_BindOnTargetDead(FixedTarget);
 	}
 	else {
@@ -251,7 +251,7 @@ void USOWTurretCombatComponent::SetNewTargetSelectCount(int32 NewCount)
 void USOWTurretCombatComponent::ActivateTurretFunction()
 {
 	MakeDetectableTileArea();
-	UE_LOG(LogTemp, Warning, TEXT("Tile Count : %s"), *FString::FromInt(DetectorTiles.Num()));
+	//UE_LOG(LogTemp, Warning, TEXT("Tile Count : %s"), *FString::FromInt(DetectorTiles.Num()));
 	CachedOwnerCharacter->SwitchCollision(true);
 	RefreshTurretFunction();
 }
@@ -440,9 +440,9 @@ TArray<AActor*> USOWTurretCombatComponent::GetAllAttackTarget()
 		BaseActorList += DetectedTargetActors;
 	}
 
-	for (AActor* Actor : BaseActorList) {
-		UE_LOG(LogTemp, Warning, TEXT("Base Actor : %s"), *Actor->GetActorNameOrLabel());
-	}
+	//for (AActor* Actor : BaseActorList) {
+	//	//UE_LOG(LogTemp, Warning, TEXT("Base Actor : %s"), *Actor->GetActorNameOrLabel());
+	//}
 
 	for (int i = 0; i < TargetSelectCount; i++) {
 		if (BaseActorList.Num() <= 0) break;
@@ -455,9 +455,9 @@ TArray<AActor*> USOWTurretCombatComponent::GetAllAttackTarget()
 		BaseActorList.Remove(CurrentTarget); // 더 효율적인 제거 방식
 	}
 
-	for (AActor* Actor : FinalTargetList) {
+	/*for (AActor* Actor : FinalTargetList) {
 		UE_LOG(LogTemp, Warning, TEXT("Final Actor : %s"), *Actor->GetActorNameOrLabel());
-	}
+	}*/
 
 	return FinalTargetList;
 }

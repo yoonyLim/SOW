@@ -230,3 +230,20 @@ namespace SOWSynergyTags {
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Synergy_Ice_IV);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Synergy_Ice_V);
 }
+
+namespace SOWStatAffectTags {
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stat_Increase_AttackPower);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stat_Decrease_AttackPower);
+
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stat_Increase_AttackSpeed);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stat_Decrease_AttackSpeed);
+
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stat_Increase_DetectionRange);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stat_Decrease_DetectionRange);
+
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stat_Increase_ExtraDamage);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stat_Decrease_ExtraDamage);
+
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stat_Increase_DebuffStack);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stat_Decrease_DebuffStack);
+}
