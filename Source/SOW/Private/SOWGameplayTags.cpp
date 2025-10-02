@@ -22,6 +22,10 @@ namespace SOWGameplayTags
 
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Ability_Initialize, "Enemy.Ability.Initialize");
 
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Buff_Stealth, "Enemy.Status.Buff.Stealth");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Buff_RangedResistance, "Enemy.Status.Buff.RangedResistance");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Buff_MeleeResistance, "Enemy.Status.Buff.MeleeResistance");
+
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Taunted, "Enemy.Status.Debuff.Taunted");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Slow, "Enemy.Status.Debuff.Slow");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_RestoreMovement, "Enemy.Status.Debuff.RestoreMovement");

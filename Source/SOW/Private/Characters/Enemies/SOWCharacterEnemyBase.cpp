@@ -234,7 +234,7 @@ void ASOWCharacterEnemyBase::OnHealthChanged(const FOnAttributeChangeData& Data)
 	{
 		GetWorldTimerManager().SetTimer(
 			HideHealthBarHandle,
-			FTimerDelegate::CreateLambda([&]() { HealthBarWidget->SetHiddenInGame(true); }),
+			FTimerDelegate::CreateWeakLambda(this,[this]() { HealthBarWidget->SetHiddenInGame(true); }),
 			1.f,
 			false
 		);

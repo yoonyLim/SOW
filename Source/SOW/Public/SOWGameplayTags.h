@@ -30,6 +30,10 @@ namespace SOWGameplayTags {
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Ability_Attack_Ranged);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Ability_Initialize);
 
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Buff_Stealth);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Buff_RangedResistance);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Buff_MeleeResistance);
+
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Debuff_Taunted);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Debuff_Slow);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Debuff_Rooted);
@@ -109,15 +113,15 @@ namespace SOWGameplayTags {
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Event_TargetCharacterIn);
 
 	/* Shared Tags */
-	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Ability_Death);				// Ä³¸¯ÅÍÀÇ Á×À½ ´É·Â¿¡ ºÎ¿©µÇ´Â ½Äº° ÅÂ±×
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Ability_Death);				// Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½É·Â¿ï¿½ ï¿½Î¿ï¿½ï¿½Ç´ï¿½ ï¿½Äºï¿½ ï¿½Â±ï¿½
 
-	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Status_Dead);					// Ä³¸¯ÅÍÀÇ ÇöÀç Ã¼·ÂÀÌ 0ÀÏ¶§ ºÎ¿©µÇ´Â »óÅÂ ÅÂ±×
-	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Status_DamagedOverTime);		// ÇØ´ç »óÅÂ ÅÂ±×°¡ ºÎ¿©µÈ ´ë»óÀº DamageOverTime °ª¸¸Å­ Áö¼Ó ÇÇÇØ¸¦ ÀÔÀ½.
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Status_Dead);					// Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½ï¿½ï¿½ 0ï¿½Ï¶ï¿½ ï¿½Î¿ï¿½ï¿½Ç´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Â±ï¿½
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Status_DamagedOverTime);		// ï¿½Ø´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Â±×°ï¿½ ï¿½Î¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ DamageOverTime ï¿½ï¿½ï¿½ï¿½Å­ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ø¸ï¿½ ï¿½ï¿½ï¿½ï¿½.
 
-	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_MeleeHit);				// Ä³¸¯ÅÍ°¡ °ø°Ý¿¡ ¼º°øÇßÀ» °æ¿ì ºÎ¿©ÇÏ´Â ÀÌº¥Æ® ÅÂ±×
-	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_HitReact);				// Ä³¸¯ÅÍ¿¡ °ø°Ý¿¡ ¸ÂÀ» °æ¿ì ÇÇ°ÝÀÚ¿¡°Ô ºÎ¿©µÇ´Â ÀÌº¥Æ® ÅÂ±×
-	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_TargetDead);			// °ø°ÝÇÑ Å¸°ÙÀÌ »ç¸ÁÇßÀ» °æ¿ì °ø°ÝÀÚ¿¡°Ô Àü´ÞµÇ´Â ÀÌº¥Æ® ÅÂ±×
-	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_TauntToTarget);			// µµ¹ß ¼º°ø ½Ã Å¸°Ù¿¡°Ô Àü´ÞµÇ´Â ÀÌº¥Æ® ÅÂ±×
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_MeleeHit);				// Ä³ï¿½ï¿½ï¿½Í°ï¿½ ï¿½ï¿½ï¿½Ý¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Î¿ï¿½ï¿½Ï´ï¿½ ï¿½Ìºï¿½Æ® ï¿½Â±ï¿½
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_HitReact);				// Ä³ï¿½ï¿½ï¿½Í¿ï¿½ ï¿½ï¿½ï¿½Ý¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ç°ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½ ï¿½Î¿ï¿½ï¿½Ç´ï¿½ ï¿½Ìºï¿½Æ® ï¿½Â±ï¿½
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_TargetDead);			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ÞµÇ´ï¿½ ï¿½Ìºï¿½Æ® ï¿½Â±ï¿½
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_TauntToTarget);			// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Å¸ï¿½Ù¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ÞµÇ´ï¿½ ï¿½Ìºï¿½Æ® ï¿½Â±ï¿½
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_MeleeHitDone);
 
 
