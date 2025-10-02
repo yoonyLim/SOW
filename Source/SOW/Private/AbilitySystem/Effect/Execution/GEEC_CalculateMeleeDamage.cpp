@@ -12,6 +12,8 @@
 
 struct FAttributeCapturesDamage {
 	DECLARE_ATTRIBUTE_CAPTUREDEF(AttackPowerBase);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(AdditionalDamageRatio);
+
 	DECLARE_ATTRIBUTE_CAPTUREDEF(DefensePowerBase);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(CurrentHealth);
 
@@ -20,6 +22,8 @@ struct FAttributeCapturesDamage {
 
 	FAttributeCapturesDamage() {
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, AttackPowerBase, Source, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, AdditionalDamageRatio, Source, false);
+
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, DefensePowerBase, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, CurrentHealth, Target, false);
 
@@ -68,6 +72,8 @@ float UGEEC_CalculateMeleeDamage::GetElementalResistanceCost(
 UGEEC_CalculateMeleeDamage::UGEEC_CalculateMeleeDamage()
 {
 	RelevantAttributesToCapture.Add(GetCapturedPropertiesDamage().AttackPowerBaseDef);
+	RelevantAttributesToCapture.Add(GetCapturedPropertiesDamage().AdditionalDamageRatioDef);
+
 	RelevantAttributesToCapture.Add(GetCapturedPropertiesDamage().DefensePowerBaseDef);
 	RelevantAttributesToCapture.Add(GetCapturedPropertiesDamage().CurrentHealthDef);
 
@@ -109,6 +115,12 @@ void UGEEC_CalculateMeleeDamage::Execute_Implementation(const FGameplayEffectCus
 		L_ExtraRatio
 	);
 	
+	float L_AddtionalRatio = 0.f;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
+		GetCapturedPropertiesDamage().AdditionalDamageRatioDef,
+		EvalParams,
+		L_AddtionalRatio
+	);
 	// Elemantal Damage
 	float ElementalResistance = 1.f;
 	//float ElementalResistance = GetElementalResistanceCost(ExecutionParams, EvalParams);
@@ -134,7 +146,7 @@ void UGEEC_CalculateMeleeDamage::Execute_Implementation(const FGameplayEffectCus
 
 	float BasicDamageFormal = (L_AttackPower - FMath::Log2(2 + L_DefensePower));
 	float ElementalExtraDamage = ElementalResistance;
-	float FinalExtraDamage = (1.0f + L_ExtraRatio + AdditinalDamageRatio);
+	float FinalExtraDamage = (1.0f + L_ExtraRatio + AdditinalDamageRatio + L_AddtionalRatio);
 
 	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] FinalExtraDamage : Value: %f"), FinalExtraDamage); // �α��߰�
 	// Calculate Final Damage

@@ -96,12 +96,15 @@ namespace SOWGameplayTags
 	
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_SetPropByEvo, "Turret.Event.SetPropByEvo"); 
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_TargetCountChanged, "Turret.Event.TargetCountChanged"); 
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_ChangedTurretLocation, "Turret.Event.ChangedTurretLocation");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_ChangedFixedLocation, "Turret.Event.ChangedFixedLocation");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_ChangedFixedTarget, "Turret.Event.ChangedFixedTarget"); 
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_DebuffApplied, "Turret.Event.DebuffApplied");
 
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_TargetCharacterOut, "Turret.Event.TargetCharacterOut");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_TargetCharacterIn, "Turret.Event.TargetCharacterIn");
+
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_AffectStatUp, "Turret.Event.AffectStatUp");
 
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Ability_Death, "Shared.Ability.Death");
 
@@ -214,4 +217,22 @@ namespace SOWSynergyTags {
 	UE_DEFINE_GAMEPLAY_TAG(Synergy_Ice_III, "Synergy.Ice.III");
 	UE_DEFINE_GAMEPLAY_TAG(Synergy_Ice_IV, "Synergy.Ice.IV");
 	UE_DEFINE_GAMEPLAY_TAG(Synergy_Ice_V, "Synergy.Ice.V");
+}
+
+namespace SOWGlacioPropertyTags {
+	UE_DEFINE_GAMEPLAY_TAG(Property_Alpha_I, "Property.Alpha.I");
+	UE_DEFINE_GAMEPLAY_TAG(Property_Alpha_II, "Property.Alpha.II");
+	UE_DEFINE_GAMEPLAY_TAG(Property_Alpha_III, "Property.Alpha.III");
+	UE_DEFINE_GAMEPLAY_TAG(Property_Alpha_IV, "Property.Alpha.IV");
+	UE_DEFINE_GAMEPLAY_TAG(Property_Alpha_V, "Property.Alpha.V");
+
+	UE_DEFINE_GAMEPLAY_TAG(Property_Alpha, "Property.Alpha");
+
+	UE_DEFINE_GAMEPLAY_TAG(Property_Beta_I, "Property.Beta.I");
+	UE_DEFINE_GAMEPLAY_TAG(Property_Beta_II, "Property.Beta.II");
+	UE_DEFINE_GAMEPLAY_TAG(Property_Beta_III, "Property.Beta.III");
+	UE_DEFINE_GAMEPLAY_TAG(Property_Beta_IV, "Property.Beta.IV");
+	UE_DEFINE_GAMEPLAY_TAG(Property_Beta_V, "Property.Beta.V");
+
+	UE_DEFINE_GAMEPLAY_TAG(Property_Beta, "Property.Beta");
 }
