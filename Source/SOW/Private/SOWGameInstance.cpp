@@ -58,7 +58,7 @@ void USOWGameInstance::Init()
 
     if (TurretSynergyManager)
     {
-        TurretSynergyManager->Initialize();
+        TurretSynergyManager->Initialize(SynergyDataTable, GlacioInstance);
     }
 }
 

@@ -47,6 +47,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Turret|TargetDetection")
 	void ClearTargetDetectionAsDead();
 
+	bool GetStealthCheck(AActor* Target) const;
+
 #pragma endregion
 
 

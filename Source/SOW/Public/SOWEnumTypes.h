@@ -83,7 +83,7 @@ enum class ETurretName : uint8 {
 	IceCitizen		UMETA(DisplayName = "IceCitizen"),
 	IceGolem		UMETA(DisplayName = "IceGolem"),
 	Yetti			UMETA(DisplayName = "Yetti"),
-	Toyland			UMETA(DisplayName = "Toyland"),
+	IceBreaker		UMETA(DisplayName = "IceBreaker"),
 	Wildboar		UMETA(DisplayName = "Wildboar"),
 
 	// Special Unit

@@ -88,6 +88,7 @@ namespace SOWGameplayTags {
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Status_Buff_Mushroom);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Status_Buff_Snowball);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Status_Buff_GlassyAura);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Status_Buff_Detector);
 
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Status_Debuff_Slow);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Status_Debuff_Root);
@@ -106,11 +107,14 @@ namespace SOWGameplayTags {
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Event_SetPropByEvo);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Event_TargetCountChanged);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Event_ChangedFixedLocation);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Event_ChangedTurretLocation);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Event_ChangedFixedTarget);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Event_DebuffApplied);
 
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Event_TargetCharacterOut);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Event_TargetCharacterIn);
+
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Event_AffectStatUp);
 
 	/* Shared Tags */
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Ability_Death);				// ĳ������ ���� �ɷ¿� �ο��Ǵ� �ĺ� �±�
@@ -250,4 +254,23 @@ namespace SOWStatAffectTags {
 
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stat_Increase_DebuffStack);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stat_Decrease_DebuffStack);
+}
+
+
+namespace SOWGlacioPropertyTags {
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Property_Alpha_I);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Property_Alpha_II);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Property_Alpha_III);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Property_Alpha_IV);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Property_Alpha_V);
+
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Property_Alpha);
+
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Property_Beta_I);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Property_Beta_II);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Property_Beta_III);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Property_Beta_IV);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Property_Beta_V);
+
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Property_Beta);
 }

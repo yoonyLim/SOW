@@ -89,6 +89,10 @@ void ASOWCharacterTurretBase::PossessedBy(AController* NewController)
 			AttributeSet->GetAttackSpeedBaseAttribute())
 			.AddUObject(this, &ASOWCharacterTurretBase::OnWidgetAttributeChanged);
 
+		ASC->GetGameplayAttributeValueChangeDelegate(
+			AttributeSet->GetAdditionalDamageRatioAttribute())
+			.AddUObject(this, &ASOWCharacterTurretBase::OnAdditionalDamageRatioChanged);
+
 
 		FGameplayTagContainer TagsToWatch;
 		TagsToWatch.AddTag(FGameplayTag::RequestGameplayTag(TEXT("Turret.Status.Buff")));
@@ -184,14 +188,19 @@ FWidgetDescAtt ASOWCharacterTurretBase::GetWidgetAttributeChangeDelegate(const F
 }
 
 
+void ASOWCharacterTurretBase::OnAdditionalDamageRatioChanged(const FOnAttributeChangeData& Data)
+{
+	if (!TurretUIComponent) return;
+
+	TurretUIComponent->OnAdditionalDamageRatioChange.Broadcast(AttributeSet->GetAdditionalDamageRatio());
+}
+
 void ASOWCharacterTurretBase::OnDetectionRangeChanged(const FOnAttributeChangeData& Data)
 {
 	if (!GetTurretCombatComponent()) return;
 
 	GetTurretCombatComponent()->MakeDetectableTileArea();
 	TurretUIComponent->OnRangeChanged.Broadcast();
-	//SwitchDetectionRangeDecal(true);
-	//SwitchDetectionRangeDecal(DetectionRangeDecal->GetVisibleFlag());
 }
 
 void ASOWCharacterTurretBase::Tick(float DeltaTime) {
@@ -226,6 +235,12 @@ float ASOWCharacterTurretBase::GetAttackSpeed() const
 {
 	checkf(AttributeSet, TEXT("AttributeSet not Found / Check point : SOWCharacterTurretBase.cpp"));
 	return AttributeSet->GetAttackSpeedBase();
+}
+
+float ASOWCharacterTurretBase::GetAdditionalDamageRatio() const
+{
+	checkf(AttributeSet, TEXT("AttributeSet not Found / Check point : SOWCharacterTurretBase.cpp"));
+	return AttributeSet->GetAdditionalDamageRatio();
 }
 
 
@@ -327,6 +342,12 @@ float ASOWCharacterTurretBase::BP_GetAttackPower() const
 {
 	checkf(AttributeSet, TEXT("AttributeSet not Found / Check point : SOWCharacterTurretBase.cpp"));
 	return GetAttackPower();
+}
+
+float ASOWCharacterTurretBase::BP_GetAdditionalDamageRatio() const
+{
+	checkf(AttributeSet, TEXT("AttributeSet not Found / Check point : SOWCharacterTurretBase.cpp"));
+	return GetAdditionalDamageRatio();
 }
 
 USOWTurretCombatComponent* ASOWCharacterTurretBase::GetTurretCombatComponent() const

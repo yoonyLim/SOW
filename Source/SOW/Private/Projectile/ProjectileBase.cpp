@@ -97,7 +97,7 @@ bool AProjectileBase::GetProjectileInGame() const
 	return InGame;
 }
 
-void AProjectileBase::InitProjectileProperties(FTransform InTransform, ETurretTargetSelectionPolicy InPolicy, FGameplayEffectSpecHandle InHandle, bool InMovement, float InSpeed, float InDuration, float InScale, ASOWCharacter* InTargetActor)
+void AProjectileBase::InitProjectileProperties(FTransform InTransform, ETurretTargetSelectionPolicy InPolicy, FGameplayEffectSpecHandle InHandle, bool InMovement, float InSpeed, float InDuration, float InScale, AActor* InTargetActor)
 {
 	// 투사체의 속성을 초기화합니다.
 	// 투사체의 데이터는 TurretPropertyData 데이터테이블에 일괄적으로 정의되고 있습니다.
