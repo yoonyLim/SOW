@@ -10,7 +10,7 @@
 #include "AbilitySystem/SOWAttributeSet.h"
 #include "Widget/DamageLogger.h"
 
-struct FAttributeCapturesDamage {
+struct FAttributeCapturesMeleeDamage {
 	DECLARE_ATTRIBUTE_CAPTUREDEF(AttackPowerBase);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(AdditionalDamageRatio);
 
@@ -20,7 +20,7 @@ struct FAttributeCapturesDamage {
 	DECLARE_ATTRIBUTE_CAPTUREDEF(ExtraDamageRatio);
 
 
-	FAttributeCapturesDamage() {
+	FAttributeCapturesMeleeDamage() {
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, AttackPowerBase, Source, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, AdditionalDamageRatio, Source, false);
 
@@ -31,8 +31,8 @@ struct FAttributeCapturesDamage {
 	}
 };
 
-static const FAttributeCapturesDamage& GetCapturedPropertiesDamage() {
-	static FAttributeCapturesDamage AttributeCaptures;
+static const FAttributeCapturesMeleeDamage& GetCapturedPropertiesMeleeDamage() {
+	static FAttributeCapturesMeleeDamage AttributeCaptures;
 	return AttributeCaptures;
 }
 
@@ -71,13 +71,13 @@ float UGEEC_CalculateMeleeDamage::GetElementalResistanceCost(
 
 UGEEC_CalculateMeleeDamage::UGEEC_CalculateMeleeDamage()
 {
-	RelevantAttributesToCapture.Add(GetCapturedPropertiesDamage().AttackPowerBaseDef);
-	RelevantAttributesToCapture.Add(GetCapturedPropertiesDamage().AdditionalDamageRatioDef);
+	RelevantAttributesToCapture.Add(GetCapturedPropertiesMeleeDamage().AttackPowerBaseDef);
+	RelevantAttributesToCapture.Add(GetCapturedPropertiesMeleeDamage().AdditionalDamageRatioDef);
 
-	RelevantAttributesToCapture.Add(GetCapturedPropertiesDamage().DefensePowerBaseDef);
-	RelevantAttributesToCapture.Add(GetCapturedPropertiesDamage().CurrentHealthDef);
+	RelevantAttributesToCapture.Add(GetCapturedPropertiesMeleeDamage().DefensePowerBaseDef);
+	RelevantAttributesToCapture.Add(GetCapturedPropertiesMeleeDamage().CurrentHealthDef);
 
-	RelevantAttributesToCapture.Add(GetCapturedPropertiesDamage().ExtraDamageRatioDef);
+	RelevantAttributesToCapture.Add(GetCapturedPropertiesMeleeDamage().ExtraDamageRatioDef);
 }
 
 void UGEEC_CalculateMeleeDamage::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
@@ -99,7 +99,7 @@ void UGEEC_CalculateMeleeDamage::Execute_Implementation(const FGameplayEffectCus
 	// Base Attack Power
 	float L_AttackPower = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
-		GetCapturedPropertiesDamage().AttackPowerBaseDef,
+		GetCapturedPropertiesMeleeDamage().AttackPowerBaseDef,
 		EvalParams,
 		L_AttackPower
 	);
@@ -110,14 +110,14 @@ void UGEEC_CalculateMeleeDamage::Execute_Implementation(const FGameplayEffectCus
 
 	float L_ExtraRatio = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
-		GetCapturedPropertiesDamage().ExtraDamageRatioDef,
+		GetCapturedPropertiesMeleeDamage().ExtraDamageRatioDef,
 		EvalParams,
 		L_ExtraRatio
 	);
 	
 	float L_AddtionalRatio = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
-		GetCapturedPropertiesDamage().AdditionalDamageRatioDef,
+		GetCapturedPropertiesMeleeDamage().AdditionalDamageRatioDef,
 		EvalParams,
 		L_AddtionalRatio
 	);
@@ -138,7 +138,7 @@ void UGEEC_CalculateMeleeDamage::Execute_Implementation(const FGameplayEffectCus
 	// Base Defense Power
 	float L_DefensePower = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
-		GetCapturedPropertiesDamage().DefensePowerBaseDef,
+		GetCapturedPropertiesMeleeDamage().DefensePowerBaseDef,
 		EvalParams,
 		L_DefensePower
 	);
@@ -173,7 +173,7 @@ void UGEEC_CalculateMeleeDamage::Execute_Implementation(const FGameplayEffectCus
 	// Apply Final Damage
 	OutExecutionOutput.AddOutputModifier(
 		FGameplayModifierEvaluatedData(
-			GetCapturedPropertiesDamage().CurrentHealthDef.AttributeToCapture,
+			GetCapturedPropertiesMeleeDamage().CurrentHealthDef.AttributeToCapture,
 			EGameplayModOp::Additive,
 			-L_FinalDamage)
 	);

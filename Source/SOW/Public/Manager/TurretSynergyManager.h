@@ -59,8 +59,14 @@ public :
 	UFUNCTION(BlueprintCallable, category = "Turret|Synergy")
 	void RemoveTurratDataFromSynergy(ASOWCharacterTurretBase* SummonedTurret, EElementalType ElementType);
 
+	UFUNCTION(BlueprintCallable, category = "Turret|Synergy")
+	int GetActiveSynergyCount(EElementalType ElementType);
+	// Get Active Synergy Tag Count. If you want to know how many synergy are active, use this function in bp or cpp.
+
 	void Initialize(UDataTable* InSynergyDataTable, TSubclassOf<ASOWCharacterTurretSpecialBase> GlacioTurret);
 
+
+	UFUNCTION(BlueprintCallable, category = "Turret|Glacio")
 	void InsertAffectStatInBuffer(EGlacioStatType statType, float value);
 
 	UFUNCTION(BlueprintCallable, category = "Turret|Glacio")

@@ -124,7 +124,7 @@ public:
 	bool GetProjectileInGame() const;
 #pragma endregion
 	UFUNCTION(BlueprintCallable)
-	void InitProjectileProperties(FTransform InTransform, ETurretTargetSelectionPolicy InPolicy, FGameplayEffectSpecHandle InHandle, bool InMovement, float InSpeed, float InDuration, float InScale, ASOWCharacter* InTargetActor);
+	void InitProjectileProperties(FTransform InTransform, ETurretTargetSelectionPolicy InPolicy, FGameplayEffectSpecHandle InHandle, bool InMovement, float InSpeed, float InDuration, float InScale, AActor* InTargetActor);
 
 	UFUNCTION(BlueprintCallable)
 	void SetPoolNumber(int InNumber);

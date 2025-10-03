@@ -11,7 +11,7 @@
 #include "Characters/SOWCharacter.h"
 #include "Widget/DamageLogger.h"
 
-struct FAttributeCapturesDamage {
+struct FAttributeCapturesRangedDamage {
 	DECLARE_ATTRIBUTE_CAPTUREDEF(AttackPowerBase);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(AdditionalDamageRatio);
 
@@ -21,7 +21,7 @@ struct FAttributeCapturesDamage {
 	DECLARE_ATTRIBUTE_CAPTUREDEF(ExtraDamageRatio);
 
 
-	FAttributeCapturesDamage() {
+	FAttributeCapturesRangedDamage() {
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, AttackPowerBase, Source, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, AdditionalDamageRatio, Source, false);
 
@@ -32,8 +32,8 @@ struct FAttributeCapturesDamage {
 	}
 };
 
-static const FAttributeCapturesDamage& GetCapturedPropertiesDamage() {
-	static FAttributeCapturesDamage AttributeCaptures;
+static const FAttributeCapturesRangedDamage& GetCapturedPropertiesRangedDamage() {
+	static FAttributeCapturesRangedDamage AttributeCaptures;
 	return AttributeCaptures;
 }
 
@@ -72,13 +72,13 @@ float UGEEC_CalculateRangedDamage::GetElementalResistanceCost(
 
 UGEEC_CalculateRangedDamage::UGEEC_CalculateRangedDamage()
 {
-	RelevantAttributesToCapture.Add(GetCapturedPropertiesDamage().AttackPowerBaseDef);
-	RelevantAttributesToCapture.Add(GetCapturedPropertiesDamage().AdditionalDamageRatioDef);
+	RelevantAttributesToCapture.Add(GetCapturedPropertiesRangedDamage().AttackPowerBaseDef);
+	RelevantAttributesToCapture.Add(GetCapturedPropertiesRangedDamage().AdditionalDamageRatioDef);
 
-	RelevantAttributesToCapture.Add(GetCapturedPropertiesDamage().DefensePowerBaseDef);
-	RelevantAttributesToCapture.Add(GetCapturedPropertiesDamage().CurrentHealthDef);
+	RelevantAttributesToCapture.Add(GetCapturedPropertiesRangedDamage().DefensePowerBaseDef);
+	RelevantAttributesToCapture.Add(GetCapturedPropertiesRangedDamage().CurrentHealthDef);
 
-	RelevantAttributesToCapture.Add(GetCapturedPropertiesDamage().ExtraDamageRatioDef);
+	RelevantAttributesToCapture.Add(GetCapturedPropertiesRangedDamage().ExtraDamageRatioDef);
 }
 
 void UGEEC_CalculateRangedDamage::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
@@ -100,7 +100,7 @@ void UGEEC_CalculateRangedDamage::Execute_Implementation(const FGameplayEffectCu
 	// Base Attack Power
 	float L_AttackPower = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
-		GetCapturedPropertiesDamage().AttackPowerBaseDef,
+		GetCapturedPropertiesRangedDamage().AttackPowerBaseDef,
 		EvalParams,
 		L_AttackPower
 	);
@@ -111,14 +111,14 @@ void UGEEC_CalculateRangedDamage::Execute_Implementation(const FGameplayEffectCu
 
 	float L_ExtraRatio = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
-		GetCapturedPropertiesDamage().ExtraDamageRatioDef,
+		GetCapturedPropertiesRangedDamage().ExtraDamageRatioDef,
 		EvalParams,
 		L_ExtraRatio
 	);
 	
 	float L_AddtionalRatio = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
-		GetCapturedPropertiesDamage().AdditionalDamageRatioDef,
+		GetCapturedPropertiesRangedDamage().AdditionalDamageRatioDef,
 		EvalParams,
 		L_AddtionalRatio
 	);
@@ -139,7 +139,7 @@ void UGEEC_CalculateRangedDamage::Execute_Implementation(const FGameplayEffectCu
 	// Base Defense Power
 	float L_DefensePower = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
-		GetCapturedPropertiesDamage().DefensePowerBaseDef,
+		GetCapturedPropertiesRangedDamage().DefensePowerBaseDef,
 		EvalParams,
 		L_DefensePower
 	);
@@ -175,7 +175,7 @@ void UGEEC_CalculateRangedDamage::Execute_Implementation(const FGameplayEffectCu
 	// Apply Final Damage
 	OutExecutionOutput.AddOutputModifier(
 		FGameplayModifierEvaluatedData(
-			GetCapturedPropertiesDamage().CurrentHealthDef.AttributeToCapture,
+			GetCapturedPropertiesRangedDamage().CurrentHealthDef.AttributeToCapture,
 			EGameplayModOp::Additive,
 			-L_FinalDamage)
 	);

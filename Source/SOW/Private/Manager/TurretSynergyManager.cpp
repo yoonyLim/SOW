@@ -100,7 +100,7 @@ void UTurretSynergyManager::AddNewTurretDataForSynergy(ASOWCharacterTurretBase* 
 	UpdateSynergyTagContainer(InTurretRarity, ElementType, true);
 
 	int SynergyTurretCount = MonitoringTurrets.Num();
-	UE_LOG(LogTemp, Warning, TEXT("SynergyTurretCount : %s"), *FString::FromInt(SynergyTurretCount));
+	//UE_LOG(LogTemp, Warning, TEXT("SynergyTurretCount : %s"), *FString::FromInt(SynergyTurretCount));
 
 
 	const FName ElementName = USOWBlueprintFunctionLibrary::EnumToFName<EElementalType>(ElementType);
@@ -173,6 +173,32 @@ void UTurretSynergyManager::RemoveTurratDataFromSynergy(ASOWCharacterTurretBase*
 	
 }
 
+int UTurretSynergyManager::GetActiveSynergyCount(EElementalType ElementType)
+{
+	int SynergyCount = 0;
+	TArray<ASOWCharacterTurretBase*>& MonitoringTurrets = SynergyMonitor[ElementType];
+
+	const FName ElementName = USOWBlueprintFunctionLibrary::EnumToFName<EElementalType>(ElementType);
+	const FTurretSynergyTagData* SynergyDataRow = SynergyTagData->FindRow<FTurretSynergyTagData>(ElementName, TEXT(""));
+
+	if (!SynergyDataRow) return -1;
+	const TArray<FTurretSynergyTagItem> SynergyTagItems = SynergyDataRow->SynergyTagItems;
+
+
+	for (int i = 1; i <= MonitoringTurrets.Num() && i < SynergyTagItems.Num(); i++) {
+
+		const FGameplayTag InTag = SynergyTagItems[i].SynergyTag;
+		if (!InTag.IsValid()) continue;
+
+		const FSynergyCondition InCondition = SynergyTagItems[i].SynergyCondition;
+		if (!CheckRarityCondition(SynergyRarityMonitor[ElementType], InCondition)) continue;
+
+		SynergyCount++;
+	}
+
+	return SynergyCount;
+}
+
 void UTurretSynergyManager::Initialize(UDataTable* InSynergyDataTable, TSubclassOf<ASOWCharacterTurretSpecialBase> GlacioTurret) {
 	SynergyMonitor.Add(EElementalType::Nature);
 	SynergyMonitor.Add(EElementalType::Electro);
@@ -206,7 +232,7 @@ void UTurretSynergyManager::Initialize(UDataTable* InSynergyDataTable, TSubclass
 
 void UTurretSynergyManager::InsertAffectStatInBuffer(EGlacioStatType statType, float value)
 {
-	int newValue = value;
+	float newValue = value;
 	if (AffectStatBuffer.Contains(statType)) {
 		newValue += AffectStatBuffer[statType];
 	}
