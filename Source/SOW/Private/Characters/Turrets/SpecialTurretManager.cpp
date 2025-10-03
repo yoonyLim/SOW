@@ -11,12 +11,21 @@
 #include "AIController.h"
 #include "Core/SOWPlayerController.h"
 
-void USpecialTurretManager::Initialize() {
-    FStringClassReference GlacioBPRef(TEXT("/Game/01Blueprints/Turret/03Ice/00Glacio/BP_Turret_Special_Glacio.BP_Turret_Special_Glacio_C"));
-    if (UClass* LoadedClass = GlacioBPRef.TryLoadClass<ASOWCharacterTurretSpecialBase>())
-    {
-        GlacioClass = LoadedClass;
-    }
+void USpecialTurretManager::Initialize(TSubclassOf<ASOWCharacterTurretSpecialBase> GlacioTurret) {
+   
+    GlacioClass = GlacioTurret;
+    
+    AlphaPropertyCondition.Add(SOWGlacioPropertyTags::Property_Alpha_I, 0);
+    AlphaPropertyCondition.Add(SOWGlacioPropertyTags::Property_Alpha_II, 0);
+    AlphaPropertyCondition.Add(SOWGlacioPropertyTags::Property_Alpha_III, 0);
+    AlphaPropertyCondition.Add(SOWGlacioPropertyTags::Property_Alpha_IV, 0);
+    AlphaPropertyCondition.Add(SOWGlacioPropertyTags::Property_Alpha_V, 0);
+
+    BetaPropertyCondition.Add(SOWGlacioPropertyTags::Property_Beta_I, 0);
+    BetaPropertyCondition.Add(SOWGlacioPropertyTags::Property_Beta_II, 0);
+    BetaPropertyCondition.Add(SOWGlacioPropertyTags::Property_Beta_III, 0);
+    BetaPropertyCondition.Add(SOWGlacioPropertyTags::Property_Beta_IV, 0);
+    BetaPropertyCondition.Add(SOWGlacioPropertyTags::Property_Beta_V, 0);
 
     OnSynergyChanged.AddDynamic(this, &USpecialTurretManager::ProcessGlacio);
 }
@@ -94,6 +103,8 @@ ASOWCharacterTurretBase* USpecialTurretManager::GetGlacio()
 
 void USpecialTurretManager::ProcessGlacio(int SynergyCount)
 {
+    //if (!SummonedGlacio) return;
+
 	if (SynergyCount == 2) {
         UE_LOG(LogTemp, Warning, TEXT("Synergy 2. Try to Spawn Glacio"));
 		SummonGlacio();
@@ -104,4 +115,61 @@ void USpecialTurretManager::ProcessGlacio(int SynergyCount)
 	else {
 		// ??
 	}
+}
+
+void USpecialTurretManager::RequestToApplyPropertyCondition(FGameplayTag ConditionTag)
+{
+    //if (!SummonedGlacio) return;
+
+    if (AlphaPropertyCondition.Contains(ConditionTag)) {
+        int newValue = AlphaPropertyCondition[ConditionTag] + 1;
+        AlphaPropertyCondition.Add(ConditionTag, newValue);
+
+        TArray<int> AllValues;
+        AlphaPropertyCondition.GenerateValueArray(AllValues);
+        for (int value : AllValues) {
+            if (value == 0) {
+                return;
+            }
+        }
+        if (!SummonedGlacio) return;
+        SummonedGlacio->OnAlphaConditionCheck.Broadcast(true);
+    }
+    else if (BetaPropertyCondition.Contains(ConditionTag)) {
+        int newValue = BetaPropertyCondition[ConditionTag] + 1;
+        BetaPropertyCondition.Add(ConditionTag, newValue);
+
+        TArray<int> AllValues;
+        BetaPropertyCondition.GenerateValueArray(AllValues);
+        for (int value : AllValues) {
+            if (value == 0) {
+                return;
+            }
+        }
+        if (!SummonedGlacio) return;
+        SummonedGlacio->OnBetaConditionCheck.Broadcast(true);
+    }
+
+    else { return; }
+}
+
+void USpecialTurretManager::RequestToRemovePropertyCondition(FGameplayTag ConditionTag)
+{
+    //if (!SummonedGlacio) return;
+
+    if (AlphaPropertyCondition.Contains(ConditionTag)) {
+        int newValue = AlphaPropertyCondition[ConditionTag] - 1;
+     
+        if (SummonedGlacio && newValue == 0) SummonedGlacio->OnAlphaConditionCheck.Broadcast(false);
+        AlphaPropertyCondition.Add(ConditionTag, newValue);
+    }
+    else if (BetaPropertyCondition.Contains(ConditionTag)) {
+    
+        int newValue = BetaPropertyCondition[ConditionTag] - 1;
+       
+        if (SummonedGlacio && newValue == 0) SummonedGlacio->OnBetaConditionCheck.Broadcast(false);
+        BetaPropertyCondition.Add(ConditionTag, newValue);
+    }
+
+    else { return; }
 }

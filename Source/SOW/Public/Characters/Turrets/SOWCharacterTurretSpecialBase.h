@@ -11,6 +11,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSynergyTurretSummonDelegate, EGl
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSynergyTurretDeathDelegate, EGlacioStatType, StatType, float, value);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPropertyConditionChecked, bool, HasChecked);
+
 /**
  * 
  */
@@ -25,5 +27,11 @@ public:
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnSynergyTurretDeathDelegate OnSynergyRemoved;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FPropertyConditionChecked OnAlphaConditionCheck;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FPropertyConditionChecked OnBetaConditionCheck;
 	
 };

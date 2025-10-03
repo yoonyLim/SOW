@@ -38,6 +38,10 @@ public :
 	FGameplayAttributeData ExtraDamageRatio;
 	ATTRIBUTE_ACCESSORS(USOWAttributeSet, ExtraDamageRatio)
 
+	UPROPERTY(BlueprintReadOnly, Category = "Damage")
+	FGameplayAttributeData AdditionalDamageRatio;
+	ATTRIBUTE_ACCESSORS(USOWAttributeSet, AdditionalDamageRatio)
+
 	UPROPERTY(BlueprintReadOnly, Category = "Health")
 	FGameplayAttributeData CurrentHealth;
 	ATTRIBUTE_ACCESSORS(USOWAttributeSet, CurrentHealth)

@@ -27,7 +27,7 @@ public:
 	void RemovePool(int32 PoolNumber);
 
 	UFUNCTION(BlueprintCallable)
-	AProjectileBase* SpawnProjectile(const FTransform& SpawnTransform, ETurretTargetSelectionPolicy InPolicy, FGameplayEffectSpecHandle InHandle, bool InMovement, float InSpeed, float InDuration, float InScale, ASOWCharacter* InTargetActor, int32 PoolNumber);
+	AProjectileBase* SpawnProjectile(const FTransform& SpawnTransform, ETurretTargetSelectionPolicy InPolicy, FGameplayEffectSpecHandle InHandle, bool InMovement, float InSpeed, float InDuration, float InScale, AActor* InTargetActor, int32 PoolNumber);
 
 	UFUNCTION(BlueprintCallable)
 	void ReturnProjectile(AProjectileBase* Projectile);

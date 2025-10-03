@@ -57,6 +57,7 @@ public:
 
 	float GetAttackPower() const;
 	float GetAttackSpeed() const;
+	float GetAdditionalDamageRatio() const;
 	float GetDetectionRangeRadius() const;										// Get Attack Radius From Attribute Set in Turret Base 
 	float GetAttackCooldownTime() const;										// Get Attack Delay From Attribute Set in Turret Base
 	int32 GetCircleCount() const { return CircleCount; };						// Get Circle Count when Turret Spawning Time
@@ -91,6 +92,9 @@ public:
 
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Turret Attack Power"))
 	float BP_GetAttackPower() const;
+
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Turret Additional Damage Ratio"))
+	float BP_GetAdditionalDamageRatio() const;
 
 	UFUNCTION(BlueprintPure)
 	USOWTurretCombatComponent* GetTurretCombatComponent() const;				// Get Combat Component at other classes
@@ -144,10 +148,13 @@ private:
 	UFUNCTION()
 	void OnGameplayTagChanged(const FGameplayTag Tag, int32 NewCount);
 
+
+	void OnAdditionalDamageRatioChanged(const FOnAttributeChangeData& Data);
+
 	void OnDetectionRangeChanged(const FOnAttributeChangeData& Data);
 
 	void OnWidgetAttributeChanged(const FOnAttributeChangeData& Data);
-
+	
 	UFUNCTION(BlueprintCallable)
 	void InitWidgetAttributeChange();
 
