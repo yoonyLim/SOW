@@ -4,12 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "SOWLogFunctionLibrary.h"
 #include "WaveGameMode.generated.h"
+
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnOneTimeCurrencyChanged, int32, TotalCurrency);
 
 // 전방 선언: 로거는 헤더 의존 최소화
-class UCurrencyGainLogger;
+class UWaveLoggingManager;
 
 /**
  * 
@@ -25,7 +27,7 @@ private:
 
 	// 통화 획득 로거 인스턴스
 	UPROPERTY() // GC 보호
-	TObjectPtr<UCurrencyGainLogger> CurrencyLogger;
+	TObjectPtr<USOWLogFunctionLibrary> CurrencyLogger;
 
 public:
 	virtual void BeginPlay() override;

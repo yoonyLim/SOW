@@ -30,36 +30,40 @@ namespace SOWGameplayTags {
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Ability_Attack_Ranged);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Ability_Initialize);
 
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Buff_Stealth);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Buff_RangedResistance);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Buff_MeleeResistance);
+
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Debuff_Taunted);
-	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Debuff_Poison);
-	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Debuff_SpiderWeb);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Debuff_Slow);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Debuff_Rooted);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Debuff_RestoreMovement);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Debuff_Detected);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Debuff_Static);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Debuff_Chill);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Debuff_Freezing);
 
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Debuff_Sine_Alpha);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Debuff_Sine_Stun);
 
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Debuff_Sine_Beta);
-	//SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Debuff_Static);
 
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Debuff_Sine_Gamma);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Debuff_Sine_Chellenger);
 
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Debuff_Sine_Delta);
-	//SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Debuff_Balancing);
+
 
 
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Immunity_ShadowAdditionalDamage);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Immunity_Sine_Stun);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Immunity_Chill);
 
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Immunity_Sine_Alpha);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Immunity_Sine_Beta);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Immunity_Sine_Gamma);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Immunity_Sine_Delta);
-	//SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Immune_Balancing);
+
 
 
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Event_Confusing);
@@ -74,11 +78,17 @@ namespace SOWGameplayTags {
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Ability_Attack_Ranged);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Ability_Buff);
 
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Ability_MeleeAttack);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Ability_RangedAttack);
+
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Status_Buff_Hoppy);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Status_Buff_BlessingOfRune);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Status_Buff_SpiderWeb);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Status_Buff_NightEyes); 
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Status_Buff_Mushroom);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Status_Buff_Snowball);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Status_Buff_GlassyAura);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Status_Buff_Detector);
 
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Status_Debuff_Slow);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Status_Debuff_Root);
@@ -97,22 +107,25 @@ namespace SOWGameplayTags {
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Event_SetPropByEvo);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Event_TargetCountChanged);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Event_ChangedFixedLocation);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Event_ChangedTurretLocation);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Event_ChangedFixedTarget);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Event_DebuffApplied);
 
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Event_TargetCharacterOut);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Event_TargetCharacterIn);
 
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Event_AffectStatUp);
+
 	/* Shared Tags */
-	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Ability_Death);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Ability_Death);				// Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½É·Â¿ï¿½ ï¿½Î¿ï¿½ï¿½Ç´ï¿½ ï¿½Äºï¿½ ï¿½Â±ï¿½
 
-	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Status_Dead);					// Ä³¸¯ÅÍÀÇ ÇöÀç Ã¼·ÂÀÌ 0ÀÏ¶§ ºÎ¿©µÇ´Â »óÅÂ ÅÂ±×
-	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Status_DamagedOverTime);		// ÇØ´ç »óÅÂ ÅÂ±×°¡ ºÎ¿©µÈ ´ë»óÀº DamageOverTime °ª¸¸Å­ Áö¼Ó ÇÇÇØ¸¦ ÀÔÀ½.
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Status_Dead);					// Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½ï¿½ï¿½ 0ï¿½Ï¶ï¿½ ï¿½Î¿ï¿½ï¿½Ç´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Â±ï¿½
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Status_DamagedOverTime);		// ï¿½Ø´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Â±×°ï¿½ ï¿½Î¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ DamageOverTime ï¿½ï¿½ï¿½ï¿½Å­ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ø¸ï¿½ ï¿½ï¿½ï¿½ï¿½.
 
-	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_MeleeHit);				// Ä³¸¯ÅÍ°¡ °ø°Ý¿¡ ¼º°øÇßÀ» °æ¿ì ºÎ¿©ÇÏ´Â ÀÌº¥Æ® ÅÂ±×
-	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_HitReact);				// Ä³¸¯ÅÍ¿¡ °ø°Ý¿¡ ¸ÂÀ» °æ¿ì ÇÇ°ÝÀÚ¿¡°Ô ºÎ¿©µÇ´Â ÀÌº¥Æ® ÅÂ±×
-	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_TargetDead);			// °ø°ÝÇÑ Å¸°ÙÀÌ »ç¸ÁÇßÀ» °æ¿ì °ø°ÝÀÚ¿¡°Ô Àü´ÞµÇ´Â ÀÌº¥Æ® ÅÂ±×
-	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_TauntToTarget);			// µµ¹ß ¼º°ø ½Ã Å¸°Ù¿¡°Ô Àü´ÞµÇ´Â ÀÌº¥Æ® ÅÂ±×
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_MeleeHit);				// Ä³ï¿½ï¿½ï¿½Í°ï¿½ ï¿½ï¿½ï¿½Ý¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Î¿ï¿½ï¿½Ï´ï¿½ ï¿½Ìºï¿½Æ® ï¿½Â±ï¿½
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_HitReact);				// Ä³ï¿½ï¿½ï¿½Í¿ï¿½ ï¿½ï¿½ï¿½Ý¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ç°ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½ ï¿½Î¿ï¿½ï¿½Ç´ï¿½ ï¿½Ìºï¿½Æ® ï¿½Â±ï¿½
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_TargetDead);			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ÞµÇ´ï¿½ ï¿½Ìºï¿½Æ® ï¿½Â±ï¿½
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_TauntToTarget);			// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Å¸ï¿½Ù¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ÞµÇ´ï¿½ ï¿½Ìºï¿½Æ® ï¿½Â±ï¿½
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_MeleeHitDone);
 
 
@@ -161,9 +174,7 @@ namespace SOWGameplayTags {
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_SetByCaller_MultipleDamage);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_SetByCaller_AdditinalDamageRatio_Pulse);
 
-
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_SetByCaller_PercentageDamage);
-	
 
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_SetByCaller_AdditiveBuffValue);
 
@@ -171,6 +182,9 @@ namespace SOWGameplayTags {
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_SetByCaller_MushroomExtraDamageCont);
 
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_SetByCaller_RestoreMovement);
+
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_SetByCaller_ChillSlow);
+
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Data_RestoreMovement);
 
 	/* Data Tags */
@@ -199,4 +213,64 @@ namespace SOWGameplayTags {
 
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Skill_Creation_l);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Skill_Creation_ll);
+}
+
+
+namespace SOWSynergyTags {
+	// Need to Implement Turret Synergy System only
+	// When a turret is summoned, the synergy that matches the turret's Element reacts to grant a special effect to all turrets of the same Element that the instance is monitoring.
+
+	// Nature Synergy
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Synergy_Nature_III);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Synergy_Nature_V);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Synergy_Nature_VI);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Synergy_Nature_VII);
+
+	// Electro Synergy
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Synergy_Electro_I);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Synergy_Electro_II);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Synergy_Electro_III);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Synergy_Electro_IV);
+
+	// Ice Synergy
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Synergy_Ice_II);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Synergy_Ice_III);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Synergy_Ice_IV);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Synergy_Ice_V);
+}
+
+namespace SOWStatAffectTags {
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stat_Increase_AttackPower);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stat_Decrease_AttackPower);
+
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stat_Increase_AttackSpeed);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stat_Decrease_AttackSpeed);
+
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stat_Increase_DetectionRange);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stat_Decrease_DetectionRange);
+
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stat_Increase_ExtraDamage);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stat_Decrease_ExtraDamage);
+
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stat_Increase_DebuffStack);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stat_Decrease_DebuffStack);
+}
+
+
+namespace SOWGlacioPropertyTags {
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Property_Alpha_I);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Property_Alpha_II);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Property_Alpha_III);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Property_Alpha_IV);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Property_Alpha_V);
+
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Property_Alpha);
+
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Property_Beta_I);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Property_Beta_II);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Property_Beta_III);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Property_Beta_IV);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Property_Beta_V);
+
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Property_Beta);
 }

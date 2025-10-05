@@ -46,7 +46,7 @@ void USOWProjectilePoolingComponent::RemovePool(int32 NewPoolNumber)
 
 
 
-AProjectileBase* USOWProjectilePoolingComponent::SpawnProjectile(const FTransform& SpawnTransform, ETurretTargetSelectionPolicy InPolicy, FGameplayEffectSpecHandle InHandle, bool InMovement, float InSpeed, float InDuration, float InScale, ASOWCharacter* InTargetActor, int32 NewPoolNumber)
+AProjectileBase* USOWProjectilePoolingComponent::SpawnProjectile(const FTransform& SpawnTransform, ETurretTargetSelectionPolicy InPolicy, FGameplayEffectSpecHandle InHandle, bool InMovement, float InSpeed, float InDuration, float InScale, AActor* InTargetActor, int32 NewPoolNumber)
 {
 	// if you want to spawn projectile from pool, just use this function. 
 	// you need to assign other properties from owner turret or enemy

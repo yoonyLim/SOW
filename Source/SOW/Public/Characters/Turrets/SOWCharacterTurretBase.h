@@ -10,11 +10,13 @@
 class UCapsuleComponent;
 class USOWTurretCombatComponent;
 class USOWTurretEvolutionComponent;
+class USOWTurretSkillComponent;
 class USOWProjectilePoolingComponent;
 class UWidgetComponent;
 struct FEffectOrientedTurretAttribute;
 struct FWidgetDescAtt;
 class UDecalComponent;
+class ATileBase;
 
 
 
@@ -39,7 +41,7 @@ public:
 	/* End ISOWCharacterUIInterface implement */
 
 	UFUNCTION(BlueprintCallable)
-	void SwitchDetectionRangeDecal(bool On);
+	void SwitchDetectionRangeDecal(bool On, TArray<ATileBase*>& OutTiles);
 
 	UFUNCTION(BlueprintCallable)
 	void FindTurretByElementTarget();
@@ -55,12 +57,16 @@ public:
 
 	float GetAttackPower() const;
 	float GetAttackSpeed() const;
+	float GetAdditionalDamageRatio() const;
 	float GetDetectionRangeRadius() const;										// Get Attack Radius From Attribute Set in Turret Base 
 	float GetAttackCooldownTime() const;										// Get Attack Delay From Attribute Set in Turret Base
 	int32 GetCircleCount() const { return CircleCount; };						// Get Circle Count when Turret Spawning Time
 	FName GetTurretName() const;												// Get Turret Name (enum) to FName
 	FName GetTurretRank() const;
 	FGameplayTag GetTurretElementTag() const;
+
+	float GetAffectStatValue() const;
+	EGlacioStatType GetAffectStatType() const;
 
 #pragma endregion
 
@@ -73,6 +79,11 @@ public:
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Turret Rank"))
 	FName BP_GetTurretRank() const;
 
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Affect Stat Type"))
+	EGlacioStatType BP_GetAffectStatType() const;
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Affect Stat Value"))
+	float BP_GetAffectStatValue() const;
+
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Turret Detection Range"))
 	float BP_GetDetectionRangeRadius() const;
 
@@ -81,6 +92,9 @@ public:
 
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Turret Attack Power"))
 	float BP_GetAttackPower() const;
+
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Turret Additional Damage Ratio"))
+	float BP_GetAdditionalDamageRatio() const;
 
 	UFUNCTION(BlueprintPure)
 	USOWTurretCombatComponent* GetTurretCombatComponent() const;				// Get Combat Component at other classes
@@ -111,6 +125,9 @@ protected:
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void InitFromDataAsset() override;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widgets", meta = (AllowPrivateAccess = "true"))
+	UWidgetComponent* CustomTurretStatusfWidget; 
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	USOWTurretCombatComponent* TurretCombatComponent;
 
@@ -131,10 +148,13 @@ private:
 	UFUNCTION()
 	void OnGameplayTagChanged(const FGameplayTag Tag, int32 NewCount);
 
+
+	void OnAdditionalDamageRatioChanged(const FOnAttributeChangeData& Data);
+
 	void OnDetectionRangeChanged(const FOnAttributeChangeData& Data);
 
 	void OnWidgetAttributeChanged(const FOnAttributeChangeData& Data);
-
+	
 	UFUNCTION(BlueprintCallable)
 	void InitWidgetAttributeChange();
 

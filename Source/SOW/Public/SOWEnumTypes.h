@@ -82,7 +82,12 @@ enum class ETurretName : uint8 {
 	// Ice
 	IceCitizen		UMETA(DisplayName = "IceCitizen"),
 	IceGolem		UMETA(DisplayName = "IceGolem"),
-	Yetti			UMETA(DisplayName = "Yetti")
+	Yetti			UMETA(DisplayName = "Yetti"),
+	IceBreaker		UMETA(DisplayName = "IceBreaker"),
+	Wildboar		UMETA(DisplayName = "Wildboar"),
+
+	// Special Unit
+	Glacio			UMETA(DisplayName = "Glacio")
 	
 };
 
@@ -204,4 +209,15 @@ enum class ETileSummonState : uint8
 	Available,
 	Unavailable,
 	Occupied,
+};
+
+UENUM(BlueprintType)
+enum class EGlacioStatType : uint8
+{
+	AttackPower,
+	AttackSpeed,
+	DetectionRange,
+	DebuffCount,
+	ExtraDamage,
+	None
 };

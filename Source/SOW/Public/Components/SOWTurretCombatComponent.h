@@ -35,7 +35,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Turret|Properties")
 	void AddNewTargetPriority(ETurretTargetSelectionPriority NewPriority);
 
-	void VisualizeTurretDetectionRange(bool bOn);
+	void VisualizeTurretDetectionRange(bool bOn, TArray<ATileBase*>& OutTiles);
 
 	void MakeDetectableTileArea();
 #pragma endregion
@@ -46,6 +46,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Turret|TargetDetection")
 	void ClearTargetDetectionAsDead();
+
+	bool GetStealthCheck(AActor* Target) const;
 
 #pragma endregion
 
@@ -73,15 +75,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
 	ETurretName GetTurretNameByEnum() const { return TurretName; }
 
-	FGameplayTag GetAbilityTagToActivation() const { return AbilityTagToActivation; }
-
 	UFUNCTION(BlueprintPure, Category = "Turret|Combat")
 	FWidgetDesciptableTurretAttribute GetWidgetDesciptableTurretAttribute() const { return WidgetDescriptableAttritutes; }
 
 	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
 	float GetProjectileLivingTime() const;
 
+
+
 	bool GetActiveBool() const;
+	FGameplayTag GetAbilityTagToActivation() const { return AbilityTagToActivation; }
+	EGlacioStatType GetAffectStatType() const { return AffectStatType; }
+	float GetAffectStatValue() const {return AffectStatValue;}
 #pragma endregion
 
 	
@@ -167,6 +172,12 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Turret|Properties")
 	FGameplayTag AbilityTagToActivation;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Turret|Properties")
+	EGlacioStatType AffectStatType;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Turret|Properties")
+	float AffectStatValue;
 #pragma endregion
 
 	

@@ -200,6 +200,41 @@ EElementalType USOWBlueprintFunctionLibrary::TranslateElementTagToEnum(const FGa
 
 }
 
+EElementalType USOWBlueprintFunctionLibrary::FindTurretElementAsEnum(ASOWCharacterTurretBase* InTurret)
+{
+    if (!InTurret) return EElementalType::Max;
+
+    return TranslateElementTagToEnum(FindTurretElementAsTag(InTurret));
+}
+
+FGameplayTag USOWBlueprintFunctionLibrary::FindTurretElementAsTag(ASOWCharacterTurretBase* InTurret)
+{
+    if (!InTurret)
+        return FGameplayTag();
+
+    // Turret이 가진 ASC 가져오기
+    USOWAbilitySystemComponent* ASC = NativeGetSOWAbilitySystemComponentFromActorInfo(InTurret);
+    if (!ASC)
+        return FGameplayTag();
+
+    // ASC에서 태그 컨테이너 복사
+    const FGameplayTagContainer& AllTags = ASC->GetOwnedGameplayTags();
+
+    // 기준 태그
+    const FGameplayTag ElementParentTag = FGameplayTag::RequestGameplayTag(TEXT("Shared.Element"));
+
+    // Shared.Element 기반 태그 탐색
+    for (const FGameplayTag& Tag : AllTags)
+    {
+        if (Tag.MatchesTag(ElementParentTag))
+        {
+            return Tag;
+        }
+    }
+
+    return FGameplayTag(); // 못 찾으면 빈 값 반환
+}
+
 TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAroundMouse(APlayerController* PlayerController, const ETileSelectType TileSelectionType, const int32 N, const float TileSize = 83.f)
 {
     TArray<ATileBase*> SelectedTiles;
@@ -253,6 +288,8 @@ FVector USOWBlueprintFunctionLibrary::MakeCentralTileLocationFromAnyPoint(APlaye
     Params.bReturnPhysicalMaterial = false;
 
     if (!PlayerController->GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_GameTraceChannel1, Params)) return FVector::ZeroVector;
+    if(!Hit.GetActor()) return FVector::ZeroVector;
+
     CenterLocation = Hit.GetActor()->GetActorLocation();
     FVector CriticVector = AnyPoint - CenterLocation;
 
@@ -433,5 +470,6 @@ TArray<AActor*> USOWBlueprintFunctionLibrary::GetActorsOnTiles(TArray<ATileBase*
     }
     return OnTileActors;
 }
+
 
 

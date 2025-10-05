@@ -33,6 +33,7 @@
 #include "Interface/SOWCharacterTypeInterface.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "DataAsset/DA_StartupDataTurret.h"
+#include "Tile/TileBase.h"
 
 
 ASOWCharacterTurretBase::ASOWCharacterTurretBase()
@@ -50,6 +51,17 @@ ASOWCharacterTurretBase::ASOWCharacterTurretBase()
 	CharacterType = ESOWCharacterType::Turret;
 
 	TurretUIComponent = CreateDefaultSubobject<USOWTurretUIComponent>(TEXT("TurretUIComponent"));
+
+	CustomTurretStatusfWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("CustomTurretStatusfWidget"));
+	if (CustomTurretStatusfWidget) {
+		CustomTurretStatusfWidget->SetupAttachment(RootComponent);
+		CustomTurretStatusfWidget->SetWidgetSpace(EWidgetSpace::Screen);
+		CustomTurretStatusfWidget->SetRelativeLocation(FVector(0.f, 0.f, 1.f));
+		static ConstructorHelpers::FClassFinder<UUserWidget> CustomTurretStatusfWidgetClass{ TEXT("/Game/01Blueprints/Turret/UI/WBP_YettiSnowball") };
+
+		if (CustomTurretStatusfWidgetClass.Succeeded())
+			CustomTurretStatusfWidget->SetWidgetClass((CustomTurretStatusfWidgetClass.Class));
+	}
 
 }
 
@@ -76,6 +88,10 @@ void ASOWCharacterTurretBase::PossessedBy(AController* NewController)
 		ASC->GetGameplayAttributeValueChangeDelegate(
 			AttributeSet->GetAttackSpeedBaseAttribute())
 			.AddUObject(this, &ASOWCharacterTurretBase::OnWidgetAttributeChanged);
+
+		ASC->GetGameplayAttributeValueChangeDelegate(
+			AttributeSet->GetAdditionalDamageRatioAttribute())
+			.AddUObject(this, &ASOWCharacterTurretBase::OnAdditionalDamageRatioChanged);
 
 
 		FGameplayTagContainer TagsToWatch;
@@ -122,11 +138,14 @@ void ASOWCharacterTurretBase::OnGameplayTagChanged(const FGameplayTag Tag, int32
 }
 
 
-void ASOWCharacterTurretBase::SwitchDetectionRangeDecal(bool On)
+void ASOWCharacterTurretBase::SwitchDetectionRangeDecal(bool On, TArray<ATileBase*>& OutTiles)
 {
-	if (!GetTurretCombatComponent()) return;
+	if (!GetTurretCombatComponent()) {
+		OutTiles = TArray<ATileBase*>();
+		return;
+	} 
 
-	GetTurretCombatComponent()->VisualizeTurretDetectionRange(On);
+	GetTurretCombatComponent()->VisualizeTurretDetectionRange(On, OutTiles);
 }
 
 
@@ -169,14 +188,19 @@ FWidgetDescAtt ASOWCharacterTurretBase::GetWidgetAttributeChangeDelegate(const F
 }
 
 
+void ASOWCharacterTurretBase::OnAdditionalDamageRatioChanged(const FOnAttributeChangeData& Data)
+{
+	if (!TurretUIComponent) return;
+
+	TurretUIComponent->OnAdditionalDamageRatioChange.Broadcast(AttributeSet->GetAdditionalDamageRatio());
+}
+
 void ASOWCharacterTurretBase::OnDetectionRangeChanged(const FOnAttributeChangeData& Data)
 {
 	if (!GetTurretCombatComponent()) return;
 
 	GetTurretCombatComponent()->MakeDetectableTileArea();
 	TurretUIComponent->OnRangeChanged.Broadcast();
-	//SwitchDetectionRangeDecal(true);
-	//SwitchDetectionRangeDecal(DetectionRangeDecal->GetVisibleFlag());
 }
 
 void ASOWCharacterTurretBase::Tick(float DeltaTime) {
@@ -213,6 +237,12 @@ float ASOWCharacterTurretBase::GetAttackSpeed() const
 	return AttributeSet->GetAttackSpeedBase();
 }
 
+float ASOWCharacterTurretBase::GetAdditionalDamageRatio() const
+{
+	checkf(AttributeSet, TEXT("AttributeSet not Found / Check point : SOWCharacterTurretBase.cpp"));
+	return AttributeSet->GetAdditionalDamageRatio();
+}
+
 
 float ASOWCharacterTurretBase::GetDetectionRangeRadius() const
 {
@@ -238,6 +268,20 @@ FName ASOWCharacterTurretBase::GetTurretRank() const
 	ETurretRarity tr = TurretCombatComponent->GetTurretRarity();
 
 	return USOWBlueprintFunctionLibrary::EnumToFName<ETurretRarity>(tr);
+}
+
+float ASOWCharacterTurretBase::GetAffectStatValue() const
+{
+	checkf(TurretCombatComponent, TEXT("Invalid Component : TurretCombatComponent"));
+
+	return TurretCombatComponent->GetAffectStatValue();
+}
+
+EGlacioStatType ASOWCharacterTurretBase::GetAffectStatType() const
+{
+	checkf(TurretCombatComponent, TEXT("Invalid Component : TurretCombatComponent"));
+
+	return TurretCombatComponent->GetAffectStatType();
 }
 
 FGameplayTag ASOWCharacterTurretBase::GetTurretElementTag() const
@@ -273,6 +317,16 @@ FName ASOWCharacterTurretBase::BP_GetTurretRank() const
 	return GetTurretRank();
 }
 
+EGlacioStatType ASOWCharacterTurretBase::BP_GetAffectStatType() const
+{
+	return GetAffectStatType();
+}
+
+float ASOWCharacterTurretBase::BP_GetAffectStatValue() const
+{
+	return GetAffectStatValue();
+}
+
 float ASOWCharacterTurretBase::BP_GetDetectionRangeRadius() const
 {
 	return GetDetectionRangeRadius();
@@ -288,6 +342,12 @@ float ASOWCharacterTurretBase::BP_GetAttackPower() const
 {
 	checkf(AttributeSet, TEXT("AttributeSet not Found / Check point : SOWCharacterTurretBase.cpp"));
 	return GetAttackPower();
+}
+
+float ASOWCharacterTurretBase::BP_GetAdditionalDamageRatio() const
+{
+	checkf(AttributeSet, TEXT("AttributeSet not Found / Check point : SOWCharacterTurretBase.cpp"));
+	return GetAdditionalDamageRatio();
 }
 
 USOWTurretCombatComponent* ASOWCharacterTurretBase::GetTurretCombatComponent() const

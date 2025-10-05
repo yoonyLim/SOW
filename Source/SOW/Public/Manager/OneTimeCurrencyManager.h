@@ -5,8 +5,9 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "SOWEnumTypes.h"
+#include "SOWLogFunctionLibrary.h"
 
-class UCurrencyGainLogger;
+class UWaveLoggingManager;
 
 #include "OneTimeCurrencyManager.generated.h"
 
@@ -46,5 +47,5 @@ protected:
 	
 private:
 	UPROPERTY()
-	UCurrencyGainLogger* GainLogger = nullptr;
+	USOWLogFunctionLibrary* GainLogger = nullptr;
 };

@@ -71,6 +71,16 @@ void USOWTurretCombatComponent::ClearTargetDetectionAsDead()
 	GetWorld()->GetTimerManager().ClearTimer(AttackTimerHandle);
 }
 
+bool USOWTurretCombatComponent::GetStealthCheck(AActor* Target) const
+{
+	bool HasStealth = USOWBlueprintFunctionLibrary::DoesActorHasTag(Target, SOWGameplayTags::Enemy_Status_Buff_Stealth);
+	bool CanDetectStealth = USOWBlueprintFunctionLibrary::DoesActorHasTag(CachedOwnerCharacter, SOWGameplayTags::Turret_Status_Buff_Detector);
+	bool HasDetected = USOWBlueprintFunctionLibrary::DoesActorHasTag(Target, SOWGameplayTags::Enemy_Status_Debuff_Detected);
+
+	return HasStealth && !(CanDetectStealth || HasDetected);
+}
+
+
 void USOWTurretCombatComponent::InitTurretProperties(const FTurretPropertyData& Data)
 {
 	// Need To Data Table
@@ -108,10 +118,13 @@ void USOWTurretCombatComponent::AddNewTargetPriority(ETurretTargetSelectionPrior
 	PriorityChange();
 }
 
-void USOWTurretCombatComponent::VisualizeTurretDetectionRange(bool bOn)
+void USOWTurretCombatComponent::VisualizeTurretDetectionRange(bool bOn, TArray<ATileBase*>& OutTiles)
 {
 
-	if (DetectorTiles.Num() <= 0) return;
+	if (DetectorTiles.Num() <= 0) {
+		OutTiles = TArray<ATileBase*>();
+		return;
+	} 
 
 	if (bOn) {
 		for (ATileBase* Tile : DetectorTiles) {
@@ -125,11 +138,16 @@ void USOWTurretCombatComponent::VisualizeTurretDetectionRange(bool bOn)
 			Tile->HideRange();
 		}
 	}
+
+	OutTiles = DetectorTiles;
 }
 
 void USOWTurretCombatComponent::MakeDetectableTileArea()
 {
 	APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
+
+	if (!PC || !CachedOwnerCharacter) return;
+
 	float Radius = 2 * CachedOwnerCharacter->GetDetectionRangeRadius() + 1;
 	float TileSize = 116.f;
 
@@ -210,13 +228,13 @@ bool USOWTurretCombatComponent::SetFixedTarget(AActor* InActor)
 			PreviousTarget->OnTargetDead.RemoveAll(CachedOwnerCharacter);
 		}
 
-		if (FixedTarget) {
+		/*if (FixedTarget) {
 			UE_LOG(LogTemp, Warning, TEXT("Cur : %s, Target : %s"), *FixedTarget->GetActorNameOrLabel(), *InActor->GetActorNameOrLabel());
-		}
+		}*/
 		
 		FixedTarget = InActor;
 		AttackTarget = FixedTarget;
-		UE_LOG(LogTemp, Warning, TEXT("Target : %s"), *FixedTarget->GetActorNameOrLabel());
+		//UE_LOG(LogTemp, Warning, TEXT("Target : %s"), *FixedTarget->GetActorNameOrLabel());
 		CachedOwnerCharacter->BP_BindOnTargetDead(FixedTarget);
 	}
 	else {
@@ -243,7 +261,7 @@ void USOWTurretCombatComponent::SetNewTargetSelectCount(int32 NewCount)
 void USOWTurretCombatComponent::ActivateTurretFunction()
 {
 	MakeDetectableTileArea();
-	UE_LOG(LogTemp, Warning, TEXT("Tile Count : %s"), *FString::FromInt(DetectorTiles.Num()));
+	//UE_LOG(LogTemp, Warning, TEXT("Tile Count : %s"), *FString::FromInt(DetectorTiles.Num()));
 	CachedOwnerCharacter->SwitchCollision(true);
 	RefreshTurretFunction();
 }
@@ -314,7 +332,8 @@ bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 
 		if (!IsActorValidTarget(CurrentTarget) || 
 			!CurrentTarget->Implements<USOWCharacterTypeInterface>() || 
-			CurrentTarget == CachedOwnerCharacter) 
+			CurrentTarget == CachedOwnerCharacter ||
+			GetStealthCheck(CurrentTarget))
 			continue;
 		
 		ISOWCharacterTypeInterface* SOWCharacter = Cast<ISOWCharacterTypeInterface>(CurrentTarget);
@@ -432,9 +451,9 @@ TArray<AActor*> USOWTurretCombatComponent::GetAllAttackTarget()
 		BaseActorList += DetectedTargetActors;
 	}
 
-	for (AActor* Actor : BaseActorList) {
-		UE_LOG(LogTemp, Warning, TEXT("Base Actor : %s"), *Actor->GetActorNameOrLabel());
-	}
+	//for (AActor* Actor : BaseActorList) {
+	//	//UE_LOG(LogTemp, Warning, TEXT("Base Actor : %s"), *Actor->GetActorNameOrLabel());
+	//}
 
 	for (int i = 0; i < TargetSelectCount; i++) {
 		if (BaseActorList.Num() <= 0) break;
@@ -442,14 +461,16 @@ TArray<AActor*> USOWTurretCombatComponent::GetAllAttackTarget()
 		AActor* CurrentTarget = GetSingleAttackTargetOnList(BaseActorList);
 		if (!CurrentTarget) break;
 
-		FinalTargetList.AddUnique(CurrentTarget);
-		
+		if (!GetStealthCheck(CurrentTarget)) {
+			FinalTargetList.AddUnique(CurrentTarget);
+		}
+
 		BaseActorList.Remove(CurrentTarget); // 더 효율적인 제거 방식
 	}
 
-	for (AActor* Actor : FinalTargetList) {
+	/*for (AActor* Actor : FinalTargetList) {
 		UE_LOG(LogTemp, Warning, TEXT("Final Actor : %s"), *Actor->GetActorNameOrLabel());
-	}
+	}*/
 
 	return FinalTargetList;
 }

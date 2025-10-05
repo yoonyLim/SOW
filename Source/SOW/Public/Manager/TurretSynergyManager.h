@@ -1,0 +1,76 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "UObject/NoExportTypes.h"
+#include "SOWEnumTypes.h"
+#include "SOWStructTypes.h"
+#include "SOWGameplayTags.h"
+#include "TurretSynergyManager.generated.h"
+
+class ASOWCharacterTurretBase;
+class USpecialTurretManager;
+class ASOWCharacterTurretSpecialBase;
+
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParam(FOnNewTurretSummonedDelegate, ASOWCharacterTurretBase*, SummonedTurret, EElementalType, ElementType);
+/**
+ * 
+ */
+UCLASS()
+class SOW_API UTurretSynergyManager : public UObject
+{
+	GENERATED_BODY()
+protected:
+	UPROPERTY(BlueprintReadOnly)
+	USpecialTurretManager* GlacioTurretManager;
+
+	TMap<EGlacioStatType, float> AffectStatBuffer;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Turret|Synergy")
+	UDataTable* SynergyTagData;
+
+private:
+
+	TMap<EElementalType, TArray<ASOWCharacterTurretBase*>> SynergyMonitor;
+	TMap <EElementalType, TMap<ETurretRarity, int>> SynergyRarityMonitor;
+
+	TMap<EElementalType, FGameplayTagContainer> SynergyTagContainer;
+
+	
+	// 얼음 시너지 2개 이상 추가 시, 여기로 터렛 생성 델리게이트를 전송합니다.
+	
+	// etc...
+
+	bool CheckRarityCondition(const TMap<ETurretRarity, int> Monitor, const FSynergyCondition& SynergyContidion);
+
+	void UpdateSynergyTagContainer(ETurretRarity TurretRarity, EElementalType ElementType, bool bAdd);
+
+	void GrantSynergyTagToMonitoringTurrets(ASOWCharacterTurretBase* Turret, int SynergyTurretCount, const TArray<FTurretSynergyTagItem> SynergyTagItems, EElementalType ElementType);
+
+	void RemoveSynergyTagFromMonitoringTurrets(ASOWCharacterTurretBase* Turret, int SynergyTurretCount, const TArray<FTurretSynergyTagItem> SynergyTagItems, EElementalType ElementType);
+
+	
+public :
+	//FOnNewTurretSummonedDelegate OnNewTurretSummmoned;
+	UFUNCTION(BlueprintCallable, category = "Turret|Synergy")
+	void AddNewTurretDataForSynergy(ASOWCharacterTurretBase* SummonedTurret, EElementalType ElementType);
+
+	UFUNCTION(BlueprintCallable, category = "Turret|Synergy")
+	void RemoveTurratDataFromSynergy(ASOWCharacterTurretBase* SummonedTurret, EElementalType ElementType);
+
+	UFUNCTION(BlueprintCallable, category = "Turret|Synergy")
+	int GetActiveSynergyCount(EElementalType ElementType);
+	// Get Active Synergy Tag Count. If you want to know how many synergy are active, use this function in bp or cpp.
+
+	void Initialize(UDataTable* InSynergyDataTable, TSubclassOf<ASOWCharacterTurretSpecialBase> GlacioTurret);
+
+
+	UFUNCTION(BlueprintCallable, category = "Turret|Glacio")
+	void InsertAffectStatInBuffer(EGlacioStatType statType, float value);
+
+	UFUNCTION(BlueprintCallable, category = "Turret|Glacio")
+	void RetreiveAttectStat();
+
+	ASOWCharacterTurretBase* GetGlacioInstance();
+};

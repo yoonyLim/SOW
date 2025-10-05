@@ -51,6 +51,10 @@ void ASOWCharacter::PossessedBy(AController* NewController)
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
 			AttributeSet->GetWalkSpeedAttribute())
 			.AddUObject(this, &ASOWCharacter::OnWalkSpeedChanged);
+
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
+			AttributeSet->GetExtraWalkSpeedAttribute())
+			.AddUObject(this, &ASOWCharacter::OnWalkSpeedChanged);
 	}
 }
 
@@ -84,8 +88,10 @@ void ASOWCharacter::Tick(float DeltaTime) {
 
 void ASOWCharacter::OnWalkSpeedChanged(const FOnAttributeChangeData& Data)
 {
-	float NewSpeed = Data.NewValue;
-	UE_LOG(LogTemp, Warning, TEXT("Move Speed Must be Changed"));
+	
+
+	float NewSpeed = AttributeSet->GetWalkSpeed() * (1.0f + AttributeSet->GetExtraWalkSpeed());
+	//UE_LOG(LogTemp, Warning, TEXT("Move Speed Must be Changed"));
 	if (GetCharacterMovement()) {
 		UCharacterMovementComponent* MoveComp = Cast<UCharacterMovementComponent>(GetCharacterMovement());
 		UE_LOG(LogTemp, Warning, TEXT("Move Speed Must be Changed Before : %s" ), *FString::SanitizeFloat(MoveComp->MaxWalkSpeed));

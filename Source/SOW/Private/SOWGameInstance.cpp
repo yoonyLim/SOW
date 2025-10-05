@@ -19,6 +19,8 @@
 
 #include "SOWBlueprintFunctionLibrary.h"
 
+#include "Manager/TurretSynergyManager.h"
+
 
 void USOWGameInstance::Init()
 {
@@ -50,6 +52,13 @@ void USOWGameInstance::Init()
     if (SummonManager)
     {
         SummonManager->Initialize();
+    }
+
+    TurretSynergyManager = NewObject<UTurretSynergyManager>(this);
+
+    if (TurretSynergyManager)
+    {
+        TurretSynergyManager->Initialize(SynergyDataTable, GlacioInstance);
     }
 }
 
