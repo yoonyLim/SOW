@@ -184,7 +184,7 @@ void USOWTurretEvolutionComponent::TryEvolution(EEvolutionType Type)
 		UE_LOG(LogTemp, Error, TEXT("Invalid Evolution Type"));
 		break;
 	}
-	UE_LOG(LogTemp, Error, TEXT("Evolution Successed"));
+	//UE_LOG(LogTemp, Wa, TEXT("Evolution Successed"));
 }
 
 bool USOWTurretEvolutionComponent::CheckResourceAndProb(EEvolutionType Type)
@@ -223,13 +223,13 @@ bool USOWTurretEvolutionComponent::CheckResourceAndProb(EEvolutionType Type)
 		float PercentValue = FoundCurve_Percent->Eval(EvolutionStatusLevel + 1);
 
 		if (!USOWBlueprintFunctionLibrary::QueryForCurrencyCountSufficient(this, FGameplayTag::RequestGameplayTag("Shared.Element.Nature"), PriceValue)) {
-			UE_LOG(LogTemp, Error, TEXT("PriceValue Condition Failed"));
+			UE_LOG(LogTemp, Warning, TEXT("PriceValue Condition Failed"));
 			return false;
 		}
 
 		int32 value = FMath::RandRange(1, 100);
 		if (value > PercentValue) {
-			UE_LOG(LogTemp, Error, TEXT("PercentValue Condition Failed : %s"), *FString::FromInt(value));
+			UE_LOG(LogTemp, Warning, TEXT("PercentValue Condition Failed : %s"), *FString::FromInt(value));
 			CurrencySpentForStat += PriceValue;
 			return false; 
 		}

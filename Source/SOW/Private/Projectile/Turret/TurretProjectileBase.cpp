@@ -135,10 +135,13 @@ void ATurretProjectileBase::BP_DestroyProjectile()
 {
 	//checkf(CachedInstigator.Get()->GetProjectilePoolingComponent(), TEXT("No Pool Found For %s"), *CachedInstigator.Get()->GetActorNameOrLabel());
 
-	if (!CachedInstigator.Get() || !CachedInstigator.Get()->GetProjectilePoolingComponent()) Destroy();
+	if (!CachedInstigator.Get() || !CachedInstigator.Get()->GetProjectilePoolingComponent()) {
+		Destroy();
+		return;
+	} 
 
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(CachedInstigator.Get(), SOWGameplayTags::Turret_Event_Attack_Done, FGameplayEventData());
 
 	CachedInstigator.Get()->GetProjectilePoolingComponent()->ReturnProjectile(this);
-	UE_LOG(LogTemp, Warning, TEXT("Return to Pool : %s"), *this->GetActorNameOrLabel());
+	//UE_LOG(LogTemp, Warning, TEXT("Return to Pool : %s"), *this->GetActorNameOrLabel());
 }

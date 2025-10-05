@@ -12,8 +12,9 @@
 class ASOWCharacterTurretBase;
 class USpecialTurretManager;
 class ASOWCharacterTurretSpecialBase;
+class ASynergyUpdateAnnouncer;
 
-//DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParam(FOnNewTurretSummonedDelegate, ASOWCharacterTurretBase*, SummonedTurret, EElementalType, ElementType);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSynergyUpdatedDelegate, int, SynergyCount, TArray<FName>, SynergyComposer);
 /**
  * 
  */
@@ -23,19 +24,22 @@ class SOW_API UTurretSynergyManager : public UObject
 	GENERATED_BODY()
 protected:
 	UPROPERTY(BlueprintReadOnly)
-	USpecialTurretManager* GlacioTurretManager;
+	TObjectPtr<USpecialTurretManager> GlacioTurretManager;
 
 	TMap<EGlacioStatType, float> AffectStatBuffer;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Turret|Synergy")
 	UDataTable* SynergyTagData;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Turret|Synergy")
+	ASynergyUpdateAnnouncer* SynergyUpdateAnnouncer;
 private:
 
 	TMap<EElementalType, TArray<ASOWCharacterTurretBase*>> SynergyMonitor;
 	TMap <EElementalType, TMap<ETurretRarity, int>> SynergyRarityMonitor;
 
 	TMap<EElementalType, FGameplayTagContainer> SynergyTagContainer;
+	TMap<EElementalType, TMap<FName, int>> SynergyTypeMonitor;
 
 	
 	// 얼음 시너지 2개 이상 추가 시, 여기로 터렛 생성 델리게이트를 전송합니다.
@@ -44,15 +48,21 @@ private:
 
 	bool CheckRarityCondition(const TMap<ETurretRarity, int> Monitor, const FSynergyCondition& SynergyContidion);
 
-	void UpdateSynergyTagContainer(ETurretRarity TurretRarity, EElementalType ElementType, bool bAdd);
+	void UpdateSynergyTagContainer(ASOWCharacterTurretBase* InTurret, EElementalType ElementType, bool bAdd);
+
+	void UpdateTurretTypeContainer(ASOWCharacterTurretBase* InTurret, EElementalType ElementType, bool bAdd);
+
 
 	void GrantSynergyTagToMonitoringTurrets(ASOWCharacterTurretBase* Turret, int SynergyTurretCount, const TArray<FTurretSynergyTagItem> SynergyTagItems, EElementalType ElementType);
 
 	void RemoveSynergyTagFromMonitoringTurrets(ASOWCharacterTurretBase* Turret, int SynergyTurretCount, const TArray<FTurretSynergyTagItem> SynergyTagItems, EElementalType ElementType);
 
-	
+	void AnnounceSynergyUpdate(EElementalType ElementType);
 public :
-	//FOnNewTurretSummonedDelegate OnNewTurretSummmoned;
+	/*UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnSynergyUpdatedDelegate OnSynergyUpdated;*/
+
+
 	UFUNCTION(BlueprintCallable, category = "Turret|Synergy")
 	void AddNewTurretDataForSynergy(ASOWCharacterTurretBase* SummonedTurret, EElementalType ElementType);
 
@@ -65,6 +75,8 @@ public :
 
 	void Initialize(UDataTable* InSynergyDataTable, TSubclassOf<ASOWCharacterTurretSpecialBase> GlacioTurret);
 
+	UFUNCTION(BlueprintCallable, category = "Turret|Synergy")
+	ASynergyUpdateAnnouncer* GenerateSynergyUpdateAnnouncer();
 
 	UFUNCTION(BlueprintCallable, category = "Turret|Glacio")
 	void InsertAffectStatInBuffer(EGlacioStatType statType, float value);
@@ -72,5 +84,10 @@ public :
 	UFUNCTION(BlueprintCallable, category = "Turret|Glacio")
 	void RetreiveAttectStat();
 
+	UFUNCTION(BlueprintCallable, category = "Turret|Synergy")
+	TArray<FName> GetSynergyConfigurationTurrets(EElementalType ElementType);
+
 	ASOWCharacterTurretBase* GetGlacioInstance();
+
+	
 };
