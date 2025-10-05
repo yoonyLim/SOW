@@ -133,9 +133,9 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 
 
 	// Additinal Damage By Sine Debuff
-	float AdditinalDamageRatio = 0.f;
-	AdditinalDamageRatio += Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_AdditinalDamageRatio_Pulse, false, 0.f); 
-	AdditinalDamageRatio += Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_AdditiveDamage, false, 0.f);
+	float AdditionalDamageRatio = 0.f;
+	AdditionalDamageRatio += Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_AdditinalDamageRatio_Pulse, false, 0.f); 
+	AdditionalDamageRatio += Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_AdditionalDamageRatio, false, 0.f);
 	//UE_LOG(LogTemp, Warning, TEXT("Additional Damage Ratio : %s"), *FString::SanitizeFloat(AdditinalDamageRatio, 2));
 	//UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] AdditionalDamageRatio: %f"), AdditinalDamageRatio); //�α��߰�
 
@@ -150,7 +150,7 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 
 	float BasicDamageFormal = (L_AttackPower - FMath::Log2(2 + L_DefensePower));
 	float ElementalExtraDamage = ElementalResistance;
-	float FinalExtraDamage = (1.0f + L_ExtraRatio + AdditinalDamageRatio + L_AddtionalRatio);
+	float FinalExtraDamage = (1.0f + L_ExtraRatio + AdditionalDamageRatio + L_AddtionalRatio);
 
 	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] FinalExtraDamage : Value: %f"), FinalExtraDamage); // �α��߰�
 	// Calculate Final Damage

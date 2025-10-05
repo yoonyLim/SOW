@@ -47,16 +47,23 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+	UPROPERTY(VisibleAnywhere)
 	UCurveTable* PropertyResourceData;
+
+	UPROPERTY(VisibleAnywhere)
 	UCurveTable* StatusResourceData;
 
 private:
+	UPROPERTY()
 	ASOWCharacterTurretBase* CachedOwnerCharacter;
 
+	UPROPERTY()
 	TSubclassOf<UGameplayEffect> AlphaData;
 
+	UPROPERTY()
 	TSubclassOf<UGameplayEffect> BetaData;
 
+	UPROPERTY()
 	TArray<FTurretEvolutionItem> PropertyData;
 
 	int32 EvolutionPropertyLevel = 0;

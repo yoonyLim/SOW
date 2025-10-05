@@ -127,6 +127,7 @@ namespace SOWGameplayTags {
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_TargetDead);			// ������ Ÿ���� ������� ��� �����ڿ��� ���޵Ǵ� �̺�Ʈ �±�
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_TauntToTarget);			// ���� ���� �� Ÿ�ٿ��� ���޵Ǵ� �̺�Ʈ �±�
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_MeleeHitDone);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_HitReact_PercentDamage);
 
 
 	/* Element Tags */
@@ -173,6 +174,7 @@ namespace SOWGameplayTags {
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_SetByCaller_AdditiveDamage);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_SetByCaller_MultipleDamage);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_SetByCaller_AdditinalDamageRatio_Pulse);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_SetByCaller_AdditionalDamageRatio);
 
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_SetByCaller_PercentageDamage);
 
