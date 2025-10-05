@@ -111,6 +111,10 @@ void ASOWCharacter::BP_DeactivateCharacterAllFunctionAsync()
 {
 	if (!AbilitySystemComponent) return;
 
+	GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this, &AActor::K2_DestroyActor, 3.f, false, 0.5f);
+
+	AbilitySystemComponent->CancelAllAbilities();
+
 	// 어빌리티 제거 (비동기 아님, 즉시 제거)
 	AbilitySystemComponent->ClearAllAbilities();
 
@@ -122,5 +126,5 @@ void ASOWCharacter::BP_DeactivateCharacterAllFunctionAsync()
 	//PlayDeathEffectAsync();
 
 	// 일정 시간 후 제거 (타이머 기반 비동기 처리)
-	GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this, &AActor::K2_DestroyActor, 3.0f, false, 0.1f);
+	
 }

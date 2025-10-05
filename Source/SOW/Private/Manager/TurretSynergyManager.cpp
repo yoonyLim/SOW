@@ -148,12 +148,12 @@ void UTurretSynergyManager::RemoveSynergyTagFromMonitoringTurrets(ASOWCharacterT
 
 void UTurretSynergyManager::AnnounceSynergyUpdate(EElementalType ElementType)
 {
-	if (SynergyUpdateObserver->OnSynergyUpdated.IsBound()) {
+	if (SynergyUpdateAnnouncer && SynergyUpdateAnnouncer->OnSynergyUpdated.IsBound() && SynergyTypeMonitor.Contains(ElementType)) {
 		int SynergyCount = GetActiveSynergyCount(ElementType);
 		TArray<FName> TurretNames;
 		SynergyTypeMonitor[ElementType].GetKeys(TurretNames);
 
-		SynergyUpdateObserver->OnSynergyUpdated.Broadcast(ElementType, SynergyCount, TurretNames);
+		SynergyUpdateAnnouncer->OnSynergyUpdated.Broadcast(ElementType, SynergyCount, TurretNames);
 	}
 }
 
@@ -326,7 +326,7 @@ void UTurretSynergyManager::Initialize(UDataTable* InSynergyDataTable, TSubclass
 	SynergyTypeMonitor.Add(EElementalType::Electro);
 	SynergyTypeMonitor.Add(EElementalType::Ice);
 	
-	SynergyUpdateObserver = GetWorld()->SpawnActor<ASynergyUpdateAnnouncer>();
+	GenerateSynergyUpdateAnnouncer();
 	SynergyTagData = InSynergyDataTable;
 
 	GlacioTurretManager = NewObject<USpecialTurretManager>(this);
@@ -334,6 +334,13 @@ void UTurretSynergyManager::Initialize(UDataTable* InSynergyDataTable, TSubclass
 	{
 		GlacioTurretManager->Initialize(GlacioTurret);
 	}
+}
+
+ASynergyUpdateAnnouncer* UTurretSynergyManager::GenerateSynergyUpdateAnnouncer()
+{
+	if (SynergyUpdateAnnouncer) return SynergyUpdateAnnouncer;
+
+	return SynergyUpdateAnnouncer = GetWorld()->SpawnActor<ASynergyUpdateAnnouncer>();
 }
 
 

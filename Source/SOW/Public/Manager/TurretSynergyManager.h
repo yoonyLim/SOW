@@ -32,7 +32,7 @@ protected:
 	UDataTable* SynergyTagData;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Turret|Synergy")
-	ASynergyUpdateAnnouncer* SynergyUpdateObserver;
+	ASynergyUpdateAnnouncer* SynergyUpdateAnnouncer;
 private:
 
 	TMap<EElementalType, TArray<ASOWCharacterTurretBase*>> SynergyMonitor;
@@ -75,6 +75,8 @@ public :
 
 	void Initialize(UDataTable* InSynergyDataTable, TSubclassOf<ASOWCharacterTurretSpecialBase> GlacioTurret);
 
+	UFUNCTION(BlueprintCallable, category = "Turret|Synergy")
+	ASynergyUpdateAnnouncer* GenerateSynergyUpdateAnnouncer();
 
 	UFUNCTION(BlueprintCallable, category = "Turret|Glacio")
 	void InsertAffectStatInBuffer(EGlacioStatType statType, float value);
