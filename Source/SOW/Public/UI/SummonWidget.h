@@ -13,6 +13,7 @@
  */
 
 class UButton;
+class UTextBlock;
 class UDataTable;
 class UToastStackWidget;
 
@@ -31,8 +32,20 @@ public:
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
 	UToastStackWidget* W_SummonNotiBox;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
+	UTextBlock* NatureSynergyCounts;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
+	UTextBlock* IceSynergyCounts;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
+	UTextBlock* ElectroSynergyCounts;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float ToastDuration = 2.0f;
+
+private:
+	TArray<EElementalType> Elementals = {EElementalType::Nature, EElementalType::Ice, EElementalType::Electro, EElementalType::Divinity, EElementalType::Death, EElementalType::Flame };
 
 public:
 	UFUNCTION()
