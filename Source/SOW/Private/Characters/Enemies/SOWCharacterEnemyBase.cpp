@@ -375,7 +375,10 @@ void ASOWCharacterEnemyBase::OnBeginOverlap(UPrimitiveComponent* OverlappedComp,
 			);
 		}
 		
-		Destroy();
+		// Destroy();
+		SetActorHiddenInGame(true);
+		SetActorEnableCollision(false);
+		SetActorTickEnabled(false);
 	}
 }
 
