@@ -38,6 +38,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Rune")
 	void RuneUpdateHUD(float Health, float MaxHealth);
 
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Rune")
+	void RuneDestroyed();
+
 	UFUNCTION(BlueprintCallable, Category = "Currency")
 	void AddCurrency(int32 AddedCurrency);
 
