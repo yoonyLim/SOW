@@ -45,7 +45,7 @@ public:
 	void BP_DeactivateCharacterAllFunctionAsync();
 
 	virtual void Tick(float DeltaTime) override;
-
+	
 	USOWAbilitySystemComponent* GetSOWAbilitySystemComponent() const { return AbilitySystemComponent; }
 
 	USOWAttributeSet* GetSOWAttibuteSet() const { return AttributeSet;  }

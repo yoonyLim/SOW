@@ -145,6 +145,11 @@ void ASOWCharacterCoreRune::HandleCoreDestroyed()
 	// 외부(GameMode/Subsystem/UI)로 신호 전파
 	OnCoreDestroyed.Broadcast();
 
+	if (AWaveGameMode* WaveGM = Cast<AWaveGameMode>(UGameplayStatics::GetGameMode(GetWorld())))
+	{
+		WaveGM->RuneDestroyed();
+	}
+
 	// 여기서 게임 오버 처리/이펙트/사운드 등을 호출하거나,
 	// 코어를 파괴하지 않고 남겨둘 수도 있음. 필요하다면 Destroy() 호출:
 	// K2_DestroyActor();
