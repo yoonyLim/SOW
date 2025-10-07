@@ -107,6 +107,10 @@ namespace SOWGameplayTags
 
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_AffectStatUp, "Turret.Event.AffectStatUp");
 
+
+	UE_DEFINE_GAMEPLAY_TAG(Rune_SetByCaller_HealBySynergy, "Rune.SetByCaller.HealBySynergy");
+
+
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Ability_Death, "Shared.Ability.Death");
 
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Status_Dead, "Shared.Status.Dead"); 

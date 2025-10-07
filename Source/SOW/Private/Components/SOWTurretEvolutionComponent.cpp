@@ -96,6 +96,17 @@ void USOWTurretEvolutionComponent::GetStatusNextValueString(FString& OutAtk, FSt
 
 }
 
+TArray<FString> USOWTurretEvolutionComponent::GetAllPropertyDescriptString()
+{
+	if (PropertyData.Num() == 0) return TArray<FString>();
+
+	TArray<FString> StringCont;
+	for (int i = 0; i < PropertyMaxLevel; i++) {
+		StringCont.Add(PropertyData[i].EvolutionDescription);
+	}
+	return StringCont;
+}
+
 // Called when the game starts
 void USOWTurretEvolutionComponent::BeginPlay()
 {
