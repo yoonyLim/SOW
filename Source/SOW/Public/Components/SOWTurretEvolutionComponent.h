@@ -43,6 +43,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Turret|Evolution")
 	void GetStatusNextValueString(FString& OutAtk, FString& OutSpd);
 
+	UFUNCTION(BlueprintCallable, Category = "Turret|Evolution")
+	TArray<FString> GetAllPropertyDescriptString();
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;

@@ -10,6 +10,9 @@
 #include "Components/SOWTurretCombatComponent.h"
 #include "Characters/Turrets/SpecialTurretManager.h"
 #include "Manager/Actor/SynergyUpdateAnnouncer.h"
+#include "Characters/CoreRune/SOWCharacterCoreRune.h"
+#include "Characters/CoreRune/CoreRuneManager.h"
+
 
 
 bool UTurretSynergyManager::CheckRarityCondition(const TMap<ETurretRarity, int> Monitor, const FSynergyCondition& SynergyContidion)
@@ -73,7 +76,7 @@ void UTurretSynergyManager::UpdateTurretTypeContainer(ASOWCharacterTurretBase* I
 	}
 
 	TMap<FName, int>& CurrentMonitor = SynergyTypeMonitor[ElementType];
-	if (!InTurret) return;
+	if (!IsValid(InTurret)) return;
 
 	FName TurretName = InTurret->GetTurretName();
 	if (bAdd) {
@@ -99,9 +102,9 @@ void UTurretSynergyManager::UpdateTurretTypeContainer(ASOWCharacterTurretBase* I
 	}
 }
 
-void UTurretSynergyManager::GrantSynergyTagToMonitoringTurrets(ASOWCharacterTurretBase* Turret, int SynergyTurretCount, const TArray<FTurretSynergyTagItem> SynergyTagItems, EElementalType ElementType)
+void UTurretSynergyManager::GrantSynergyTagToMonitoringTurrets(ASOWCharacter* Turret, int SynergyTurretCount, const TArray<FTurretSynergyTagItem> SynergyTagItems, EElementalType ElementType)
 {
-	if (!Turret) return;
+	if (!IsValid(Turret)) return;
 
 	// 현재 활성화된 터렛 개수를 바탕으로 활성화 가능한 모든 시너지 검사
 	for (int i = 1; i <= SynergyTurretCount && i < SynergyTagItems.Num(); i++) {
@@ -119,9 +122,9 @@ void UTurretSynergyManager::GrantSynergyTagToMonitoringTurrets(ASOWCharacterTurr
 	}
 }
 
-void UTurretSynergyManager::RemoveSynergyTagFromMonitoringTurrets(ASOWCharacterTurretBase* Turret, int SynergyTurretCount, const TArray<FTurretSynergyTagItem> SynergyTagItems, EElementalType ElementType)
+void UTurretSynergyManager::RemoveSynergyTagFromMonitoringTurrets(ASOWCharacter* Turret, int SynergyTurretCount, const TArray<FTurretSynergyTagItem> SynergyTagItems, EElementalType ElementType)
 {
-	if (!Turret) return;
+	if (!IsValid(Turret)) return;
 
 	int i = 1;
 
@@ -161,7 +164,7 @@ void UTurretSynergyManager::AddNewTurretDataForSynergy(ASOWCharacterTurretBase* 
 {
 	// 특정 속성의 시너지 효과를 추가합니다.
 
-	if (!SummonedTurret || !SummonedTurret->GetTurretCombatComponent()) return;
+	if (!IsValid(SummonedTurret) || !SummonedTurret->GetTurretCombatComponent()) return;
 	if (!SynergyMonitor.Contains(ElementType)) {
 		UE_LOG(LogTemp, Error, TEXT("%s is not implemented synergy element."), *USOWBlueprintFunctionLibrary::EnumToFName<EElementalType>(ElementType).ToString());
 		return;
@@ -210,6 +213,11 @@ void UTurretSynergyManager::AddNewTurretDataForSynergy(ASOWCharacterTurretBase* 
 		}
 	}
 	
+	else if (ElementType == EElementalType::Nature) {
+		if (ASOWCharacterCoreRune* Rune = GetCoreRuneInstance()) {
+			GrantSynergyTagToMonitoringTurrets(Rune, SynergyTurretCount, SynergyTagItems, ElementType);
+		}
+	}
 	AnnounceSynergyUpdate(ElementType);
 	
 }
@@ -218,7 +226,7 @@ void UTurretSynergyManager::RemoveTurratDataFromSynergy(ASOWCharacterTurretBase*
 {
 	// 특정 속성의 시너지 효과를 제거합니다.
 
-	if (!SummonedTurret || !SummonedTurret->GetTurretCombatComponent()) return;
+	if (!IsValid(SummonedTurret) || !SummonedTurret->GetTurretCombatComponent()) return;
 	if (!SynergyMonitor.Contains(ElementType)) {
 		UE_LOG(LogTemp, Error, TEXT("%s is not implemented synergy element."), *USOWBlueprintFunctionLibrary::EnumToFName<EElementalType>(ElementType).ToString());
 		return;
@@ -255,7 +263,11 @@ void UTurretSynergyManager::RemoveTurratDataFromSynergy(ASOWCharacterTurretBase*
 			RemoveSynergyTagFromMonitoringTurrets(Glacio, SynergyTurretCount, SynergyTagItems, ElementType);
 		}
 	}
-
+	else if (ElementType == EElementalType::Nature) {
+		if (ASOWCharacterCoreRune* Rune = GetCoreRuneInstance()) {
+			RemoveSynergyTagFromMonitoringTurrets(Rune, SynergyTurretCount, SynergyTagItems, ElementType);
+		}
+	}
 	AnnounceSynergyUpdate(ElementType);
 	
 }
@@ -309,6 +321,18 @@ TArray<FName> UTurretSynergyManager::GetSynergyConfigurationTurrets(EElementalTy
 	return OutKeys;
 }
 
+int UTurretSynergyManager::GetMonitoringTurretsCount(EElementalType ElementType)
+{
+	if (!SynergyMonitor.Contains(ElementType)) return -1;
+
+	return SynergyMonitor[ElementType].Num();
+}
+
+void UTurretSynergyManager::SendRuneReference(ASOWCharacterCoreRune* InRune)
+{
+	CoreRuneManager->MakeCoreRuneReference(InRune);
+}
+
 
 void UTurretSynergyManager::Initialize(UDataTable* InSynergyDataTable, TSubclassOf<ASOWCharacterTurretSpecialBase> GlacioTurret) {
 	// 시너지를 부여받는 터렛을 속성에 맞게 모니터링하는 컨테이너
@@ -334,11 +358,17 @@ void UTurretSynergyManager::Initialize(UDataTable* InSynergyDataTable, TSubclass
 	{
 		GlacioTurretManager->Initialize(GlacioTurret);
 	}
+
+	
+	CoreRuneManager = NewObject<UCoreRuneManager>(this);
+	if (CoreRuneManager) {
+		CoreRuneManager->Initialize();
+	}
 }
 
 ASynergyUpdateAnnouncer* UTurretSynergyManager::GenerateSynergyUpdateAnnouncer()
 {
-	if (SynergyUpdateAnnouncer) return SynergyUpdateAnnouncer;
+	if (IsValid(SynergyUpdateAnnouncer)) return SynergyUpdateAnnouncer;
 
 	return SynergyUpdateAnnouncer = GetWorld()->SpawnActor<ASynergyUpdateAnnouncer>();
 }
@@ -370,8 +400,14 @@ void UTurretSynergyManager::RetreiveAttectStat()
 
 
 
-ASOWCharacterTurretBase* UTurretSynergyManager::GetGlacioInstance()
+ASOWCharacterTurretBase* UTurretSynergyManager::GetGlacioInstance() const
 {// Glacio 전용 코드
 	check(GlacioTurretManager);
 	return GlacioTurretManager->GetGlacio();
+}
+
+ASOWCharacterCoreRune* UTurretSynergyManager::GetCoreRuneInstance() const
+{
+	check(CoreRuneManager);
+	return CoreRuneManager->GetCoreRune();
 }
