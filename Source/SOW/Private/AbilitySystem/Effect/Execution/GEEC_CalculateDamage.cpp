@@ -262,9 +262,11 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 	);
 	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] DefensePower captured Value: %f"), L_DefensePower); //�α��߰�
 
+	float  L_FinalReduction = Spec.GetSetByCallerMagnitude(SOWGameplayTags::Shared_SetByCaller_ReductedDamage, false, 1.f);
+
 	float BasicDamageFormal = (L_AttackPower - FMath::Log2(2 + L_DefensePower));
 	//float ElementalExtraDamage = ElementalResistance;
-	float FinalExtraDamage = (1.0f + L_ExtraRatio + AdditionalDamageRatio + L_AddtionalRatio);
+	float FinalExtraDamage = (1.0f + L_ExtraRatio + AdditionalDamageRatio + L_AddtionalRatio) * (L_FinalReduction);
 
 	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] FinalExtraDamage : Value: %f"), FinalExtraDamage); // �α��߰�
 	// Calculate Final Damage

@@ -63,7 +63,7 @@ void AProjectileBase::ResetProjectile()
 		ProjectileHitCollisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 	ProjectileMoveComp->Deactivate();
-	ProjectileFxComp->Deactivate();
+	ProjectileFxComp->DeactivateImmediate();
 
 	SetProjectileInGame(false);
 	SetActorHiddenInGame(true);
@@ -143,6 +143,8 @@ void AProjectileBase::SendTargetDeadEventToInstigator(AActor* InCheckingTarget)
 	// 투사체의 Instigator에 충돌한 타겟이 사망했다는 정보를 전달합니다.
 	// 만약, 공격 대상이 사망한 이력을 확인하여 후속 조치가 필요한 경우 사용할 수 있습니다.
 	// 대상 사망 시, Shared.Event.TargetDead 이벤트를 전달하므로, Wait 또는 Triggered Ability를 활용할 수 있습니다.
+
+	if (!IsValid(InCheckingTarget)) return;
 
 	if (USOWBlueprintFunctionLibrary::DoesActorHasTag(InCheckingTarget, SOWGameplayTags::Shared_Status_Dead)) {
 		ASOWCharacter* SOWInstigator = Cast<ASOWCharacter>(GetInstigator());

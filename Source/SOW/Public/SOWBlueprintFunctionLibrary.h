@@ -12,6 +12,7 @@ class USOWAbilitySystemComponent;
 class ASOWCharacterTurretBase;
 class ATileBase;
 struct FGameplayTag;
+class USOWWidgetBase;
 
 
 /**
@@ -78,6 +79,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Tile")
 	static TArray<AActor*> GetTurretsOnTiles(TArray<ATileBase*> Tiles);
 
+	UFUNCTION(BlueprintCallable, Category = "Input")
+	static bool IsMouseOverUI(APlayerController* PC, const TSubclassOf<USOWWidgetBase>& TargetWidget);
 };
 
 template <typename T>
