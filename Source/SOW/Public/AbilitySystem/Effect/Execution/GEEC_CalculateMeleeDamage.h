@@ -15,6 +15,9 @@ class SOW_API UGEEC_CalculateMeleeDamage : public UGameplayEffectExecutionCalcul
 	GENERATED_BODY()
 	
 	float GetElementalResistanceCost(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FAggregatorEvaluateParameters EvalParams) const;
+	void ApplyRealDamage(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput, float BaseDamage, float FinalDamage) const;
+
+	void ApplyShieldDamage(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const;
 
 public:
 	UGEEC_CalculateMeleeDamage();
