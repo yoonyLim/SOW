@@ -75,6 +75,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Tile")
 	static TArray<AActor*> GetActorsOnTiles(TArray<ATileBase*> Tiles);
 
+	UFUNCTION(BlueprintCallable, Category = "Tile")
+	static TArray<AActor*> GetTurretsOnTiles(TArray<ATileBase*> Tiles);
+
 };
 
 template <typename T>

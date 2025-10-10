@@ -13,6 +13,12 @@
 #include "Kismet/GameplayStatics.h"
 #include "Widget/Enemy/EnemyHealthBarWidget.h" // 퍼센트 세터 재사용
 
+// 시너지
+#include "SOWGameInstance.h"
+#include "Manager/TurretSynergyManager.h"
+
+
+#include "AIController.h"
 // Sets default values
 ASOWCharacterCoreRune::ASOWCharacterCoreRune()
 {
@@ -69,6 +75,35 @@ void ASOWCharacterCoreRune::BeginPlay()
 		const float MaxHealth = ASCAttributes->GetMaxHealthBase();
 		UpdateHealthBarValue(MaxHealth, MaxHealth);
 	}
+
+	USOWGameInstance* GI = Cast<USOWGameInstance>(GetGameInstance());
+	if (GI) {
+		GI->GetTurretSynergyManager()->SendRuneReference(this);
+	}
+	
+
+
+		// AIController를 스폰하고 빙의
+	if (!GetController())
+	{
+		AAIController* AIController = GetWorld()->SpawnActor<AAIController>(
+			AAIController::StaticClass(),
+			FVector::ZeroVector,
+			FRotator::ZeroRotator
+		);
+
+		if (AIController)
+		{
+			AIController->Possess(this);
+		}
+	}
+	
+}
+
+void ASOWCharacterCoreRune::PossessedBy(AController* NewController) {
+	Super::PossessedBy(NewController);
+
+	UE_LOG(LogTemp, Warning, TEXT("Possessed"));
 }
 
 // 체력 변화 시 호출

@@ -46,6 +46,10 @@ public :
 	FGameplayAttributeData CurrentHealth;
 	ATTRIBUTE_ACCESSORS(USOWAttributeSet, CurrentHealth)
 
+	UPROPERTY(BlueprintReadOnly, Category = "Health")
+	FGameplayAttributeData DamageShield;
+	ATTRIBUTE_ACCESSORS(USOWAttributeSet, DamageShield)
+
 		/* Status Attack */
 	UPROPERTY(BlueprintReadOnly, Category = "Attack")
 	FGameplayAttributeData AttackPowerBase;

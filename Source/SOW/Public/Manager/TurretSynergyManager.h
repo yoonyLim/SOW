@@ -13,6 +13,8 @@ class ASOWCharacterTurretBase;
 class USpecialTurretManager;
 class ASOWCharacterTurretSpecialBase;
 class ASynergyUpdateAnnouncer;
+class UCoreRuneManager;
+class ASOWCharacterCoreRune;
 
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSynergyUpdatedDelegate, int, SynergyCount, TArray<FName>, SynergyComposer);
 /**
@@ -25,6 +27,9 @@ class SOW_API UTurretSynergyManager : public UObject
 protected:
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<USpecialTurretManager> GlacioTurretManager;
+
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<UCoreRuneManager> CoreRuneManager;
 
 	TMap<EGlacioStatType, float> AffectStatBuffer;
 	
@@ -53,9 +58,9 @@ private:
 	void UpdateTurretTypeContainer(ASOWCharacterTurretBase* InTurret, EElementalType ElementType, bool bAdd);
 
 
-	void GrantSynergyTagToMonitoringTurrets(ASOWCharacterTurretBase* Turret, int SynergyTurretCount, const TArray<FTurretSynergyTagItem> SynergyTagItems, EElementalType ElementType);
+	void GrantSynergyTagToMonitoringTurrets(ASOWCharacter* Turret, int SynergyTurretCount, const TArray<FTurretSynergyTagItem> SynergyTagItems, EElementalType ElementType);
 
-	void RemoveSynergyTagFromMonitoringTurrets(ASOWCharacterTurretBase* Turret, int SynergyTurretCount, const TArray<FTurretSynergyTagItem> SynergyTagItems, EElementalType ElementType);
+	void RemoveSynergyTagFromMonitoringTurrets(ASOWCharacter* Turret, int SynergyTurretCount, const TArray<FTurretSynergyTagItem> SynergyTagItems, EElementalType ElementType);
 
 	void AnnounceSynergyUpdate(EElementalType ElementType);
 public :
@@ -87,7 +92,13 @@ public :
 	UFUNCTION(BlueprintCallable, category = "Turret|Synergy")
 	TArray<FName> GetSynergyConfigurationTurrets(EElementalType ElementType);
 
-	ASOWCharacterTurretBase* GetGlacioInstance();
+	UFUNCTION(BlueprintCallable, category = "Turret|Synergy")
+	int GetMonitoringTurretsCount(EElementalType ElementType);
+
+	void SendRuneReference(ASOWCharacterCoreRune* InRune);
+
+	ASOWCharacterTurretBase* GetGlacioInstance() const;
+	ASOWCharacterCoreRune* GetCoreRuneInstance() const;
 
 	
 };

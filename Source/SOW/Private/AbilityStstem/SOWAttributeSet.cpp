@@ -15,7 +15,7 @@ USOWAttributeSet::USOWAttributeSet()
 {
     InitWalkSpeed(400.f);
     InitMaxHealthBase(100.f);
-    InitCurrentHealth(100.f);
+    InitCurrentHealth(1.f);
     InitAttackPowerBase(1.f);
     InitDefensePowerBase(1.f);
     InitDamageOverTime(0.f);
@@ -25,6 +25,7 @@ USOWAttributeSet::USOWAttributeSet()
     InitCurrentMana(200.f);
     InitMaxStaminaBase(100.f);
     InitExtraDamageRatio(0.f);
+    InitDamageShield(0.f);
     InitCurrentStamina(GetMaxStaminaBase());
 }
 

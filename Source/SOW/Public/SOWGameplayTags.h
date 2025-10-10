@@ -116,6 +116,9 @@ namespace SOWGameplayTags {
 
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Event_AffectStatUp);
 
+	/* Rune Tags */
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Rune_SetByCaller_HealBySynergy);
+
 	/* Shared Tags */
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Ability_Death);				// ĳ������ ���� �ɷ¿� �ο��Ǵ� �ĺ� �±�
 

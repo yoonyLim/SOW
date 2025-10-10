@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+Ôªø// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "SOWBlueprintFunctionLibrary.h"
@@ -21,33 +21,104 @@
 
 #include "DrawDebugHelpers.h"
 
+//USOWAbilitySystemComponent* USOWBlueprintFunctionLibrary::NativeGetSOWAbilitySystemComponentFromActorInfo(AActor* InActor)
+//{
+//    checkf(InActor, TEXT("Invalid Actor has passed"));
+//    USOWAbilitySystemComponent* ASC = Cast<USOWAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(InActor));
+//
+//    return ASC;
+//}
+//
+//USOWAbilitySystemComponent* USOWBlueprintFunctionLibrary::GetSOWAbilitySystemComponentFromActorInfo(AActor* InActor)
+//{
+//    check(InActor);
+//    return NativeGetSOWAbilitySystemComponentFromActorInfo(InActor);
+//}
+//
+//bool USOWBlueprintFunctionLibrary::NativeDoesActorHasTag(AActor* InActor, FGameplayTag InActorTag)
+//{
+//    USOWAbilitySystemComponent* ASC = NativeGetSOWAbilitySystemComponentFromActorInfo(InActor);
+//   
+//    return  ASC->HasMatchingGameplayTag(InActorTag);
+//}
+//
+//bool USOWBlueprintFunctionLibrary::DoesActorHasTag(AActor* InActor, FGameplayTag InActorTag)
+//{
+//    if (!InActor) return false;
+//    if (!InActor->Implements<USOWCharacterTypeInterface>()) return false;
+//    return NativeDoesActorHasTag(InActor, InActorTag);
+//}
+
 USOWAbilitySystemComponent* USOWBlueprintFunctionLibrary::NativeGetSOWAbilitySystemComponentFromActorInfo(AActor* InActor)
 {
-    checkf(InActor, TEXT("Invalid Actor has passed"));
-    USOWAbilitySystemComponent* ASC = Cast<USOWAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(InActor));
+    if (!IsValid(InActor))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("NativeGetSOWAbilitySystemComponentFromActorInfo: Invalid Actor"));
+        return nullptr;
+    }
+
+    USOWAbilitySystemComponent* ASC =
+        Cast<USOWAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(InActor));
 
     return ASC;
 }
 
 USOWAbilitySystemComponent* USOWBlueprintFunctionLibrary::GetSOWAbilitySystemComponentFromActorInfo(AActor* InActor)
 {
-    check(InActor);
+    if (!IsValid(InActor))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("GetSOWAbilitySystemComponentFromActorInfo: Invalid Actor"));
+        return nullptr;
+    }
     return NativeGetSOWAbilitySystemComponentFromActorInfo(InActor);
 }
 
 bool USOWBlueprintFunctionLibrary::NativeDoesActorHasTag(AActor* InActor, FGameplayTag InActorTag)
 {
+    if (!IsValid(InActor))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("NativeDoesActorHasTag: Invalid Actor"));
+        return false;
+    }
+
     USOWAbilitySystemComponent* ASC = NativeGetSOWAbilitySystemComponentFromActorInfo(InActor);
-   
-    return  ASC->HasMatchingGameplayTag(InActorTag);
+    if (!ASC)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("NativeDoesActorHasTag: No ASC for %s"), *InActor->GetName());
+        return false;
+    }
+
+    return ASC->HasMatchingGameplayTag(InActorTag);
 }
 
 bool USOWBlueprintFunctionLibrary::DoesActorHasTag(AActor* InActor, FGameplayTag InActorTag)
 {
-    if (!InActor) return false;
-    if (!InActor->Implements<USOWCharacterTypeInterface>()) return false;
+    // ‚úÖ Î∞òÎìúÏãú IsValid ÏÇ¨Ïö©Ìï¥Ïïº Ìï®
+    if (!IsValid(InActor))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("DoesActorHasTag: Invalid Actor pointer (possibly destroyed)."));
+        return false;
+    }
+
+    // ‚úÖ UClass Ï†ëÍ∑º Ï†ÑÏóêÎèÑ Î∞òÎìúÏãú Ïú†Ìö®ÏÑ± Ï≤¥ÌÅ¨
+    UClass* ActorClass = InActor->GetClass();
+    if (!IsValid(ActorClass))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("DoesActorHasTag: Invalid ActorClass for %s"), *InActor->GetName());
+        return false;
+    }
+
+    // ‚úÖ ÏïàÏ†ÑÌïú Î∞©ÏãùÏúºÎ°ú Ïù∏ÌÑ∞ÌéòÏù¥Ïä§ ÌôïÏù∏
+    if (!ActorClass->ImplementsInterface(USOWCharacterTypeInterface::StaticClass()))
+    {
+        UE_LOG(LogTemp, VeryVerbose, TEXT("%s does not implement SOWCharacterTypeInterface"), *InActor->GetName());
+        return false;
+    }
+
     return NativeDoesActorHasTag(InActor, InActorTag);
 }
+
+///////////////////////////////
 
 bool USOWBlueprintFunctionLibrary::GetMouseWorldLocation(UObject* WorldContextObject, FVector& OutWorldLocation)
 {
@@ -56,11 +127,11 @@ bool USOWBlueprintFunctionLibrary::GetMouseWorldLocation(UObject* WorldContextOb
     UWorld* World = WorldContextObject->GetWorld();
     if (!World) return false;
 
-    // 0π¯ ¿Œµ¶Ω∫¿« «√∑π¿ÃæÓ ƒ¡∆Æ∑—∑Ø ∞°¡Æø¿±‚
+    // 0Î≤à Ïù∏Îç±Ïä§Ïùò ÌîåÎ†àÏù¥Ïñ¥ Ïª®Ìä∏Î°§Îü¨ Í∞ÄÏ†∏Ïò§Í∏∞
     APlayerController* PC = UGameplayStatics::GetPlayerController(WorldContextObject, 0);
     if (!PC) return false;
 
-    // ∏∂øÏΩ∫ æ∆∑° HitResult ∞°¡Æø¿±‚
+    // ÎßàÏö∞Ïä§ ÏïÑÎûò HitResult Í∞ÄÏ†∏Ïò§Í∏∞
     FHitResult HitResult;
     if (PC->GetHitResultUnderCursor(ECC_Visibility, false, HitResult))
     {
@@ -83,7 +154,7 @@ bool USOWBlueprintFunctionLibrary::SpawnTurretWithCircleCount(UObject* WorldCont
         )
     );
 
-    if (SpawnedTurret)
+    if (IsValid(SpawnedTurret))
     {
         SpawnedTurret->CircleCount = InCircleCount;
 
@@ -212,18 +283,18 @@ FGameplayTag USOWBlueprintFunctionLibrary::FindTurretElementAsTag(ASOWCharacterT
     if (!InTurret)
         return FGameplayTag();
 
-    // Turret¿Ã ∞°¡¯ ASC ∞°¡Æø¿±‚
+    // TurretÏù¥ Í∞ÄÏßÑ ASC Í∞ÄÏ†∏Ïò§Í∏∞
     USOWAbilitySystemComponent* ASC = NativeGetSOWAbilitySystemComponentFromActorInfo(InTurret);
     if (!ASC)
         return FGameplayTag();
 
-    // ASCø°º≠ ≈¬±◊ ƒ¡≈◊¿Ã≥  ∫πªÁ
+    // ASCÏóêÏÑú ÌÉúÍ∑∏ Ïª®ÌÖåÏù¥ÎÑà Î≥µÏÇ¨
     const FGameplayTagContainer& AllTags = ASC->GetOwnedGameplayTags();
 
-    // ±‚¡ÿ ≈¬±◊
+    // Í∏∞Ï§Ä ÌÉúÍ∑∏
     const FGameplayTag ElementParentTag = FGameplayTag::RequestGameplayTag(TEXT("Shared.Element"));
 
-    // Shared.Element ±‚π› ≈¬±◊ ≈Ωªˆ
+    // Shared.Element Í∏∞Î∞ò ÌÉúÍ∑∏ ÌÉêÏÉâ
     for (const FGameplayTag& Tag : AllTags)
     {
         if (Tag.MatchesTag(ElementParentTag))
@@ -232,7 +303,7 @@ FGameplayTag USOWBlueprintFunctionLibrary::FindTurretElementAsTag(ASOWCharacterT
         }
     }
 
-    return FGameplayTag(); // ∏¯ √£¿∏∏È ∫Û ∞™ π›»Ø
+    return FGameplayTag(); // Î™ª Ï∞æÏúºÎ©¥ Îπà Í∞í Î∞òÌôò
 }
 
 TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAroundMouse(APlayerController* PlayerController, const ETileSelectType TileSelectionType, const int32 N, const float TileSize = 83.f)
@@ -363,7 +434,7 @@ TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAsSquaredFromCenterLoca
     FVector DownOffset(0, TileSize, 0.f);
     FVector OriginOffset = CenterPosition - N/2 * FVector(TileSize , TileSize, 0);
     if (N % 2 == 0) {
-        // 3-1. N¿Ã ¬¶ºˆ ¿œ ∞ÊøÏ ¡ﬂΩ… ¿ßƒ° ¡∂¡§
+        // 3-1. NÏù¥ ÏßùÏàò Ïùº Í≤ΩÏö∞ Ï§ëÏã¨ ÏúÑÏπò Ï°∞Ï†ï
         OriginOffset += FVector(TileSize/2, TileSize/2, 0);
     }
     FVector CurrentOffset = OriginOffset;
@@ -438,14 +509,14 @@ TArray<AActor*> USOWBlueprintFunctionLibrary::GetActorsOnTiles(TArray<ATileBase*
 
         FVector TileCenter = tile->GetActorLocation(); 
         float HalfExtent = 25.f;                       
-        float Height = 100.f;                          
+        float Height = 200.f;                          
         FCollisionShape BoxShape = FCollisionShape::MakeBox(FVector(HalfExtent, HalfExtent, Height));
 
 
 
         TArray<FOverlapResult> Overlaps;
 
-        // √Êµπ ƒı∏Æ ºˆ«‡
+        // Ï∂©Îèå ÏøºÎ¶¨ ÏàòÌñâ
         bool bHasOverlap = tile->GetWorld()->OverlapMultiByChannel(
             Overlaps,
             TileCenter,              
@@ -465,6 +536,50 @@ TArray<AActor*> USOWBlueprintFunctionLibrary::GetActorsOnTiles(TArray<ATileBase*
                 }
 
                 
+            }
+        }
+    }
+    return OnTileActors;
+}
+
+TArray<AActor*> USOWBlueprintFunctionLibrary::GetTurretsOnTiles(TArray<ATileBase*> Tiles)
+{
+    TArray<AActor*> OnTileActors;
+
+    for (ATileBase* tile : Tiles) {
+
+        if (!tile) continue;
+        TArray<AActor*> OverlappedActors;
+
+        FVector TileCenter = tile->GetActorLocation();
+        float HalfExtent = 25.f;
+        float Height = 100.f;
+        FCollisionShape BoxShape = FCollisionShape::MakeBox(FVector(HalfExtent, HalfExtent, Height));
+
+
+
+        TArray<FOverlapResult> Overlaps;
+
+        // Ï∂©Îèå ÏøºÎ¶¨ ÏàòÌñâ
+        bool bHasOverlap = tile->GetWorld()->OverlapMultiByChannel(
+            Overlaps,
+            TileCenter,
+            FQuat::Identity,
+            ECC_GameTraceChannel3,
+            BoxShape
+        );
+
+        if (bHasOverlap)
+        {
+            for (auto& Result : Overlaps)
+            {
+                AActor* HitActor = Result.GetActor();
+                if (HitActor)
+                {
+                    OnTileActors.AddUnique(HitActor);
+                }
+
+
             }
         }
     }
