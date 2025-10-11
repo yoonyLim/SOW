@@ -27,33 +27,7 @@
 
 #include "DrawDebugHelpers.h"
 
-//USOWAbilitySystemComponent* USOWBlueprintFunctionLibrary::NativeGetSOWAbilitySystemComponentFromActorInfo(AActor* InActor)
-//{
-//    checkf(InActor, TEXT("Invalid Actor has passed"));
-//    USOWAbilitySystemComponent* ASC = Cast<USOWAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(InActor));
-//
-//    return ASC;
-//}
-//
-//USOWAbilitySystemComponent* USOWBlueprintFunctionLibrary::GetSOWAbilitySystemComponentFromActorInfo(AActor* InActor)
-//{
-//    check(InActor);
-//    return NativeGetSOWAbilitySystemComponentFromActorInfo(InActor);
-//}
-//
-//bool USOWBlueprintFunctionLibrary::NativeDoesActorHasTag(AActor* InActor, FGameplayTag InActorTag)
-//{
-//    USOWAbilitySystemComponent* ASC = NativeGetSOWAbilitySystemComponentFromActorInfo(InActor);
-//   
-//    return  ASC->HasMatchingGameplayTag(InActorTag);
-//}
-//
-//bool USOWBlueprintFunctionLibrary::DoesActorHasTag(AActor* InActor, FGameplayTag InActorTag)
-//{
-//    if (!InActor) return false;
-//    if (!InActor->Implements<USOWCharacterTypeInterface>()) return false;
-//    return NativeDoesActorHasTag(InActor, InActorTag);
-//}
+// TileSize 를 인게임 타일 사이즈를 가져오는 Getter로 모두 전환하면 끝임.
 
 USOWAbilitySystemComponent* USOWBlueprintFunctionLibrary::NativeGetSOWAbilitySystemComponentFromActorInfo(AActor* InActor)
 {
@@ -355,6 +329,9 @@ TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAroundMouse(APlayerCont
 
 FVector USOWBlueprintFunctionLibrary::MakeCentralTileLocationFromAnyPoint(APlayerController* PlayerController, FVector AnyPoint, const ETileSelectType TileSelectionType, const int32 N, const float TileSize, bool bRot)
 {
+    USOWGameInstance* GI = Cast<USOWGameInstance>(PlayerController->GetWorld()->GetGameInstance());
+    float WorldTileSize = GI->GetWorldTileSize();
+
     FVector CenterLocation = FVector::ZeroVector;
 
     FVector TraceStart = AnyPoint;
@@ -380,7 +357,8 @@ FVector USOWBlueprintFunctionLibrary::MakeCentralTileLocationFromAnyPoint(APlaye
                 FVector CenterPos;
 
                 for (int i = 0; i < 4; i++) {
-                    FVector Pivot = FVector(TileSize/2 * dx[i], TileSize/2 * dy[i], 0);
+                    FVector Pivot = FVector(WorldTileSize / 2 * dx[i], WorldTileSize / 2 * dy[i], 0);
+                    //FVector Pivot = FVector(TileSize/2 * dx[i], TileSize/2 * dy[i], 0);
                     float Dot = FVector::DotProduct(CriticVector, Pivot);
 
                     if (Dot >= DotMax) {
@@ -409,7 +387,8 @@ FVector USOWBlueprintFunctionLibrary::MakeCentralTileLocationFromAnyPoint(APlaye
                 }
 
                 for (int i = 0; i < 2; i++) {
-                    FVector Pivot = FVector(TileSize * dx[i] / 2.f, TileSize * dy[i] / 2.f , 0);
+                    FVector Pivot = FVector(WorldTileSize * dx[i] / 2.f, WorldTileSize * dy[i] / 2.f, 0);
+                   // FVector Pivot = FVector(TileSize * dx[i] / 2.f, TileSize * dy[i] / 2.f , 0);
                     float Dot = FVector::DotProduct(AnyPoint, Pivot);
 
                     if (Dot >= DotMax) {
@@ -427,6 +406,8 @@ FVector USOWBlueprintFunctionLibrary::MakeCentralTileLocationFromAnyPoint(APlaye
 
 TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAsSquaredFromCenterLocation(APlayerController* PlayerController, FVector CenterPosition, const int32 N, const float TileSize)
 {
+    USOWGameInstance* GI = Cast<USOWGameInstance>(PlayerController->GetWorld()->GetGameInstance());
+    float WorldTileSize = GI->GetWorldTileSize();
     // Get Tiles Around Center Tile Location.
     // If N is odd, center position must be the center coordinates of the tile.
     // else, it should be the vertex closest to the center coordinates.
@@ -436,12 +417,17 @@ TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAsSquaredFromCenterLoca
     FCollisionQueryParams Params;
     Params.bReturnPhysicalMaterial = false;
 
-    FVector RightOffset(TileSize, 0.f, 0.f);
+    FVector RightOffset(WorldTileSize, 0.f, 0.f);
+    FVector DownOffset(0, WorldTileSize, 0.f);
+    FVector OriginOffset = CenterPosition - N / 2 * FVector(WorldTileSize, WorldTileSize, 0);
+
+   /* FVector RightOffset(TileSize, 0.f, 0.f);
     FVector DownOffset(0, TileSize, 0.f);
-    FVector OriginOffset = CenterPosition - N/2 * FVector(TileSize , TileSize, 0);
+    FVector OriginOffset = CenterPosition - N/2 * FVector(TileSize , TileSize, 0);*/
     if (N % 2 == 0) {
         // 3-1. N이 짝수 일 경우 중심 위치 조정
-        OriginOffset += FVector(TileSize/2, TileSize/2, 0);
+        OriginOffset += FVector(WorldTileSize / 2, WorldTileSize / 2, 0);
+        //OriginOffset += FVector(TileSize/2, TileSize/2, 0);
     }
     FVector CurrentOffset = OriginOffset;
 
@@ -468,13 +454,19 @@ TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAsSquaredFromCenterLoca
 
 TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAsStraightFromCenterLocation(APlayerController* PlayerController, FVector CenterPosition, const int32 N, const float TileSize, bool bRot)
 {
+    USOWGameInstance* GI = Cast<USOWGameInstance>(PlayerController->GetWorld()->GetGameInstance());
+    float WorldTileSize = GI->GetWorldTileSize();
+
     TArray<ATileBase*> SelectedTiles;
-    float SideLength = TileSize;
+
+    float SideLength = WorldTileSize;
+   // float SideLength = TileSize;
 
     FCollisionQueryParams Params;
     Params.bReturnPhysicalMaterial = false;
 
-    FVector CriticVector = FVector(TileSize, 0, 0) + (bRot ? 1 : -1) * FVector(0, TileSize, 0);
+    FVector CriticVector = FVector(WorldTileSize, 0, 0) + (bRot ? 1 : -1) * FVector(0, WorldTileSize, 0);
+    //FVector CriticVector = FVector(TileSize, 0, 0) + (bRot ? 1 : -1) * FVector(0, TileSize, 0);
 
     for (int32 X = 0; X <= N / 2; X++)
     {

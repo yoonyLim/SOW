@@ -140,3 +140,13 @@ void USOWGameInstance::GetResource(float Count)
 
     GM->AddCurrency(Count);
 }
+
+void USOWGameInstance::SetWorldTileSize(float InSize)
+{
+    WorldTileSize = InSize;
+}
+
+float USOWGameInstance::GetWorldTileSize() const
+{
+    return WorldTileSize;
+}

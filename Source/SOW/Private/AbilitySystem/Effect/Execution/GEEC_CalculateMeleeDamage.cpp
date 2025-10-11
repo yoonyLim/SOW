@@ -200,8 +200,22 @@ void UGEEC_CalculateMeleeDamage::Execute_Implementation(const FGameplayEffectCus
 	FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
 {
 	// Check if the target has RangedResistance tag
-	if (USOWBlueprintFunctionLibrary::DoesActorHasTag(ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor(), SOWGameplayTags::Enemy_Status_Buff_MeleeResistance))
+	if (USOWBlueprintFunctionLibrary::DoesActorHasTag(ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor(), SOWGameplayTags::Enemy_Status_Buff_MeleeResistance)) {
+		AActor* Target = ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor();
+		FGameplayEventData Data;
+		Data.Instigator = ExecutionParams.GetSourceAbilitySystemComponent()->GetAvatarActor();
+		UDamageLogger* Logger = NewObject<UDamageLogger>();
+		Logger->SetLoggerValue(0.f, 0.f);
+		Data.OptionalObject = Logger;
+		Data.EventMagnitude = 0.f;
+
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+			Target,
+			SOWGameplayTags::Shared_Event_HitReact,
+			Data
+		);
 		return;
+	}
 	
 	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] Execute_Implementation called.")); //�α� �߰�, ���߿� �����.
 	const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();
