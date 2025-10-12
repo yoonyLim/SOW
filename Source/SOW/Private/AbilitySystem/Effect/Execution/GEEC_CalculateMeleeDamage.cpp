@@ -16,6 +16,7 @@ struct FAttributeCapturesMeleeDamage {
 
 	DECLARE_ATTRIBUTE_CAPTUREDEF(DefensePowerBase);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(CurrentHealth);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(DamageShield);
 
 	DECLARE_ATTRIBUTE_CAPTUREDEF(ExtraDamageRatio);
 
@@ -26,6 +27,7 @@ struct FAttributeCapturesMeleeDamage {
 
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, DefensePowerBase, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, CurrentHealth, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, DamageShield, Target, false);
 
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, ExtraDamageRatio, Target, false);
 	}
@@ -69,6 +71,120 @@ float UGEEC_CalculateMeleeDamage::GetElementalResistanceCost(
 	return ElementalResistance;
 }
 
+void UGEEC_CalculateMeleeDamage::ApplyRealDamage(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput, float BaseDamage, float FinalDamage) const {
+	OutExecutionOutput.AddOutputModifier(
+		FGameplayModifierEvaluatedData(
+			GetCapturedPropertiesMeleeDamage().CurrentHealthDef.AttributeToCapture,
+			EGameplayModOp::Additive,
+			-FinalDamage)
+	);
+
+	AActor* Target = ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor();
+	FGameplayEventData Data;
+	Data.Instigator = ExecutionParams.GetSourceAbilitySystemComponent()->GetAvatarActor();
+	UDamageLogger* Logger = NewObject<UDamageLogger>();
+	Logger->SetLoggerValue(FMath::CeilToInt(BaseDamage), FMath::CeilToInt(FinalDamage));
+	Data.OptionalObject = Logger;
+	Data.EventMagnitude = FinalDamage;
+
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+		Target,
+		SOWGameplayTags::Shared_Event_HitReact,
+		Data
+	);
+
+	//////////
+
+	AActor* TargetActor = ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor();
+	FVector TargetPos = TargetActor ? TargetActor->GetActorLocation() : FVector::ZeroVector;
+
+	// ��: �ͷ� ���� ID (�ͷ� Actor���� �������� ��Ŀ� �°� ���� �ʿ�)
+	FString TurretInstanceID = FString::FromInt(reinterpret_cast<int64>(ExecutionParams.GetSourceAbilitySystemComponent()));
+	FString TurretID = ExecutionParams.GetSourceAbilitySystemComponent()->GetAvatarActor()->GetName();
+	FString TargetID = TargetActor ? TargetActor->GetName() : TEXT("Unknown");
+
+	// �ܿ� HP (AttributeSet���� ��������)
+	float TargetHP = 0.f;
+	if (const UAbilitySystemComponent* TargetASC = ExecutionParams.GetTargetAbilitySystemComponent())
+	{
+		if (const USOWAttributeSet* TargetAttributes = Cast<USOWAttributeSet>(TargetASC->GetAttributeSet(USOWAttributeSet::StaticClass())))
+		{
+			TargetHP = TargetAttributes->GetCurrentHealth();
+		}
+	}
+
+	// CSV ���
+	USOWLogFunctionLibrary::LogDamageToCSV(
+		TurretInstanceID,
+		TurretID,
+		TargetID,
+		FMath::CeilToInt(BaseDamage),
+		FMath::CeilToInt(FinalDamage),
+		TargetHP,
+		TargetPos,
+		0, // ���̺�/���� ��ȣ
+		ExecutionParams.GetSourceAbilitySystemComponent()->GetAvatarActor(),
+		ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor()
+	);
+}
+
+void UGEEC_CalculateMeleeDamage::ApplyShieldDamage(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const {
+	OutExecutionOutput.AddOutputModifier(
+		FGameplayModifierEvaluatedData(
+			GetCapturedPropertiesMeleeDamage().DamageShieldDef.AttributeToCapture,
+			EGameplayModOp::Additive,
+			-1)
+	);
+
+	AActor* Target = ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor();
+	FGameplayEventData Data;
+	Data.Instigator = ExecutionParams.GetSourceAbilitySystemComponent()->GetAvatarActor();
+	UDamageLogger* Logger = NewObject<UDamageLogger>();
+	Logger->SetLoggerValue(0.f, 0.f);
+	Data.OptionalObject = Logger;
+	Data.EventMagnitude = 0.f;
+
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+		Target,
+		SOWGameplayTags::Shared_Event_HitReact,
+		Data
+	);
+
+	//////////
+
+	AActor* TargetActor = ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor();
+	FVector TargetPos = TargetActor ? TargetActor->GetActorLocation() : FVector::ZeroVector;
+
+	// ��: �ͷ� ���� ID (�ͷ� Actor���� �������� ��Ŀ� �°� ���� �ʿ�)
+	FString TurretInstanceID = FString::FromInt(reinterpret_cast<int64>(ExecutionParams.GetSourceAbilitySystemComponent()));
+	FString TurretID = ExecutionParams.GetSourceAbilitySystemComponent()->GetAvatarActor()->GetName();
+	FString TargetID = TargetActor ? TargetActor->GetName() : TEXT("Unknown");
+
+	// �ܿ� HP (AttributeSet���� ��������)
+	float TargetHP = 0.f;
+	if (const UAbilitySystemComponent* TargetASC = ExecutionParams.GetTargetAbilitySystemComponent())
+	{
+		if (const USOWAttributeSet* TargetAttributes = Cast<USOWAttributeSet>(TargetASC->GetAttributeSet(USOWAttributeSet::StaticClass())))
+		{
+			TargetHP = TargetAttributes->GetCurrentHealth();
+		}
+	}
+
+	// CSV ���
+	USOWLogFunctionLibrary::LogDamageToCSV(
+		TurretInstanceID,
+		TurretID,
+		TargetID,
+		0.f,
+		0.f,
+		TargetHP,
+		TargetPos,
+		0, // ���̺�/���� ��ȣ
+		ExecutionParams.GetSourceAbilitySystemComponent()->GetAvatarActor(),
+		ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor()
+	);
+}
+
 UGEEC_CalculateMeleeDamage::UGEEC_CalculateMeleeDamage()
 {
 	RelevantAttributesToCapture.Add(GetCapturedPropertiesMeleeDamage().AttackPowerBaseDef);
@@ -84,8 +200,22 @@ void UGEEC_CalculateMeleeDamage::Execute_Implementation(const FGameplayEffectCus
 	FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
 {
 	// Check if the target has RangedResistance tag
-	if (USOWBlueprintFunctionLibrary::DoesActorHasTag(ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor(), SOWGameplayTags::Enemy_Status_Buff_MeleeResistance))
+	if (USOWBlueprintFunctionLibrary::DoesActorHasTag(ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor(), SOWGameplayTags::Enemy_Status_Buff_MeleeResistance)) {
+		AActor* Target = ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor();
+		FGameplayEventData Data;
+		Data.Instigator = ExecutionParams.GetSourceAbilitySystemComponent()->GetAvatarActor();
+		UDamageLogger* Logger = NewObject<UDamageLogger>();
+		Logger->SetLoggerValue(0.f, 0.f);
+		Data.OptionalObject = Logger;
+		Data.EventMagnitude = 0.f;
+
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+			Target,
+			SOWGameplayTags::Shared_Event_HitReact,
+			Data
+		);
 		return;
+	}
 	
 	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] Execute_Implementation called.")); //�α� �߰�, ���߿� �����.
 	const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();
@@ -154,61 +284,19 @@ void UGEEC_CalculateMeleeDamage::Execute_Implementation(const FGameplayEffectCus
 	L_FinalDamage = FMath::CeilToInt(L_FinalDamage) < 1.f ? 1.f : FMath::CeilToInt(L_FinalDamage);
 	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] FinalDamage calculated: %f"), L_FinalDamage); // �α��߰�
 
-	// Send HitReact Event To Target
-	AActor* Target = ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor();
-	FGameplayEventData Data;
-	Data.Instigator = ExecutionParams.GetSourceAbilitySystemComponent()->GetAvatarActor();
-	UDamageLogger* Logger = NewObject<UDamageLogger>();
-	Logger->SetLoggerValue(FMath::CeilToInt(BasicDamageFormal), FMath::CeilToInt(L_FinalDamage));
-	Data.OptionalObject = Logger;
-	Data.EventMagnitude = L_FinalDamage;
-
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
-		Target,
-		SOWGameplayTags::Shared_Event_HitReact,
-		Data
+	float ShieldSize = 0.f;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
+		GetCapturedPropertiesMeleeDamage().DamageShieldDef,
+		EvalParams,
+		ShieldSize
 	);
 
 
-	// Apply Final Damage
-	OutExecutionOutput.AddOutputModifier(
-		FGameplayModifierEvaluatedData(
-			GetCapturedPropertiesMeleeDamage().CurrentHealthDef.AttributeToCapture,
-			EGameplayModOp::Additive,
-			-L_FinalDamage)
-	);
-
-	//////////
-
-	AActor* TargetActor = ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor();
-	FVector TargetPos = TargetActor ? TargetActor->GetActorLocation() : FVector::ZeroVector;
-
-	// ��: �ͷ� ���� ID (�ͷ� Actor���� �������� ��Ŀ� �°� ���� �ʿ�)
-	FString TurretInstanceID = FString::FromInt(reinterpret_cast<int64>(ExecutionParams.GetSourceAbilitySystemComponent()));
-	FString TurretID = ExecutionParams.GetSourceAbilitySystemComponent()->GetAvatarActor()->GetName();
-	FString TargetID = TargetActor ? TargetActor->GetName() : TEXT("Unknown");
-
-	// �ܿ� HP (AttributeSet���� ��������)
-	float TargetHP = 0.f;
-	if (const UAbilitySystemComponent* TargetASC = ExecutionParams.GetTargetAbilitySystemComponent())
-	{
-		if (const USOWAttributeSet* TargetAttributes = Cast<USOWAttributeSet>(TargetASC->GetAttributeSet(USOWAttributeSet::StaticClass())))
-		{
-			TargetHP = TargetAttributes->GetCurrentHealth();
-		}
+	if (ShieldSize > 0.f) {
+		ApplyShieldDamage(ExecutionParams, OutExecutionOutput);
 	}
 
-	// CSV ���
-	USOWLogFunctionLibrary::LogDamageToCSV(
-		TurretInstanceID,
-		TurretID,
-		TargetID,
-		FMath::CeilToInt(BasicDamageFormal),
-		FMath::CeilToInt(L_FinalDamage),
-		TargetHP,
-		TargetPos,
-		0, // ���̺�/���� ��ȣ
-		ExecutionParams.GetSourceAbilitySystemComponent()->GetAvatarActor(),
-		ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor()
-	);
+	else {
+		ApplyRealDamage(ExecutionParams, OutExecutionOutput, BasicDamageFormal, L_FinalDamage);
+	}
 }

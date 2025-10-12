@@ -221,7 +221,7 @@ void USOWTurretCombatComponent::SetNewCollisionScale(float NewScale)
 
 bool USOWTurretCombatComponent::SetFixedTarget(AActor* InActor)
 {
-	if (!InActor || !InActor->Implements<USOWCharacterTypeInterface>()) return false;
+	if (!IsValid(InActor) || !InActor->Implements<USOWCharacterTypeInterface>()) return false;
 	ISOWCharacterTypeInterface* SOWCharacter = Cast<ISOWCharacterTypeInterface>(InActor);
 	ESOWCharacterType TargetType = SOWCharacter->GetSOWCharacterType();
 
@@ -320,7 +320,7 @@ bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 
 
 	if (!IsValid(CachedOwnerCharacter)) {
-		UE_LOG(LogTemp, Warning, TEXT("CachedOwnerCharacter is not initialized"));
+		//UE_LOG(LogTemp, Warning, TEXT("CachedOwnerCharacter is not initialized"));
 		return (bTargetFound = false);
 	}
 
@@ -380,6 +380,8 @@ AActor* USOWTurretCombatComponent::GetSingleAttackTargetOnList(const TArray<AAct
 		CriticValue = 0;
 
 		for (AActor* ATarget : InTargetList) {
+
+			if (!IsValid(ATarget)) continue;
 			ASOWCharacterEnemyBase* TargetEnemy = Cast<ASOWCharacterEnemyBase>(ATarget);
 			TargetValue = TargetEnemy->GetSOWAttibuteSet()->GetCurrentHealth();
 
@@ -394,6 +396,7 @@ AActor* USOWTurretCombatComponent::GetSingleAttackTargetOnList(const TArray<AAct
 		CriticValue = 10000.0f;
 
 		for (AActor* ATarget : InTargetList) {
+			if (!IsValid(ATarget)) continue;
 			ASOWCharacterEnemyBase* TargetEnemy = Cast<ASOWCharacterEnemyBase>(ATarget);
 			TargetValue = TargetEnemy->GetSOWAttibuteSet()->GetCurrentHealth();
 
@@ -408,6 +411,7 @@ AActor* USOWTurretCombatComponent::GetSingleAttackTargetOnList(const TArray<AAct
 		CriticValue = 0.f;
 
 		for (AActor* ATarget : InTargetList) {
+			if (!IsValid(ATarget)) continue;
 			ASOWCharacterEnemyBase* TargetEnemy = Cast<ASOWCharacterEnemyBase>(ATarget);
 			TargetValue = TargetEnemy->GetSOWAttibuteSet()->GetAttackPowerBase();
 
@@ -422,6 +426,7 @@ AActor* USOWTurretCombatComponent::GetSingleAttackTargetOnList(const TArray<AAct
 		CriticValue = 10000.f;
 
 		for (AActor* ATarget : InTargetList) {
+			if (!IsValid(ATarget)) continue;
 			TargetValue = FVector::Dist(TurretLocation, ATarget->GetActorLocation());
 
 			if (CriticValue > TargetValue) {
@@ -473,7 +478,7 @@ TArray<AActor*> USOWTurretCombatComponent::GetAllAttackTarget()
 		if (BaseActorList.Num() <= 0) break;
 
 		AActor* CurrentTarget = GetSingleAttackTargetOnList(BaseActorList);
-		if (!CurrentTarget) break;
+		if (!IsValid(CurrentTarget)) break;
 
 		if (!GetStealthCheck(CurrentTarget)) {
 			FinalTargetList.AddUnique(CurrentTarget);
@@ -493,6 +498,8 @@ TArray<FVector> USOWTurretCombatComponent::GetAllAttackLocation()
 	}
 	else {
 		for (const AActor* CurActor : GetAllAttackTarget()) {
+			if (!IsValid(CurActor)) continue;
+
 			FinalLocationList.Add(CurActor->GetActorLocation());
 		}
 	}
@@ -514,7 +521,7 @@ void USOWTurretCombatComponent::AddNewFixedLocation(ATileBase* HitTile, const FV
 	FCollisionQueryParams Params;
 	Params.bReturnPhysicalMaterial = false;
 
-	if (!HitTile)
+	if (!IsValid(HitTile))
 	{
 		Error = ETargetFixErrorType::INVALID_TARGET;
 		return;
@@ -545,7 +552,7 @@ bool USOWTurretCombatComponent::TryAddNewFixedTarget(AActor* NewTarget, ETargetF
 		return false;
 	}
 
-	if (!NewTarget || !NewTarget->Implements<USOWCharacterTypeInterface>()) {
+	if (!IsValid(NewTarget) || !NewTarget->Implements<USOWCharacterTypeInterface>()) {
 		Error = ETargetFixErrorType::INVALID_TARGET;
 		return false;
 	} 
@@ -576,6 +583,8 @@ bool USOWTurretCombatComponent::TryAddNewFixedTarget(AActor* NewTarget, ETargetF
 void USOWTurretCombatComponent::ClearFixedTargetList()
 {
 	for (AActor* PreviousBindTarget : FixedTargetList) {
+		if (!IsValid(PreviousBindTarget)) continue;
+
 		if (ASOWCharacter* PreviousTarget = Cast<ASOWCharacter>(PreviousBindTarget)) {
 			PreviousTarget->OnTargetDead.RemoveAll(CachedOwnerCharacter);
 		}
@@ -585,7 +594,7 @@ void USOWTurretCombatComponent::ClearFixedTargetList()
 
 void USOWTurretCombatComponent::AttackAbilityActivation()
 {
-	if (!CachedOwnerCharacter) return;
+	if (!IsValid(CachedOwnerCharacter)) return;
 
 	if (!FindAttackTargetFromAllTargetAvailable()) {
 		UE_LOG(LogTemp, Warning, TEXT("No Valid Actor Found"));
@@ -602,24 +611,24 @@ bool USOWTurretCombatComponent::IsActorValidTarget(AActor* InActor)
 	// if target actor is equal to self or selection policy is uncertain, otherwise the actor has dead state, 
 	// then it can not be a target for the turret
 	if (!IsValid(InActor)) return false;
-	UE_LOG(LogTemp, Warning, TEXT("Valid Actor"));
+	//UE_LOG(LogTemp, Warning, TEXT("Valid Actor"));
 
 	
 
 	if (TurretTargetSelectionPolicy == ETurretTargetSelectionPolicy::Uncertain) return false;
-	UE_LOG(LogTemp, Warning, TEXT("Matched Policy"));
+	//UE_LOG(LogTemp, Warning, TEXT("Matched Policy"));
 
 	// Case 1. Policy was not selected
 
 	if (InActor == CachedOwnerCharacter) return false;
-	UE_LOG(LogTemp, Warning, TEXT("Not Seld"));
+	//UE_LOG(LogTemp, Warning, TEXT("Not Seld"));
 	// Case 2. Detected target is itself
 
 	if (USOWBlueprintFunctionLibrary::NativeDoesActorHasTag(InActor, SOWGameplayTags::Shared_Status_Dead)) return false;
-	UE_LOG(LogTemp, Warning, TEXT("Alive Target"));
+	//UE_LOG(LogTemp, Warning, TEXT("Alive Target"));
 
 	// Case 3. Target actor has dead
-	UE_LOG(LogTemp, Warning, TEXT("%s is valid Target"), *InActor->GetActorNameOrLabel());
+	//UE_LOG(LogTemp, Warning, TEXT("%s is valid Target"), *InActor->GetActorNameOrLabel());
 	return true;
 }
 
@@ -635,7 +644,7 @@ void USOWTurretCombatComponent::AddActorMatchesTargetingPolicy(AActor* CurrentAc
 	// check target type that matches to target selection policy.
 	// if matched, insert the target to DetectedTargetActors
 
-	
+	if (!IsValid(CurrentActor)) return;
 
 	if (TurretTargetSelectionPolicy == ETurretTargetSelectionPolicy::OnPlayer) {
 		if (Type == ESOWCharacterType::Player) {
@@ -646,7 +655,7 @@ void USOWTurretCombatComponent::AddActorMatchesTargetingPolicy(AActor* CurrentAc
 	else if (TurretTargetSelectionPolicy == ETurretTargetSelectionPolicy::OnTurret) {
 		if (Type == ESOWCharacterType::Turret) {
 
-			UE_LOG(LogTemp, Warning, TEXT("Turret Detected"));
+			//UE_LOG(LogTemp, Warning, TEXT("Turret Detected"));
 			DetectedTargetActors.AddUnique(CurrentActor);
 		}
 	}

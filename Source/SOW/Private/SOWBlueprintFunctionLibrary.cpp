@@ -18,42 +18,22 @@
 #include "Components/BoxComponent.h"
 #include "AbilitySystem/SOWAttributeSet.h"
 #include "GameModes/WaveGameMode.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
+//#include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Widget/SOWWidgetBase.h"
+#include "Slate/SObjectWidget.h"
+
+#include "Framework/Application/SlateApplication.h"
 
 #include "DrawDebugHelpers.h"
 
-//USOWAbilitySystemComponent* USOWBlueprintFunctionLibrary::NativeGetSOWAbilitySystemComponentFromActorInfo(AActor* InActor)
-//{
-//    checkf(InActor, TEXT("Invalid Actor has passed"));
-//    USOWAbilitySystemComponent* ASC = Cast<USOWAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(InActor));
-//
-//    return ASC;
-//}
-//
-//USOWAbilitySystemComponent* USOWBlueprintFunctionLibrary::GetSOWAbilitySystemComponentFromActorInfo(AActor* InActor)
-//{
-//    check(InActor);
-//    return NativeGetSOWAbilitySystemComponentFromActorInfo(InActor);
-//}
-//
-//bool USOWBlueprintFunctionLibrary::NativeDoesActorHasTag(AActor* InActor, FGameplayTag InActorTag)
-//{
-//    USOWAbilitySystemComponent* ASC = NativeGetSOWAbilitySystemComponentFromActorInfo(InActor);
-//   
-//    return  ASC->HasMatchingGameplayTag(InActorTag);
-//}
-//
-//bool USOWBlueprintFunctionLibrary::DoesActorHasTag(AActor* InActor, FGameplayTag InActorTag)
-//{
-//    if (!InActor) return false;
-//    if (!InActor->Implements<USOWCharacterTypeInterface>()) return false;
-//    return NativeDoesActorHasTag(InActor, InActorTag);
-//}
+// TileSize 를 인게임 타일 사이즈를 가져오는 Getter로 모두 전환하면 끝임.
 
 USOWAbilitySystemComponent* USOWBlueprintFunctionLibrary::NativeGetSOWAbilitySystemComponentFromActorInfo(AActor* InActor)
 {
     if (!IsValid(InActor))
     {
-        UE_LOG(LogTemp, Warning, TEXT("NativeGetSOWAbilitySystemComponentFromActorInfo: Invalid Actor"));
+        //UE_LOG(LogTemp, Warning, TEXT("NativeGetSOWAbilitySystemComponentFromActorInfo: Invalid Actor"));
         return nullptr;
     }
 
@@ -67,7 +47,7 @@ USOWAbilitySystemComponent* USOWBlueprintFunctionLibrary::GetSOWAbilitySystemCom
 {
     if (!IsValid(InActor))
     {
-        UE_LOG(LogTemp, Warning, TEXT("GetSOWAbilitySystemComponentFromActorInfo: Invalid Actor"));
+        //UE_LOG(LogTemp, Warning, TEXT("GetSOWAbilitySystemComponentFromActorInfo: Invalid Actor"));
         return nullptr;
     }
     return NativeGetSOWAbilitySystemComponentFromActorInfo(InActor);
@@ -77,14 +57,14 @@ bool USOWBlueprintFunctionLibrary::NativeDoesActorHasTag(AActor* InActor, FGamep
 {
     if (!IsValid(InActor))
     {
-        UE_LOG(LogTemp, Warning, TEXT("NativeDoesActorHasTag: Invalid Actor"));
+       // UE_LOG(LogTemp, Warning, TEXT("NativeDoesActorHasTag: Invalid Actor"));
         return false;
     }
 
     USOWAbilitySystemComponent* ASC = NativeGetSOWAbilitySystemComponentFromActorInfo(InActor);
     if (!ASC)
     {
-        UE_LOG(LogTemp, Warning, TEXT("NativeDoesActorHasTag: No ASC for %s"), *InActor->GetName());
+       // UE_LOG(LogTemp, Warning, TEXT("NativeDoesActorHasTag: No ASC for %s"), *InActor->GetName());
         return false;
     }
 
@@ -96,7 +76,7 @@ bool USOWBlueprintFunctionLibrary::DoesActorHasTag(AActor* InActor, FGameplayTag
     // ✅ 반드시 IsValid 사용해야 함
     if (!IsValid(InActor))
     {
-        UE_LOG(LogTemp, Warning, TEXT("DoesActorHasTag: Invalid Actor pointer (possibly destroyed)."));
+        //UE_LOG(LogTemp, Warning, TEXT("DoesActorHasTag: Invalid Actor pointer (possibly destroyed)."));
         return false;
     }
 
@@ -104,14 +84,14 @@ bool USOWBlueprintFunctionLibrary::DoesActorHasTag(AActor* InActor, FGameplayTag
     UClass* ActorClass = InActor->GetClass();
     if (!IsValid(ActorClass))
     {
-        UE_LOG(LogTemp, Warning, TEXT("DoesActorHasTag: Invalid ActorClass for %s"), *InActor->GetName());
+       // UE_LOG(LogTemp, Warning, TEXT("DoesActorHasTag: Invalid ActorClass for %s"), *InActor->GetName());
         return false;
     }
 
     // ✅ 안전한 방식으로 인터페이스 확인
     if (!ActorClass->ImplementsInterface(USOWCharacterTypeInterface::StaticClass()))
     {
-        UE_LOG(LogTemp, VeryVerbose, TEXT("%s does not implement SOWCharacterTypeInterface"), *InActor->GetName());
+        //UE_LOG(LogTemp, VeryVerbose, TEXT("%s does not implement SOWCharacterTypeInterface"), *InActor->GetName());
         return false;
     }
 
@@ -273,19 +253,19 @@ EElementalType USOWBlueprintFunctionLibrary::TranslateElementTagToEnum(const FGa
 
 EElementalType USOWBlueprintFunctionLibrary::FindTurretElementAsEnum(ASOWCharacterTurretBase* InTurret)
 {
-    if (!InTurret) return EElementalType::Max;
+    if (!IsValid(InTurret)) return EElementalType::Max;
 
     return TranslateElementTagToEnum(FindTurretElementAsTag(InTurret));
 }
 
 FGameplayTag USOWBlueprintFunctionLibrary::FindTurretElementAsTag(ASOWCharacterTurretBase* InTurret)
 {
-    if (!InTurret)
+    if (!IsValid(InTurret))
         return FGameplayTag();
 
     // Turret이 가진 ASC 가져오기
     USOWAbilitySystemComponent* ASC = NativeGetSOWAbilitySystemComponentFromActorInfo(InTurret);
-    if (!ASC)
+    if (!IsValid(ASC))
         return FGameplayTag();
 
     // ASC에서 태그 컨테이너 복사
@@ -328,7 +308,7 @@ TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAroundMouse(APlayerCont
     if (!PlayerController->GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_Camera, Params)) return SelectedTiles;
 
     AActor* CenterTile = Hit.GetActor();
-    if (!CenterTile) return SelectedTiles;
+    if (!IsValid(CenterTile)) return SelectedTiles;
 
     FVector CenterLocation = Hit.GetActor()->GetActorLocation();
 
@@ -349,6 +329,9 @@ TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAroundMouse(APlayerCont
 
 FVector USOWBlueprintFunctionLibrary::MakeCentralTileLocationFromAnyPoint(APlayerController* PlayerController, FVector AnyPoint, const ETileSelectType TileSelectionType, const int32 N, const float TileSize, bool bRot)
 {
+    USOWGameInstance* GI = Cast<USOWGameInstance>(PlayerController->GetWorld()->GetGameInstance());
+    float WorldTileSize = GI->GetWorldTileSize();
+
     FVector CenterLocation = FVector::ZeroVector;
 
     FVector TraceStart = AnyPoint;
@@ -359,7 +342,7 @@ FVector USOWBlueprintFunctionLibrary::MakeCentralTileLocationFromAnyPoint(APlaye
     Params.bReturnPhysicalMaterial = false;
 
     if (!PlayerController->GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_GameTraceChannel1, Params)) return FVector::ZeroVector;
-    if(!Hit.GetActor()) return FVector::ZeroVector;
+    if(!IsValid(Hit.GetActor())) return FVector::ZeroVector;
 
     CenterLocation = Hit.GetActor()->GetActorLocation();
     FVector CriticVector = AnyPoint - CenterLocation;
@@ -374,7 +357,8 @@ FVector USOWBlueprintFunctionLibrary::MakeCentralTileLocationFromAnyPoint(APlaye
                 FVector CenterPos;
 
                 for (int i = 0; i < 4; i++) {
-                    FVector Pivot = FVector(TileSize/2 * dx[i], TileSize/2 * dy[i], 0);
+                    FVector Pivot = FVector(WorldTileSize / 2 * dx[i], WorldTileSize / 2 * dy[i], 0);
+                    //FVector Pivot = FVector(TileSize/2 * dx[i], TileSize/2 * dy[i], 0);
                     float Dot = FVector::DotProduct(CriticVector, Pivot);
 
                     if (Dot >= DotMax) {
@@ -403,7 +387,8 @@ FVector USOWBlueprintFunctionLibrary::MakeCentralTileLocationFromAnyPoint(APlaye
                 }
 
                 for (int i = 0; i < 2; i++) {
-                    FVector Pivot = FVector(TileSize * dx[i] / 2.f, TileSize * dy[i] / 2.f , 0);
+                    FVector Pivot = FVector(WorldTileSize * dx[i] / 2.f, WorldTileSize * dy[i] / 2.f, 0);
+                   // FVector Pivot = FVector(TileSize * dx[i] / 2.f, TileSize * dy[i] / 2.f , 0);
                     float Dot = FVector::DotProduct(AnyPoint, Pivot);
 
                     if (Dot >= DotMax) {
@@ -421,6 +406,8 @@ FVector USOWBlueprintFunctionLibrary::MakeCentralTileLocationFromAnyPoint(APlaye
 
 TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAsSquaredFromCenterLocation(APlayerController* PlayerController, FVector CenterPosition, const int32 N, const float TileSize)
 {
+    USOWGameInstance* GI = Cast<USOWGameInstance>(PlayerController->GetWorld()->GetGameInstance());
+    float WorldTileSize = GI->GetWorldTileSize();
     // Get Tiles Around Center Tile Location.
     // If N is odd, center position must be the center coordinates of the tile.
     // else, it should be the vertex closest to the center coordinates.
@@ -430,12 +417,17 @@ TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAsSquaredFromCenterLoca
     FCollisionQueryParams Params;
     Params.bReturnPhysicalMaterial = false;
 
-    FVector RightOffset(TileSize, 0.f, 0.f);
+    FVector RightOffset(WorldTileSize, 0.f, 0.f);
+    FVector DownOffset(0, WorldTileSize, 0.f);
+    FVector OriginOffset = CenterPosition - N / 2 * FVector(WorldTileSize, WorldTileSize, 0);
+
+   /* FVector RightOffset(TileSize, 0.f, 0.f);
     FVector DownOffset(0, TileSize, 0.f);
-    FVector OriginOffset = CenterPosition - N/2 * FVector(TileSize , TileSize, 0);
+    FVector OriginOffset = CenterPosition - N/2 * FVector(TileSize , TileSize, 0);*/
     if (N % 2 == 0) {
         // 3-1. N이 짝수 일 경우 중심 위치 조정
-        OriginOffset += FVector(TileSize/2, TileSize/2, 0);
+        OriginOffset += FVector(WorldTileSize / 2, WorldTileSize / 2, 0);
+        //OriginOffset += FVector(TileSize/2, TileSize/2, 0);
     }
     FVector CurrentOffset = OriginOffset;
 
@@ -462,13 +454,19 @@ TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAsSquaredFromCenterLoca
 
 TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAsStraightFromCenterLocation(APlayerController* PlayerController, FVector CenterPosition, const int32 N, const float TileSize, bool bRot)
 {
+    USOWGameInstance* GI = Cast<USOWGameInstance>(PlayerController->GetWorld()->GetGameInstance());
+    float WorldTileSize = GI->GetWorldTileSize();
+
     TArray<ATileBase*> SelectedTiles;
-    float SideLength = TileSize;
+
+    float SideLength = WorldTileSize;
+   // float SideLength = TileSize;
 
     FCollisionQueryParams Params;
     Params.bReturnPhysicalMaterial = false;
 
-    FVector CriticVector = FVector(TileSize, 0, 0) + (bRot ? 1 : -1) * FVector(0, TileSize, 0);
+    FVector CriticVector = FVector(WorldTileSize, 0, 0) + (bRot ? 1 : -1) * FVector(0, WorldTileSize, 0);
+    //FVector CriticVector = FVector(TileSize, 0, 0) + (bRot ? 1 : -1) * FVector(0, TileSize, 0);
 
     for (int32 X = 0; X <= N / 2; X++)
     {
@@ -504,7 +502,7 @@ TArray<AActor*> USOWBlueprintFunctionLibrary::GetActorsOnTiles(TArray<ATileBase*
 
     for (ATileBase* tile : Tiles) {
 
-        if (!tile) continue;
+        if (!IsValid(tile)) continue;
         TArray<AActor*> OverlappedActors;
 
         FVector TileCenter = tile->GetActorLocation(); 
@@ -530,7 +528,7 @@ TArray<AActor*> USOWBlueprintFunctionLibrary::GetActorsOnTiles(TArray<ATileBase*
             for (auto& Result : Overlaps)
             {
                 AActor* HitActor = Result.GetActor();
-                if (HitActor)
+                if (IsValid(HitActor))
                 {
                     OnTileActors.AddUnique(HitActor);
                 }
@@ -548,7 +546,7 @@ TArray<AActor*> USOWBlueprintFunctionLibrary::GetTurretsOnTiles(TArray<ATileBase
 
     for (ATileBase* tile : Tiles) {
 
-        if (!tile) continue;
+        if (!IsValid(tile)) continue;
         TArray<AActor*> OverlappedActors;
 
         FVector TileCenter = tile->GetActorLocation();
@@ -574,7 +572,7 @@ TArray<AActor*> USOWBlueprintFunctionLibrary::GetTurretsOnTiles(TArray<ATileBase
             for (auto& Result : Overlaps)
             {
                 AActor* HitActor = Result.GetActor();
-                if (HitActor)
+                if (IsValid(HitActor))
                 {
                     OnTileActors.AddUnique(HitActor);
                 }
@@ -584,6 +582,45 @@ TArray<AActor*> USOWBlueprintFunctionLibrary::GetTurretsOnTiles(TArray<ATileBase
         }
     }
     return OnTileActors;
+}
+
+bool USOWBlueprintFunctionLibrary::IsMouseOverUI(APlayerController* PC, const TSubclassOf<USOWWidgetBase>& TargetWidget)
+{
+    if (!FSlateApplication::IsInitialized())
+        return false;
+
+    FSlateApplication& SlateApp = FSlateApplication::Get();
+    FVector2D MousePos = SlateApp.GetCursorPos();
+
+    FWidgetPath WidgetPath = SlateApp.LocateWindowUnderMouse(MousePos, SlateApp.GetInteractiveTopLevelWindows());
+    if (!WidgetPath.IsValid())
+        return false;
+
+    const FArrangedChildren& ArrangedWidgets = WidgetPath.Widgets;
+
+    for (const FArrangedWidget& ArrangedWidget : ArrangedWidgets.GetInternalArray())
+    {
+        TSharedPtr<SWidget> SlateWidget = ArrangedWidget.Widget;
+        if (!SlateWidget.IsValid())
+            continue;
+
+        // 🔹 핵심 부분: SObjectWidget을 통해 UUserWidget 찾기
+        if (TSharedPtr<SObjectWidget> ObjectWidget = StaticCastSharedPtr<SObjectWidget>(SlateWidget))
+        {
+            if (!ObjectWidget.IsValid()) continue;
+            UUserWidget* UserWidget = ObjectWidget->GetWidgetObject();
+
+            if (IsValid(UserWidget))
+            {
+                if (UserWidget->IsA(TargetWidget))
+                {
+                    return true; // 특정 위젯 클래스 위에 마우스가 존재함
+                }
+            }
+        }
+    }
+
+    return false;
 }
 
 

@@ -11,6 +11,8 @@
 #include "UObject/ConstructorHelpers.h"
 #include "Core/SOWPlayerController.h"
 
+#include "SOWGameInstance.h"
+
 #include "Utilities/MapScriptLoader.h"
 #include "Misc/Paths.h"
 #include "Misc/FileHelper.h"
@@ -138,6 +140,9 @@ void ATileSpawner::BeginPlay()
 	{
 		NavSys->Build();
 	}
+
+	USOWGameInstance* GI = Cast<USOWGameInstance>(GetGameInstance());
+	GI->SetWorldTileSize(TileWidth);
 }
 
 void ATileSpawner::SpawnIncomingRoutes()
