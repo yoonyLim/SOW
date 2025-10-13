@@ -19,6 +19,8 @@
 
 #include "SOWBlueprintFunctionLibrary.h"
 
+#include "Manager/TurretSynergyManager.h"
+
 
 void USOWGameInstance::Init()
 {
@@ -50,6 +52,13 @@ void USOWGameInstance::Init()
     if (SummonManager)
     {
         SummonManager->Initialize();
+    }
+
+    TurretSynergyManager = NewObject<UTurretSynergyManager>(this);
+
+    if (TurretSynergyManager)
+    {
+        TurretSynergyManager->Initialize(SynergyDataTable, GlacioInstance);
     }
 }
 
@@ -130,4 +139,14 @@ void USOWGameInstance::GetResource(float Count)
     AWaveGameMode* GM = Cast<AWaveGameMode>(UGameplayStatics::GetGameMode(this));
 
     GM->AddCurrency(Count);
+}
+
+void USOWGameInstance::SetWorldTileSize(float InSize)
+{
+    WorldTileSize = InSize;
+}
+
+float USOWGameInstance::GetWorldTileSize() const
+{
+    return WorldTileSize;
 }

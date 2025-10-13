@@ -17,7 +17,9 @@
 #include "SOWGameInstance.h"
 #include "Core/SOWPlayerController.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/TextBlock.h"
 #include "UI/ToastStackWidget.h"
+#include "Manager/TurretSynergyManager.h"
 
 
 void USummonWidget::NativeConstruct()
@@ -86,6 +88,32 @@ void USummonWidget::OnTurretSummoned(const FSummonData& TurretToSummon)
 		W_SummonNotiBox->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	}
 	W_SummonNotiBox->PushToast(TurretToSummon);
+
+	if (USOWGameInstance* GI = Cast<USOWGameInstance>(GetGameInstance()))
+	{
+		if (UTurretSynergyManager* TSM = GI->GetTurretSynergyManager())
+		{
+			for (EElementalType a : Elementals)
+			{
+				int counts = TSM->GetActiveSynergyCount(a);
+				if (counts > 0)
+				{
+					switch (a)
+					{
+					case EElementalType::Nature:
+						NatureSynergyCounts->SetText(FText::AsNumber(counts));
+						break;
+					case EElementalType::Ice:
+						IceSynergyCounts->SetText(FText::AsNumber(counts));
+						break;
+					case EElementalType::Electro:
+						ElectroSynergyCounts->SetText(FText::AsNumber(counts));
+						break;
+					}
+				}
+			}
+		}
+	}
 }
 
 

@@ -12,6 +12,7 @@ class USOWAbilitySystemComponent;
 class ASOWCharacterTurretBase;
 class ATileBase;
 struct FGameplayTag;
+class USOWWidgetBase;
 
 
 /**
@@ -52,9 +53,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "AbilitySystem")
 	static bool QueryForCurrencyCountSufficient(UObject* WorldContextObject, const FGameplayTag& InTag, const int InCount);
 
+	UFUNCTION(BlueprintCallable, Category = "Tag")
 	static EElementalType TranslateElementTagToEnum(const FGameplayTag& InTag);
 
-
+	UFUNCTION(BlueprintCallable, Category = "Tag")
+	static FGameplayTag FindTurretElementAsTag(ASOWCharacterTurretBase* InTurret);
+	UFUNCTION(BlueprintCallable, Category = "Tag")
+	static EElementalType FindTurretElementAsEnum(ASOWCharacterTurretBase* InTurret);
 
 	UFUNCTION(BlueprintCallable, Category = "Tile")
 	static TArray<ATileBase*> GetTilesAroundMouse(APlayerController* PlayerController, const ETileSelectType TileSelectionType, const int32 N, const float TileSize);
@@ -71,6 +76,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Tile")
 	static TArray<AActor*> GetActorsOnTiles(TArray<ATileBase*> Tiles);
 
+	UFUNCTION(BlueprintCallable, Category = "Tile")
+	static TArray<AActor*> GetTurretsOnTiles(TArray<ATileBase*> Tiles);
+
+	UFUNCTION(BlueprintCallable, Category = "Input")
+	static bool IsMouseOverUI(APlayerController* PC, const TSubclassOf<USOWWidgetBase>& TargetWidget);
 };
 
 template <typename T>

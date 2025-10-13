@@ -16,19 +16,19 @@ class ATurretProjectileBase;
 /**
  * 
  */
-USTRUCT(BlueprintType)
-struct FPlayerAbilitySet {
-
-	GENERATED_BODY()
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (Categories = "InputTag"))
-	FGameplayTag InputTag;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSubclassOf<USOWPlayerGameplayAbility> AbilityToGrant;
-
-	bool IsValid() const;
-};
+//USTRUCT(BlueprintType)
+//struct FPlayerAbilitySet {
+//
+//	GENERATED_BODY()
+//
+//	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (Categories = "InputTag"))
+//	FGameplayTag InputTag;
+//
+//	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+//	TSubclassOf<USOWPlayerGameplayAbility> AbilityToGrant;
+//
+//	bool IsValid() const;
+//};
 
 USTRUCT(BlueprintType)
 struct FElementResistanceData : public FTableRowBase {
@@ -38,28 +38,28 @@ public:
 	FElementResistanceData();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Resistance Value"))
-	float Nature;
+	float Nature = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Resistance Value"))
-	float Electro;
+	float Electro = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Resistance Value"))
-	float Death;
+	float Death = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Resistance Value"))
-	float Ice;
+	float Ice = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Resistance Value"))
-	float Wave;
+	float Wave = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Resistance Value"))
-	float Divinity;
+	float Divinity = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Resistance Value"))
-	float Madness;
+	float Madness = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Resistance Value"))
-	float Flame;
+	float Flame = 0.f;
 };
 
 USTRUCT(BlueprintType)
@@ -71,13 +71,13 @@ public:
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Attribute Value"))
-	float AttackPowerBase;
+	float AttackPowerBase =0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Attribute Value"))
-	float AttackSpeedBase;
+	float AttackSpeedBase = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Attribute Value"))
-	float DetectionRange;
+	float DetectionRange = 0.f;
 };
 
 USTRUCT(BlueprintType)
@@ -268,7 +268,7 @@ struct FEvolutionData : public FTableRowBase {
 	TArray<FTurretEvolutionItem> EvolutionPropertyArray;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 StatusMaxLevel;
+	int32 StatusMaxLevel = 0;
 };
 
 USTRUCT(BlueprintType)
@@ -397,4 +397,38 @@ struct FSkillData : public FTableRowBase
 	/* CircleUpgrade */
 	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "EffectType==ESkillEffectType::CircleUpgrade"), Category = "CircleUpgrade")
 	uint8 CircleLevel;
+};
+
+USTRUCT(BlueprintType)
+struct FSynergyCondition {
+	// legacys
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ETurretRarity SynergyConditionRarity = ETurretRarity::Common;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int SynergyConditionCount = 0;
+};
+
+USTRUCT(BlueprintType)
+struct FTurretSynergyTagItem {
+	// legacys
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGameplayTag SynergyTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FSynergyCondition SynergyCondition;
+};
+
+USTRUCT(BlueprintType)
+struct FTurretSynergyTagData : public FTableRowBase {
+	// legacys
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FTurretSynergyTagItem> SynergyTagItems;
+
 };

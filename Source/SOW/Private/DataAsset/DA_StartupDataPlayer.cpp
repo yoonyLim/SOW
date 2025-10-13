@@ -9,15 +9,15 @@ void UDA_StartupDataPlayer::GiveToAbilitySystemComponent(USOWAbilitySystemCompon
 {
 	Super::GiveToAbilitySystemComponent(InASCToGive, ApplyLevel);
 
-	if (!PlayerCombatAbilities.IsEmpty()) {
-		for (const FPlayerAbilitySet& AbilitySet : PlayerCombatAbilities) {
-			
-			FGameplayAbilitySpec AbilitySpec(AbilitySet.AbilityToGrant);
-			AbilitySpec.SourceObject = InASCToGive->GetAvatarActor();
-			AbilitySpec.Level = ApplyLevel;
-			AbilitySpec.DynamicAbilityTags.AddTag(AbilitySet.InputTag);
+	//if (!PlayerCombatAbilities.IsEmpty()) {
+	//	for (const FPlayerAbilitySet& AbilitySet : PlayerCombatAbilities) {
+	//		
+	//		FGameplayAbilitySpec AbilitySpec(AbilitySet.AbilityToGrant);
+	//		AbilitySpec.SourceObject = InASCToGive->GetAvatarActor();
+	//		AbilitySpec.Level = ApplyLevel;
+	//		AbilitySpec.DynamicAbilityTags.AddTag(AbilitySet.InputTag);
 
-			InASCToGive->GiveAbility(AbilitySpec);
-		}
-	}
+	//		InASCToGive->GiveAbility(AbilitySpec);
+	//	}
+	//}
 }

@@ -41,7 +41,7 @@ void ATurretProjectileBase::Tick(float DeltaTime) {
 			BP_DestroyProjectile();
 		}
 
-		if (bHitOnce && (!TargetActor || (Cast<ASOWCharacter>(TargetActor) && USOWBlueprintFunctionLibrary::DoesActorHasTag(TargetActor, SOWGameplayTags::Shared_Status_Dead)))) {
+		if (bHitOnce && (!IsValid(TargetActor) || (Cast<ASOWCharacter>(TargetActor) && USOWBlueprintFunctionLibrary::DoesActorHasTag(TargetActor, SOWGameplayTags::Shared_Status_Dead)))) {
 			BP_DestroyProjectile();
 		}
 		else { 
@@ -54,7 +54,7 @@ void ATurretProjectileBase::Tick(float DeltaTime) {
 void ATurretProjectileBase::FaceToTargetActor() {
 	if (!HasMovement) return;
 
-	if (!TargetActor) return;
+	if (!IsValid(TargetActor)) return;
 
 	if (bHitDone) return;
 
@@ -93,9 +93,9 @@ void ATurretProjectileBase::OnCollisionHit(UPrimitiveComponent* OverlappedCompon
 	// Overlapping Callback Function
 	Super::OnCollisionHit(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 
-	if (!CachedInstigator.Get()) return;
+	if (!IsValid(CachedInstigator.Get())) return;
 
-	if (!OtherActor) return;
+	if (!IsValid(OtherActor)) return;
 
 	if (!Cast<ASOWCharacter>(OtherActor) || Cast<ASOWCharacterPlayer>(OtherActor)) return;
 
@@ -112,14 +112,14 @@ void ATurretProjectileBase::OnCollisionOut(UPrimitiveComponent* OverlappedCompon
 {
 	Super::OnCollisionOut(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex);
 
-	if (!OtherActor) return;
+	if (!IsValid(OtherActor)) return;
 
 	BP_PostProjectileOut(OtherActor);
 }
 
 bool ATurretProjectileBase::IsHostileTarget(AActor* Target)
 {
-	if (!Target || !Target->Implements<USOWCharacterTypeInterface>()) return false;
+	if (!IsValid(Target) || !Target->Implements<USOWCharacterTypeInterface>()) return false;
 
 	ESOWCharacterType TargetType = Cast<ISOWCharacterTypeInterface>(Target)->GetSOWCharacterType();
 	return USOWBlueprintFunctionLibrary::IsTarget(OwnerPolicy, TargetType);
@@ -135,10 +135,13 @@ void ATurretProjectileBase::BP_DestroyProjectile()
 {
 	//checkf(CachedInstigator.Get()->GetProjectilePoolingComponent(), TEXT("No Pool Found For %s"), *CachedInstigator.Get()->GetActorNameOrLabel());
 
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetOwner(), SOWGameplayTags::Turret_Event_Attack_Done, FGameplayEventData());
+	if (!IsValid(CachedInstigator.Get()) || !CachedInstigator.Get()->GetProjectilePoolingComponent()) {
+		Destroy();
+		return;
+	} 
 
-	if (!CachedInstigator.Get() || !CachedInstigator.Get()->GetProjectilePoolingComponent()) Destroy();
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(CachedInstigator.Get(), SOWGameplayTags::Turret_Event_Attack_Done, FGameplayEventData());
 
 	CachedInstigator.Get()->GetProjectilePoolingComponent()->ReturnProjectile(this);
-	UE_LOG(LogTemp, Warning, TEXT("Return to Pool : %s"), *this->GetActorNameOrLabel());
+	//UE_LOG(LogTemp, Warning, TEXT("Return to Pool : %s"), *this->GetActorNameOrLabel());
 }

@@ -13,6 +13,12 @@
 #include "Kismet/GameplayStatics.h"
 #include "Widget/Enemy/EnemyHealthBarWidget.h" // 퍼센트 세터 재사용
 
+// 시너지
+#include "SOWGameInstance.h"
+#include "Manager/TurretSynergyManager.h"
+
+
+#include "AIController.h"
 // Sets default values
 ASOWCharacterCoreRune::ASOWCharacterCoreRune()
 {
@@ -69,6 +75,35 @@ void ASOWCharacterCoreRune::BeginPlay()
 		const float MaxHealth = ASCAttributes->GetMaxHealthBase();
 		UpdateHealthBarValue(MaxHealth, MaxHealth);
 	}
+
+	USOWGameInstance* GI = Cast<USOWGameInstance>(GetGameInstance());
+	if (GI) {
+		GI->GetTurretSynergyManager()->SendRuneReference(this);
+	}
+	
+
+
+		// AIController를 스폰하고 빙의
+	if (!GetController())
+	{
+		AAIController* AIController = GetWorld()->SpawnActor<AAIController>(
+			AAIController::StaticClass(),
+			FVector::ZeroVector,
+			FRotator::ZeroRotator
+		);
+
+		if (AIController)
+		{
+			AIController->Possess(this);
+		}
+	}
+	
+}
+
+void ASOWCharacterCoreRune::PossessedBy(AController* NewController) {
+	Super::PossessedBy(NewController);
+
+	UE_LOG(LogTemp, Warning, TEXT("Possessed"));
 }
 
 // 체력 변화 시 호출
@@ -144,6 +179,11 @@ void ASOWCharacterCoreRune::HandleCoreDestroyed()
 {
 	// 외부(GameMode/Subsystem/UI)로 신호 전파
 	OnCoreDestroyed.Broadcast();
+
+	if (AWaveGameMode* WaveGM = Cast<AWaveGameMode>(UGameplayStatics::GetGameMode(GetWorld())))
+	{
+		WaveGM->RuneDestroyed();
+	}
 
 	// 여기서 게임 오버 처리/이펙트/사운드 등을 호출하거나,
 	// 코어를 파괴하지 않고 남겨둘 수도 있음. 필요하다면 Destroy() 호출:

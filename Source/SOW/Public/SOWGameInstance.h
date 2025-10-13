@@ -12,6 +12,10 @@ class UOneTimeCurrencyManager;
 class USummonManager;
 class UDataTable;
 
+class UTurretSynergyManager;
+class ASOWCharacterTurretSpecialBase;
+
+
 /**
  * 
  */
@@ -34,8 +38,19 @@ public:
     UPROPERTY(BlueprintReadOnly)
     TObjectPtr<USummonManager> SummonManager;
 
+    UPROPERTY(BlueprintReadOnly)
+    TObjectPtr<UTurretSynergyManager> TurretSynergyManager;
+
+
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Skill")
     TObjectPtr<UDataTable> SkillDataTable;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Synergy")
+    TObjectPtr<UDataTable> SynergyDataTable;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Synergy")
+    TSubclassOf<ASOWCharacterTurretSpecialBase> GlacioInstance;
+
 
 public:
     virtual void Init() override;
@@ -52,9 +67,19 @@ public:
     UFUNCTION(BlueprintCallable)
     UOneTimeCurrencyManager* GetOneTimeCurrencyManager() { return OneTimeCurrencyManager; }
 
+    UFUNCTION(BlueprintCallable)
+    UTurretSynergyManager* GetTurretSynergyManager() { return TurretSynergyManager; }
     UFUNCTION(Exec)
     void SummonTurret(FName TurretName);
 
     UFUNCTION(Exec)
     void GetResource(float Count);
+
+    void SetWorldTileSize(float InSize);
+
+    float GetWorldTileSize() const;
+
+private:
+
+    float WorldTileSize;
 };

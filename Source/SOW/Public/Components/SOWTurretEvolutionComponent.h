@@ -43,20 +43,30 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Turret|Evolution")
 	void GetStatusNextValueString(FString& OutAtk, FString& OutSpd);
 
+	UFUNCTION(BlueprintCallable, Category = "Turret|Evolution")
+	TArray<FString> GetAllPropertyDescriptString();
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+	UPROPERTY(VisibleAnywhere)
 	UCurveTable* PropertyResourceData;
+
+	UPROPERTY(VisibleAnywhere)
 	UCurveTable* StatusResourceData;
 
 private:
+	UPROPERTY()
 	ASOWCharacterTurretBase* CachedOwnerCharacter;
 
+	UPROPERTY()
 	TSubclassOf<UGameplayEffect> AlphaData;
 
+	UPROPERTY()
 	TSubclassOf<UGameplayEffect> BetaData;
 
+	UPROPERTY()
 	TArray<FTurretEvolutionItem> PropertyData;
 
 	int32 EvolutionPropertyLevel = 0;

@@ -72,6 +72,7 @@ void UGEEC_CalculatePercentageDamage::Execute_Implementation(const FGameplayEffe
 	// Send HitReact Event To Target
 	AActor* Target = ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor();
 	FGameplayEventData Data;
+	Data.EventTag = SOWGameplayTags::Shared_Event_HitReact_PercentDamage;
 	//Data.OptionalObject = UDamageLogger(L_FinalDamage);
 	Data.EventMagnitude = L_FinalDamage;
 

@@ -46,7 +46,7 @@ void USOWProjectilePoolingComponent::RemovePool(int32 NewPoolNumber)
 
 
 
-AProjectileBase* USOWProjectilePoolingComponent::SpawnProjectile(const FTransform& SpawnTransform, ETurretTargetSelectionPolicy InPolicy, FGameplayEffectSpecHandle InHandle, bool InMovement, float InSpeed, float InDuration, float InScale, ASOWCharacter* InTargetActor, int32 NewPoolNumber)
+AProjectileBase* USOWProjectilePoolingComponent::SpawnProjectile(const FTransform& SpawnTransform, ETurretTargetSelectionPolicy InPolicy, FGameplayEffectSpecHandle InHandle, bool InMovement, float InSpeed, float InDuration, float InScale, AActor* InTargetActor, int32 NewPoolNumber)
 {
 	// if you want to spawn projectile from pool, just use this function. 
 	// you need to assign other properties from owner turret or enemy
@@ -69,12 +69,21 @@ AProjectileBase* USOWProjectilePoolingComponent::SpawnProjectile(const FTransfor
 	if (!InTargetActor) return nullptr;
 
 	AProjectileBase* Projectile = Pool->Pop();
+
+	/*ProjectileHitCollisionComp->SetCollisionEnabled(NoCollision);
+	ProjectileFxComp->DeactivateImmediate();
+	ProjectileMoveComp->StopMovementImmediately();*/
+
 	Projectile->InitProjectileProperties(SpawnTransform, InPolicy, InHandle, InMovement, InSpeed, InDuration, InScale, InTargetActor);
 	Projectile->SetPoolNumber(NewPoolNumber);
 
 	Projectile->SetActorTransform(SpawnTransform);
 	Projectile->SetProjectileInGame(true);
 	Projectile->SetActorHiddenInGame(false);
+
+	/*Projectile->ProjectileMoveComp->SetUpdatedComponent(RootComponent);
+	Projectile->ProjectileMoveComp->Velocity = SpawnDirection * InSpeed;*/
+
 	Projectile->ActivateMovement();
 
 	Projectile->BP_ExecuteProjectileSpawnEffect();

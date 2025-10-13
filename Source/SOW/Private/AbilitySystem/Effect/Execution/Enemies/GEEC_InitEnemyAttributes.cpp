@@ -46,7 +46,7 @@ void UGEEC_InitEnemyAttributes::Execute_Implementation(const FGameplayEffectCust
 	if (ASOWCharacterEnemyBase* Enemy = Cast<ASOWCharacterEnemyBase>(ExecutionParams.GetSourceAbilitySystemComponent()->GetAvatarActor()))
 	{
 		const auto EnemyAttributesData = Enemy->EnemyAttributesDT.DataTable->FindRow<FEnemyAttributeData>(Enemy->GetEnemyTypeStr(), "");
-
+		if (!EnemyAttributesData) return;
 		/*if (EnemyAttributesData)
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, Enemy->GetEnemyTypeStr().ToString());

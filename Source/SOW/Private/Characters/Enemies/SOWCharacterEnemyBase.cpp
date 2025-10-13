@@ -234,7 +234,7 @@ void ASOWCharacterEnemyBase::OnHealthChanged(const FOnAttributeChangeData& Data)
 	{
 		GetWorldTimerManager().SetTimer(
 			HideHealthBarHandle,
-			FTimerDelegate::CreateLambda([&]() { HealthBarWidget->SetHiddenInGame(true); }),
+			FTimerDelegate::CreateWeakLambda(this,[this]() { HealthBarWidget->SetHiddenInGame(true); }),
 			1.f,
 			false
 		);
@@ -375,7 +375,14 @@ void ASOWCharacterEnemyBase::OnBeginOverlap(UPrimitiveComponent* OverlappedComp,
 			);
 		}
 		
-		Destroy();
+		// Destroy();
+
+		// Object Pool logic mimic
+		SetActorHiddenInGame(true);
+		SetActorEnableCollision(false);
+		SetActorTickEnabled(false);
+
+		BroadcastEnemyDeath();
 	}
 }
 

@@ -51,6 +51,10 @@ void ASOWCharacter::PossessedBy(AController* NewController)
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
 			AttributeSet->GetWalkSpeedAttribute())
 			.AddUObject(this, &ASOWCharacter::OnWalkSpeedChanged);
+
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
+			AttributeSet->GetExtraWalkSpeedAttribute())
+			.AddUObject(this, &ASOWCharacter::OnWalkSpeedChanged);
 	}
 }
 
@@ -84,8 +88,10 @@ void ASOWCharacter::Tick(float DeltaTime) {
 
 void ASOWCharacter::OnWalkSpeedChanged(const FOnAttributeChangeData& Data)
 {
-	float NewSpeed = Data.NewValue;
-	UE_LOG(LogTemp, Warning, TEXT("Move Speed Must be Changed"));
+	
+
+	float NewSpeed = AttributeSet->GetWalkSpeed() * (1.0f + AttributeSet->GetExtraWalkSpeed());
+	//UE_LOG(LogTemp, Warning, TEXT("Move Speed Must be Changed"));
 	if (GetCharacterMovement()) {
 		UCharacterMovementComponent* MoveComp = Cast<UCharacterMovementComponent>(GetCharacterMovement());
 		UE_LOG(LogTemp, Warning, TEXT("Move Speed Must be Changed Before : %s" ), *FString::SanitizeFloat(MoveComp->MaxWalkSpeed));
@@ -105,6 +111,10 @@ void ASOWCharacter::BP_DeactivateCharacterAllFunctionAsync()
 {
 	if (!AbilitySystemComponent) return;
 
+	GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this, &AActor::K2_DestroyActor, 3.f, false, 0.5f);
+
+	AbilitySystemComponent->CancelAllAbilities();
+
 	// 어빌리티 제거 (비동기 아님, 즉시 제거)
 	AbilitySystemComponent->ClearAllAbilities();
 
@@ -116,5 +126,5 @@ void ASOWCharacter::BP_DeactivateCharacterAllFunctionAsync()
 	//PlayDeathEffectAsync();
 
 	// 일정 시간 후 제거 (타이머 기반 비동기 처리)
-	GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this, &AActor::K2_DestroyActor, 3.0f, false, 0.1f);
+	
 }
