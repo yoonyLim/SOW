@@ -10,6 +10,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Core/SOWPlayerController.h"
+#include "SOWGameInstance.h"
 
 #include "Utilities/MapScriptLoader.h"
 #include "Misc/Paths.h"
@@ -142,6 +143,9 @@ void ASOWTileSpawner::BeginPlay()
 	{
 		NavSys->Build();
 	}
+
+	USOWGameInstance* GI = Cast<USOWGameInstance>(GetGameInstance());
+	GI->SetWorldTileSize(TileWidth);
 }
 
 FVector ASOWTileSpawner::GridToWorld_TopLeft(int32 GX, int32 GY, float InTileW, float InTileH) const

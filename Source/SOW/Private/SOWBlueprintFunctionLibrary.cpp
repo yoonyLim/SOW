@@ -436,65 +436,156 @@ TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAsSquaredFromCenterLoca
         for (int32 Y = 0; Y < N; Y++)
         {
 
-            FVector Start = CurrentOffset + X * DownOffset + FVector(0, 0, 500.f) + Y * RightOffset;
-            FVector End = CurrentOffset + X * DownOffset + FVector(0, 0, -500.f) + Y * RightOffset;
+            const FRotator CamRot = PlayerController->PlayerCameraManager->GetCameraRotation();
+            const FVector  CamFwd = CamRot.Vector();
+            const float    Depth = 100000.f;
+            const FVector  RayNeg = -CamFwd * Depth;
+            const FVector  RayPos = CamFwd * Depth;
+
+            const FVector Sample = OriginOffset + X * DownOffset + Y * RightOffset;
+            const FVector Start = Sample + RayNeg;
+            const FVector End = Sample + RayPos;
+
+            FHitResult Hit;
+            if (PlayerController->GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_GameTraceChannel1, Params))
+            {
+                ATileBase* Tile = Cast<ATileBase>(Hit.GetActor());
+                if (!Tile && Hit.GetComponent()) Tile = Cast<ATileBase>(Hit.GetComponent()->GetOwner());
+
+                if (Tile) SelectedTiles.AddUnique(Tile);
+            }
+        }
+    }
+    UE_LOG(LogTemp, Warning, TEXT("[Tiles] Collected: %d (N=%d, TileSize=%.1f)"),
+        SelectedTiles.Num(), N, WorldTileSize);
+
+    for (int32 i = 0; i < SelectedTiles.Num(); ++i)
+    {
+        ATileBase* T = SelectedTiles[i];
+        if (!T) continue;
+
+        const FVector P = T->GetActorLocation();
+        UE_LOG(LogTemp, Warning, TEXT("[Tiles][%d] %s  Loc=(%.0f, %.0f, %.0f)"),
+            i, *T->GetActorNameOrLabel(), P.X, P.Y, P.Z);
+    }
+
+
+    return SelectedTiles;
+}
+
+TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAsStraightFromCenterLocation(
+    APlayerController* PlayerController,
+    FVector CenterPosition,
+    const int32 N,
+    const float TileSize,
+    bool bRot)
+{
+    USOWGameInstance* GI = Cast<USOWGameInstance>(PlayerController->GetWorld()->GetGameInstance());
+    float WorldTileSize = GI ? GI->GetWorldTileSize() : TileSize;
+
+    TArray<ATileBase*> SelectedTiles;
+
+    FCollisionQueryParams Params(SCENE_QUERY_STAT(TilesFromCenter), true);
+    Params.bReturnPhysicalMaterial = false;
+    if (APawn* Pawn = PlayerController->GetPawn())
+    {
+        Params.AddIgnoredActor(Pawn);
+    }
+
+    const FVector CriticVector = FVector(WorldTileSize, 0, 0) + (bRot ? 1.f : -1.f) * FVector(0, WorldTileSize, 0);
+
+
+    const FRotator CamRot = PlayerController->PlayerCameraManager->GetCameraRotation();
+    const FVector  CamFwd = CamRot.Vector();                  
+    const float    Depth = 100000.f;                      
+    const FVector  RayNeg = -CamFwd * Depth;
+    const FVector  RayPos = CamFwd * Depth;
+
+
+    const FVector HalfShift = (N % 2 == 0) ? (CriticVector * 0.5f) : FVector::ZeroVector;
+
+    for (int32 X = 0; X <= N / 2; X++)
+    {
+
+        {
+            const FVector BasePos = CenterPosition + (X * CriticVector) - HalfShift;
+            const FVector Start = BasePos + RayNeg;
+            const FVector End = BasePos + RayPos;
 
             FHitResult TileHit;
-            if (PlayerController->GetWorld()->LineTraceSingleByChannel(TileHit, End, Start, ECC_GameTraceChannel1, Params))
+            if (PlayerController->GetWorld()->LineTraceSingleByChannel(TileHit, Start, End, ECC_GameTraceChannel1, Params))
             {
-                if (TileHit.GetActor() && !SelectedTiles.Contains(TileHit.GetActor()))
+                if (ATileBase* Tile = Cast<ATileBase>(TileHit.GetActor()))
                 {
-                    SelectedTiles.AddUnique(Cast<ATileBase>(TileHit.GetActor()));
+                    SelectedTiles.AddUnique(Tile);
+                }
+            }
+        }
+
+        {
+            const FVector BasePos = CenterPosition - (X * CriticVector) + HalfShift;
+
+            const FVector Start = BasePos + RayNeg;
+            const FVector End = BasePos + RayPos;
+
+            FHitResult TileHit;
+            if (PlayerController->GetWorld()->LineTraceSingleByChannel(TileHit, Start, End, ECC_GameTraceChannel1, Params))
+            {
+                if (ATileBase* Tile = Cast<ATileBase>(TileHit.GetActor()))
+                {
+                    SelectedTiles.AddUnique(Tile);
                 }
             }
         }
     }
+
     return SelectedTiles;
 }
 
-TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAsStraightFromCenterLocation(APlayerController* PlayerController, FVector CenterPosition, const int32 N, const float TileSize, bool bRot)
-{
-    USOWGameInstance* GI = Cast<USOWGameInstance>(PlayerController->GetWorld()->GetGameInstance());
-    float WorldTileSize = GI->GetWorldTileSize();
-
-    TArray<ATileBase*> SelectedTiles;
-
-    float SideLength = WorldTileSize;
-   // float SideLength = TileSize;
-
-    FCollisionQueryParams Params;
-    Params.bReturnPhysicalMaterial = false;
-
-    FVector CriticVector = FVector(WorldTileSize, 0, 0) + (bRot ? 1 : -1) * FVector(0, WorldTileSize, 0);
-    //FVector CriticVector = FVector(TileSize, 0, 0) + (bRot ? 1 : -1) * FVector(0, TileSize, 0);
-
-    for (int32 X = 0; X <= N / 2; X++)
-    {
-        FVector StartRight = CenterPosition + FVector(0, 0, 500.f) + X * CriticVector - (N % 2 == 0 ? CriticVector/2 : FVector::ZeroVector);
-        FVector EndRight = CenterPosition + FVector(0, 0, -500.f) + X * CriticVector - (N % 2 == 0 ? CriticVector/2 : FVector::ZeroVector);
-
-        FHitResult TileHit;
-        if (PlayerController->GetWorld()->LineTraceSingleByChannel(TileHit, EndRight, StartRight, ECC_GameTraceChannel1, Params))
-        {
-            if (TileHit.GetActor() && !SelectedTiles.Contains(TileHit.GetActor()))
-            {
-                SelectedTiles.AddUnique(Cast<ATileBase>(TileHit.GetActor()));
-            }
-        }
-
-        FVector StartLeft = CenterPosition + FVector(0, 0, 500.f) - X * CriticVector + (N % 2 == 0 ? CriticVector/2 : FVector::ZeroVector);
-        FVector EndLeft = CenterPosition + FVector(0, 0, -500.f) - X * CriticVector + (N % 2 == 0 ? CriticVector/2 : FVector::ZeroVector);
-
-        if (PlayerController->GetWorld()->LineTraceSingleByChannel(TileHit, EndLeft, StartLeft, ECC_GameTraceChannel1, Params))
-        {
-            if (TileHit.GetActor() && !SelectedTiles.Contains(TileHit.GetActor()))
-            {
-                SelectedTiles.AddUnique(Cast<ATileBase>(TileHit.GetActor()));
-            }
-        }
-    }
-    return SelectedTiles;
-}
+//TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAsStraightFromCenterLocation(APlayerController* PlayerController, FVector CenterPosition, const int32 N, const float TileSize, bool bRot)
+//{
+//    USOWGameInstance* GI = Cast<USOWGameInstance>(PlayerController->GetWorld()->GetGameInstance());
+//    float WorldTileSize = GI->GetWorldTileSize();
+//
+//    TArray<ATileBase*> SelectedTiles;
+//
+//    float SideLength = WorldTileSize;
+//   // float SideLength = TileSize;
+//
+//    FCollisionQueryParams Params;
+//    Params.bReturnPhysicalMaterial = false;
+//
+//    FVector CriticVector = FVector(WorldTileSize, 0, 0) + (bRot ? 1 : -1) * FVector(0, WorldTileSize, 0);
+//    //FVector CriticVector = FVector(TileSize, 0, 0) + (bRot ? 1 : -1) * FVector(0, TileSize, 0);
+//
+//    for (int32 X = 0; X <= N / 2; X++)
+//    {
+//        FVector StartRight = CenterPosition + FVector(0, 0, 500.f) + X * CriticVector - (N % 2 == 0 ? CriticVector/2 : FVector::ZeroVector);
+//        FVector EndRight = CenterPosition + FVector(0, 0, -500.f) + X * CriticVector - (N % 2 == 0 ? CriticVector/2 : FVector::ZeroVector);
+//
+//        FHitResult TileHit;
+//
+//        if (PlayerController->GetWorld()->LineTraceSingleByChannel(TileHit, EndRight, StartRight, ECC_GameTraceChannel1, Params))
+//        {
+//            if (TileHit.GetActor() && !SelectedTiles.Contains(TileHit.GetActor()))
+//            {
+//                SelectedTiles.AddUnique(Cast<ATileBase>(TileHit.GetActor()));
+//            }
+//        }
+//
+//        FVector StartLeft = CenterPosition + FVector(0, 0, 500.f) - X * CriticVector + (N % 2 == 0 ? CriticVector/2 : FVector::ZeroVector);
+//        FVector EndLeft = CenterPosition + FVector(0, 0, -500.f) - X * CriticVector + (N % 2 == 0 ? CriticVector/2 : FVector::ZeroVector);
+//
+//        if (PlayerController->GetWorld()->LineTraceSingleByChannel(TileHit, EndLeft, StartLeft, ECC_GameTraceChannel1, Params))
+//        {
+//            if (TileHit.GetActor() && !SelectedTiles.Contains(TileHit.GetActor()))
+//            {
+//                SelectedTiles.AddUnique(Cast<ATileBase>(TileHit.GetActor()));
+//            }
+//        }
+//    }
+//    return SelectedTiles;
+//}
 
 TArray<AActor*> USOWBlueprintFunctionLibrary::GetActorsOnTiles(TArray<ATileBase*> Tiles)
 {
