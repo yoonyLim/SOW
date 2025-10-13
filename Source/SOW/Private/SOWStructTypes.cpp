@@ -3,10 +3,10 @@
 
 #include "SOWStructTypes.h"
 
-bool FPlayerAbilitySet::IsValid() const
-{
-	return InputTag.IsValid() && AbilityToGrant;
-}
+//bool FPlayerAbilitySet::IsValid() const
+//{
+//	return InputTag.IsValid() && AbilityToGrant;
+//}
 
 FElementResistanceData::FElementResistanceData()
 {

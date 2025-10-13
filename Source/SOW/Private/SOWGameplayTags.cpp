@@ -107,6 +107,10 @@ namespace SOWGameplayTags
 
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_AffectStatUp, "Turret.Event.AffectStatUp");
 
+
+	UE_DEFINE_GAMEPLAY_TAG(Rune_SetByCaller_HealBySynergy, "Rune.SetByCaller.HealBySynergy");
+
+
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Ability_Death, "Shared.Ability.Death");
 
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Status_Dead, "Shared.Status.Dead"); 
@@ -118,6 +122,7 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Event_HitReact, "Shared.Event.HitReact");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Event_TargetDead, "Shared.Event.TargetDead");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Event_TauntToTarget, "Shared.Event.TauntToTarget");
+	UE_DEFINE_GAMEPLAY_TAG(Shared_Event_HitReact_PercentDamage, "Shared.Event.HitReact.PercentDamage");
 	
 
 	
@@ -150,8 +155,9 @@ namespace SOWGameplayTags
 	//UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditiveAttackPower, "Shared.SetByCaller.AdditiveAttackPower");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditiveDamage, "Shared.SetByCaller.AdditiveDamage");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_MultipleDamage, "Shared.SetByCaller.MultipleDamage");
-	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditinalDamageRatio_Pulse, "Shared.SetByCaller.AdditinalDamageRatio.Pulse");
-	
+	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditinalDamageRatio_Pulse, "Shared.SetByCaller.AdditinalDamageRatio.Pulse"); 
+	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditionalDamageRatio, "Shared.SetByCaller.AdditionalDamageRatio");
+
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_PercentageDamage, "Shared.SetByCaller.PercentageDamage");
 
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AdditiveBuffValue, "Shared.SetByCaller.AdditiveBuffValue");

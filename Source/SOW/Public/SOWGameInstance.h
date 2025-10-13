@@ -74,4 +74,12 @@ public:
 
     UFUNCTION(Exec)
     void GetResource(float Count);
+
+    void SetWorldTileSize(float InSize);
+
+    float GetWorldTileSize() const;
+
+private:
+
+    float WorldTileSize;
 };
