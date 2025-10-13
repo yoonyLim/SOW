@@ -10,6 +10,8 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnOneTimeCurrencyChanged, int32, TotalCurrency);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStageEnd);
+
 // 전방 선언: 로거는 헤더 의존 최소화
 class UWaveLoggingManager;
 
@@ -35,6 +37,10 @@ public:
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Event Dispatcher")
 	FOnOneTimeCurrencyChanged OnOneTimeCurrencyChanged;
 
+	// fucking shit clear
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Event Dispatcher")
+	FOnStageEnd OnStageEnd;
+
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Rune")
 	void RuneUpdateHUD(float Health, float MaxHealth);
 
@@ -46,4 +52,5 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Currency")
 	int32 GetCurrency() const { return Currency; };
+
 };

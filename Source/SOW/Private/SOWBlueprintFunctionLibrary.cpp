@@ -82,7 +82,7 @@ bool USOWBlueprintFunctionLibrary::DoesActorHasTag(AActor* InActor, FGameplayTag
 
     // ✅ UClass 접근 전에도 반드시 유효성 체크
     UClass* ActorClass = InActor->GetClass();
-    if (!IsValid(ActorClass))
+    if (ActorClass == nullptr)
     {
        // UE_LOG(LogTemp, Warning, TEXT("DoesActorHasTag: Invalid ActorClass for %s"), *InActor->GetName());
         return false;
