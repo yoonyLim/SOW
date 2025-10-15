@@ -334,7 +334,7 @@ FVector USOWBlueprintFunctionLibrary::MakeCentralTileLocationFromAnyPoint(APlaye
 
     FVector CenterLocation = FVector::ZeroVector;
 
-    FVector TraceStart = AnyPoint;
+    FVector TraceStart = AnyPoint + (FVector(0, 0, 1) * 1000.f); ;
     FVector TraceEnd = AnyPoint + (FVector(0,0,-1) * 10000.f);
 
     FHitResult Hit;

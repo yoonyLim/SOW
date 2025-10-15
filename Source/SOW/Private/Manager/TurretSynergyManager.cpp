@@ -339,16 +339,19 @@ void UTurretSynergyManager::Initialize(UDataTable* InSynergyDataTable, TSubclass
 	SynergyMonitor.Add(EElementalType::Nature);
 	SynergyMonitor.Add(EElementalType::Electro);
 	SynergyMonitor.Add(EElementalType::Ice);
+	SynergyMonitor.Add(EElementalType::Flame);
 
 	// 시너지를 등급 조건을 확인하기 위한 컨테이너
 	SynergyRarityMonitor.Add(EElementalType::Nature);
 	SynergyRarityMonitor.Add(EElementalType::Electro);
 	SynergyRarityMonitor.Add(EElementalType::Ice);
+	SynergyRarityMonitor.Add(EElementalType::Flame);
 
 	// 시너지를 활설화 시키고 있는 터렛 종류를 위한 컨테이너
 	SynergyTypeMonitor.Add(EElementalType::Nature);
 	SynergyTypeMonitor.Add(EElementalType::Electro);
 	SynergyTypeMonitor.Add(EElementalType::Ice);
+	SynergyTypeMonitor.Add(EElementalType::Flame);
 	
 	GenerateSynergyUpdateAnnouncer();
 	SynergyTagData = InSynergyDataTable;

@@ -15,6 +15,8 @@
 #include "Interface/SOWCharacterTypeInterface.h"
 #include "SOWBlueprintFunctionLibrary.h"
 
+#include "SOWGameInstance.h"
+
 // Sets default values
 ATurretProjectileBase::ATurretProjectileBase()
 {
@@ -73,8 +75,11 @@ void ATurretProjectileBase::FaceToTargetActor() {
 
 bool ATurretProjectileBase::CheckOutOfRange()
 {
+	USOWGameInstance* GI = Cast<USOWGameInstance>(GetGameInstance());
+	if (!GI) return false;
+
 	float range = CachedInstigator->GetDetectionRangeRadius();
-	float criticValue = (range + 0.5f) * 116.f; // Tile Size : 116 -> Hard Coding / 한 변의 길이
+	float criticValue = (range + 0.5f) * GI->GetWorldTileSize(); // Tile Size : 116 -> Hard Coding / 한 변의 길이
 	
 	FVector VLeft = FVector::LeftVector;
 	FVector VForward = FVector::ForwardVector;

@@ -77,6 +77,7 @@ public:
 
     void SetWorldTileSize(float InSize);
 
+    UFUNCTION(BlueprintCallable)
     float GetWorldTileSize() const;
 
 private:

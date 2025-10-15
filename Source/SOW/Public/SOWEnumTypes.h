@@ -86,6 +86,13 @@ enum class ETurretName : uint8 {
 	IceBreaker		UMETA(DisplayName = "IceBreaker"),
 	Wildboar		UMETA(DisplayName = "Wildboar"),
 
+	// Flame
+	Dragon			UMETA(DisplayName = "Dragon"),
+	Tiki			UMETA(DisplayName = "Tiki"),
+	TikiGhost		UMETA(DisplayName = "TikiGhost"),
+	VolcanoGolem	UMETA(DisplayName = "VolcanoGolem"),
+	VolcanoLizard	UMETA(DisplayName = "VolcanoLizard"),
+
 	// Special Unit
 	Glacio			UMETA(DisplayName = "Glacio")
 	

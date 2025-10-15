@@ -75,9 +75,14 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_SpiderWeb, "Turret.Status.Buff.SpiderWeb");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_NightEyes, "Turret.Status.Buff.NightEyes");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Mushroom, "Turret.Status.Buff.Mushroom");
+
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Snowball, "Turret.Status.Buff.Snowball");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_GlassyAura, "Turret.Status.Buff.GlassyAura");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Detector, "Turret.Status.Buff.Detector");
+
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Ember, "Turret.Status.Buff.Ember");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Ignition, "Turret.Status.Buff.Ignition");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Glare, "Turret.Status.Buff.Glare");
 	
 
 
@@ -224,6 +229,10 @@ namespace SOWSynergyTags {
 	UE_DEFINE_GAMEPLAY_TAG(Synergy_Ice_III, "Synergy.Ice.III");
 	UE_DEFINE_GAMEPLAY_TAG(Synergy_Ice_IV, "Synergy.Ice.IV");
 	UE_DEFINE_GAMEPLAY_TAG(Synergy_Ice_V, "Synergy.Ice.V");
+
+	UE_DEFINE_GAMEPLAY_TAG(Synergy_Flame_II, "Synergy.Flame.II");
+	UE_DEFINE_GAMEPLAY_TAG(Synergy_Flame_IV, "Synergy.Flame.IV");
+	UE_DEFINE_GAMEPLAY_TAG(Synergy_Flame_V, "Synergy.Flame.V");
 }
 
 namespace SOWGlacioPropertyTags {
