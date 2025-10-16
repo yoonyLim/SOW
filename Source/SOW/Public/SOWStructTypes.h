@@ -97,6 +97,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Turret Property"))
 	ETurretTargetSelectionType TurretTargetSelectionType;					// Determine How many Target selectable
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Turret Property"))
+	EAttackType TurretAttackType;											// Determine Turrat Attack Type
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<ATurretProjectileBase> ProjectileToSpawn;					// Determine What To Spawn While Attack
 

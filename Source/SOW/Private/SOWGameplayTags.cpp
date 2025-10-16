@@ -35,7 +35,7 @@ namespace SOWGameplayTags
 
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Chill, "Enemy.Status.Debuff.Chill");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Freezing, "Enemy.Status.Debuff.Freezing");
-
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_AntiMagic, "Enemy.Status.Debuff.AntiMagic");
 
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sine_Alpha, "Enemy.Status.Debuff.Sine.Alpha");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sine_Beta, "Enemy.Status.Debuff.Sine.Beta");
@@ -68,8 +68,9 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_MeleeAttack, "Turret.Ability.MeleeAttack");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_RangedAttack, "Turret.Ability.RangedAttack");
 
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_ForceMelee, "Turret.Status.Buff.ForceMelee");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_ForceRanged, "Turret.Status.Buff.ForceRanged");
 
-	
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Hoppy, "Turret.Status.Buff.Hoppy");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_BlessingOfRune, "Turret.Status.Buff.BlessingOfRune");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_SpiderWeb, "Turret.Status.Buff.SpiderWeb");

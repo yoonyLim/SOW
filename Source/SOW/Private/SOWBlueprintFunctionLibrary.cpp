@@ -600,8 +600,8 @@ TArray<AActor*> USOWBlueprintFunctionLibrary::GetActorsOnTiles(TArray<ATileBase*
         TArray<AActor*> OverlappedActors;
 
         FVector TileCenter = tile->GetActorLocation(); 
-        float HalfExtent = 25.f;                       
-        float Height = 200.f;                          
+        float HalfExtent = 125.f;                       
+        float Height = 400.f;                          
         FCollisionShape BoxShape = FCollisionShape::MakeBox(FVector(HalfExtent, HalfExtent, Height));
 
 
@@ -644,8 +644,8 @@ TArray<AActor*> USOWBlueprintFunctionLibrary::GetTurretsOnTiles(TArray<ATileBase
         TArray<AActor*> OverlappedActors;
 
         FVector TileCenter = tile->GetActorLocation();
-        float HalfExtent = 25.f;
-        float Height = 100.f;
+        float HalfExtent = 125.f;
+        float Height = 400.f;
         FCollisionShape BoxShape = FCollisionShape::MakeBox(FVector(HalfExtent, HalfExtent, Height));
 
 

@@ -61,6 +61,16 @@ enum class ETurretTargetSelectionPriority : uint8 {
 };
 
 UENUM(BlueprintType)
+enum class EAttackType : uint8 {
+	// added by : PGH
+	// determine turret attack type 
+	UNDEFINED	UMETA(DisplayName = "Undefined"),
+	MELEE		UMETA(DisplayName = "Melee"),
+	RANGED		UMETA(DisplayName = "Ranged"),
+	SUPPORT		UMETA(DisplayName = "Support")
+};
+
+UENUM(BlueprintType)
 enum class ETurretName : uint8 {
 	// added by : PGH
 	// Nature
