@@ -10,6 +10,7 @@
 #include "SOWGameplayTags.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "NiagaraComponent.h"
+#include "SOWGameInstance.h"
 
 // Sets default values
 AProjectileBase::AProjectileBase()
@@ -101,6 +102,10 @@ void AProjectileBase::InitProjectileProperties(FTransform InTransform, ETurretTa
 {
 	// 투사체의 속성을 초기화합니다.
 	// 투사체의 데이터는 TurretPropertyData 데이터테이블에 일괄적으로 정의되고 있습니다.
+	USOWGameInstance* GI = Cast<USOWGameInstance>(GetGameInstance());
+
+	float RealScale = InScale * (GI->GetWorldTileSize() / 116.f);
+
 
 	OwnerPolicy = InPolicy;
 	OwnerDamageEffectSpecHandle = InHandle;
@@ -110,7 +115,7 @@ void AProjectileBase::InitProjectileProperties(FTransform InTransform, ETurretTa
 		OriginScaledCollisionExtent = ProjectileHitCollisionComp->GetUnscaledBoxExtent();
 	}
 
-	ProjectileHitCollisionComp->SetBoxExtent(OriginScaledCollisionExtent * InScale);
+	ProjectileHitCollisionComp->SetBoxExtent(OriginScaledCollisionExtent * RealScale);
 
 	ProjectileMoveComp->InitialSpeed = InSpeed;
 	ProjectileMoveComp->MaxSpeed = InSpeed;
@@ -121,7 +126,7 @@ void AProjectileBase::InitProjectileProperties(FTransform InTransform, ETurretTa
 	if (OriginScaledMeshExtent == FVector::ZeroVector) {
 		OriginScaledMeshExtent = ProjectileMeshComp->GetRelativeScale3D();
 	}
-	ProjectileMeshComp->SetWorldScale3D(FVector(OriginScaledMeshExtent.X, OriginScaledMeshExtent.Y, OriginScaledMeshExtent.Z) * InScale);
+	ProjectileMeshComp->SetWorldScale3D(FVector(OriginScaledMeshExtent.X, OriginScaledMeshExtent.Y, OriginScaledMeshExtent.Z) * RealScale);
 
 	HasMovement = InMovement;
 	Duration = InDuration;

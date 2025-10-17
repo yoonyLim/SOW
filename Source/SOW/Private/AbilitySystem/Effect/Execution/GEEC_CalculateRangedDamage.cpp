@@ -202,7 +202,8 @@ void UGEEC_CalculateRangedDamage::Execute_Implementation(const FGameplayEffectCu
 	FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
 {
 	// Check if the target has RangedResistance tag
-	if (USOWBlueprintFunctionLibrary::DoesActorHasTag(ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor(), SOWGameplayTags::Enemy_Status_Buff_RangedResistance)) {
+	if (USOWBlueprintFunctionLibrary::DoesActorHasTag(ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor(), SOWGameplayTags::Enemy_Status_Buff_RangedResistance) &&
+		!USOWBlueprintFunctionLibrary::DoesActorHasTag(ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor(), SOWGameplayTags::Enemy_Status_Debuff_AntiMagic)) {
 		AActor* Target = ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor();
 		FGameplayEventData Data;
 		Data.Instigator = ExecutionParams.GetSourceAbilitySystemComponent()->GetAvatarActor();

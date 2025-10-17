@@ -334,7 +334,7 @@ FVector USOWBlueprintFunctionLibrary::MakeCentralTileLocationFromAnyPoint(APlaye
 
     FVector CenterLocation = FVector::ZeroVector;
 
-    FVector TraceStart = AnyPoint;
+    FVector TraceStart = AnyPoint + (FVector(0, 0, 1) * 1000.f); ;
     FVector TraceEnd = AnyPoint + (FVector(0,0,-1) * 10000.f);
 
     FHitResult Hit;
@@ -443,8 +443,10 @@ TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAsSquaredFromCenterLoca
             const FVector  RayPos = CamFwd * Depth;
 
             const FVector Sample = OriginOffset + X * DownOffset + Y * RightOffset;
-            const FVector Start = Sample + RayNeg;
-            const FVector End = Sample + RayPos;
+            /*const FVector Start = Sample + RayNeg;
+            const FVector End = Sample + RayPos;*/
+            const FVector Start = Sample + (FVector(0, 0, 1) * 1000.f);
+            const FVector End = Sample + (FVector(0, 0, -1) * 10000.f);
 
             FHitResult Hit;
             if (PlayerController->GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_GameTraceChannel1, Params))
@@ -509,9 +511,10 @@ TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAsStraightFromCenterLoc
 
         {
             const FVector BasePos = CenterPosition + (X * CriticVector) - HalfShift;
-            const FVector Start = BasePos + RayNeg;
-            const FVector End = BasePos + RayPos;
-
+            /*const FVector Start = BasePos + RayNeg;
+            const FVector End = BasePos + RayPos;*/
+            const FVector Start = BasePos + (FVector(0, 0, 1) * 1000.f);
+            const FVector End = BasePos + (FVector(0, 0, -1) * 10000.f);
             FHitResult TileHit;
             if (PlayerController->GetWorld()->LineTraceSingleByChannel(TileHit, Start, End, ECC_GameTraceChannel1, Params))
             {
@@ -597,8 +600,8 @@ TArray<AActor*> USOWBlueprintFunctionLibrary::GetActorsOnTiles(TArray<ATileBase*
         TArray<AActor*> OverlappedActors;
 
         FVector TileCenter = tile->GetActorLocation(); 
-        float HalfExtent = 25.f;                       
-        float Height = 200.f;                          
+        float HalfExtent = 125.f;                       
+        float Height = 400.f;                          
         FCollisionShape BoxShape = FCollisionShape::MakeBox(FVector(HalfExtent, HalfExtent, Height));
 
 
@@ -641,8 +644,8 @@ TArray<AActor*> USOWBlueprintFunctionLibrary::GetTurretsOnTiles(TArray<ATileBase
         TArray<AActor*> OverlappedActors;
 
         FVector TileCenter = tile->GetActorLocation();
-        float HalfExtent = 25.f;
-        float Height = 100.f;
+        float HalfExtent = 125.f;
+        float Height = 400.f;
         FCollisionShape BoxShape = FCollisionShape::MakeBox(FVector(HalfExtent, HalfExtent, Height));
 
 

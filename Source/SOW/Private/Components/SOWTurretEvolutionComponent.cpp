@@ -130,6 +130,8 @@ void USOWTurretEvolutionComponent::BeginPlay()
 		StatusMaxLevel = EvolutionDataRow->StatusMaxLevel;
 
 		UE_LOG(LogTemp, Warning, TEXT("[EvolutionComponent] %s : EvolutionData Loading Complete."), *TurretName.ToString());
+
+		PropertyMaxLevel = PropertyData.Num();
 	}
 	
 

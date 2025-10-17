@@ -95,7 +95,7 @@ void USOWTurretCombatComponent::InitTurretProperties(const FTurretPropertyData& 
 	TurretSettablePriority = Data.TurretSettablePriority;
 	TurretTargetSelectionPolicy = Data.TurretTargetSelectionPolicy;
 	TurretTargetSelectionType = Data.TurretTargetSelectionType;
-
+	TurretAttackType = Data.TurretAttackType;
 	// Boolean Type
 	ProjectileToSpawn = Data.ProjectileToSpawn;
 	HasDependencyOnProjectile = Data.HasDependencyOnProjectile;
@@ -113,6 +113,16 @@ void USOWTurretCombatComponent::InitTurretProperties(const FTurretPropertyData& 
 	if (!TurretSettablePriority.IsEmpty()) {
 		PriorityChange();
 	}
+
+	/*if (Data.TurretAttackType == EAttackType::MELEE) {
+		CachedOwnerCharacter->GetSOWAbilitySystemComponent()->AddLooseGameplayTag(SOWGameplayTags::Turret_Type_Melee);
+	}
+	else if(Data.TurretAttackType == EAttackType::RANGED){
+		CachedOwnerCharacter->GetSOWAbilitySystemComponent()->AddLooseGameplayTag(SOWGameplayTags::Turret_Type_Ranged);
+	}
+	else if (Data.TurretAttackType == EAttackType::SUPPORT) {
+		CachedOwnerCharacter->GetSOWAbilitySystemComponent()->AddLooseGameplayTag(SOWGameplayTags::Turret_Type_Support);
+	}*/
 
 
 }
@@ -344,7 +354,7 @@ bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 
 	for (AActor* CurrentTarget : L_DetectableActors) {
 
-		if (!IsActorValidTarget(CurrentTarget) || GetStealthCheck(CurrentTarget)) {
+		if (!IsActorValidTarget(CurrentTarget) ) {//|| GetStealthCheck(CurrentTarget)
 			//UE_LOG(LogTemp, Warning, TEXT("%s is not target of %s"), *CurrentTarget->GetActorNameOrLabel(), *CachedOwnerCharacter->GetActorNameOrLabel());
 			continue;
 		}
