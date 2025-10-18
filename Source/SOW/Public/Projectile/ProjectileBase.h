@@ -40,7 +40,7 @@ public:
 	void ResetProjectile();
 
 	UFUNCTION(BlueprintCallable, Category = "Turret|Hit", meta = (DisplayName = "Destroy Projectile"))
-	virtual void BP_DestroyProjectile();
+	virtual void BP_DestroyProjectile(bool AttackSucceed = true);
 
 protected:
 	// Called when the game starts or when spawned
