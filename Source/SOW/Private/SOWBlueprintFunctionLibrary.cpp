@@ -678,6 +678,16 @@ TArray<AActor*> USOWBlueprintFunctionLibrary::GetTurretsOnTiles(TArray<ATileBase
     return OnTileActors;
 }
 
+float USOWBlueprintFunctionLibrary::GetWorldTileSizeFromInstance(APlayerController* PlayerController)
+{
+    if (!PlayerController) return 0.f;
+
+    USOWGameInstance* GI = Cast<USOWGameInstance>(PlayerController->GetWorld()->GetGameInstance());
+    if (!GI) return 0.f;
+
+    return GI->GetWorldTileSize();
+}
+
 bool USOWBlueprintFunctionLibrary::IsMouseOverUI(APlayerController* PC, const TSubclassOf<USOWWidgetBase>& TargetWidget)
 {
     if (!FSlateApplication::IsInitialized())
