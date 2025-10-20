@@ -15,6 +15,8 @@
 #include "Interface/SOWCharacterTypeInterface.h"
 #include "SOWBlueprintFunctionLibrary.h"
 
+#include "SOWGameInstance.h"
+
 // Sets default values
 ATurretProjectileBase::ATurretProjectileBase()
 {
@@ -35,6 +37,8 @@ void ATurretProjectileBase::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
 	if (!GetProjectileInGame()) return;
+
+	if(!IsValid(CachedInstigator.Get())) Destroy();
 
 	if (HasMovement) {
 		if (CheckOutOfRange()) {
@@ -73,8 +77,11 @@ void ATurretProjectileBase::FaceToTargetActor() {
 
 bool ATurretProjectileBase::CheckOutOfRange()
 {
+	USOWGameInstance* GI = Cast<USOWGameInstance>(GetGameInstance());
+	if (!GI || !IsValid(CachedInstigator.Get())) return false;
+
 	float range = CachedInstigator->GetDetectionRangeRadius();
-	float criticValue = (range + 0.5f) * 116.f; // Tile Size : 116 -> Hard Coding / 한 변의 길이
+	float criticValue = (range + 0.5f) * GI->GetWorldTileSize(); // Tile Size : 116 -> Hard Coding / 한 변의 길이
 	
 	FVector VLeft = FVector::LeftVector;
 	FVector VForward = FVector::ForwardVector;
@@ -130,8 +137,13 @@ void ATurretProjectileBase::SetHitDone(bool bHit)
 	bHitDone = bHit;
 }
 
+void ATurretProjectileBase::ClearHitActors()
+{
+	OverlappedActors.Empty();
+}
 
-void ATurretProjectileBase::BP_DestroyProjectile()
+
+void ATurretProjectileBase::BP_DestroyProjectile(bool AttackSucceed )
 {
 	//checkf(CachedInstigator.Get()->GetProjectilePoolingComponent(), TEXT("No Pool Found For %s"), *CachedInstigator.Get()->GetActorNameOrLabel());
 
@@ -140,7 +152,11 @@ void ATurretProjectileBase::BP_DestroyProjectile()
 		return;
 	} 
 
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(CachedInstigator.Get(), SOWGameplayTags::Turret_Event_Attack_Done, FGameplayEventData());
+	if (AttackSucceed) 
+	{
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(CachedInstigator.Get(), SOWGameplayTags::Turret_Event_Attack_Done, FGameplayEventData());
+	}
+		
 
 	CachedInstigator.Get()->GetProjectilePoolingComponent()->ReturnProjectile(this);
 	//UE_LOG(LogTemp, Warning, TEXT("Return to Pool : %s"), *this->GetActorNameOrLabel());

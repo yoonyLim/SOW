@@ -7,6 +7,8 @@
 #include "GameFramework/Actor.h"
 #include "Tile/SOWTileSpawnerActor.h"
 #include "Engine/EngineTypes.h"
+#include "Tile/TileBase.h"
+#include "Tile/TileArcheType.h"
 #include "SOWTileSpawner.generated.h"
 
 class AEnemyIncomingRoute;
@@ -25,6 +27,21 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	UPROPERTY(EditAnywhere, Category = "Grid", meta = (ClampMin = "1"))
+	int32 GridWidth = 16;
+
+	UPROPERTY(EditAnywhere, Category = "Grid", meta = (ClampMin = "1"))
+	int32 GridHeight = 10;
+
+	UPROPERTY(EditAnywhere, Category = "Grid", meta = (ClampMin = "1"))
+	float TileWidth = 300.f;
+
+	UPROPERTY(EditAnywhere, Category = "Grid", meta = (ClampMin = "1"))
+	float TileHeight = 300.f;
+
+	UPROPERTY(EditAnywhere, Category = "Grid")
+	TArray<TSubclassOf<class AActor>> GridTiles;
+
 	UPROPERTY(BlueprintReadOnly)
 	TArray<AActor*> SpawnedTileActors;
 
@@ -65,6 +82,12 @@ public:
 	UPROPERTY(EditAnywhere, Category = "MapScript", meta=(FilePathFilter="ini"))
 	FFilePath MapScriptFile;
 
+	UPROPERTY(EditAnywhere, Category = "Grid|Prefab")
+	bool bUseArcheTypeAfterSpawn = false;
+
+	UPROPERTY(EditAnywhere, Category = "Grid|Prefab")
+	TMap<FName, TSoftObjectPtr<UTileArcheType>> TokenToArcheType;
+
 	UFUNCTION(BlueprintCallable, Category = "MapScript")
 	bool LoadAndBuildFromScript(const FString& InFilePathRelOrAbs);
 
@@ -78,18 +101,10 @@ private:
 	UPROPERTY(Transient)
 	AStaticMeshActor* GradientPlaneActor = nullptr;
 
-	int32 GridWidth = 9;
-
-	int32 GridHeight = 5;
-
-	float TileWidth = 116.f;
-
-	float TileHeight = 116.f;
-
-	TArray<TSubclassOf<class AActor>> GridTiles;
-
 	UPROPERTY(Transient)
 	TArray<FIncomingRouteDefinition> RoutesFromScript;
+
+	FVector GridToWorld_TopLeft(int32 GX, int32 GY, float InTileW, float InTileH) const;
 
 private:
 
@@ -98,6 +113,11 @@ private:
 
 	static bool ResolveMapScriptPath(const FString& Input, FString& OutAbsPath);
 	
+	ETileRole ResolveRoleFromToken(const FName& Token) const;
+
+	void ApplyArcheTypeIfSet(AActor* SpawnedTile, int32 X, int32 Y, const FName& UseToken, float InTileWidth);
+
+
 	void ClearSpawnedTiles();
 	void ClearSpawnedRoutes();
 };

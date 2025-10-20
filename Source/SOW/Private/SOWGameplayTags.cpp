@@ -35,7 +35,9 @@ namespace SOWGameplayTags
 
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Chill, "Enemy.Status.Debuff.Chill");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Freezing, "Enemy.Status.Debuff.Freezing");
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_AntiMagic, "Enemy.Status.Debuff.AntiMagic");
 
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Marking, "Enemy.Status.Debuff.Marking");
 
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sine_Alpha, "Enemy.Status.Debuff.Sine.Alpha");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sine_Beta, "Enemy.Status.Debuff.Sine.Beta");
@@ -64,22 +66,28 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_Attack_Melee, "Turret.Ability.Attack.Melee");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_Attack_Ranged, "Turret.Ability.Attack.Ranged");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_Buff, "Turret.Ability.Buff"); 
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_Continue, "Turret.Ability.Continue");
 
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_MeleeAttack, "Turret.Ability.MeleeAttack");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_RangedAttack, "Turret.Ability.RangedAttack");
 
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_ForceMelee, "Turret.Status.Buff.ForceMelee");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_ForceRanged, "Turret.Status.Buff.ForceRanged");
 
-	
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Hoppy, "Turret.Status.Buff.Hoppy");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_BlessingOfRune, "Turret.Status.Buff.BlessingOfRune");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_SpiderWeb, "Turret.Status.Buff.SpiderWeb");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_NightEyes, "Turret.Status.Buff.NightEyes");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Mushroom, "Turret.Status.Buff.Mushroom");
+
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Snowball, "Turret.Status.Buff.Snowball");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_GlassyAura, "Turret.Status.Buff.GlassyAura");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Detector, "Turret.Status.Buff.Detector");
-	
 
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Ember, "Turret.Status.Buff.Ember");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Ignition, "Turret.Status.Buff.Ignition");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Glare, "Turret.Status.Buff.Glare");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Impatience, "Turret.Status.Buff.Impatience");
 
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Debuff_Slow, "Turret.Status.Debuff.Slow");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Debuff_Root, "Turret.Status.Debuff.Root");
@@ -91,6 +99,10 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_Attack_Done, "Turret.Event.Attack.Done");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_Attack_Double, "Turret.Event.Attack.Double"); 
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_EffectApplied, "Turret.Event.EffectApplied");
+
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_TikiSupporting, "Turret.Event.TikiSupporting");
+
+
 
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Evolution_Alpha, "Turret.Evolution.Alpha");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Evolution_Beta, "Turret.Evolution.Beta");
@@ -224,6 +236,10 @@ namespace SOWSynergyTags {
 	UE_DEFINE_GAMEPLAY_TAG(Synergy_Ice_III, "Synergy.Ice.III");
 	UE_DEFINE_GAMEPLAY_TAG(Synergy_Ice_IV, "Synergy.Ice.IV");
 	UE_DEFINE_GAMEPLAY_TAG(Synergy_Ice_V, "Synergy.Ice.V");
+
+	UE_DEFINE_GAMEPLAY_TAG(Synergy_Flame_II, "Synergy.Flame.II");
+	UE_DEFINE_GAMEPLAY_TAG(Synergy_Flame_IV, "Synergy.Flame.IV");
+	UE_DEFINE_GAMEPLAY_TAG(Synergy_Flame_V, "Synergy.Flame.V");
 }
 
 namespace SOWGlacioPropertyTags {

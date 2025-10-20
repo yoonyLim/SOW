@@ -80,6 +80,7 @@ public:
 
     void SetWorldTileSize(float InSize);
 
+    UFUNCTION(BlueprintCallable)
     float GetWorldTileSize() const;
     
     UPROPERTY(EditAnywhere, Category = "Sound")
