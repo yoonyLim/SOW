@@ -127,10 +127,6 @@ void USOWGameInstance::SummonTurret(FName TurretType)
             //OnSummonTurret.Broadcast(TurretToSummon);
             // No Any Broadcast. this is just for debugging with random spawn
         }
-        else
-        {
-            continue;
-        }
     }
 }
 
