@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "Sound/SoundBase.h"
 #include "SOWGameInstance.generated.h"
 
 class UUSkillManager;
@@ -55,6 +56,8 @@ public:
 public:
     virtual void Init() override;
 
+    void OnStart() override;
+    
     UFUNCTION(BlueprintCallable)
     UUSkillManager* GetSkillManager() { return SkillManager; }
 
@@ -79,6 +82,10 @@ public:
 
     UFUNCTION(BlueprintCallable)
     float GetWorldTileSize() const;
+    
+    UPROPERTY(EditAnywhere, Category = "Sound")
+    USoundBase* StartBGM; 
+
 
 private:
 
