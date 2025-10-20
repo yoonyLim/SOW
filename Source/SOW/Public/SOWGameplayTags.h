@@ -79,6 +79,7 @@ namespace SOWGameplayTags {
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Ability_Attack_Melee);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Ability_Attack_Ranged);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Ability_Buff);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Ability_Continue);
 
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Ability_MeleeAttack);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Turret_Ability_RangedAttack);

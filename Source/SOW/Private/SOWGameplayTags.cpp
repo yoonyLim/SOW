@@ -66,6 +66,7 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_Attack_Melee, "Turret.Ability.Attack.Melee");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_Attack_Ranged, "Turret.Ability.Attack.Ranged");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_Buff, "Turret.Ability.Buff"); 
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_Continue, "Turret.Ability.Continue");
 
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_MeleeAttack, "Turret.Ability.MeleeAttack");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_RangedAttack, "Turret.Ability.RangedAttack");
