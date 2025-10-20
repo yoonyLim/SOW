@@ -21,7 +21,7 @@ public:
 	void PlaySFX(USoundBase* SFX, FVector Location = FVector::ZeroVector);
 	void SetBGMVolume(float Volume);
 	void SetSFXVolume(float Volume);
-
+	void Init(UWorld* World);
 private:
 	// Singleton 인스턴스
 	static USoundManager* Instance;
@@ -33,8 +33,8 @@ private:
 	UPROPERTY()
 	UWorld* CachedWorld;
 
-	float BGMVolume = 1.0f;
-	float SFXVolume = 1.0f;
+	float BGMVolume = 100.0f;
+	float SFXVolume = 100.0f;
 
-	void Init(UWorld* World);
+
 };
