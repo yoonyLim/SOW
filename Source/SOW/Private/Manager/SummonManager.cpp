@@ -87,6 +87,9 @@ FSummonData USummonManager::RNG()
 
 bool USummonManager::TurretSummon()
 {
+	if (USOWBlueprintFunctionLibrary::GetCurrency(GetWorld()) < 10)
+		return false;
+	
 	FSummonData TurretToSummon = RNG();
 
 	ASOWPlayerController* SOWPC = Cast<ASOWPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
@@ -116,7 +119,7 @@ bool USummonManager::TurretSummon()
 			// possess AIController to Summoning Turret
 			if (NewTurret)
 			{
-				// AIController¸¦ ½ºÆùÇÏ°í ºùÀÇ
+				// AIControllerï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½
 				if (!NewTurret->GetController())
 				{
 					AAIController* AIController = GetWorld()->SpawnActor<AAIController>(

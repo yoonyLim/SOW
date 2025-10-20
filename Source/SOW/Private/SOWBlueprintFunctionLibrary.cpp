@@ -197,7 +197,7 @@ void USOWBlueprintFunctionLibrary::RequestToGenerateOnTimeCurrency(UObject* Worl
 bool USOWBlueprintFunctionLibrary::QueryForCurrencyCountSufficient(UObject* WorldContextObject, const FGameplayTag& InTag, const int InCount)
 {
     // Has Enough Currency Count?
-    USOWGameInstance* SOWGameInstance = Cast<USOWGameInstance>(WorldContextObject->GetWorld()->GetGameInstance());
+    // USOWGameInstance* SOWGameInstance = Cast<USOWGameInstance>(WorldContextObject->GetWorld()->GetGameInstance());
 
     AWaveGameMode* GM = Cast<AWaveGameMode>(UGameplayStatics::GetGameMode(WorldContextObject->GetWorld()));
 
@@ -209,6 +209,13 @@ bool USOWBlueprintFunctionLibrary::QueryForCurrencyCountSufficient(UObject* Worl
     }
 
     return false;
+}
+
+int USOWBlueprintFunctionLibrary::GetCurrency(UObject* WorldContextObject)
+{
+    AWaveGameMode* GM = Cast<AWaveGameMode>(UGameplayStatics::GetGameMode(WorldContextObject->GetWorld()));
+
+    return GM->GetCurrency();
 }
 
 

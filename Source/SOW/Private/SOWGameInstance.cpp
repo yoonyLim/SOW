@@ -104,7 +104,7 @@ void USOWGameInstance::SummonTurret(FName TurretType)
             // possess AIController to Summoning Turret
             if (NewTurret)
             {
-                // AIController¸¦ ½ºÆùÇÏ°í ºùÀÇ
+                // AIControllerï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½
                 if (!NewTurret->GetController())
                 {
                     AAIController* AIController = GetWorld()->SpawnActor<AAIController>(
@@ -125,10 +125,6 @@ void USOWGameInstance::SummonTurret(FName TurretType)
             return;
             //OnSummonTurret.Broadcast(TurretToSummon);
             // No Any Broadcast. this is just for debugging with random spawn
-        }
-        else
-        {
-            continue;
         }
     }
 }
