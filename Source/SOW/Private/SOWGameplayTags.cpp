@@ -37,6 +37,8 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Freezing, "Enemy.Status.Debuff.Freezing");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_AntiMagic, "Enemy.Status.Debuff.AntiMagic");
 
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Marking, "Enemy.Status.Debuff.Marking");
+
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sine_Alpha, "Enemy.Status.Debuff.Sine.Alpha");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sine_Beta, "Enemy.Status.Debuff.Sine.Beta");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Status_Debuff_Sine_Gamma, "Enemy.Status.Debuff.Sine.Gamma");
@@ -64,6 +66,7 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_Attack_Melee, "Turret.Ability.Attack.Melee");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_Attack_Ranged, "Turret.Ability.Attack.Ranged");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_Buff, "Turret.Ability.Buff"); 
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_Continue, "Turret.Ability.Continue");
 
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_MeleeAttack, "Turret.Ability.MeleeAttack");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Ability_RangedAttack, "Turret.Ability.RangedAttack");
@@ -84,8 +87,7 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Ember, "Turret.Status.Buff.Ember");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Ignition, "Turret.Status.Buff.Ignition");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Glare, "Turret.Status.Buff.Glare");
-	
-
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Impatience, "Turret.Status.Buff.Impatience");
 
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Debuff_Slow, "Turret.Status.Debuff.Slow");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Debuff_Root, "Turret.Status.Debuff.Root");
@@ -97,6 +99,10 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_Attack_Done, "Turret.Event.Attack.Done");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_Attack_Double, "Turret.Event.Attack.Double"); 
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_EffectApplied, "Turret.Event.EffectApplied");
+
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_TikiSupporting, "Turret.Event.TikiSupporting");
+
+
 
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Evolution_Alpha, "Turret.Evolution.Alpha");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Evolution_Beta, "Turret.Evolution.Beta");
