@@ -18,7 +18,7 @@
 #include "Components/Enemies/EnemyIncomingRouteComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Structures/Enemies/EnemyStructs.h"
-#include "Tile/SOWTileSpawnerActor.h"
+#include "Tile/SOWTileSpawner.h"
 #include "Utilities/EnemyIncomingRoute.h"
 #include "Widget/Enemy/EnemyHealthBarWidget.h"
 
@@ -280,13 +280,13 @@ void ASOWCharacterEnemyBase::SetAIController(AEnemyBaseAIController* NewAIContro
 AEnemyIncomingRoute* ASOWCharacterEnemyBase::FindClosestIncomingRoute() const
 {
 	// 1. Find the ATileSpawner actor
-	ATileSpawner* TileSpawner = nullptr;
+	ASOWTileSpawner* TileSpawner = nullptr;
 	TArray<AActor*> FoundActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATileSpawner::StaticClass(), FoundActors);
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASOWTileSpawner::StaticClass(), FoundActors);
 
 	if (FoundActors.Num() > 0)
 	{
-		TileSpawner = Cast<ATileSpawner>(FoundActors[0]);
+		TileSpawner = Cast<ASOWTileSpawner>(FoundActors[0]);
 	}
 
 	if (!TileSpawner)

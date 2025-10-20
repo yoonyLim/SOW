@@ -61,6 +61,16 @@ enum class ETurretTargetSelectionPriority : uint8 {
 };
 
 UENUM(BlueprintType)
+enum class EAttackType : uint8 {
+	// added by : PGH
+	// determine turret attack type 
+	UNDEFINED	UMETA(DisplayName = "Undefined"),
+	MELEE		UMETA(DisplayName = "Melee"),
+	RANGED		UMETA(DisplayName = "Ranged"),
+	SUPPORT		UMETA(DisplayName = "Support")
+};
+
+UENUM(BlueprintType)
 enum class ETurretName : uint8 {
 	// added by : PGH
 	// Nature
@@ -85,6 +95,13 @@ enum class ETurretName : uint8 {
 	Yetti			UMETA(DisplayName = "Yetti"),
 	IceBreaker		UMETA(DisplayName = "IceBreaker"),
 	Wildboar		UMETA(DisplayName = "Wildboar"),
+
+	// Flame
+	Dragon			UMETA(DisplayName = "Dragon"),
+	Tiki			UMETA(DisplayName = "Tiki"),
+	TikiGhost		UMETA(DisplayName = "TikiGhost"),
+	VolcanoGolem	UMETA(DisplayName = "VolcanoGolem"),
+	VolcanoLizard	UMETA(DisplayName = "VolcanoLizard"),
 
 	// Special Unit
 	Glacio			UMETA(DisplayName = "Glacio")

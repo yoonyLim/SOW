@@ -92,7 +92,7 @@ void UGEEC_CalculateDamage::ApplyRealDamage(const FGameplayEffectCustomExecution
 	FGameplayEventData Data;
 	Data.Instigator = ExecutionParams.GetSourceAbilitySystemComponent()->GetAvatarActor();
 	UDamageLogger* Logger = NewObject<UDamageLogger>();
-	Logger->SetLoggerValue(FMath::CeilToInt(BaseDamage), FMath::CeilToInt(FinalDamage));
+	Logger->SetLoggerValue(FMath::RoundToInt(BaseDamage), FMath::RoundToInt(FinalDamage));
 	Data.OptionalObject = Logger;
 	Data.EventMagnitude = FinalDamage;
 
@@ -127,8 +127,8 @@ void UGEEC_CalculateDamage::ApplyRealDamage(const FGameplayEffectCustomExecution
 		TurretInstanceID,
 		TurretID,
 		TargetID,
-		FMath::CeilToInt(BaseDamage),
-		FMath::CeilToInt(FinalDamage),
+		FMath::RoundToInt(BaseDamage),
+		FMath::RoundToInt(FinalDamage),
 		TargetHP,
 		TargetPos,
 		0, // ���̺�/���� ��ȣ
@@ -272,7 +272,7 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 	// Calculate Final Damage
 	//float L_FinalDamage = BasicDamageFormal * ElementalExtraDamage * FinalExtraDamage;
 	float L_FinalDamage = BasicDamageFormal * FinalExtraDamage;
-	L_FinalDamage = FMath::CeilToInt(L_FinalDamage) < 1.f ? 1.f : FMath::CeilToInt(L_FinalDamage);
+	L_FinalDamage = FMath::RoundToInt(L_FinalDamage) < 0.f ? 0.f : FMath::RoundToInt(L_FinalDamage);
 	UE_LOG(LogTemp, Warning, TEXT("[DamageCalc] FinalDamage calculated: %f"), L_FinalDamage); // �α��߰�
 
 

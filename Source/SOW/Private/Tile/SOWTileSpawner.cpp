@@ -10,6 +10,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Core/SOWPlayerController.h"
+#include "SOWGameInstance.h"
 
 #include "Utilities/MapScriptLoader.h"
 #include "Misc/Paths.h"
@@ -59,7 +60,8 @@ void ASOWTileSpawner::BeginPlay()
 					continue;
 				}
 
-				FVector SpawnLocation = SOWTilePlacementHelper::GetTileWorldPosition(X, Y, TileWidth, TileHeight);
+				FVector SpawnLocation = GridToWorld_TopLeft(X, Y, TileWidth, TileHeight);
+				SpawnLocation.Z = GetActorLocation().Z;
 
 				const FRotator Rotation = FRotator::ZeroRotator;
 
@@ -67,6 +69,8 @@ void ASOWTileSpawner::BeginPlay()
 				{
 					SpawnedTileActors.Add(SpawnedTile);
 					SpawnedTileLocations.Add(Index, SpawnLocation);
+
+					ApplyArcheTypeIfSet(SpawnedTile, X, Y, FName("BUILD"), TileWidth);
 
 					if (SpawnedTile->Implements<UGridTileInterface>())
 					{
@@ -97,7 +101,7 @@ void ASOWTileSpawner::BeginPlay()
 	ComputeMapBoundsFromTiles(SpawnedTileLocations, TileWidth, TileHeight, CenterWS, HalfSizeWorldXY);
 
 	// ���� ���� Z�� �����ϰ� �ʹٸ�:
-	CenterWS.Z = SOWTilePlacementHelper::GetTileWorldPosition(
+	CenterWS.Z = GridToWorld_TopLeft(
 		(GridWidth - 1) / 2.0f, (GridHeight - 1) / 2.0f, TileWidth, TileHeight).Z;
 
 	if (bSpawnGradientPlane)
@@ -105,7 +109,8 @@ void ASOWTileSpawner::BeginPlay()
 		SetupGradientPlaneAndMaterial(CenterWS, HalfSizeWorldXY);
 	}
 
-	const FVector Center = SOWTilePlacementHelper::GetTileWorldPosition((GridWidth - 1) / 2.0f, (GridHeight - 1) / 2.0f, TileWidth, TileHeight);
+	const FVector Center = GridToWorld_TopLeft(
+		(GridWidth - 1) / 2.0f, (GridHeight - 1) / 2.0f, TileWidth, TileHeight);
 	const FVector Extent = FVector(
 		(GridWidth * TileWidth * 0.5f) + TileWidth,
 		(GridHeight * TileHeight * 0.5f) + TileHeight,
@@ -138,6 +143,18 @@ void ASOWTileSpawner::BeginPlay()
 	{
 		NavSys->Build();
 	}
+
+	USOWGameInstance* GI = Cast<USOWGameInstance>(GetGameInstance());
+	GI->SetWorldTileSize(TileWidth);
+}
+
+FVector ASOWTileSpawner::GridToWorld_TopLeft(int32 GX, int32 GY, float InTileW, float InTileH) const
+{
+	const FVector Origin = GetActorLocation();     
+	const FVector Right = GetActorForwardVector();
+	const FVector Down = GetActorRightVector(); 
+
+	return Origin + Right * (GX * InTileW) + Down * (GY * InTileH);
 }
 
 void ASOWTileSpawner::SpawnIncomingRoutes()
@@ -370,7 +387,11 @@ bool ASOWTileSpawner::LoadAndBuildFromScript(const FString& InFilePathRelOrAbs)
 			}
 
 			const int32 Index = Y * Spec.GridWidth + X;
-			const FVector SpawnLocation = SOWTilePlacementHelper::GetTileWorldPosition(X, Y, Spec.TileWidth, Spec.TileHeight);
+			FVector SpawnLocation = GridToWorld_TopLeft(X, Y, Spec.TileWidth, Spec.TileHeight);
+			SpawnLocation.Z = GetActorLocation().Z;
+
+			UE_LOG(LogTemp, Warning, TEXT("[Spawn] X=%d Y=%d Loc=%s  TileW=%.1f TileH=%.1f"),
+				X, Y, *SpawnLocation.ToString(), Spec.TileWidth, Spec.TileHeight);
 		
 			FActorSpawnParameters Params;
 			Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
@@ -380,6 +401,8 @@ bool ASOWTileSpawner::LoadAndBuildFromScript(const FString& InFilePathRelOrAbs)
 
 			SpawnedTileActors.Add(SpawnedTile);
 			SpawnedTileLocations.Add(Index, SpawnLocation);
+
+			ApplyArcheTypeIfSet(SpawnedTile, X, Y, UseToken, Spec.TileWidth);
 
 			if (SpawnedTile->Implements<UGridTileInterface>() && UseToken == FName("ENEMY"))
 			{
@@ -440,4 +463,61 @@ void ASOWTileSpawner::ClearSpawnedRoutes()
 		if (IsValid(R)) { R->Destroy(); }
 	}
 	SpawnedEnemyRoutes.Reset();
+}
+
+ETileRole ASOWTileSpawner::ResolveRoleFromToken(const FName& Token) const
+{
+	if (Token.IsNone()) return ETileRole::Empty;
+	auto Eq = [&](const TCHAR* S) { return Token.IsEqual(FName(S), ENameCase::IgnoreCase);  };
+
+	if (Eq(TEXT("PATH")) || Eq(TEXT("P"))) return ETileRole::Path;
+	if (Eq(TEXT("TURRET1")) || Eq(TEXT("B"))) return ETileRole::Buildable;
+	if (Eq(TEXT("TURRET2")) || Eq(TEXT("B"))) return ETileRole::Buildable;
+	if (Eq(TEXT("TURRET3")) || Eq(TEXT("B"))) return ETileRole::Buildable;
+	if (Eq(TEXT("TURRET4")) || Eq(TEXT("B"))) return ETileRole::Buildable;
+	if (Eq(TEXT("BLOCKED")) || Eq(TEXT("X"))) return ETileRole::Blocked;
+	if (Eq(TEXT("SPAWN")) || Eq(TEXT("S"))) return ETileRole::Spawn;
+	if (Eq(TEXT("RUNE")) || Eq(TEXT("G"))) return ETileRole::Goal;
+
+	return ETileRole::Empty;
+
+}
+
+void ASOWTileSpawner::ApplyArcheTypeIfSet(
+	AActor* SpawnedTile,
+	int32 X, int32 Y,
+	const FName& UseToken,
+	float InTileWidth)
+{
+	if (!SpawnedTile) return;
+
+	if (ATileBase* TB = Cast<ATileBase>(SpawnedTile))
+	{
+		TB->GridX = X;
+		TB->GridY = Y;
+		TB->TileSizeUU = InTileWidth;
+
+		const ETileRole R = ResolveRoleFromToken(UseToken);
+		if (R != ETileRole::Empty)
+		{
+			TB->SetRole(R);
+		}
+
+		if (bUseArcheTypeAfterSpawn)
+		{
+			if (const TSoftObjectPtr<UTileArcheType>* Ptr = TokenToArcheType.Find(UseToken))
+			{
+				if (Ptr && !Ptr->IsNull())
+				{
+					if (UTileArcheType* Data = Ptr->LoadSynchronous())
+					{
+						TB->ConfigureFromData(Data);
+					}
+				}
+			}
+		}
+
+		TB->ApplyZPolicy();
+		TB->ApplyVisualTransform();
+	}
 }

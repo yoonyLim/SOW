@@ -66,6 +66,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Turret|TargetDetection")
 	float GetAttackCooldownTimeFromOwner() const;
 
+	UFUNCTION(BlueprintPure, Category = "Turret|Combat")
+	EAttackType GetTurretAttackType() const { return TurretAttackType; }
+
 	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
 	ATurretMeleeHitCollision* GetHitCollision() const { return CreatedHitCollision; }
 
@@ -151,6 +154,9 @@ protected:
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Turret|Properties|Combat")
 	ETurretTargetSelectionType TurretTargetSelectionType = ETurretTargetSelectionType::Single;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Turret|Properties|Combat")
+	EAttackType TurretAttackType = EAttackType::UNDEFINED;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Turret|Properties|Combat")
 	TSubclassOf<ATurretProjectileBase> ProjectileToSpawn;

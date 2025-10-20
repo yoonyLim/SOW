@@ -95,7 +95,7 @@ void USOWTurretCombatComponent::InitTurretProperties(const FTurretPropertyData& 
 	TurretSettablePriority = Data.TurretSettablePriority;
 	TurretTargetSelectionPolicy = Data.TurretTargetSelectionPolicy;
 	TurretTargetSelectionType = Data.TurretTargetSelectionType;
-
+	TurretAttackType = Data.TurretAttackType;
 	// Boolean Type
 	ProjectileToSpawn = Data.ProjectileToSpawn;
 	HasDependencyOnProjectile = Data.HasDependencyOnProjectile;
@@ -113,6 +113,16 @@ void USOWTurretCombatComponent::InitTurretProperties(const FTurretPropertyData& 
 	if (!TurretSettablePriority.IsEmpty()) {
 		PriorityChange();
 	}
+
+	/*if (Data.TurretAttackType == EAttackType::MELEE) {
+		CachedOwnerCharacter->GetSOWAbilitySystemComponent()->AddLooseGameplayTag(SOWGameplayTags::Turret_Type_Melee);
+	}
+	else if(Data.TurretAttackType == EAttackType::RANGED){
+		CachedOwnerCharacter->GetSOWAbilitySystemComponent()->AddLooseGameplayTag(SOWGameplayTags::Turret_Type_Ranged);
+	}
+	else if (Data.TurretAttackType == EAttackType::SUPPORT) {
+		CachedOwnerCharacter->GetSOWAbilitySystemComponent()->AddLooseGameplayTag(SOWGameplayTags::Turret_Type_Support);
+	}*/
 
 
 }
@@ -336,15 +346,18 @@ bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 		L_DetectableActors = USOWBlueprintFunctionLibrary::GetActorsOnTiles(DetectorTiles);
 	else if (AbilityTagToActivation == SOWGameplayTags::Turret_Ability_Buff)
 		L_DetectableActors = USOWBlueprintFunctionLibrary::GetTurretsOnTiles(DetectorTiles);
-	else 
+	else if(AbilityTagToActivation == SOWGameplayTags::Turret_Ability_Continue)
+		return (bTargetFound = true);
+	else {
 		return (bTargetFound = false);
+	}
 	
 
 	//UE_LOG(LogTemp, Warning, TEXT("%s : Detected Target Count : %s"), *CachedOwnerCharacter->GetActorNameOrLabel(), *FString::FromInt(L_DetectableActors.Num()));
 
 	for (AActor* CurrentTarget : L_DetectableActors) {
 
-		if (!IsActorValidTarget(CurrentTarget) || GetStealthCheck(CurrentTarget)) {
+		if (!IsActorValidTarget(CurrentTarget) ) {//|| GetStealthCheck(CurrentTarget)
 			//UE_LOG(LogTemp, Warning, TEXT("%s is not target of %s"), *CurrentTarget->GetActorNameOrLabel(), *CachedOwnerCharacter->GetActorNameOrLabel());
 			continue;
 		}
@@ -360,9 +373,10 @@ bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 		
 	}
 	
-	return bTargetFound = !DetectedTargetActors.IsEmpty() || 
+	return bTargetFound = (!DetectedTargetActors.IsEmpty() || 
 		TurretTargetSelectionPriority == ETurretTargetSelectionPriority::LocationFixed || 
-		TurretTargetSelectionPriority == ETurretTargetSelectionPriority::TargetFixed;
+		TurretTargetSelectionPriority == ETurretTargetSelectionPriority::TargetFixed)
+		;
 }
 
 
