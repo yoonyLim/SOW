@@ -21,6 +21,9 @@
 #include "UI/ToastStackWidget.h"
 #include "Manager/TurretSynergyManager.h"
 
+#include "Kismet/GameplayStatics.h"
+#include "GameModes/WaveGameMode.h"
+#include "SOWBlueprintFunctionLibrary.h"
 
 void USummonWidget::NativeConstruct()
 {
@@ -65,13 +68,24 @@ void USummonWidget::NativeDestruct()
 
 void  USummonWidget::SummonTurret()
 {
-	if (Cast<USOWGameInstance>(GetWorld()->GetGameInstance())->GetSummonManager()->TurretSummon())
+	if (USOWGameInstance* GI = Cast<USOWGameInstance>(GetWorld()->GetGameInstance()))
 	{
-		UE_LOG(LogTemp, Error, TEXT("SummongWidget: Success to Summon Turret"));
+		AWaveGameMode* GM = Cast<AWaveGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+		if (GM && GM->GetCurrency() < 10) {
+			UE_LOG(LogTemp, Error, TEXT("SummonWidget: Fail to Summon Turret : Lack Of Currency "));
+			return;
+		}
+	
+
+		GM->AddCurrency(-10);
+		GI->GetSummonManager()->TurretSummon();
+
+		UE_LOG(LogTemp, Error, TEXT("SummonWidget: Success to Summon Turret"));
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("SummongWidget: Fail to Summon Turret"));
+		UE_LOG(LogTemp, Error, TEXT("SummonWidget: Fail to Summon Turret"));
 	}
 }
 

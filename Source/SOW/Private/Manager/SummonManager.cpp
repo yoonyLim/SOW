@@ -87,8 +87,8 @@ FSummonData USummonManager::RNG()
 
 bool USummonManager::TurretSummon()
 {
-	if (USOWBlueprintFunctionLibrary::GetCurrency(GetWorld()) < 10)
-		return false;
+	/*if (USOWBlueprintFunctionLibrary::GetCurrency(GetWorld()) < 10)
+		return false;*/
 	
 	FSummonData TurretToSummon = RNG();
 
