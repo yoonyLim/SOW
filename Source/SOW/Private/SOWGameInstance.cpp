@@ -20,12 +20,13 @@
 #include "SOWBlueprintFunctionLibrary.h"
 
 #include "Manager/TurretSynergyManager.h"
+#include "Sound/SoundManager.h"
 
 
 void USOWGameInstance::Init()
 {
 	Super::Init();
-
+    
     SkillManager = NewObject<UUSkillManager>(this);
 
     if (SkillManager && SkillDataTable)
@@ -60,7 +61,7 @@ void USOWGameInstance::Init()
     {
         TurretSynergyManager->Initialize(SynergyDataTable, GlacioInstance);
     }
-}
+ }
 
 void USOWGameInstance::SummonTurret(FName TurretType)
 {
@@ -104,7 +105,7 @@ void USOWGameInstance::SummonTurret(FName TurretType)
             // possess AIController to Summoning Turret
             if (NewTurret)
             {
-                // AIController¸¦ ½ºÆùÇÏ°í ºùÀÇ
+                // AIControllerï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½
                 if (!NewTurret->GetController())
                 {
                     AAIController* AIController = GetWorld()->SpawnActor<AAIController>(
@@ -126,10 +127,6 @@ void USOWGameInstance::SummonTurret(FName TurretType)
             //OnSummonTurret.Broadcast(TurretToSummon);
             // No Any Broadcast. this is just for debugging with random spawn
         }
-        else
-        {
-            continue;
-        }
     }
 }
 
@@ -149,4 +146,15 @@ void USOWGameInstance::SetWorldTileSize(float InSize)
 float USOWGameInstance::GetWorldTileSize() const
 {
     return WorldTileSize;
+}
+
+void USOWGameInstance::OnStart()
+{
+    Super::OnStart();
+
+    auto* Manager = USoundManager::Get(this);
+    if (StartBGM)
+    {
+        Manager->PlayBGM(StartBGM, 1.0f);
+    }
 }

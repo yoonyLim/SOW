@@ -197,7 +197,7 @@ void USOWBlueprintFunctionLibrary::RequestToGenerateOnTimeCurrency(UObject* Worl
 bool USOWBlueprintFunctionLibrary::QueryForCurrencyCountSufficient(UObject* WorldContextObject, const FGameplayTag& InTag, const int InCount)
 {
     // Has Enough Currency Count?
-    USOWGameInstance* SOWGameInstance = Cast<USOWGameInstance>(WorldContextObject->GetWorld()->GetGameInstance());
+    // USOWGameInstance* SOWGameInstance = Cast<USOWGameInstance>(WorldContextObject->GetWorld()->GetGameInstance());
 
     AWaveGameMode* GM = Cast<AWaveGameMode>(UGameplayStatics::GetGameMode(WorldContextObject->GetWorld()));
 
@@ -209,6 +209,13 @@ bool USOWBlueprintFunctionLibrary::QueryForCurrencyCountSufficient(UObject* Worl
     }
 
     return false;
+}
+
+int USOWBlueprintFunctionLibrary::GetCurrency(UObject* WorldContextObject)
+{
+    AWaveGameMode* GM = Cast<AWaveGameMode>(UGameplayStatics::GetGameMode(WorldContextObject->GetWorld()));
+
+    return GM->GetCurrency();
 }
 
 
@@ -329,7 +336,10 @@ TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAroundMouse(APlayerCont
 
 FVector USOWBlueprintFunctionLibrary::MakeCentralTileLocationFromAnyPoint(APlayerController* PlayerController, FVector AnyPoint, const ETileSelectType TileSelectionType, const int32 N, const float TileSize, bool bRot)
 {
+    if (!PlayerController || !PlayerController->GetWorld() || !PlayerController->GetWorld()->GetGameInstance()) return FVector::ZeroVector;
     USOWGameInstance* GI = Cast<USOWGameInstance>(PlayerController->GetWorld()->GetGameInstance());
+
+    if (!GI)return FVector::ZeroVector;;
     float WorldTileSize = GI->GetWorldTileSize();
 
     FVector CenterLocation = FVector::ZeroVector;
@@ -406,7 +416,10 @@ FVector USOWBlueprintFunctionLibrary::MakeCentralTileLocationFromAnyPoint(APlaye
 
 TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAsSquaredFromCenterLocation(APlayerController* PlayerController, FVector CenterPosition, const int32 N, const float TileSize)
 {
+    if (!PlayerController || !PlayerController->GetWorld() || !PlayerController->GetWorld()->GetGameInstance()) return TArray<ATileBase*>();
     USOWGameInstance* GI = Cast<USOWGameInstance>(PlayerController->GetWorld()->GetGameInstance());
+
+    if (!GI)return TArray<ATileBase*>();
     float WorldTileSize = GI->GetWorldTileSize();
     // Get Tiles Around Center Tile Location.
     // If N is odd, center position must be the center coordinates of the tile.
@@ -482,7 +495,10 @@ TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAsStraightFromCenterLoc
     const float TileSize,
     bool bRot)
 {
+    if (!PlayerController || !PlayerController->GetWorld() || !PlayerController->GetWorld()->GetGameInstance()) return TArray<ATileBase*>();
     USOWGameInstance* GI = Cast<USOWGameInstance>(PlayerController->GetWorld()->GetGameInstance());
+
+    if (!GI)return TArray<ATileBase*>();
     float WorldTileSize = GI ? GI->GetWorldTileSize() : TileSize;
 
     TArray<ATileBase*> SelectedTiles;
@@ -676,6 +692,16 @@ TArray<AActor*> USOWBlueprintFunctionLibrary::GetTurretsOnTiles(TArray<ATileBase
         }
     }
     return OnTileActors;
+}
+
+float USOWBlueprintFunctionLibrary::GetWorldTileSizeFromInstance(APlayerController* PlayerController)
+{
+    if (!PlayerController) return 0.f;
+
+    USOWGameInstance* GI = Cast<USOWGameInstance>(PlayerController->GetWorld()->GetGameInstance());
+    if (!GI) return 0.f;
+
+    return GI->GetWorldTileSize();
 }
 
 bool USOWBlueprintFunctionLibrary::IsMouseOverUI(APlayerController* PC, const TSubclassOf<USOWWidgetBase>& TargetWidget)

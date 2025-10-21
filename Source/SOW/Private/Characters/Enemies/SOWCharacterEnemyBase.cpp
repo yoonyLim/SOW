@@ -355,7 +355,7 @@ void ASOWCharacterEnemyBase::OnHit(UPrimitiveComponent* HitComp, AActor* OtherAc
 void ASOWCharacterEnemyBase::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (ASOWCharacterCoreRune* Rune = Cast<ASOWCharacterCoreRune>(OtherActor))
+	if (Cast<ASOWCharacterCoreRune>(OtherActor))
 	{
 		// UE_LOG(LogTemp, Warning, TEXT("Rune Overlapped"))
 		
@@ -378,9 +378,12 @@ void ASOWCharacterEnemyBase::OnBeginOverlap(UPrimitiveComponent* OverlappedComp,
 		// Destroy();
 
 		// Object Pool logic mimic
-		SetActorHiddenInGame(true);
+		/*SetActorHiddenInGame(true);
 		SetActorEnableCollision(false);
-		SetActorTickEnabled(false);
+		SetActorTickEnabled(false);*/
+
+		GetSOWAbilitySystemComponent()->AddLooseGameplayTag(SOWGameplayTags::Shared_Ability_Death);
+		GetSOWAbilitySystemComponent()->AddLooseGameplayTag(SOWGameplayTags::Shared_Status_Dead);
 
 		BroadcastEnemyDeath();
 	}

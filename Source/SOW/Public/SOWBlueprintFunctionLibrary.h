@@ -53,6 +53,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "AbilitySystem")
 	static bool QueryForCurrencyCountSufficient(UObject* WorldContextObject, const FGameplayTag& InTag, const int InCount);
 
+	UFUNCTION(BlueprintCallable, Category = "GameMode")
+	static int GetCurrency(UObject* WorldContextObject);
+
 	UFUNCTION(BlueprintCallable, Category = "Tag")
 	static EElementalType TranslateElementTagToEnum(const FGameplayTag& InTag);
 
@@ -79,6 +82,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Tile")
 	static TArray<AActor*> GetTurretsOnTiles(TArray<ATileBase*> Tiles);
 
+
+	UFUNCTION(BlueprintPure, Category = "Tile")
+	static float GetWorldTileSizeFromInstance(APlayerController* PlayerController);
+
 	UFUNCTION(BlueprintCallable, Category = "Input")
 	static bool IsMouseOverUI(APlayerController* PC, const TSubclassOf<USOWWidgetBase>& TargetWidget);
 };
@@ -89,10 +96,10 @@ FName USOWBlueprintFunctionLibrary::EnumToFName(const T EnumValue)
 	UEnum* EnumPtr = StaticEnum<T>();
 	if (!EnumPtr) return NAME_None;
 
-	// Enum ÀÌ¸§À» FNameÀ¸·Î ¹ÝÈ¯
+	// Enum ï¿½Ì¸ï¿½ï¿½ï¿½ FNameï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
 
 	FString EnumNameStr = EnumPtr->GetNameStringByValue(static_cast<int64>(EnumValue));
-	// ¿¹: "Walking"
+	// ï¿½ï¿½: "Walking"
 
 	FName CleanFName(*EnumNameStr);
 
