@@ -21,7 +21,6 @@ ATileBase::ATileBase()
 	OverlayPlane = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("OverlayPlane"));
 	OverlayPlane->SetupAttachment(SceneRoot);
 	OverlayPlane->SetMobility(EComponentMobility::Movable);
-	OverlayPlane->SetupAttachment(MeshComponent);           
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> PlaneMesh(TEXT("/Engine/BasicShapes/Plane.Plane"));
 	if (PlaneMesh.Succeeded())
@@ -29,9 +28,12 @@ ATileBase::ATileBase()
 		OverlayPlane->SetStaticMesh(PlaneMesh.Object);
 	}
 
+	FVector V = MeshComponent->GetRelativeLocation();
+	V.Z += 0.01;
+
 	OverlayPlane->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	OverlayPlane->SetCastShadow(false);
-	OverlayPlane->SetRelativeLocation(FVector(0, 0, 0.1f));    
+	OverlayPlane->SetRelativeLocation(V);
 	OverlayPlane->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
 	OverlayPlane->SetVisibility(false);
 }
