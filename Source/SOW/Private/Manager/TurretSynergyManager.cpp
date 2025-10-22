@@ -252,6 +252,7 @@ void UTurretSynergyManager::RemoveTurratDataFromSynergy(ASOWCharacterTurretBase*
 	}
 
 	// Glacio 전용 코드
+	// Glacio 소환 조건이 맞지 않을 경우 Glacio를 제거합니다.
 	if (ElementType == EElementalType::Ice) {
 		GlacioTurretManager->OnSynergyChanged.Broadcast(SynergyTurretCount);
 
