@@ -21,7 +21,6 @@
 #include "UI/ToastStackWidget.h"
 #include "Manager/TurretSynergyManager.h"
 
-#include "Kismet/GameplayStatics.h"
 #include "GameModes/WaveGameMode.h"
 #include "SOWBlueprintFunctionLibrary.h"
 
@@ -40,7 +39,7 @@ void USummonWidget::NativeConstruct()
 		UE_LOG(LogTemp, Error, TEXT("SummongWidget: Failed to load Turret Summon Prob DataTable"));
 	}
 
-	if (BTN_Summon) BTN_Summon->OnClicked.AddDynamic(this, &USummonWidget::SummonTurret);
+	//if (BTN_Summon) BTN_Summon->OnClicked.AddDynamic(this, &USummonWidget::SummonTurret);
 
 	W_SummonNotiBox->OnBecameEmpty.AddLambda([this]()
 		{
@@ -79,7 +78,6 @@ void  USummonWidget::SummonTurret()
 	
 
 		GM->AddCurrency(-10);
-		GI->GetSummonManager()->TurretSummon();
 
 		UE_LOG(LogTemp, Error, TEXT("SummonWidget: Success to Summon Turret"));
 	}

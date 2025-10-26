@@ -22,6 +22,8 @@ enum class ERarity : uint8
 	Common,
 	Rare,
 	Epic,
+	Legendary,
+	Origin,
 };
 
 UENUM(BlueprintType)
@@ -30,6 +32,28 @@ enum class ETurretAttackType : uint8
 	Melee,
 	Range,
 	Support,
+};
+
+USTRUCT(BlueprintType)
+struct FSummonProb : public FTableRowBase {
+
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int CommonProb;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int RareProb;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int EpicProb;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int LegendaryProb;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int OriginProb;
 };
 
 USTRUCT(BlueprintType)
@@ -48,6 +72,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<ASOWCharacterTurretBase> TurretClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* ProfileTexture;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EElementalType ElementalType;
 
 	bool operator==(const FSummonData& Other) const;
 };
@@ -72,6 +102,12 @@ public:
 	UPROPERTY()
 	TArray<FSummonData> L_Epic;
 
+	UPROPERTY()
+	TArray<FSummonData> L_Legendary;
+
+	UPROPERTY()
+	TArray<FSummonData> L_Origin;
+
 	UPROPERTY(BlueprintAssignable, Category = "Delegate")
 	FOnSummonTurret OnSummonTurret;
 
@@ -79,10 +115,15 @@ public:
 	void Initialize();
 
 	UFUNCTION(BlueprintCallable)
-	bool TurretSummon();
+	bool TurretSummon(FSummonData TurretData);
+
+	UFUNCTION(BlueprintCallable)
+	FSummonData RNG(FSummonProb SummonProb);
+
+	UFUNCTION(BlueprintCallable)
+	FSummonData RNGOriginTurret();
 
 private:
 	void InitTurretArray();
 
-	FSummonData RNG();
 };
