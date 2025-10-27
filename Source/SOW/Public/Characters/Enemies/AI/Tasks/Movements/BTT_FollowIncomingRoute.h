@@ -25,9 +25,6 @@ class SOW_API UBTT_FollowIncomingRoute : public UBTTask_BlackboardBase
 
 	UPROPERTY()
 	UBehaviorTreeComponent* CachedOwnerComp;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Navigation", meta = (AllowPrivateAccess = "true"))
-	float AcceptanceRadius = 100.f;
 
 public:
 	explicit UBTT_FollowIncomingRoute(FObjectInitializer const& ObjectInitializer);

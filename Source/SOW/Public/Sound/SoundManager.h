@@ -12,15 +12,26 @@ UCLASS()
 class SOW_API USoundManager : public UObject
 {
 	GENERATED_BODY()
+
 public:
 	static USoundManager* Get(UObject* WorldContext);
 
 	// 사운드 관련 기능
+	UFUNCTION(BlueprintCallable)
 	void PlayBGM(USoundBase* BGM, float FadeTime = 1.0f);
+
+	UFUNCTION(BlueprintCallable)
 	void StopBGM(float FadeTime = 1.0f);
+
+	UFUNCTION(BlueprintCallable)
 	void PlaySFX(USoundBase* SFX, FVector Location = FVector::ZeroVector);
+
+	UFUNCTION(BlueprintCallable)
 	void SetBGMVolume(float Volume);
+
+	UFUNCTION(BlueprintCallable)
 	void SetSFXVolume(float Volume);
+
 	void Init(UWorld* World);
 private:
 	// Singleton 인스턴스

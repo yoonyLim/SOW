@@ -18,6 +18,14 @@ bool UEnemyIncomingRouteComponent::HasReachedEnd() const
 	return false;
 }
 
+bool UEnemyIncomingRouteComponent::IsCloseToEnd(int32 BufferNodes)
+{
+	if (IncomingRouteIndex > EnemyIncomingRoute->GetNumberOfPoints() - 1 - BufferNodes)
+		return true;
+
+	return false;
+}
+
 void UEnemyIncomingRouteComponent::IncrementIncomingRouteIndex()
 {
 	IncomingRouteIndex += 1;
