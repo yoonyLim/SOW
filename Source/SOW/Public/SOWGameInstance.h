@@ -7,6 +7,7 @@
 #include "Sound/SoundBase.h"
 #include "SOWGameInstance.generated.h"
 
+class USoundManager;
 class UUSkillManager;
 class UGlobalCurrencyManager;
 class UOneTimeCurrencyManager;
@@ -42,6 +43,8 @@ public:
     UPROPERTY(BlueprintReadOnly)
     TObjectPtr<UTurretSynergyManager> TurretSynergyManager;
 
+    UPROPERTY(BlueprintReadOnly)
+    TObjectPtr<USoundManager> SoundManager;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Skill")
     TObjectPtr<UDataTable> SkillDataTable;

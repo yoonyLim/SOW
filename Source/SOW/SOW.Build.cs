@@ -15,7 +15,7 @@ public class SOW : ModuleRules
 			"Engine",
 			"InputCore",
 			"EnhancedInput",
-			"GamePlayAbilities",
+			"GameplayAbilities",
 			"GameplayTags",
 			"GameplayTasks", 
 			"AnimGraphRuntime", // Added by Yoony for Enemy AnimInstance

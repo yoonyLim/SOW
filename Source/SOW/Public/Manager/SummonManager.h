@@ -14,7 +14,6 @@
 class ASOWCharacterTurretBase;
 class UDataTable;
 
-
 UENUM(BlueprintType)
 enum class ERarity : uint8
 {

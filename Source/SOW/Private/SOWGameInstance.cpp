@@ -61,6 +61,13 @@ void USOWGameInstance::Init()
     {
         TurretSynergyManager->Initialize(SynergyDataTable, GlacioInstance);
     }
+
+    SoundManager = NewObject<USoundManager>(this);
+
+    if (SoundManager)
+    {
+        SoundManager->Get(this);
+    }
  }
 
 void USOWGameInstance::SummonTurret(FName TurretType)
@@ -152,9 +159,9 @@ void USOWGameInstance::OnStart()
 {
     Super::OnStart();
 
-    auto* Manager = USoundManager::Get(this);
+    /*auto* Manager = USoundManager::Get(this);
     if (StartBGM)
     {
         Manager->PlayBGM(StartBGM, 1.0f);
-    }
+    }*/
 }

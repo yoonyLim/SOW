@@ -14,6 +14,7 @@
 #include "Characters/Turrets/SOWCharacterTurretBase.h"
 
 #include "AIController.h" // added by pgh
+#include "GameModes/WaveGameMode.h"
 
 static const TArray<int32> RarityWeights = { 83, 15, 2 }; // {common, rare, epic}
 
@@ -107,6 +108,13 @@ bool USummonManager::TurretSummon(FSummonData TurretData)
 {
 	/*if (USOWBlueprintFunctionLibrary::GetCurrency(GetWorld()) < 10)
 		return false;*/
+
+	AWaveGameMode* GM = Cast<AWaveGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+	if (GM && !GM->SpawnTurret())
+	{
+		return false;
+	}
 	
 	FSummonData TurretToSummon = TurretData;
 
