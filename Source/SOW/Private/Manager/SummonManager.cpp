@@ -16,7 +16,7 @@
 #include "AIController.h" // added by pgh
 #include "GameModes/WaveGameMode.h"
 
-static const TArray<int32> RarityWeights = { 83, 15, 2 }; // {common, rare, epic}
+const TArray<int32> RarityWeights = { 83, 15, 2 }; // {common, rare, epic}
 
 bool FSummonData::operator==(const FSummonData& Other) const
 {
@@ -76,11 +76,9 @@ void USummonManager::InitTurretArray()
 	}
 }
 
-FSummonData USummonManager::RNG(FSummonProb SummonProb)
+FSummonData USummonManager::RNG(TArray<int32> NewRarityWeights)
 {
-	int32 FullWeight = RarityWeights[0] + RarityWeights[1] + RarityWeights[2];
-
-	const int32 RarityIdx = GachaRNG::DrawWeightedIndex(RarityWeights);
+	const int32 RarityIdx = GachaRNG::DrawWeightedIndex(NewRarityWeights);
 
 	const TArray<FSummonData>* Pool = nullptr;
 	switch (RarityIdx)
@@ -90,6 +88,7 @@ FSummonData USummonManager::RNG(FSummonProb SummonProb)
 	case 2: Pool = &L_Epic; break;
 	case 3: Pool = &L_Legendary; break;
 	case 4: Pool = &L_Origin; break;
+	default: Pool = &L_Common; break;
 	}
 
 	const uint32 idx = GachaRNG::UniformIndex((uint32)Pool->Num());

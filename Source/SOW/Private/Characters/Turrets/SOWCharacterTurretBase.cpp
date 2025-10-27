@@ -421,7 +421,7 @@ void ASOWCharacterTurretBase::SellTurret(float Price)
 	AbilitySystemComponent->AddLooseGameplayTag(SOWGameplayTags::Shared_Status_Dead);
 
 	AWaveGameMode* GM = Cast<AWaveGameMode>(UGameplayStatics::GetGameMode(this));
-	GM->AddCurrency(Price);
+	if (GM) GM->SellTurret(Price);
 	//USOWBlueprintFunctionLibrary::RequestToGenerateOnTimeCurrency(this, FGameplayTag::RequestGameplayTag("Shared.Element.Nature"), Price);
 }
 
