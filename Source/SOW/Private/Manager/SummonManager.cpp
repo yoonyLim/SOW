@@ -40,6 +40,8 @@ void USummonManager::InitTurretArray()
 	L_Common.Reset();
 	L_Rare.Reset();
 	L_Epic.Reset();
+	L_Legendary.Reset();
+	L_Origin.Reset();
 
 	if (!DT_SummonTurretProb)
 	{
@@ -64,11 +66,17 @@ void USummonManager::InitTurretArray()
 		case ERarity::Epic:
 			L_Epic.AddUnique(*Row);
 			break;
+		case ERarity::Legendary:
+			L_Legendary.AddUnique(*Row);
+			break;
+		case ERarity::Origin:
+			L_Origin.AddUnique(*Row);
+			break;
 		}
 	}
 }
 
-FSummonData USummonManager::RNG()
+FSummonData USummonManager::RNG(FSummonProb SummonProb)
 {
 	int32 FullWeight = RarityWeights[0] + RarityWeights[1] + RarityWeights[2];
 
@@ -80,13 +88,23 @@ FSummonData USummonManager::RNG()
 	case 0: Pool = &L_Common; break;
 	case 1: Pool = &L_Rare; break;
 	case 2: Pool = &L_Epic; break;
+	case 3: Pool = &L_Legendary; break;
+	case 4: Pool = &L_Origin; break;
 	}
 
 	const uint32 idx = GachaRNG::UniformIndex((uint32)Pool->Num());
 	return (*Pool)[(int32)idx];
 }
 
-bool USummonManager::TurretSummon()
+FSummonData USummonManager::RNGOriginTurret()
+{
+	const TArray<FSummonData>* Pool = &L_Origin;
+
+	const uint32 idx = GachaRNG::UniformIndex((uint32)Pool->Num());
+	return (*Pool)[(int32)idx];
+}
+
+bool USummonManager::TurretSummon(FSummonData TurretData)
 {
 	/*if (USOWBlueprintFunctionLibrary::GetCurrency(GetWorld()) < 10)
 		return false;*/
@@ -98,7 +116,7 @@ bool USummonManager::TurretSummon()
 		return false;
 	}
 	
-	FSummonData TurretToSummon = RNG();
+	FSummonData TurretToSummon = TurretData;
 
 	ASOWPlayerController* SOWPC = Cast<ASOWPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
