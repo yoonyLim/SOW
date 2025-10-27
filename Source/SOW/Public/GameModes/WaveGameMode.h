@@ -26,6 +26,7 @@ class SOW_API AWaveGameMode : public AGameModeBase
 private:
 	// 재화 합계
 	int32 Currency = 0;
+	int32 SummonedTurretsNum = 0;
 
 	// 통화 획득 로거 인스턴스
 	UPROPERTY() // GC 보호
@@ -53,4 +54,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Currency")
 	int32 GetCurrency() const { return Currency; };
 
+	UFUNCTION(BlueprintCallable, Category = "Turrets")
+	int32 GetSummonedTurretsNum() const { return SummonedTurretsNum; }
+
+	UFUNCTION(BlueprintCallable, Category = "Turrets")
+	void AddSummonedTurretsNum() { SummonedTurretsNum++; }
+
+	UFUNCTION(BlueprintCallable, Category = "Turrets")
+	bool SpawnTurret();
 };

@@ -10,6 +10,7 @@
 #include "Tile/TileBase.h"
 #include "AIController.h"
 #include "Core/SOWPlayerController.h"
+#include "GameModes/WaveGameMode.h"
 
 void USpecialTurretManager::Initialize(TSubclassOf<ASOWCharacterTurretSpecialBase> GlacioTurret) {
    
@@ -33,7 +34,7 @@ void USpecialTurretManager::Initialize(TSubclassOf<ASOWCharacterTurretSpecialBas
 void USpecialTurretManager::SummonGlacio()
 {
     if (SummonedGlacio) return;
-    // ÀÌ¹Ì ±Û¶ó½Ã¿À°¡ ¼ÒÈ¯µÇ¾î ÀÖ´Ù¸é ¹«½ÃÇÕ´Ï´Ù.
+    // ï¿½Ì¹ï¿½ ï¿½Û¶ï¿½Ã¿ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ç¾ï¿½ ï¿½Ö´Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
 
     ASOWPlayerController* SOWPC = Cast<ASOWPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
@@ -62,7 +63,7 @@ void USpecialTurretManager::SummonGlacio()
             // possess AIController to Summoning Turret
             if (SummonedGlacio)
             {
-                // AIController¸¦ ½ºÆùÇÏ°í ºùÀÇ
+                // AIControllerï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½
                 if (!SummonedGlacio->GetController())
                 {
                     AAIController* AIController = GetWorld()->SpawnActor<AAIController>(
@@ -104,6 +105,13 @@ ASOWCharacterTurretBase* USpecialTurretManager::GetGlacio()
 void USpecialTurretManager::ProcessGlacio(int SynergyCount)
 {
     //if (!SummonedGlacio) return;
+
+    AWaveGameMode* GM = Cast<AWaveGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+    if (GM && !GM->SpawnTurret())
+    {
+        return;
+    }
 
 	if (SynergyCount == 2) {
         UE_LOG(LogTemp, Warning, TEXT("Synergy 2. Try to Spawn Glacio"));
