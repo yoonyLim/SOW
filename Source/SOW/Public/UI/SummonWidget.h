@@ -29,8 +29,8 @@ public:
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Summon", meta = (BindWidget))
 	//UButton* BTN_Summon;
 
-	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
-	UToastStackWidget* W_SummonNotiBox;
+	//UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
+	//UToastStackWidget* W_SummonNotiBox;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* NatureSynergyCounts;
