@@ -84,6 +84,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Turret|Combat")
 	float GetProjectileLivingTime() const;
 
+	UFUNCTION(BlueprintCallable, Category = "Turret|Property")
+	FString GetTurretDescriptor() const { return TurretDescriptor; }
+
 
 
 	bool GetActiveBool() const;
@@ -184,6 +187,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Turret|Properties")
 	float AffectStatValue;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Turret|Properties")
+	FString TurretDescriptor;
 #pragma endregion
 
 	

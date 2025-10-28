@@ -74,7 +74,7 @@ void AProjectileBase::BP_DestroyProjectile(bool AttackSucceed)
 {
 	// 블루프린트 내에서 구현할 수 있는 투사체 파괴 함수입니다.
 	// 현재 TurretProjectileBase에서 활용하고 있습니다.
-
+	BP_PostProjectileDestroyed();
 	Destroy();
 }
 

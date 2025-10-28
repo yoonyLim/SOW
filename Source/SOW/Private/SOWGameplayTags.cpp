@@ -75,6 +75,8 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_ForceRanged, "Turret.Status.Buff.ForceRanged");
 
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Hoppy, "Turret.Status.Buff.Hoppy");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Hoppy_Normal, "Turret.Status.Buff.Hoppy.Normal");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Hoppy_Enhanced, "Turret.Status.Buff.Hoppy.Enhanced");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_BlessingOfRune, "Turret.Status.Buff.BlessingOfRune");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_SpiderWeb, "Turret.Status.Buff.SpiderWeb");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_NightEyes, "Turret.Status.Buff.NightEyes");
@@ -135,6 +137,7 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Event_TargetDead, "Shared.Event.TargetDead");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Event_TauntToTarget, "Shared.Event.TauntToTarget");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Event_HitReact_PercentDamage, "Shared.Event.HitReact.PercentDamage");
+	UE_DEFINE_GAMEPLAY_TAG(Shared_Event_HitReact_ShieldHit, "Shared.Event.HitReact.ShieldHit");
 	
 
 	

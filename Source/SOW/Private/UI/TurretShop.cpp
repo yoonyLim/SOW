@@ -124,6 +124,7 @@ void UTurretShop::RNGTurret()
 							DA_SummonData->GetProbByRarity(ShopRank, ERarity::Legendary),
 							DA_SummonData->GetProbByRarity(ShopRank, ERarity::Origin), }; // {common, rare, epic}
 
+
 	for (int i = 0; i < 4; i++)
 	{
 		FSummonData TurretData = SM->RNG(DA_SummonData->GetSummonProbByShopRank(ShopRank));
