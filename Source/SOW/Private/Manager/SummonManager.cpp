@@ -16,8 +16,6 @@
 #include "AIController.h" // added by pgh
 #include "GameModes/WaveGameMode.h"
 
-const TArray<int32> RarityWeights = { 83, 15, 2 }; // {common, rare, epic}
-
 bool FSummonData::operator==(const FSummonData& Other) const
 {
 	return TurretName == Other.TurretName
