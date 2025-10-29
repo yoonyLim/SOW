@@ -60,7 +60,10 @@ void ATurretProjectileBase::FaceToTargetActor() {
 
 	if (!IsValid(TargetActor)) return;
 
-	if (bHitDone) return;
+	if (bHitDone) {
+		ProjectileMoveComp->Velocity = FVector(ProjectileMoveComp->Velocity.X, ProjectileMoveComp->Velocity.Y, 0.f);
+		return;
+	} 
 
 	bool bValidTarget = TargetActor->Implements<USOWCharacterTypeInterface>();
 	if (!bValidTarget) return;
@@ -72,6 +75,9 @@ void ATurretProjectileBase::FaceToTargetActor() {
 
 		ProjectileMoveComp->Velocity = DirVector * ProjectileMoveComp->InitialSpeed;
 		SetActorRotation(DirVector.Rotation());
+	}
+	else {
+		
 	}
 }
 
