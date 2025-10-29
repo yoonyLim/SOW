@@ -117,7 +117,7 @@ public:
 	bool TurretSummon(FSummonData TurretData);
 
 	UFUNCTION(BlueprintCallable)
-	FSummonData RNG(FSummonProb SummonProb);
+	FSummonData RNG(TArray<int32> RarityWeights);
 
 	UFUNCTION(BlueprintCallable)
 	FSummonData RNGOriginTurret();

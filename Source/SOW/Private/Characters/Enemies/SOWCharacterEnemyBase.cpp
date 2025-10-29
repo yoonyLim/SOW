@@ -40,7 +40,7 @@ ASOWCharacterEnemyBase::ASOWCharacterEnemyBase()
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("EnemyPawn"));
 	GetMesh()->SetCollisionProfileName(TEXT("EnemyPawn"));
 
-	GetCapsuleComponent()->OnComponentHit.AddDynamic(this, &ASOWCharacterEnemyBase::OnHit);
+	// GetCapsuleComponent()->OnComponentHit.AddDynamic(this, &ASOWCharacterEnemyBase::OnHit);
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ASOWCharacterEnemyBase::OnBeginOverlap);
 
 	// EnemyCombatComponent ����
@@ -259,7 +259,7 @@ void ASOWCharacterEnemyBase::OnHealthChanged(const FOnAttributeChangeData& Data)
 			Cast<UEnemyHealthBarWidget>(HealthBarWidget->GetUserWidgetObject())->PlayFadeAnimation();
 	}
 
-	if (HitAnimation)
+	if (HitAnimation && NewHealth != MaxHealth)
 	{
 		// OnHitMontageEnded.BindUObject(this, &ASuraCharacterEnemyBase::OnHitEnded);
 		
@@ -343,19 +343,19 @@ void ASOWCharacterEnemyBase::UpdateHealthBarValue(float NewHealth, float MaxHeal
 		Widget->SetHealthBarPercent(NewHealth / MaxHealth);
 }
 
-void ASOWCharacterEnemyBase::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	FVector NormalImpulse, const FHitResult& HitResult)
-{
-	UE_LOG(LogTemp, Warning, TEXT("Others Hit? %s"), *OtherActor->GetName())
-	
-	if (ASOWCharacterCoreRune* Rune = Cast<ASOWCharacterCoreRune>(OtherActor))
-		UE_LOG(LogTemp, Warning, TEXT("Rune Hit?"))
-}
+//void ASOWCharacterEnemyBase::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+//	FVector NormalImpulse, const FHitResult& HitResult)
+//{
+//	UE_LOG(LogTemp, Warning, TEXT("Others Hit? %s"), *OtherActor->GetName())
+//	
+//	if (ASOWCharacterCoreRune* Rune = Cast<ASOWCharacterCoreRune>(OtherActor))
+//		UE_LOG(LogTemp, Warning, TEXT("Rune Hit?"))
+//}
 
 void ASOWCharacterEnemyBase::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (Cast<ASOWCharacterCoreRune>(OtherActor))
+	if (Cast<ASOWCharacterCoreRune>(OtherActor) && GetEnemyIncomingRouteComponent()->IsCloseToEnd(2))
 	{
 		// UE_LOG(LogTemp, Warning, TEXT("Rune Overlapped"))
 		

@@ -62,4 +62,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Turrets")
 	bool SpawnTurret();
+
+	UFUNCTION(BlueprintCallable, Category = "Turrets")
+	void SellTurret(int32 RefundCurrency);
+
+	UFUNCTION(BlueprintCallable, Category = "Turrets")
+	int32 CheckSpawnedTurretNum();
 };

@@ -127,7 +127,7 @@ void UTurretShop::RNGTurret()
 
 	for (int i = 0; i < 4; i++)
 	{
-		FSummonData TurretData = SM->RNG(DA_SummonData->GetSummonProbByShopRank(ShopRank));
+		FSummonData TurretData = SM->RNG(RarityWeights);
 		ShopBoxes[i]->InitWidget(TurretData);
 	}
 }

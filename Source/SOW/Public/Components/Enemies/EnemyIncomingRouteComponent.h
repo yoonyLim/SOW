@@ -24,6 +24,7 @@ public:
 	void SetIncomingRoute(AEnemyIncomingRoute* IncomingRoute);
 
 	bool HasReachedEnd() const;
+	bool IsCloseToEnd(int32 BufferNodes);
 	void IncrementIncomingRouteIndex(); // return true if reached the end to freely head toward the core rune
 	FVector GetCurrentIndexPosition() const;
 	AEnemyIncomingRoute* GetIncomingRoute() const { return EnemyIncomingRoute; };

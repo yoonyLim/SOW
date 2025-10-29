@@ -48,3 +48,16 @@ bool AWaveGameMode::SpawnTurret()
 
 	return true;
 }
+
+void AWaveGameMode::SellTurret(int32 RefundCurrency)
+{
+	if (SummonedTurretsNum > 0) {
+		SummonedTurretsNum--;
+		AddCurrency(RefundCurrency);
+	}
+}
+
+int32 AWaveGameMode::CheckSpawnedTurretNum()
+{
+	return SummonedTurretsNum;
+}
