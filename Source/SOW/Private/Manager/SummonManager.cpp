@@ -16,8 +16,6 @@
 #include "AIController.h" // added by pgh
 #include "GameModes/WaveGameMode.h"
 
-static const TArray<int32> RarityWeights = { 83, 15, 2 }; // {common, rare, epic}
-
 bool FSummonData::operator==(const FSummonData& Other) const
 {
 	return TurretName == Other.TurretName
@@ -76,10 +74,8 @@ void USummonManager::InitTurretArray()
 	}
 }
 
-FSummonData USummonManager::RNG(FSummonProb SummonProb)
+FSummonData USummonManager::RNG(TArray<int32> RarityWeights)
 {
-	int32 FullWeight = RarityWeights[0] + RarityWeights[1] + RarityWeights[2];
-
 	const int32 RarityIdx = GachaRNG::DrawWeightedIndex(RarityWeights);
 
 	const TArray<FSummonData>* Pool = nullptr;
