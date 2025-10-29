@@ -106,13 +106,6 @@ void USpecialTurretManager::ProcessGlacio(int SynergyCount)
 {
     //if (!SummonedGlacio) return;
 
-    AWaveGameMode* GM = Cast<AWaveGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-
-    if (GM && !GM->SpawnTurret())
-    {
-        return;
-    }
-
 	if (SynergyCount == 2) {
         UE_LOG(LogTemp, Warning, TEXT("Synergy 2. Try to Spawn Glacio"));
 		SummonGlacio();

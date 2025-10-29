@@ -75,6 +75,10 @@ public:
 
     UFUNCTION(BlueprintCallable)
     UTurretSynergyManager* GetTurretSynergyManager() { return TurretSynergyManager; }
+
+    UFUNCTION(BlueprintCallable)
+    USoundManager* GetSoundManager() { return SoundManager; }
+
     UFUNCTION(Exec)
     void SummonTurret(FName TurretName);
 
