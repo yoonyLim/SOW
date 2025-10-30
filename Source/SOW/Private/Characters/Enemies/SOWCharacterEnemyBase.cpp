@@ -122,7 +122,7 @@ void ASOWCharacterEnemyBase::PossessedBy(AController* NewController) {
 		).AddUObject(this, &ASOWCharacterEnemyBase::OnGameplayTagChanged);*/
 
 		ASC->RegisterGameplayTagEvent(
-			FGameplayTag::RequestGameplayTag(TEXT("Enemy.Status.Debuff.Sine")),
+			FGameplayTag::RequestGameplayTag(TEXT("Enemy.Status.Debuff")),
 			EGameplayTagEventType::AnyCountChange
 		).AddUObject(this, &ASOWCharacterEnemyBase::OnGameplayTagChanged);
 
