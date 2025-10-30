@@ -33,7 +33,7 @@ void USpecialTurretManager::Initialize(TSubclassOf<ASOWCharacterTurretSpecialBas
 
 void USpecialTurretManager::SummonGlacio()
 {
-    if (SummonedGlacio) return;
+    if (IsValid(SummonedGlacio)) return;
     // �̹� �۶�ÿ��� ��ȯ�Ǿ� �ִٸ� �����մϴ�.
 
     ASOWPlayerController* SOWPC = Cast<ASOWPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
@@ -106,16 +106,17 @@ void USpecialTurretManager::ProcessGlacio(int SynergyCount)
 {
     //if (!SummonedGlacio) return;
 
-	if (SynergyCount == 2) {
+    AWaveGameMode* GM = Cast<AWaveGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+
+	if (SynergyCount >= 2) {
         UE_LOG(LogTemp, Warning, TEXT("Synergy 2. Try to Spawn Glacio"));
 		SummonGlacio();
 	}
-	else if (SynergyCount < 2) {
+	else  {
 		RemoveGlacio();
 	}
-	else {
-		// ??
-	}
+
 }
 
 void USpecialTurretManager::RequestToApplyPropertyCondition(FGameplayTag ConditionTag)

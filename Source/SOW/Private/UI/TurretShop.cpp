@@ -122,7 +122,8 @@ void UTurretShop::RNGTurret()
 							DA_SummonData->GetProbByRarity(ShopRank, ERarity::Rare),
 							DA_SummonData->GetProbByRarity(ShopRank, ERarity::Epic),
 							DA_SummonData->GetProbByRarity(ShopRank, ERarity::Legendary),
-							DA_SummonData->GetProbByRarity(ShopRank, ERarity::Origin), }; // {common, rare, epic}
+							DA_SummonData->GetProbByRarity(ShopRank, ERarity::Origin) }; // {common, rare, epic}
+
 
 	for (int i = 0; i < 4; i++)
 	{

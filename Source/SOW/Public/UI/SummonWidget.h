@@ -32,15 +32,6 @@ public:
 	//UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
 	//UToastStackWidget* W_SummonNotiBox;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
-	UTextBlock* NatureSynergyCounts;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
-	UTextBlock* IceSynergyCounts;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
-	UTextBlock* ElectroSynergyCounts;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float ToastDuration = 2.0f;
 

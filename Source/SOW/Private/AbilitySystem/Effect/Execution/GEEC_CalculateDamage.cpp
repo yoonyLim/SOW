@@ -160,6 +160,12 @@ void UGEEC_CalculateDamage::ApplyShieldDamage(const FGameplayEffectCustomExecuti
 		Data
 	);
 
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+		Target,
+		SOWGameplayTags::Shared_Event_HitReact_ShieldHit,
+		Data
+	);
+
 	//////////
 
 	AActor* TargetActor = ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor();
