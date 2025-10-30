@@ -17,7 +17,7 @@
 
 bool UTurretSynergyManager::CheckRarityCondition(const TMap<ETurretRarity, int> Monitor, const FSynergyCondition& SynergyContidion)
 {
-	// ½Ã³ÊÁö µî±Þ Á¶°ÇÀ» È®ÀÎÇÕ´Ï´Ù. Á¶°Ç ÃæÁ· ½Ã ½Ã³ÊÁö ÅÂ±×ÀÇ Ãß°¡, À¯Áö°¡ °áÁ¤µÇ¸ç ¹ÌÃæÁ· ½Ã Á¦°Å°¡ °áÁ¤µË´Ï´Ù.
+	// ï¿½Ã³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ï¿½Õ´Ï´ï¿½. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ã³ï¿½ï¿½ï¿½ ï¿½Â±ï¿½ï¿½ï¿½ ï¿½ß°ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Å°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ë´Ï´ï¿½.
 
 	ETurretRarity TargetRarity = SynergyContidion.SynergyConditionRarity;
 	int TargetCount = SynergyContidion.SynergyConditionCount;
@@ -27,11 +27,11 @@ bool UTurretSynergyManager::CheckRarityCondition(const TMap<ETurretRarity, int> 
 
 void UTurretSynergyManager::UpdateSynergyTagContainer(ASOWCharacterTurretBase* InTurret, EElementalType ElementType, bool bAdd)
 {
-	// ½Ã³ÊÁöÀÇ µî±Þ Á¶°ÇÀ» °»½ÅÇÕ´Ï´Ù. 
-	// bAdd = true : Á¶°Ç Ãß°¡
-	// bAdd = false : Á¶°Ç Á¦°Å
+	// ï¿½Ã³ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½. 
+	// bAdd = true : ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
+	// bAdd = false : ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-	// Áßº¹ ¹æÁö¸¦ °í·ÁÇÏ¿© ¼öÁ¤ÀÌ ÇÊ¿äÇÕ´Ï´Ù.
+	// ï¿½ßºï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½Õ´Ï´ï¿½.
 
 	ETurretRarity InTurretRarity = InTurret->GetTurretCombatComponent()->GetTurretRarity();
 	FName TurretName = InTurret->GetTurretName();
@@ -106,7 +106,7 @@ void UTurretSynergyManager::GrantSynergyTagToMonitoringTurrets(ASOWCharacter* Tu
 {
 	if (!IsValid(Turret)) return;
 
-	// ÇöÀç È°¼ºÈ­µÈ ÅÍ·¿ °³¼ö¸¦ ¹ÙÅÁÀ¸·Î È°¼ºÈ­ °¡´ÉÇÑ ¸ðµç ½Ã³ÊÁö °Ë»ç
+	// ï¿½ï¿½ï¿½ï¿½ È°ï¿½ï¿½È­ï¿½ï¿½ ï¿½Í·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È°ï¿½ï¿½È­ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ã³ï¿½ï¿½ï¿½ ï¿½Ë»ï¿½
 	for (int i = 1; i <= SynergyTurretCount && i < SynergyTagItems.Num(); i++) {
 
 		const FGameplayTag InTag = SynergyTagItems[i].SynergyTag;
@@ -128,7 +128,7 @@ void UTurretSynergyManager::RemoveSynergyTagFromMonitoringTurrets(ASOWCharacter*
 
 	int i = 1;
 
-	// ±âÁ¸ ½Ã³ÊÁöÀÇ µî±Þ Á¶°ÇÀ» µûÁ®¼­ Á¦°Å ¿©ºÎ È®ÀÎ
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ã³ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
 	while (i <= SynergyTurretCount && i < SynergyTagItems.Num()) {
 		const FGameplayTag InTag = SynergyTagItems[i].SynergyTag;
 		if (!InTag.IsValid()) { i++; continue; }
@@ -142,7 +142,7 @@ void UTurretSynergyManager::RemoveSynergyTagFromMonitoringTurrets(ASOWCharacter*
 		i++;
 	}
 
-	// ¸¶Áö¸· ½Ã³ÊÁö ÅÂ±×´Â ¹Ýµå½Ã Á¦°ÅÇØ¾ß ÇÏ¹Ç·Î ·çÇÁ¿¡¼­ ÃßÃâ
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã³ï¿½ï¿½ï¿½ ï¿½Â±×´ï¿½ ï¿½Ýµï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ï¿½ ï¿½Ï¹Ç·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	if (i < SynergyTagItems.Num() && SynergyTagItems[i].SynergyTag.IsValid()) {
 		USOWAbilitySystemComponent* TurretASC = USOWBlueprintFunctionLibrary::GetSOWAbilitySystemComponentFromActorInfo(Turret);
 		TurretASC->RemoveLooseGameplayTag(SynergyTagItems[i].SynergyTag);
@@ -162,7 +162,7 @@ void UTurretSynergyManager::AnnounceSynergyUpdate(EElementalType ElementType)
 
 void UTurretSynergyManager::AddNewTurretDataForSynergy(ASOWCharacterTurretBase* SummonedTurret, EElementalType ElementType)
 {
-	// Æ¯Á¤ ¼Ó¼ºÀÇ ½Ã³ÊÁö È¿°ú¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// Æ¯ï¿½ï¿½ ï¿½Ó¼ï¿½ï¿½ï¿½ ï¿½Ã³ï¿½ï¿½ï¿½ È¿ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½Õ´Ï´ï¿½.
 
 	if (!IsValid(SummonedTurret) || !SummonedTurret->GetTurretCombatComponent()) return;
 	if (!SynergyMonitor.Contains(ElementType)) {
@@ -192,8 +192,8 @@ void UTurretSynergyManager::AddNewTurretDataForSynergy(ASOWCharacterTurretBase* 
 		GrantSynergyTagToMonitoringTurrets(Turret, SynergyTurretCount, SynergyTagItems, ElementType);
 	}
 
-	// Glacio Àü¿ë ÄÚµå
-	// Glacio°¡ ÀÖ´Ù¸é Áï½Ã ¹Ý¿µ, ¾ø´Ù¸é ¹öÆÛ¿¡ ÀúÀåÇÏ´Â ¿ëµµÀÔ´Ï´Ù.
+	// Glacio ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½
+	// Glacioï¿½ï¿½ ï¿½Ö´Ù¸ï¿½ ï¿½ï¿½ï¿½ ï¿½Ý¿ï¿½, ï¿½ï¿½ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½Û¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ëµµï¿½Ô´Ï´ï¿½.
 	if (ElementType == EElementalType::Ice) {
 		GlacioTurretManager->OnSynergyChanged.Broadcast(SynergyTurretCount);
 		if (GlacioTurretManager->OnTurretSummoned.IsBound()) {
@@ -224,7 +224,7 @@ void UTurretSynergyManager::AddNewTurretDataForSynergy(ASOWCharacterTurretBase* 
 
 void UTurretSynergyManager::RemoveTurratDataFromSynergy(ASOWCharacterTurretBase* SummonedTurret, EElementalType ElementType)
 {
-	// Æ¯Á¤ ¼Ó¼ºÀÇ ½Ã³ÊÁö È¿°ú¸¦ Á¦°ÅÇÕ´Ï´Ù.
+	// Æ¯ï¿½ï¿½ ï¿½Ó¼ï¿½ï¿½ï¿½ ï¿½Ã³ï¿½ï¿½ï¿½ È¿ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
 
 	if (!IsValid(SummonedTurret) || !SummonedTurret->GetTurretCombatComponent()) return;
 	if (!SynergyMonitor.Contains(ElementType)) {
@@ -251,8 +251,8 @@ void UTurretSynergyManager::RemoveTurratDataFromSynergy(ASOWCharacterTurretBase*
 		RemoveSynergyTagFromMonitoringTurrets(Turret, SynergyTurretCount, SynergyTagItems, ElementType);
 	}
 
-	// Glacio Àü¿ë ÄÚµå
-	// Glacio ¼ÒÈ¯ Á¶°ÇÀÌ ¸ÂÁö ¾ÊÀ» °æ¿ì Glacio¸¦ Á¦°ÅÇÕ´Ï´Ù.
+	// Glacio ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½
+	// Glacio ï¿½ï¿½È¯ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ Glacioï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
 	if (ElementType == EElementalType::Ice) {
 		GlacioTurretManager->OnSynergyChanged.Broadcast(SynergyTurretCount);
 
@@ -275,8 +275,8 @@ void UTurretSynergyManager::RemoveTurratDataFromSynergy(ASOWCharacterTurretBase*
 
 int UTurretSynergyManager::GetActiveSynergyCount(EElementalType ElementType)
 {
-	// Æ¯Á¤ ¼Ó¼º¿¡ ´ëÇØ È°¼ºÈ­ ÁßÀÎ ½Ã³ÊÁö ÅÂ±×ÀÇ °³¼ö¸¦ ¹ÝÈ¯ÇÕ´Ï´Ù.
-	// ¸¸¾à ºÎÀûÀýÇÑ Á¢±Ù ½Ãµµ ¹× µ¥ÀÌÅÍ ´©¶ô ½Ã -1À» ¹ÝÈ¯ÇÕ´Ï´Ù.
+	// Æ¯ï¿½ï¿½ ï¿½Ó¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È°ï¿½ï¿½È­ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã³ï¿½ï¿½ï¿½ ï¿½Â±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Õ´Ï´ï¿½.
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ãµï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ -1ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Õ´Ï´ï¿½.
 
 	int SynergyCount = 0;
 
@@ -312,7 +312,7 @@ int UTurretSynergyManager::GetActiveSynergyCount(EElementalType ElementType)
 
 TArray<FName> UTurretSynergyManager::GetSynergyConfigurationTurrets(EElementalType ElementType)
 {
-	// Æ¯Á¤ ¼Ó¼º¿¡ ´ëÇØ ½Ã³ÊÁö¸¦ È°¼ºÈ­½ÃÅ°°í ÀÖ´Â ÅÍ·¿ÀÇ Á¾·ù¸¦ FNameÀ¸·Î ¹ÝÈ¯ÇÕ´Ï´Ù.
+	// Æ¯ï¿½ï¿½ ï¿½Ó¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã³ï¿½ï¿½ï¿½ï¿½ï¿½ È°ï¿½ï¿½È­ï¿½ï¿½Å°ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½Í·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ FNameï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Õ´Ï´ï¿½.
 
 	if (!SynergyTypeMonitor.Contains(ElementType)) return TArray<FName>();
 
@@ -336,19 +336,19 @@ void UTurretSynergyManager::SendRuneReference(ASOWCharacterCoreRune* InRune)
 
 
 void UTurretSynergyManager::Initialize(UDataTable* InSynergyDataTable, TSubclassOf<ASOWCharacterTurretSpecialBase> GlacioTurret) {
-	// ½Ã³ÊÁö¸¦ ºÎ¿©¹Þ´Â ÅÍ·¿À» ¼Ó¼º¿¡ ¸Â°Ô ¸ð´ÏÅÍ¸µÇÏ´Â ÄÁÅ×ÀÌ³Ê
+	// ï¿½Ã³ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Î¿ï¿½ï¿½Þ´ï¿½ ï¿½Í·ï¿½ï¿½ï¿½ ï¿½Ó¼ï¿½ï¿½ï¿½ ï¿½Â°ï¿½ ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì³ï¿½
 	SynergyMonitor.Add(EElementalType::Nature);
 	SynergyMonitor.Add(EElementalType::Electro);
 	SynergyMonitor.Add(EElementalType::Ice);
 	SynergyMonitor.Add(EElementalType::Flame);
 
-	// ½Ã³ÊÁö¸¦ µî±Þ Á¶°ÇÀ» È®ÀÎÇÏ±â À§ÇÑ ÄÁÅ×ÀÌ³Ê
+	// ï¿½Ã³ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì³ï¿½
 	SynergyRarityMonitor.Add(EElementalType::Nature);
 	SynergyRarityMonitor.Add(EElementalType::Electro);
 	SynergyRarityMonitor.Add(EElementalType::Ice);
 	SynergyRarityMonitor.Add(EElementalType::Flame);
 
-	// ½Ã³ÊÁö¸¦ È°¼³È­ ½ÃÅ°°í ÀÖ´Â ÅÍ·¿ Á¾·ù¸¦ À§ÇÑ ÄÁÅ×ÀÌ³Ê
+	// ï¿½Ã³ï¿½ï¿½ï¿½ï¿½ï¿½ È°ï¿½ï¿½È­ ï¿½ï¿½Å°ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½Í·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì³ï¿½
 	SynergyTypeMonitor.Add(EElementalType::Nature);
 	SynergyTypeMonitor.Add(EElementalType::Electro);
 	SynergyTypeMonitor.Add(EElementalType::Ice);
@@ -381,7 +381,7 @@ ASynergyUpdateAnnouncer* UTurretSynergyManager::GenerateSynergyUpdateAnnouncer()
 
 void UTurretSynergyManager::InsertAffectStatInBuffer(EGlacioStatType statType, float value)
 {
-	// Glacio Àü¿ë ÄÚµå
+	// Glacio ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½
 	float newValue = value;
 	if (AffectStatBuffer.Contains(statType)) {
 		newValue += AffectStatBuffer[statType];
@@ -391,7 +391,7 @@ void UTurretSynergyManager::InsertAffectStatInBuffer(EGlacioStatType statType, f
 
 void UTurretSynergyManager::RetreiveAttectStat()
 {
-	// Glacio Àü¿ë ÄÚµå
+	// Glacio ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½
 	TArray<EGlacioStatType> Stats;
 	AffectStatBuffer.GetKeys(Stats);
 
@@ -405,7 +405,7 @@ void UTurretSynergyManager::RetreiveAttectStat()
 
 
 ASOWCharacterTurretBase* UTurretSynergyManager::GetGlacioInstance() const
-{// Glacio Àü¿ë ÄÚµå
+{// Glacio ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½
 	check(GlacioTurretManager);
 	return GlacioTurretManager->GetGlacio();
 }
