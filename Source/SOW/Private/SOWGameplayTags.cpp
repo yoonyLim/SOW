@@ -75,6 +75,8 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_ForceRanged, "Turret.Status.Buff.ForceRanged");
 
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Hoppy, "Turret.Status.Buff.Hoppy");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Hoppy_Normal, "Turret.Status.Buff.Hoppy.Normal");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Hoppy_Enhanced, "Turret.Status.Buff.Hoppy.Enhanced");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_BlessingOfRune, "Turret.Status.Buff.BlessingOfRune");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_SpiderWeb, "Turret.Status.Buff.SpiderWeb");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_NightEyes, "Turret.Status.Buff.NightEyes");
@@ -95,7 +97,13 @@ namespace SOWGameplayTags
 
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Immunity_Buff, "Turret.Status.Immunity.Buff");
 	
-	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_Attack_Basic, "Turret.Event.Attack.Basic"); ;
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_Attack_Basic, "Turret.Event.Attack.Basic");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_Attack_Basic_ADD1, "Turret.Event.Attack.Basic.ADD1");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_Attack_Basic_ADD2, "Turret.Event.Attack.Basic.ADD2");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_Attack_Basic_ADD3, "Turret.Event.Attack.Basic.ADD3");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_Attack_Basic_ADD4, "Turret.Event.Attack.Basic.ADD4");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_Attack_Basic_ADD5, "Turret.Event.Attack.Basic.ADD5");
+
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_Attack_Done, "Turret.Event.Attack.Done");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_Attack_Double, "Turret.Event.Attack.Double"); 
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_EffectApplied, "Turret.Event.EffectApplied");
@@ -135,6 +143,7 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Event_TargetDead, "Shared.Event.TargetDead");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Event_TauntToTarget, "Shared.Event.TauntToTarget");
 	UE_DEFINE_GAMEPLAY_TAG(Shared_Event_HitReact_PercentDamage, "Shared.Event.HitReact.PercentDamage");
+	UE_DEFINE_GAMEPLAY_TAG(Shared_Event_HitReact_ShieldHit, "Shared.Event.HitReact.ShieldHit");
 	
 
 	

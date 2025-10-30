@@ -126,6 +126,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Turret Property"))
 	int32 TargetSelectCount;												// Determine How many targets must be selected in the turret
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Turret Property"))
+	FString TurretDescriptor;
 };
 
 

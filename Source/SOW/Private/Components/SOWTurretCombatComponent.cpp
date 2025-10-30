@@ -110,6 +110,11 @@ void USOWTurretCombatComponent::InitTurretProperties(const FTurretPropertyData& 
 
 	TargetSelectCount = Data.TargetSelectCount;
 
+	TurretDescriptor = Data.TurretDescriptor;
+	TurretDescriptor.ReplaceInline(TEXT("\\n"), TEXT("\n"));
+
+
+
 	if (!TurretSettablePriority.IsEmpty()) {
 		PriorityChange();
 	}
@@ -164,7 +169,7 @@ void USOWTurretCombatComponent::MakeDetectableTileArea()
 	if (!PC || !CachedOwnerCharacter) return;
 
 	float Radius = 2 * CachedOwnerCharacter->GetDetectionRangeRadius() + 1;
-	float TileSize = 116.f;
+	float TileSize = 300.f;
 
 	FVector CPoint = USOWBlueprintFunctionLibrary::MakeCentralTileLocationFromAnyPoint(
 		PC,
@@ -179,6 +184,8 @@ void USOWTurretCombatComponent::MakeDetectableTileArea()
 		CPoint,
 		Radius,
 		TileSize);
+
+	UE_LOG(LogTemp, Warning, TEXT("DetectorTiles Count : %s"), * FString::FromInt(DetectorTiles.Num()));
 }
 
 float USOWTurretCombatComponent::GetProjectileLivingTime() const
