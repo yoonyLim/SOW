@@ -344,7 +344,7 @@ FVector USOWBlueprintFunctionLibrary::MakeCentralTileLocationFromAnyPoint(APlaye
 
     FVector CenterLocation = FVector::ZeroVector;
 
-    FVector TraceStart = AnyPoint + (FVector(0, 0, 1) * 1000.f); ;
+    FVector TraceStart = AnyPoint + (FVector(0, 0, 1) * 10000.f); ;
     FVector TraceEnd = AnyPoint + (FVector(0,0,-1) * 10000.f);
 
     FHitResult Hit;
@@ -355,6 +355,8 @@ FVector USOWBlueprintFunctionLibrary::MakeCentralTileLocationFromAnyPoint(APlaye
     if(!IsValid(Hit.GetActor())) return FVector::ZeroVector;
 
     CenterLocation = Hit.GetActor()->GetActorLocation();
+
+    UE_LOG(LogTemp, Warning, TEXT("Hit Actor ; %s"), *Hit.GetActor()->GetActorNameOrLabel());
     FVector CriticVector = AnyPoint - CenterLocation;
 
     switch (TileSelectionType)
@@ -461,13 +463,16 @@ TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAsSquaredFromCenterLoca
             const FVector Start = Sample + (FVector(0, 0, 1) * 1000.f);
             const FVector End = Sample + (FVector(0, 0, -1) * 10000.f);
 
-            FHitResult Hit;
-            if (PlayerController->GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_GameTraceChannel1, Params))
+            TArray<FHitResult> Hit;
+            if (PlayerController->GetWorld()->LineTraceMultiByChannel(Hit, Start, End, ECC_GameTraceChannel1, Params))
             {
-                ATileBase* Tile = Cast<ATileBase>(Hit.GetActor());
-                if (!Tile && Hit.GetComponent()) Tile = Cast<ATileBase>(Hit.GetComponent()->GetOwner());
+                for (auto hit : Hit) {
+                    ATileBase* Tile = Cast<ATileBase>(hit.GetActor());
+                    if (!Tile && hit.GetComponent()) Tile = Cast<ATileBase>(hit.GetComponent()->GetOwner());
 
-                if (Tile) SelectedTiles.AddUnique(Tile);
+                    if (Tile) SelectedTiles.AddUnique(Tile);
+                }
+                
             }
         }
     }
@@ -547,13 +552,16 @@ TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAsStraightFromCenterLoc
             const FVector Start = BasePos + RayNeg;
             const FVector End = BasePos + RayPos;
 
-            FHitResult TileHit;
-            if (PlayerController->GetWorld()->LineTraceSingleByChannel(TileHit, Start, End, ECC_GameTraceChannel1, Params))
+            TArray<FHitResult> Hit;
+            if (PlayerController->GetWorld()->LineTraceMultiByChannel(Hit, Start, End, ECC_GameTraceChannel1, Params))
             {
-                if (ATileBase* Tile = Cast<ATileBase>(TileHit.GetActor()))
-                {
-                    SelectedTiles.AddUnique(Tile);
+                for (auto hit : Hit) {
+                    ATileBase* Tile = Cast<ATileBase>(hit.GetActor());
+                    if (!Tile && hit.GetComponent()) Tile = Cast<ATileBase>(hit.GetComponent()->GetOwner());
+
+                    if (Tile) SelectedTiles.AddUnique(Tile);
                 }
+
             }
         }
     }
@@ -661,7 +669,7 @@ TArray<AActor*> USOWBlueprintFunctionLibrary::GetTurretsOnTiles(TArray<ATileBase
 
         FVector TileCenter = tile->GetActorLocation();
         float HalfExtent = 125.f;
-        float Height = 400.f;
+        float Height = 800.f;
         FCollisionShape BoxShape = FCollisionShape::MakeBox(FVector(HalfExtent, HalfExtent, Height));
 
 
@@ -677,6 +685,23 @@ TArray<AActor*> USOWBlueprintFunctionLibrary::GetTurretsOnTiles(TArray<ATileBase
             BoxShape
         );
 
+        //{
+        //    // 박스의 색상 결정 (겹침 여부에 따라 다르게 표시)
+        //    FColor BoxColor = bHasOverlap ? FColor::Green : FColor::Red;
+        //    // 박스를 1초 동안 표시 (지속 시간은 조절 가능)
+        //    DrawDebugBox(
+        //        tile->GetWorld(),
+        //        TileCenter,
+        //        BoxShape.GetExtent(),
+        //        FQuat::Identity,
+        //        BoxColor,
+        //        false,      // bPersistentLines: false면 잠깐만 표시
+        //        1.0f,       // LifeTime: 1초간 유지
+        //        0,          // DepthPriority
+        //        2.0f        // 두께
+        //    );
+        //}
+
         if (bHasOverlap)
         {
             for (auto& Result : Overlaps)
@@ -691,6 +716,8 @@ TArray<AActor*> USOWBlueprintFunctionLibrary::GetTurretsOnTiles(TArray<ATileBase
             }
         }
     }
+
+    UE_LOG(LogTemp, Warning, TEXT("Detected Turret Count : %s"), *FString::FromInt(OnTileActors.Num()));
     return OnTileActors;
 }
 

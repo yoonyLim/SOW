@@ -60,7 +60,10 @@ void ATurretProjectileBase::FaceToTargetActor() {
 
 	if (!IsValid(TargetActor)) return;
 
-	if (bHitDone) return;
+	if (bHitDone) {
+		ProjectileMoveComp->Velocity = FVector(ProjectileMoveComp->Velocity.X, ProjectileMoveComp->Velocity.Y, 0.f);
+		return;
+	} 
 
 	bool bValidTarget = TargetActor->Implements<USOWCharacterTypeInterface>();
 	if (!bValidTarget) return;
@@ -72,6 +75,9 @@ void ATurretProjectileBase::FaceToTargetActor() {
 
 		ProjectileMoveComp->Velocity = DirVector * ProjectileMoveComp->InitialSpeed;
 		SetActorRotation(DirVector.Rotation());
+	}
+	else {
+		
 	}
 }
 
@@ -143,9 +149,11 @@ void ATurretProjectileBase::ClearHitActors()
 }
 
 
-void ATurretProjectileBase::BP_DestroyProjectile(bool AttackSucceed )
+void ATurretProjectileBase::BP_DestroyProjectile(bool AttackSucceed)
 {
 	//checkf(CachedInstigator.Get()->GetProjectilePoolingComponent(), TEXT("No Pool Found For %s"), *CachedInstigator.Get()->GetActorNameOrLabel());
+
+	BP_PostProjectileDestroyed();
 
 	if (!IsValid(CachedInstigator.Get()) || !CachedInstigator.Get()->GetProjectilePoolingComponent()) {
 		Destroy();
@@ -157,7 +165,7 @@ void ATurretProjectileBase::BP_DestroyProjectile(bool AttackSucceed )
 		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(CachedInstigator.Get(), SOWGameplayTags::Turret_Event_Attack_Done, FGameplayEventData());
 	}
 		
-
+	
 	CachedInstigator.Get()->GetProjectilePoolingComponent()->ReturnProjectile(this);
 	//UE_LOG(LogTemp, Warning, TEXT("Return to Pool : %s"), *this->GetActorNameOrLabel());
 }
