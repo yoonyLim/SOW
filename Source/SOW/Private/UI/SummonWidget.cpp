@@ -110,21 +110,7 @@ void USummonWidget::OnTurretSummoned(const FSummonData& TurretToSummon)
 			for (EElementalType a : Elementals)
 			{
 				int counts = TSM->GetActiveSynergyCount(a);
-				if (counts > 0)
-				{
-					switch (a)
-					{
-					case EElementalType::Nature:
-						NatureSynergyCounts->SetText(FText::AsNumber(counts));
-						break;
-					case EElementalType::Ice:
-						IceSynergyCounts->SetText(FText::AsNumber(counts));
-						break;
-					case EElementalType::Electro:
-						ElectroSynergyCounts->SetText(FText::AsNumber(counts));
-						break;
-					}
-				}
+
 			}
 		}
 	}

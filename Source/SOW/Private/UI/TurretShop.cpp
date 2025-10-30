@@ -118,7 +118,7 @@ void UTurretShop::ReLoadTurret()
 
 void UTurretShop::RNGTurret()
 {
-	TArray<int32> RarityWeights = { DA_SummonData->GetProbByRarity(ShopRank, ERarity::Common),
+	TArray<int32> TurretRarityWeights = { DA_SummonData->GetProbByRarity(ShopRank, ERarity::Common),
 							DA_SummonData->GetProbByRarity(ShopRank, ERarity::Rare),
 							DA_SummonData->GetProbByRarity(ShopRank, ERarity::Epic),
 							DA_SummonData->GetProbByRarity(ShopRank, ERarity::Legendary),
@@ -127,7 +127,7 @@ void UTurretShop::RNGTurret()
 
 	for (int i = 0; i < 4; i++)
 	{
-		FSummonData TurretData = SM->RNG(RarityWeights);
+		FSummonData TurretData = SM->RNG(TurretRarityWeights);
 		ShopBoxes[i]->InitWidget(TurretData);
 	}
 }

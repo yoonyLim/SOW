@@ -66,7 +66,7 @@ void USOWGameInstance::Init()
 
     if (SoundManager)
     {
-        SoundManager->Get(this);
+        SoundManager = USoundManager::Get(this);
     }
  }
 
