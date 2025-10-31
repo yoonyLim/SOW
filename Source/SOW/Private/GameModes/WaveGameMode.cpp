@@ -41,7 +41,7 @@ void AWaveGameMode::AddCurrency(int32 AddedCurrency)
 
 bool AWaveGameMode::SpawnTurret()
 {
-	if (SummonedTurretsNum >= 20)
+	if (SummonedTurretsNum >= MAX_TURRETS)
 		return false;
 
 	SummonedTurretsNum++;
