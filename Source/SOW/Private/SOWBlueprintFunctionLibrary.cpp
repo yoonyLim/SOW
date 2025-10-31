@@ -73,27 +73,34 @@ bool USOWBlueprintFunctionLibrary::NativeDoesActorHasTag(AActor* InActor, FGamep
 
 bool USOWBlueprintFunctionLibrary::DoesActorHasTag(AActor* InActor, FGameplayTag InActorTag)
 {
-    // ✅ 반드시 IsValid 사용해야 함
-    if (!IsValid(InActor))
-    {
-        //UE_LOG(LogTemp, Warning, TEXT("DoesActorHasTag: Invalid Actor pointer (possibly destroyed)."));
-        return false;
-    }
+    //// ✅ 반드시 IsValid 사용해야 함
+    //if (!IsValid(InActor))
+    //{
+    //    //UE_LOG(LogTemp, Warning, TEXT("DoesActorHasTag: Invalid Actor pointer (possibly destroyed)."));
+    //    return false;
+    //}
 
-    // ✅ UClass 접근 전에도 반드시 유효성 체크
-    UClass* ActorClass = InActor->GetClass();
-    if (ActorClass == nullptr)
-    {
-       // UE_LOG(LogTemp, Warning, TEXT("DoesActorHasTag: Invalid ActorClass for %s"), *InActor->GetName());
-        return false;
-    }
+    //// ✅ UClass 접근 전에도 반드시 유효성 체크
+    //UClass* ActorClass = InActor->GetClass();
+    //if (ActorClass == nullptr)
+    //{
+    //   // UE_LOG(LogTemp, Warning, TEXT("DoesActorHasTag: Invalid ActorClass for %s"), *InActor->GetName());
+    //    return false;
+    //}
 
-    // ✅ 안전한 방식으로 인터페이스 확인
-    if (!ActorClass->ImplementsInterface(USOWCharacterTypeInterface::StaticClass()))
-    {
-        //UE_LOG(LogTemp, VeryVerbose, TEXT("%s does not implement SOWCharacterTypeInterface"), *InActor->GetName());
+    //// ✅ 안전한 방식으로 인터페이스 확인
+    //if (!ActorClass->ImplementsInterface(USOWCharacterTypeInterface::StaticClass()))
+    //{
+    //    //UE_LOG(LogTemp, VeryVerbose, TEXT("%s does not implement SOWCharacterTypeInterface"), *InActor->GetName());
+    //    return false;
+    //}
+
+    //return NativeDoesActorHasTag(InActor, InActorTag);
+    if (!IsValid(InActor) || InActor->IsPendingKillPending())
         return false;
-    }
+
+    if (!UKismetSystemLibrary::DoesImplementInterface(InActor, USOWCharacterTypeInterface::StaticClass()))
+        return false;
 
     return NativeDoesActorHasTag(InActor, InActorTag);
 }

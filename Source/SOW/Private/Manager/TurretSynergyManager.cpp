@@ -336,6 +336,7 @@ void UTurretSynergyManager::SendRuneReference(ASOWCharacterCoreRune* InRune)
 
 
 void UTurretSynergyManager::Initialize(UDataTable* InSynergyDataTable, TSubclassOf<ASOWCharacterTurretSpecialBase> GlacioTurret) {
+
 	// �ó����� �ο��޴� �ͷ��� �Ӽ��� �°� ����͸��ϴ� �����̳�
 	SynergyMonitor.Add(EElementalType::Nature);
 	SynergyMonitor.Add(EElementalType::Electro);
