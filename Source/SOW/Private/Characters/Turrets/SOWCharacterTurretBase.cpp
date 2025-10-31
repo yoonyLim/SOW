@@ -420,6 +420,9 @@ void ASOWCharacterTurretBase::SellTurret(float Price)
 
 	AbilitySystemComponent->AddLooseGameplayTag(SOWGameplayTags::Shared_Status_Dead);
 
+	// 등급에 따라 고정된 값으로 판매할 수 있게 조절하는 게 좋을 듯?
+	// 강화한 값만큼 환급해주는 기능은?
+
 	AWaveGameMode* GM = Cast<AWaveGameMode>(UGameplayStatics::GetGameMode(this));
 	if (GM) GM->SellTurret(Price);
 	//USOWBlueprintFunctionLibrary::RequestToGenerateOnTimeCurrency(this, FGameplayTag::RequestGameplayTag("Shared.Element.Nature"), Price);
