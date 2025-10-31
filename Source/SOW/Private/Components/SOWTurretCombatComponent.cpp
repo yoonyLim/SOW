@@ -185,7 +185,7 @@ void USOWTurretCombatComponent::MakeDetectableTileArea()
 		Radius,
 		TileSize);
 
-	UE_LOG(LogTemp, Warning, TEXT("DetectorTiles Count : %s"), * FString::FromInt(DetectorTiles.Num()));
+	//UE_LOG(LogTemp, Warning, TEXT("DetectorTiles Count : %s"), * FString::FromInt(DetectorTiles.Num()));
 }
 
 float USOWTurretCombatComponent::GetProjectileLivingTime() const
@@ -618,7 +618,7 @@ void USOWTurretCombatComponent::AttackAbilityActivation()
 	if (!IsValid(CachedOwnerCharacter)) return;
 
 	if (!FindAttackTargetFromAllTargetAvailable()) {
-		UE_LOG(LogTemp, Warning, TEXT("No Valid Actor Found"));
+		//UE_LOG(LogTemp, Warning, TEXT("No Valid Actor Found"));
 		return;
 	} 
 	
