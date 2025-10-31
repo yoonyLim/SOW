@@ -43,7 +43,7 @@ public:
 	virtual void BP_DestroyProjectile(bool AttackSucceed = true);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Turret|Hit", meta = (DisplayName = "Post Projectile Destroyed"))
-	void BP_PostProjectileDestroyed();
+	void BP_PostProjectileDestroyed(bool AttackSucceed);
 
 protected:
 	// Called when the game starts or when spawned

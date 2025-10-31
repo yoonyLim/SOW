@@ -153,7 +153,7 @@ void ATurretProjectileBase::BP_DestroyProjectile(bool AttackSucceed)
 {
 	//checkf(CachedInstigator.Get()->GetProjectilePoolingComponent(), TEXT("No Pool Found For %s"), *CachedInstigator.Get()->GetActorNameOrLabel());
 
-	BP_PostProjectileDestroyed();
+	BP_PostProjectileDestroyed(AttackSucceed);
 
 	if (!IsValid(CachedInstigator.Get()) || !CachedInstigator.Get()->GetProjectilePoolingComponent()) {
 		Destroy();

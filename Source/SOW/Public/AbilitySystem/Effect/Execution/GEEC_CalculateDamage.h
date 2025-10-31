@@ -20,6 +20,8 @@ class SOW_API UGEEC_CalculateDamage : public UGameplayEffectExecutionCalculation
 
 	void ApplyShieldDamage(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const;
 
+	FGameplayTag GetElementHitEventToTarget(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FAggregatorEvaluateParameters EvalParams) const;
+
 public:
 
 	UGEEC_CalculateDamage();
