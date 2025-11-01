@@ -269,3 +269,10 @@ namespace SOWGlacioPropertyTags {
 
 	UE_DEFINE_GAMEPLAY_TAG(Property_Beta, "Property.Beta");
 }
+
+namespace SOWHitEffectTags {
+	UE_DEFINE_GAMEPLAY_TAG(Effect_Nature, "Effect.Nature");
+	UE_DEFINE_GAMEPLAY_TAG(Effect_Electro, "Effect.Electro");
+	UE_DEFINE_GAMEPLAY_TAG(Effect_Ice, "Effect.Ice");
+	UE_DEFINE_GAMEPLAY_TAG(Effect_Flame, "Effect.Flame");
+}

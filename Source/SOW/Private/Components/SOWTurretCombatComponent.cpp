@@ -302,6 +302,8 @@ void USOWTurretCombatComponent::RefreshTurretFunction()
 {
 	bool bIsFixedCooldown = (AbilityTagToActivation == SOWGameplayTags::Turret_Ability_Attack);
 
+	FindAttackTargetFromAllTargetAvailable();
+
 	const float NewCooldownTime = bIsFixedCooldown ? GetAttackCooldownTimeFromOwner() : 3.f;
 
 	if (M_CachedCooldownTime != NewCooldownTime)
@@ -314,7 +316,7 @@ void USOWTurretCombatComponent::RefreshTurretFunction()
 			&USOWTurretCombatComponent::AttackAbilityActivation,
 			NewCooldownTime,
 			true,
-			NewCooldownTime
+			0
 		);
 
 		M_CachedCooldownTime = NewCooldownTime;

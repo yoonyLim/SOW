@@ -145,7 +145,22 @@ void ASOWCharacterTurretBase::SwitchDetectionRangeDecal(bool On, TArray<ATileBas
 		return;
 	} 
 
-	GetTurretCombatComponent()->VisualizeTurretDetectionRange(On, OutTiles);
+	OutTiles = USOWBlueprintFunctionLibrary::GetAllPlacableTiles(UGameplayStatics::GetPlayerController(GetWorld(), 0), GetActorLocation());
+
+	if (On) {
+		for (ATileBase* Tile : OutTiles) {
+			if (!Tile || !Tile->bCanPlace) continue;
+			Tile->ShowRange();
+		}
+	}
+	else {
+		for (ATileBase* Tile : OutTiles) {
+			if (!Tile || !Tile->bCanPlace) continue;
+			Tile->HideRange();
+		}
+	}
+
+	//GetTurretCombatComponent()->VisualizeTurretDetectionRange(On, OutTiles);
 }
 
 

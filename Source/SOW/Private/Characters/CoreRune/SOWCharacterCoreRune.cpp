@@ -62,6 +62,10 @@ void ASOWCharacterCoreRune::BeginPlay()
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
 								  USOWAttributeSet::GetCurrentHealthAttribute())
 			.AddUObject(this, &ASOWCharacterCoreRune::OnHealthChanged);
+
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
+							USOWAttributeSet::GetDamageShieldAttribute())
+			.AddUObject(this, &ASOWCharacterCoreRune::OnShieldChanged);
 	}
 
 	// AttributeSet 포인터 캐싱 (EnemyBase 동일 패턴, 이후 MaxHealth 조회에 사용, )
@@ -160,6 +164,24 @@ void ASOWCharacterCoreRune::OnHealthChanged(const FOnAttributeChangeData &Data)
 	{
 		HandleCoreDestroyed();
 	}
+}
+
+void ASOWCharacterCoreRune::OnShieldChanged(const FOnAttributeChangeData& Data)
+{
+	const float NewShield = Data.NewValue;
+
+	// 체력바 갱신 (EnemyBase의 UpdateHealthBarValue 로직과 동일, )
+	//UpdateHealthBarValue(NewHealth, MaxHealth);
+
+	if (AWaveGameMode* WaveGM = Cast<AWaveGameMode>(UGameplayStatics::GetGameMode(GetWorld())))
+	{
+		WaveGM->RuneUpdateShieldHUD(NewShield);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Game Mode Doesnt Match"));
+	}
+	// 표시/페이드 처리 (EnemyBase의 위젯 표시 로직 참조, 
 }
 
 void ASOWCharacterCoreRune::UpdateHealthBarValue(float NewHealth, float MaxHealth)

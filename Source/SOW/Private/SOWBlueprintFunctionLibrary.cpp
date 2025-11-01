@@ -728,6 +728,15 @@ TArray<AActor*> USOWBlueprintFunctionLibrary::GetTurretsOnTiles(TArray<ATileBase
     return OnTileActors;
 }
 
+TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetAllPlacableTiles(APlayerController* PlayerController, FVector ALocation)
+{
+
+    FVector ATileLoc = MakeCentralTileLocationFromAnyPoint(PlayerController, ALocation, ETileSelectType::SQUARED, 25, 300.f, false);
+    TArray<ATileBase*> OutTiles = GetTilesAsSquaredFromCenterLocation(PlayerController, ATileLoc, 25, 300.f);
+
+    return OutTiles;
+}
+
 float USOWBlueprintFunctionLibrary::GetWorldTileSizeFromInstance(APlayerController* PlayerController)
 {
     if (!PlayerController) return 0.f;

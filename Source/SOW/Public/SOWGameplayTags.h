@@ -306,3 +306,13 @@ namespace SOWGlacioPropertyTags {
 
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Property_Beta);
 }
+
+namespace SOWHitEffectTags {
+	// 특정 캐릭터의 Damage effect 동작 시 Target에게 보내는 이벤트 태그임
+
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Effect_Nature);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Effect_Electro);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Effect_Ice);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Effect_Flame);
+	// not yet SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Effect_Nature);
+}
