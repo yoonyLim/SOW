@@ -58,7 +58,13 @@ void UTurretShopBox::TrySummonTurret()
 {
 	AWaveGameMode* GM = Cast<AWaveGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 
-	if (!GM || GM->GetCurrency() < SummonCost || !GM->CanSpawnTurret()) // cost and turrets num check
+	if (!GM || GM->GetCurrency() < SummonCost) // cost and turrets num check
+	{
+		GM->AlertNotEnoughCurrency();
+		return;
+	}
+
+	if (!GM->CanSpawnTurret())
 	{
 		return;
 	}
