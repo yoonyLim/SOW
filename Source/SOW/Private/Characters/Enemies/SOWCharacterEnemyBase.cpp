@@ -358,6 +358,8 @@ void ASOWCharacterEnemyBase::OnBeginOverlap(UPrimitiveComponent* OverlappedComp,
 	if (Cast<ASOWCharacterCoreRune>(OtherActor) && GetEnemyIncomingRouteComponent()->IsCloseToEnd(2))
 	{
 		// UE_LOG(LogTemp, Warning, TEXT("Rune Overlapped"))
+
+		ShardDropAmount = 0;
 		
 		FGameplayEffectContextHandle EffectContext = USOWBlueprintFunctionLibrary::NativeGetSOWAbilitySystemComponentFromActorInfo(this)->MakeEffectContext();
 		EffectContext.AddSourceObject(this);
