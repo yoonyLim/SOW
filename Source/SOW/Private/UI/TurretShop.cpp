@@ -30,10 +30,10 @@ void UTurretShop::NativeConstruct()
 	ShopBoxes = { ShopBox1, ShopBox2, ShopBox3, ShopBox4 };
 
 	/*Binding*/
-	for (UTurretShopBox* ShopBox : ShopBoxes)
+	/*for (UTurretShopBox* ShopBox : ShopBoxes)
 	{
 		ShopBox->OnBuyTurret.AddDynamic(this, &UTurretShop::RenewShopRank);
-	}
+	}*/
 
 	WGM->OnOneTimeCurrencyChanged.AddDynamic(this, &UTurretShop::UpdateCurrency);
 
