@@ -170,6 +170,7 @@ void USOWTurretEvolutionComponent::TryEvolution(EEvolutionType Type)
 	if (!CheckResourceAndProb(Type)) {
 		// 강화 실패 시 UI Floating을 대비
 		UE_LOG(LogTemp, Error, TEXT("Evolution Failed"));
+		
 		return;
 	} 
 	switch (Type)
@@ -232,6 +233,8 @@ bool USOWTurretEvolutionComponent::CheckResourceAndProb(EEvolutionType Type)
 		}
 		int32 value = FMath::RandRange(1, 100);
 		if (value > PercentValue) {
+			if (OnPropEvolutionSucceed.IsBound())
+				OnPropEvolutionSucceed.Broadcast(false);
 			UE_LOG(LogTemp, Error, TEXT("PercentValue Condition Failed : %s"), *FString::FromInt(value));
 			CurrencySpentForProp += PriceValue;
 			return false;
@@ -254,11 +257,17 @@ bool USOWTurretEvolutionComponent::CheckResourceAndProb(EEvolutionType Type)
 
 		int32 value = FMath::RandRange(1, 100);
 		if (value > PercentValue) {
+
+			if (OnBetaEvolutionSucceed.IsBound())
+				OnBetaEvolutionSucceed.Broadcast(false);
 			UE_LOG(LogTemp, Warning, TEXT("PercentValue Condition Failed : %s"), *FString::FromInt(value));
 			CurrencySpentForStat += PriceValue;
 			return false; 
 		}
 	}
+
+
+
 
 	return true;
 }

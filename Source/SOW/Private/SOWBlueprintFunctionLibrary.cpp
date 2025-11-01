@@ -631,7 +631,7 @@ TArray<AActor*> USOWBlueprintFunctionLibrary::GetActorsOnTiles(TArray<ATileBase*
         TArray<AActor*> OverlappedActors;
 
         FVector TileCenter = tile->GetActorLocation(); 
-        float HalfExtent = 125.f;                       
+        float HalfExtent = (GetWorldTileSizeFromInstance(UGameplayStatics::GetPlayerController(tile->GetWorld(), 0)) / 2.f) - 25.f;
         float Height = 400.f;                          
         FCollisionShape BoxShape = FCollisionShape::MakeBox(FVector(HalfExtent, HalfExtent, Height));
 
