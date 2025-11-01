@@ -171,10 +171,8 @@ bool UTurretShop::TryShopRankUp()
 	case 0:
 		SuccessToRankUp();
 		return true;
-		break;
 	case 1:
 		break;
-		return false;
 	}
 	return false;
 }
