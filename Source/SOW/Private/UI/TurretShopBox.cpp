@@ -56,29 +56,22 @@ void UTurretShopBox::InitWidget(FSummonData Turret)
 
 void UTurretShopBox::TrySummonTurret()
 {
-	USOWGameInstance* GI = Cast<USOWGameInstance>(GetWorld()->GetGameInstance());
 	AWaveGameMode* GM = Cast<AWaveGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	
-	if (GM->CheckSpawnedTurretNum() >= 20)
-	{
-		return;
-	}
 
-	if (GM->GetCurrency() < SummonCost)
+	if (!GM || GM->GetCurrency() < SummonCost || !GM->CanSpawnTurret()) // cost and turrets num check
 	{
 		return;
 	}
 
 	GM->AddCurrency(-(SummonCost));
 
+	USOWGameInstance* GI = Cast<USOWGameInstance>(GetWorld()->GetGameInstance());
 	USummonManager* SM = GI->GetSummonManager();
 
 	SM->TurretSummon(TurretData);
 	OnBuyTurret.Broadcast();
 
 	HideWidget();
-
-	return;
 }
 
 void UTurretShopBox::HideWidget()

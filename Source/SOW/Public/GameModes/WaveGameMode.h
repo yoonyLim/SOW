@@ -67,7 +67,7 @@ public:
 	void AddSummonedTurretsNum() { SummonedTurretsNum++; }
 
 	UFUNCTION(BlueprintCallable, Category = "Turrets")
-	bool SpawnTurret();
+	bool CanSpawnTurret();
 
 	UFUNCTION(BlueprintCallable, Category = "Turrets")
 	void SellTurret(int32 RefundCurrency);
