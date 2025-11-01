@@ -52,6 +52,10 @@ ASOWCharacterTurretBase::ASOWCharacterTurretBase()
 
 	TurretUIComponent = CreateDefaultSubobject<USOWTurretUIComponent>(TEXT("TurretUIComponent"));
 
+	TurretDetectableRangeMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TurretDetectableRange"));
+	TurretDetectableRangeMesh->SetupAttachment(RootComponent);
+
+
 	CustomTurretStatusfWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("CustomTurretStatusfWidget"));
 	if (CustomTurretStatusfWidget) {
 		CustomTurretStatusfWidget->SetupAttachment(RootComponent);
@@ -179,6 +183,22 @@ void ASOWCharacterTurretBase::OnWidgetAttributeChanged(const FOnAttributeChangeD
 		// For AttackSpeed
 		TurretUIComponent->OnSpeedChanged.Broadcast(GetWidgetAttributeChangeDelegate(AttributeSet->AttackSpeedBase, BaseAtts.AttackSpeedBaseValue, 0));
 	}
+}
+
+void ASOWCharacterTurretBase::BP_SwitchDetectableRange(bool On)
+{
+	checkf(TurretDetectableRangeMesh, TEXT("Range Mesh not Assigned. Please Check Range Mesh of %s"), *GetActorNameOrLabel());
+
+	TurretDetectableRangeMesh->SetVisibility(On);
+}
+
+void ASOWCharacterTurretBase::BP_RefreshDetectableRange(float Scale)
+{
+	checkf(TurretDetectableRangeMesh, TEXT("Range Mesh not Assigned. Please Check Range Mesh of %s"), *GetActorNameOrLabel());
+
+	float LScale = (2.f * GetDetectionRangeRadius() + 1.f) * 3.5f; //* USOWBlueprintFunctionLibrary::GetWorldTileSizeFromInstance(UGameplayStatics::GetPlayerController(GetWorld(),0));
+
+	TurretDetectableRangeMesh->SetWorldScale3D(FVector(LScale, LScale, 0.001f));
 }
 
 void ASOWCharacterTurretBase::InitWidgetAttributeChange()
