@@ -102,6 +102,8 @@ void UGEEC_CalculateDamage::ApplyRealDamage(const FGameplayEffectCustomExecution
 		Data
 	);
 
+	
+
 	//////////
 
 	AActor* TargetActor = ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor();
@@ -201,6 +203,42 @@ void UGEEC_CalculateDamage::ApplyShieldDamage(const FGameplayEffectCustomExecuti
 	);
 }
 
+FGameplayTag UGEEC_CalculateDamage::GetElementHitEventToTarget(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FAggregatorEvaluateParameters EvalParams) const
+{
+	FGameplayTag RootTag = FGameplayTag::RequestGameplayTag(FName("Shared.Element"));
+	TArray<FGameplayTag> MatchedElementTags;
+
+	if (EvalParams.SourceTags)
+	{
+		for (const FGameplayTag& Tag : *EvalParams.SourceTags)
+		{
+			if (Tag.MatchesTag(RootTag)) // "Shared.Element" ���� �±� ���� ����
+			{
+				MatchedElementTags.Add(Tag);
+			}
+		}
+	}
+	/* Ÿ���� �Ӽ� ����ġ�� �ҷ����� ���� �ڵ� */
+	const UAbilitySystemComponent* TargetASC = ExecutionParams.GetTargetAbilitySystemComponent();
+	AActor* TargetActor = TargetASC ? TargetASC->GetAvatarActor() : nullptr;
+
+
+	const USOWAttributeSet* TargetAttributes = Cast<USOWAttributeSet>(TargetASC->GetAttributeSet(USOWAttributeSet::StaticClass()));
+
+	if (TargetAttributes)
+	{
+		for (const FGameplayTag& ElementTag : MatchedElementTags) {
+			FGameplayTag EventTag = TargetAttributes->GetTagForElementWithElementTag(ElementTag);
+			return EventTag;
+		}
+
+	}
+	//UE_LOG(LogTemp, Warning, TEXT("ElementalResistance : %f"), ElementalResistance);
+
+	return FGameplayTag();
+}
+
+
 UGEEC_CalculateDamage::UGEEC_CalculateDamage()
 {
 	RelevantAttributesToCapture.Add(GetCapturedPropertiesDamage().AttackPowerBaseDef);
@@ -295,6 +333,13 @@ void UGEEC_CalculateDamage::Execute_Implementation(const FGameplayEffectCustomEx
 	}
 
 	else {
+		if (IsValid(ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor())) {
+			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+				ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor(),
+				GetElementHitEventToTarget(ExecutionParams, EvalParams),
+				FGameplayEventData()
+			);
+		}
 		ApplyRealDamage(ExecutionParams, OutExecutionOutput, BasicDamageFormal, L_FinalDamage);
 	}
 }

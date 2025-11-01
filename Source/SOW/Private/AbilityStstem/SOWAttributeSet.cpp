@@ -120,3 +120,39 @@ float USOWAttributeSet::GetResistanceForElementWithElementTag(FGameplayTag Eleme
 
     return 0.f;
 }
+
+FGameplayTag USOWAttributeSet::GetTagForElementWithElementTag(FGameplayTag ElementTag) const
+{
+   
+
+    if (!ElementTag.IsValid())  return FGameplayTag();
+
+    FGameplayTag TargetTag;
+
+    // ElementTag -> Shared.Element.Nature.Major
+    TargetTag = FGameplayTag::RequestGameplayTag(FName("Shared.Element.Nature"));
+    if (ElementTag.MatchesTag(TargetTag)) return SOWHitEffectTags::Effect_Nature;
+
+    TargetTag = FGameplayTag::RequestGameplayTag(FName("Shared.Element.Electro"));
+    if (ElementTag.MatchesTag(TargetTag)) return SOWHitEffectTags::Effect_Electro;
+
+    TargetTag = FGameplayTag::RequestGameplayTag(FName("Shared.Element.Ice"));
+    if (ElementTag.MatchesTag(TargetTag)) return SOWHitEffectTags::Effect_Ice;
+
+    TargetTag = FGameplayTag::RequestGameplayTag(FName("Shared.Element.Flame"));
+    if (ElementTag.MatchesTag(TargetTag)) return SOWHitEffectTags::Effect_Flame;
+
+   /*not yet TargetTag = FGameplayTag::RequestGameplayTag(FName("Shared.Element.Death"));
+    if (ElementTag.MatchesTag(TargetTag)) return GetDeathResistance();
+
+    TargetTag = FGameplayTag::RequestGameplayTag(FName("Shared.Element.Divinity"));
+    if (ElementTag.MatchesTag(TargetTag)) return GetDivinityResistance();
+
+    TargetTag = FGameplayTag::RequestGameplayTag(FName("Shared.Element.Madness"));
+    if (ElementTag.MatchesTag(TargetTag)) return GetMadnessResistance();
+
+    TargetTag = FGameplayTag::RequestGameplayTag(FName("Shared.Element.Flame"));
+    if (ElementTag.MatchesTag(TargetTag)) return GetFlameResistance();*/
+    return FGameplayTag();
+    //return 0.f;
+}

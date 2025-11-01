@@ -178,17 +178,29 @@ void USOWTurretEvolutionComponent::TryEvolution(EEvolutionType Type)
 	case EEvolutionType::EVO_ALPHA:
 		ESH = ASC->MakeOutgoingSpec(AlphaData, ++EvolutionStatusLevel, CH);
 		ASC->ApplyGameplayEffectSpecToSelf(*ESH.Data.Get());
+
+		if(OnAlphaEvolutionSucceed.IsBound())
+			OnAlphaEvolutionSucceed.Broadcast(true);
+
 		CurrencySpentForStat = 0;
 		break;
 	case EEvolutionType::EVO_BETA:
 		ESH = ASC->MakeOutgoingSpec(BetaData, ++EvolutionStatusLevel, CH);
 		ASC->ApplyGameplayEffectSpecToSelf(*ESH.Data.Get());
+
+		if (OnBetaEvolutionSucceed.IsBound())
+			OnBetaEvolutionSucceed.Broadcast(true);
+
 		CurrencySpentForStat = 0;
 		break;
 	case EEvolutionType::EVO_PROP:
 		// P의 경우 배열 인덱스가 0부터 시작하므로 받은 뒤 증가
 		if (UDA_TurretEvolutionData* Data = PropertyData[EvolutionPropertyLevel].EvolutionDataAsset.LoadSynchronous()) {
 			Data->GiveToAbilitySystemComponent(ASC);
+
+			if (OnPropEvolutionSucceed.IsBound())
+				OnPropEvolutionSucceed.Broadcast(true);
+
 			CurrencySpentForProp = 0;
 			EvolutionPropertyLevel++;
 		}

@@ -40,6 +40,8 @@ protected:
 	// 체력 변화 콜백 (ASC 바인딩)
 	void OnHealthChanged(const FOnAttributeChangeData& Data);
 
+	void OnShieldChanged(const FOnAttributeChangeData& Data);
+
 	// 체력바 퍼센트 갱신
 	virtual void UpdateHealthBarValue(float NewHealth, float MaxHealth);
 

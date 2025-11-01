@@ -82,6 +82,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Tile")
 	static TArray<AActor*> GetTurretsOnTiles(TArray<ATileBase*> Tiles);
 
+	UFUNCTION(BlueprintCallable, Category = "Tile")
+	static TArray<ATileBase*> GetAllPlacableTiles(APlayerController* PlayerController, FVector ALocation);
 
 	UFUNCTION(BlueprintPure, Category = "Tile")
 	static float GetWorldTileSizeFromInstance(APlayerController* PlayerController);

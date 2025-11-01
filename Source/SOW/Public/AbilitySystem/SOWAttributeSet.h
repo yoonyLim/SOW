@@ -145,6 +145,9 @@ public :
 	UFUNCTION(BlueprintCallable, Category = "Resistance")
 	float GetResistanceForElementWithElementTag(FGameplayTag ElementTag) const;
 
+	UFUNCTION(BlueprintCallable, Category = "Effect")
+	FGameplayTag GetTagForElementWithElementTag(FGameplayTag ElementTag) const;
+
 private:
 	TWeakInterfacePtr<ISOWCharacterUIInterface> CachedCharacterUIInterface;
 

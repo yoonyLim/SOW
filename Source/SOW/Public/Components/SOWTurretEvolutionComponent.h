@@ -12,6 +12,8 @@ class ASOWCharacterTurretBase;
 class UGameplayEffect;
 class UDataTable;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEvolutionSuccessed, bool, Success);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SOW_API USOWTurretEvolutionComponent : public UActorComponent
 {
@@ -20,6 +22,20 @@ class SOW_API USOWTurretEvolutionComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	USOWTurretEvolutionComponent();
+
+#pragma region WidgetDelegate
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnEvolutionSuccessed OnAlphaEvolutionSucceed;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnEvolutionSuccessed OnBetaEvolutionSucceed;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnEvolutionSuccessed OnPropEvolutionSucceed;
+
+#pragma endregion
+
+
 
 	UFUNCTION(BlueprintCallable, Category = "Turret|Evolution")
 	void SetStatusMaxLevel(int32 MaxLv) { StatusMaxLevel = MaxLv; }
