@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
-#define MAX_TURRETS 12
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
@@ -42,6 +41,9 @@ public:
 	// fucking shit clear
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Event Dispatcher")
 	FOnStageEnd OnStageEnd;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Turerts")
+	int32 MaxturretsNum = 10;
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Rune")
 	void RuneUpdateHUD(float Health, float MaxHealth);
