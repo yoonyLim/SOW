@@ -85,7 +85,10 @@ public:
 	float GetProjectileLivingTime() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Turret|Property")
-	FString GetTurretDescriptor() const { return TurretDescriptor; }
+	FString GetTurretDescriptor() const{ 
+			
+			return TurretDescriptor;
+	} 
 
 
 

@@ -29,7 +29,10 @@ void USOWTurretEvolutionComponent::GetPropertyDescriptString(FString& OutString)
 		OutString = TEXT("강화 불가");
 	}
 	else {
+
+
 		OutString = PropertyData[EvolutionPropertyLevel].EvolutionDescription;
+		OutString.ReplaceInline(TEXT("\\n"), TEXT("\n"));
 	}
 	
 }
@@ -102,7 +105,10 @@ TArray<FString> USOWTurretEvolutionComponent::GetAllPropertyDescriptString()
 
 	TArray<FString> StringCont;
 	for (int i = 0; i < PropertyMaxLevel; i++) {
-		StringCont.Add(PropertyData[i].EvolutionDescription);
+		FString NewStr = PropertyData[i].EvolutionDescription;
+		NewStr.ReplaceInline(TEXT("\\n"), TEXT("\n"));
+
+		StringCont.Add(NewStr);
 	}
 	return StringCont;
 }
