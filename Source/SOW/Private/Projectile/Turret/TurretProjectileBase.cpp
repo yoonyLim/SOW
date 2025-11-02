@@ -45,12 +45,15 @@ void ATurretProjectileBase::Tick(float DeltaTime) {
 			BP_DestroyProjectile();
 		}
 
-		if (bHitOnce && (!IsValid(TargetActor) || (Cast<ASOWCharacter>(TargetActor) && USOWBlueprintFunctionLibrary::DoesActorHasTag(TargetActor, SOWGameplayTags::Shared_Status_Dead)))) {
+		FaceToTargetActor();
+		//FaceToTargetActor();
+
+		/*if (bHitOnce && (!IsValid(TargetActor) || (Cast<ASOWCharacter>(TargetActor) && USOWBlueprintFunctionLibrary::DoesActorHasTag(TargetActor, SOWGameplayTags::Shared_Status_Dead)))) {
 			BP_DestroyProjectile();
 		}
 		else { 
-			FaceToTargetActor(); 
-		}
+			
+		}*/
 		
 	}
 }
@@ -58,9 +61,7 @@ void ATurretProjectileBase::Tick(float DeltaTime) {
 void ATurretProjectileBase::FaceToTargetActor() {
 	if (!HasMovement) return;
 
-	if (!IsValid(TargetActor)) return;
-
-	if (bHitDone) {
+	if (bHitDone || !IsValid(TargetActor) || USOWBlueprintFunctionLibrary::DoesActorHasTag(TargetActor, SOWGameplayTags::Shared_Status_Dead)) {
 		ProjectileMoveComp->Velocity = FVector(ProjectileMoveComp->Velocity.X, ProjectileMoveComp->Velocity.Y, 0.f);
 		return;
 	} 
@@ -68,17 +69,19 @@ void ATurretProjectileBase::FaceToTargetActor() {
 	bool bValidTarget = TargetActor->Implements<USOWCharacterTypeInterface>();
 	if (!bValidTarget) return;
 
-	bool bTargetAlive = !USOWBlueprintFunctionLibrary::DoesActorHasTag(TargetActor, SOWGameplayTags::Shared_Status_Dead);
+	//bool bTargetAlive = !USOWBlueprintFunctionLibrary::DoesActorHasTag(TargetActor, SOWGameplayTags::Shared_Status_Dead);
 
-	if (bTargetAlive) {
-		FVector DirVector = (TargetActor->GetActorLocation() - GetActorLocation()).GetSafeNormal();
+	FVector DirVector = (TargetActor->GetActorLocation() - GetActorLocation()).GetSafeNormal();
 
-		ProjectileMoveComp->Velocity = DirVector * ProjectileMoveComp->InitialSpeed;
-		SetActorRotation(DirVector.Rotation());
+	ProjectileMoveComp->Velocity = DirVector * ProjectileMoveComp->InitialSpeed;
+	SetActorRotation(DirVector.Rotation());
+
+	/*if (bTargetAlive) {
+		
 	}
 	else {
 		
-	}
+	}*/
 }
 
 bool ATurretProjectileBase::CheckOutOfRange()
