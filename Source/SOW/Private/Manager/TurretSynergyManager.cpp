@@ -15,6 +15,36 @@
 
 
 
+void UTurretSynergyManager::RequestToUpdateGlacioAffectedStat(ASOWCharacterTurretBase* TargetTurret, bool OnAdd)
+{
+	if (!IsValid(TargetTurret)) return;
+
+	if (OnAdd) {
+		if (GlacioTurretManager->OnTurretSummoned.IsBound()) {
+			GlacioTurretManager->OnTurretSummoned.Broadcast(
+				TargetTurret->GetTurretCombatComponent()->GetAffectStatType(),
+				TargetTurret->GetTurretCombatComponent()->GetAffectStatValue());
+		}
+
+		InsertAffectStatInBuffer(
+			TargetTurret->GetTurretCombatComponent()->GetAffectStatType(),
+			TargetTurret->GetTurretCombatComponent()->GetAffectStatValue());
+	}
+	else {
+		if (GlacioTurretManager->OnTurretDead.IsBound()) {
+			GlacioTurretManager->OnTurretDead.Broadcast(
+				TargetTurret->GetTurretCombatComponent()->GetAffectStatType(),
+				-TargetTurret->GetTurretCombatComponent()->GetAffectStatValue());
+		}
+
+		InsertAffectStatInBuffer(
+			TargetTurret->GetTurretCombatComponent()->GetAffectStatType(),
+			-TargetTurret->GetTurretCombatComponent()->GetAffectStatValue());
+	}
+
+	
+}
+
 bool UTurretSynergyManager::CheckRarityCondition(const TMap<ETurretRarity, int> Monitor, const FSynergyCondition& SynergyContidion)
 {
 	// �ó��� ��� ������ Ȯ���մϴ�. ���� ���� �� �ó��� �±��� �߰�, ������ �����Ǹ� ������ �� ���Ű� �����˴ϴ�.
@@ -196,16 +226,16 @@ void UTurretSynergyManager::AddNewTurretDataForSynergy(ASOWCharacterTurretBase* 
 	// Glacio�� �ִٸ� ��� �ݿ�, ���ٸ� ���ۿ� �����ϴ� �뵵�Դϴ�.
 	if (ElementType == EElementalType::Ice) {
 		GlacioTurretManager->OnSynergyChanged.Broadcast(SynergyTurretCount);
-		if (GlacioTurretManager->OnTurretSummoned.IsBound()) {
-			GlacioTurretManager->OnTurretSummoned.Broadcast(
-				SummonedTurret->GetTurretCombatComponent()->GetAffectStatType(),
-				SummonedTurret->GetTurretCombatComponent()->GetAffectStatValue());
-		}
-		else {
-			InsertAffectStatInBuffer(
-				SummonedTurret->GetTurretCombatComponent()->GetAffectStatType(),
-				SummonedTurret->GetTurretCombatComponent()->GetAffectStatValue());
-		}
+		//if (GlacioTurretManager->OnTurretSummoned.IsBound()) {
+		//	GlacioTurretManager->OnTurretSummoned.Broadcast(
+		//		SummonedTurret->GetTurretCombatComponent()->GetAffectStatType(),
+		//		SummonedTurret->GetTurretCombatComponent()->GetAffectStatValue());
+		//}
+		//// Glacio가 있든 없든 강화 스텟은 버퍼에 저장
+		//InsertAffectStatInBuffer(
+		//	SummonedTurret->GetTurretCombatComponent()->GetAffectStatType(),
+		//	SummonedTurret->GetTurretCombatComponent()->GetAffectStatValue());
+		RequestToUpdateGlacioAffectedStat(SummonedTurret, true);
 		
 
 		if (ASOWCharacterTurretBase* Glacio = GetGlacioInstance()) {
@@ -256,9 +286,16 @@ void UTurretSynergyManager::RemoveTurratDataFromSynergy(ASOWCharacterTurretBase*
 	if (ElementType == EElementalType::Ice) {
 		GlacioTurretManager->OnSynergyChanged.Broadcast(SynergyTurretCount);
 
-		GlacioTurretManager->OnTurretDead.Broadcast(
+		/*if (GlacioTurretManager->OnTurretDead.IsBound()) {
+			GlacioTurretManager->OnTurretDead.Broadcast(
+				SummonedTurret->GetTurretCombatComponent()->GetAffectStatType(),
+				-SummonedTurret->GetTurretCombatComponent()->GetAffectStatValue());
+		}
+
+		InsertAffectStatInBuffer(
 			SummonedTurret->GetTurretCombatComponent()->GetAffectStatType(),
-			-SummonedTurret->GetTurretCombatComponent()->GetAffectStatValue());
+			-SummonedTurret->GetTurretCombatComponent()->GetAffectStatValue());*/
+		RequestToUpdateGlacioAffectedStat(SummonedTurret, false);
 
 		if (ASOWCharacterTurretBase* Glacio = GetGlacioInstance()) {
 			RemoveSynergyTagFromMonitoringTurrets(Glacio, SynergyTurretCount, SynergyTagItems, ElementType);
@@ -400,7 +437,7 @@ void UTurretSynergyManager::RetreiveAttectStat()
 		GlacioTurretManager->OnTurretSummoned.Broadcast(stat, AffectStatBuffer[stat]);
 	}
 
-	AffectStatBuffer.Empty();
+	//AffectStatBuffer.Empty();
 }
 
 
