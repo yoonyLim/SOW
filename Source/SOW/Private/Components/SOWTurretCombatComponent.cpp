@@ -308,7 +308,7 @@ void USOWTurretCombatComponent::RefreshTurretFunction()
 			&USOWTurretCombatComponent::AttackAbilityActivation,
 			NewCooldownTime,
 			true,
-			NewCooldownTime
+			NewCooldownTime/2.f
 		);
 
 		M_CachedCooldownTime = NewCooldownTime;
@@ -397,6 +397,7 @@ AActor* USOWTurretCombatComponent::GetSingleAttackTargetOnList(const TArray<AAct
 		for (AActor* ATarget : InTargetList) {
 
 			if (!IsValid(ATarget)) continue;
+			if (GetStealthCheck(ATarget)) continue;
 			ASOWCharacterEnemyBase* TargetEnemy = Cast<ASOWCharacterEnemyBase>(ATarget);
 			TargetValue = TargetEnemy->GetSOWAttibuteSet()->GetCurrentHealth();
 
@@ -412,6 +413,7 @@ AActor* USOWTurretCombatComponent::GetSingleAttackTargetOnList(const TArray<AAct
 
 		for (AActor* ATarget : InTargetList) {
 			if (!IsValid(ATarget)) continue;
+			if (GetStealthCheck(ATarget)) continue;
 			ASOWCharacterEnemyBase* TargetEnemy = Cast<ASOWCharacterEnemyBase>(ATarget);
 			TargetValue = TargetEnemy->GetSOWAttibuteSet()->GetCurrentHealth();
 
@@ -427,6 +429,7 @@ AActor* USOWTurretCombatComponent::GetSingleAttackTargetOnList(const TArray<AAct
 
 		for (AActor* ATarget : InTargetList) {
 			if (!IsValid(ATarget)) continue;
+			if (GetStealthCheck(ATarget)) continue;
 			ASOWCharacterEnemyBase* TargetEnemy = Cast<ASOWCharacterEnemyBase>(ATarget);
 			TargetValue = TargetEnemy->GetSOWAttibuteSet()->GetAttackPowerBase();
 
@@ -442,6 +445,7 @@ AActor* USOWTurretCombatComponent::GetSingleAttackTargetOnList(const TArray<AAct
 
 		for (AActor* ATarget : InTargetList) {
 			if (!IsValid(ATarget)) continue;
+			if (GetStealthCheck(ATarget)) continue;
 			TargetValue = FVector::Dist(TurretLocation, ATarget->GetActorLocation());
 
 			if (CriticValue > TargetValue) {
@@ -454,6 +458,8 @@ AActor* USOWTurretCombatComponent::GetSingleAttackTargetOnList(const TArray<AAct
 		CriticValue = 0.f;
 
 		for (AActor* ATarget : InTargetList) {
+			if (!IsValid(ATarget)) continue;
+			if (GetStealthCheck(ATarget)) continue;
 			TargetValue = FVector::Dist(TurretLocation, ATarget->GetActorLocation());
 
 			if (CriticValue < TargetValue) {
@@ -495,9 +501,9 @@ TArray<AActor*> USOWTurretCombatComponent::GetAllAttackTarget()
 		AActor* CurrentTarget = GetSingleAttackTargetOnList(BaseActorList);
 		if (!IsValid(CurrentTarget)) break;
 
-		if (!GetStealthCheck(CurrentTarget)) {
-			FinalTargetList.AddUnique(CurrentTarget);
-		}
+		//if (!GetStealthCheck(CurrentTarget)) {
+		FinalTargetList.AddUnique(CurrentTarget);
+		//}
 
 		BaseActorList.Remove(CurrentTarget);
 	}
