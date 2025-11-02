@@ -35,8 +35,7 @@ public:
 
 #pragma endregion
 
-	UFUNCTION(BlueprintCallable, Category = "Turret|Evolution")
-	int GetEvolutionInvestment() const;
+
 
 	UFUNCTION(BlueprintCallable, Category = "Turret|Evolution")
 	void SetStatusMaxLevel(int32 MaxLv) { StatusMaxLevel = MaxLv; }

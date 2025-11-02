@@ -32,7 +32,6 @@ protected:
 	TObjectPtr<UCoreRuneManager> CoreRuneManager;
 
 	TMap<EGlacioStatType, float> AffectStatBuffer;
-	TArray<EGlacioStatType> AffectStatBuffetArr;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Turret|Synergy")
 	UDataTable* SynergyTagData;
