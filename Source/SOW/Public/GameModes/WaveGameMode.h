@@ -9,7 +9,7 @@
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnOneTimeCurrencyChanged, int32, TotalCurrency);
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTurretsNumChanged, int32, TotalTurrets);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStageEnd);
 
 // 전방 선언: 로거는 헤더 의존 최소화
@@ -38,6 +38,9 @@ public:
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Event Dispatcher")
 	FOnOneTimeCurrencyChanged OnOneTimeCurrencyChanged;
 
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Event Dispatcher")
+	FOnTurretsNumChanged OnTurretsNumChanged;
+	
 	// fucking shit clear
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Event Dispatcher")
 	FOnStageEnd OnStageEnd;
@@ -75,6 +78,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Turrets")
 	int32 CheckSpawnedTurretNum();
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "Currency")
+	UFUNCTION(BlueprintImplementableEvent, Category = "Alert")
 	void AlertNotEnoughCurrency();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Alert")
+	void AlertMaxTurrets();
 };
