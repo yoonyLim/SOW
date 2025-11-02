@@ -20,6 +20,24 @@ USOWTurretEvolutionComponent::USOWTurretEvolutionComponent()
 }
 
 
+int USOWTurretEvolutionComponent::GetEvolutionInvestment() const
+{
+	int AccumulatedCurrency = 0;
+
+	FRealCurve* FoundCurve_PriceProp = PropertyResourceData->FindCurve("Currency", TEXT(""));
+	for (int i = 1; i <= EvolutionPropertyLevel; i++) {
+		AccumulatedCurrency += FoundCurve_PriceProp->Eval(i);
+	}
+
+	FRealCurve* FoundCurve_PriceStat = StatusResourceData->FindCurve("Currency", TEXT(""));
+	for (int i = 1; i <= EvolutionStatusLevel; i++) {
+		AccumulatedCurrency += FoundCurve_PriceStat->Eval(i);
+	}
+
+
+	return AccumulatedCurrency;
+}
+
 void USOWTurretEvolutionComponent::GetPropertyDescriptString(FString& OutString)
 {
 	if (EvolutionPropertyLevel >= PropertyMaxLevel) {
