@@ -38,6 +38,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Turret|Synergy")
 	ASynergyUpdateAnnouncer* SynergyUpdateAnnouncer;
+
+	UFUNCTION(BlueprintCallable)
+	void RequestToUpdateGlacioAffectedStat(ASOWCharacterTurretBase* SummonedTurret, bool OnAdd);
 private:
 
 	TMap<EElementalType, TArray<ASOWCharacterTurretBase*>> SynergyMonitor;
