@@ -6,6 +6,8 @@
 #include "Components/UI/SOWTurretUIComponent.h"
 #include "AbilitySystem/SOWAbilitySystemComponent.h"
 #include "SOWBlueprintFunctionLibrary.h"
+#include "GameModes/WaveGameMode.h"
+#include "Kismet/GameplayStatics.h"
 #include "Engine/DataTable.h"
 #include "Engine/CurveTable.h"
 
@@ -240,6 +242,8 @@ void USOWTurretEvolutionComponent::TryEvolution(EEvolutionType Type)
 bool USOWTurretEvolutionComponent::CheckResourceAndProb(EEvolutionType Type)
 {
 
+	AWaveGameMode* GM = Cast<AWaveGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
 	if (Type == EEvolutionType::EVO_PROP) {
 		checkf(PropertyResourceData, TEXT("PropertyResourceData not Assigned. Please check DataAsset"));
 		if (EvolutionPropertyLevel >= PropertyMaxLevel) return false; // Max LV : 4
@@ -252,6 +256,7 @@ bool USOWTurretEvolutionComponent::CheckResourceAndProb(EEvolutionType Type)
 
 		if (!USOWBlueprintFunctionLibrary::QueryForCurrencyCountSufficient(this, FGameplayTag::RequestGameplayTag("Shared.Element.Nature"), PriceValue)) {
 			UE_LOG(LogTemp, Error, TEXT("PriceValue Condition Failed"));
+			GM->AlertNotEnoughCurrency();
 			//CurrencySpentForProp += PriceValue;
 			return false;
 		}
@@ -276,6 +281,7 @@ bool USOWTurretEvolutionComponent::CheckResourceAndProb(EEvolutionType Type)
 
 		if (!USOWBlueprintFunctionLibrary::QueryForCurrencyCountSufficient(this, FGameplayTag::RequestGameplayTag("Shared.Element.Nature"), PriceValue)) {
 			UE_LOG(LogTemp, Warning, TEXT("PriceValue Condition Failed"));
+			GM->AlertNotEnoughCurrency();
 			return false;
 		}
 
