@@ -103,16 +103,6 @@ FSummonData USummonManager::RNGOriginTurret()
 
 bool USummonManager::TurretSummon(FSummonData TurretData)
 {
-	/*if (USOWBlueprintFunctionLibrary::GetCurrency(GetWorld()) < 10)
-		return false;*/
-
-	AWaveGameMode* GM = Cast<AWaveGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-
-	if (GM && !GM->SpawnTurret())
-	{
-		return false;
-	}
-	
 	FSummonData TurretToSummon = TurretData;
 
 	ASOWPlayerController* SOWPC = Cast<ASOWPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));

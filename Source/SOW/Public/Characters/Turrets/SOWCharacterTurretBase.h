@@ -108,11 +108,21 @@ public:
 	UFUNCTION(BlueprintPure)
 	USOWProjectilePoolingComponent* GetProjectilePoolingComponent() const;				// Get Pooling Component at other classes
 
+
 #pragma endregion
 
 #pragma region BlueprintFunctions
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, meta = (DisplayName = "Bind On Target Dead"))
 	void BP_BindOnTargetDead(AActor* Target);
+
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Switch Detectable Range"))
+	void BP_SwitchDetectableRange(bool On);
+
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Refresh Detectable Range"))
+	void BP_RefreshDetectableRange(float Scale);
+
+	UFUNCTION(BlueprintCallable)
+	void InitWidgetAttributeChange();
 #pragma endregion
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Turret|Properties", meta = (ExposeOnSpawn = true))
@@ -143,6 +153,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
 	USOWTurretUIComponent* TurretUIComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
+	UStaticMeshComponent* TurretDetectableRangeMesh;
+
 private:
 
 	UFUNCTION()
@@ -155,8 +168,7 @@ private:
 
 	void OnWidgetAttributeChanged(const FOnAttributeChangeData& Data);
 	
-	UFUNCTION(BlueprintCallable)
-	void InitWidgetAttributeChange();
+
 
 	FWidgetDescAtt GetWidgetAttributeChangeDelegate(const FGameplayAttributeData Att, const float Base, const float Circle);
 };

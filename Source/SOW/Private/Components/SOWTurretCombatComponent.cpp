@@ -119,15 +119,7 @@ void USOWTurretCombatComponent::InitTurretProperties(const FTurretPropertyData& 
 		PriorityChange();
 	}
 
-	/*if (Data.TurretAttackType == EAttackType::MELEE) {
-		CachedOwnerCharacter->GetSOWAbilitySystemComponent()->AddLooseGameplayTag(SOWGameplayTags::Turret_Type_Melee);
-	}
-	else if(Data.TurretAttackType == EAttackType::RANGED){
-		CachedOwnerCharacter->GetSOWAbilitySystemComponent()->AddLooseGameplayTag(SOWGameplayTags::Turret_Type_Ranged);
-	}
-	else if (Data.TurretAttackType == EAttackType::SUPPORT) {
-		CachedOwnerCharacter->GetSOWAbilitySystemComponent()->AddLooseGameplayTag(SOWGameplayTags::Turret_Type_Support);
-	}*/
+
 
 
 }
@@ -316,7 +308,7 @@ void USOWTurretCombatComponent::RefreshTurretFunction()
 			&USOWTurretCombatComponent::AttackAbilityActivation,
 			NewCooldownTime,
 			true,
-			0
+			NewCooldownTime
 		);
 
 		M_CachedCooldownTime = NewCooldownTime;

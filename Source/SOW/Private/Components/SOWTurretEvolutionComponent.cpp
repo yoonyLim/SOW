@@ -29,7 +29,10 @@ void USOWTurretEvolutionComponent::GetPropertyDescriptString(FString& OutString)
 		OutString = TEXT("강화 불가");
 	}
 	else {
+
+
 		OutString = PropertyData[EvolutionPropertyLevel].EvolutionDescription;
+		OutString.ReplaceInline(TEXT("\\n"), TEXT("\n"));
 	}
 	
 }
@@ -102,7 +105,10 @@ TArray<FString> USOWTurretEvolutionComponent::GetAllPropertyDescriptString()
 
 	TArray<FString> StringCont;
 	for (int i = 0; i < PropertyMaxLevel; i++) {
-		StringCont.Add(PropertyData[i].EvolutionDescription);
+		FString NewStr = PropertyData[i].EvolutionDescription;
+		NewStr.ReplaceInline(TEXT("\\n"), TEXT("\n"));
+
+		StringCont.Add(NewStr);
 	}
 	return StringCont;
 }
@@ -170,6 +176,7 @@ void USOWTurretEvolutionComponent::TryEvolution(EEvolutionType Type)
 	if (!CheckResourceAndProb(Type)) {
 		// 강화 실패 시 UI Floating을 대비
 		UE_LOG(LogTemp, Error, TEXT("Evolution Failed"));
+		
 		return;
 	} 
 	switch (Type)
@@ -232,6 +239,8 @@ bool USOWTurretEvolutionComponent::CheckResourceAndProb(EEvolutionType Type)
 		}
 		int32 value = FMath::RandRange(1, 100);
 		if (value > PercentValue) {
+			if (OnPropEvolutionSucceed.IsBound())
+				OnPropEvolutionSucceed.Broadcast(false);
 			UE_LOG(LogTemp, Error, TEXT("PercentValue Condition Failed : %s"), *FString::FromInt(value));
 			CurrencySpentForProp += PriceValue;
 			return false;
@@ -254,11 +263,17 @@ bool USOWTurretEvolutionComponent::CheckResourceAndProb(EEvolutionType Type)
 
 		int32 value = FMath::RandRange(1, 100);
 		if (value > PercentValue) {
+
+			if (OnBetaEvolutionSucceed.IsBound())
+				OnBetaEvolutionSucceed.Broadcast(false);
 			UE_LOG(LogTemp, Warning, TEXT("PercentValue Condition Failed : %s"), *FString::FromInt(value));
 			CurrencySpentForStat += PriceValue;
 			return false; 
 		}
 	}
+
+
+
 
 	return true;
 }
