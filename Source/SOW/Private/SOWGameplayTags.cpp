@@ -92,6 +92,8 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Glare, "Turret.Status.Buff.Glare");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Impatience, "Turret.Status.Buff.Impatience");
 
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_SoulEater, "Turret.Status.Buff.SoulEater");
+
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Debuff_Slow, "Turret.Status.Debuff.Slow");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Debuff_Pause, "Turret.Status.Debuff.Pause");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Debuff_Root, "Turret.Status.Debuff.Root");
