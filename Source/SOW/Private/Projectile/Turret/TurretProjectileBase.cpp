@@ -62,6 +62,8 @@ void ATurretProjectileBase::FaceToTargetActor() {
 	if (!HasMovement) return;
 
 	if (bHitDone || !IsValid(TargetActor) || USOWBlueprintFunctionLibrary::DoesActorHasTag(TargetActor, SOWGameplayTags::Shared_Status_Dead)) {
+		
+		SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, ZPosWhenTargetInvalid));
 		ProjectileMoveComp->Velocity = FVector(ProjectileMoveComp->Velocity.X, ProjectileMoveComp->Velocity.Y, 0.f);
 		return;
 	} 
@@ -118,6 +120,8 @@ void ATurretProjectileBase::OnCollisionHit(UPrimitiveComponent* OverlappedCompon
 	if (CachedInstigator.Get() == OtherActor || OverlappedActors.Contains(OtherActor)) return;
 
 	OverlappedActors.AddUnique(OtherActor);
+
+	ZPosWhenTargetInvalid = OtherActor->GetActorLocation().Z;
 
 	// Apply Damage or Process After Effect like Gradual reinforcement
 	//bHitDone = true;
