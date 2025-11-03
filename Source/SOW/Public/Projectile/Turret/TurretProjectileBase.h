@@ -38,6 +38,8 @@ protected:
 	void ClearHitActors();
 
 	void FaceToTargetActor();
+
+	float ZPosWhenTargetInvalid = 0.f;
 	
 private:
 	bool CheckOutOfRange();
