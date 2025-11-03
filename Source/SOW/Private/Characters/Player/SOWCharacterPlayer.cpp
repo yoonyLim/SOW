@@ -65,11 +65,11 @@ ASOWCharacterPlayer::ASOWCharacterPlayer()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 	CharacterType = ESOWCharacterType::Player; // for player type recognition - by PGH
 
-	static ConstructorHelpers::FClassFinder<UPlayerHUD> HUDClassFinder(TEXT("/Game/01Blueprints/UI/Player/WB_HUD"));
+	/*static ConstructorHelpers::FClassFinder<UPlayerHUD> HUDClassFinder(TEXT("/Game/01Blueprints/UI/Player/WB_HUD"));
 	if (HUDClassFinder.Succeeded())
 	{
 		MyHUDWidgetClass = HUDClassFinder.Class;
-	}
+	}*/
 
 	/* Turret Install Material */
 	InstallationRangeDecal = CreateDefaultSubobject<UDecalComponent>(TEXT("InstallationRangeDecal"));
@@ -77,13 +77,13 @@ ASOWCharacterPlayer::ASOWCharacterPlayer()
 	InstallationRangeDecal->SetRelativeRotation(FRotator(-90.f, 0.f, 0.f));
 	InstallationRangeDecal->DecalSize = FVector(300.f, 300.f, 300.f);
 
-	static ConstructorHelpers::FObjectFinder<UMaterialInterface> DecalMat(TEXT("/Game/03Materials/M_Range_Decal.M_Range_Decal"));
+	/*static ConstructorHelpers::FObjectFinder<UMaterialInterface> DecalMat(TEXT("/Game/03Materials/M_Range_Decal.M_Range_Decal"));
 	if (DecalMat.Succeeded())
 	{
 		InstallationRangeDecal->SetDecalMaterial(DecalMat.Object);
 	}
 
-	InstallationRangeDecal->SetVisibility(false);
+	InstallationRangeDecal->SetVisibility(false);*/
 }
 
 // Called when the game starts or when spawned

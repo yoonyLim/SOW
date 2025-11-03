@@ -19,7 +19,7 @@ void AWaveGameMode::BeginPlay()
 
 void AWaveGameMode::AddCurrency(int32 AddedCurrency)
 {
-	const int32 OldCurrency = Currency;
+	// const int32 OldCurrency = Currency;
 	Currency += AddedCurrency;
 
 	// 기존 브로드캐스트 유지
@@ -42,9 +42,13 @@ void AWaveGameMode::AddCurrency(int32 AddedCurrency)
 bool AWaveGameMode::CanSpawnTurret()
 {
 	if (SummonedTurretsNum >= MaxturretsNum)
+	{
+		AlertMaxTurrets();
 		return false;
+	}
 
 	SummonedTurretsNum++;
+	OnTurretsNumChanged.Broadcast(SummonedTurretsNum);
 
 	return true;
 }
@@ -53,6 +57,7 @@ void AWaveGameMode::SellTurret(int32 RefundCurrency)
 {
 	if (SummonedTurretsNum > 0) {
 		SummonedTurretsNum--;
+		OnTurretsNumChanged.Broadcast(SummonedTurretsNum);
 		AddCurrency(RefundCurrency);
 	}
 }
