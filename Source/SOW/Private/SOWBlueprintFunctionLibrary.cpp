@@ -61,10 +61,18 @@ bool USOWBlueprintFunctionLibrary::NativeDoesActorHasTag(AActor* InActor, FGamep
         return false;
     }
 
+  
+
+    if (!IsValid(InActor) || InActor->IsPendingKillPending())
+        return false;
+
+    if (!UKismetSystemLibrary::DoesImplementInterface(InActor, USOWCharacterTypeInterface::StaticClass()))
+        return false;
+
     USOWAbilitySystemComponent* ASC = NativeGetSOWAbilitySystemComponentFromActorInfo(InActor);
     if (!ASC)
     {
-       // UE_LOG(LogTemp, Warning, TEXT("NativeDoesActorHasTag: No ASC for %s"), *InActor->GetName());
+        // UE_LOG(LogTemp, Warning, TEXT("NativeDoesActorHasTag: No ASC for %s"), *InActor->GetName());
         return false;
     }
 
@@ -96,7 +104,7 @@ bool USOWBlueprintFunctionLibrary::DoesActorHasTag(AActor* InActor, FGameplayTag
     //}
 
     //return NativeDoesActorHasTag(InActor, InActorTag);
-    if (!IsValid(InActor) || InActor->IsPendingKillPending())
+    if (!IsValid(InActor) || InActor->IsPendingKillPending() || !InActorTag.IsValid())
         return false;
 
     if (!UKismetSystemLibrary::DoesImplementInterface(InActor, USOWCharacterTypeInterface::StaticClass()))
