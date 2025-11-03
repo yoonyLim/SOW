@@ -20,7 +20,7 @@ class USOWEnemyCombatComponent;
 
 class USOWEnemyUIComponent;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyDeath, int32, ShardAmount);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnEnemyDeath, int32, ShardAmount, TSubclassOf<ASOWCharacterEnemyBase>, EnemyType);
 
 UCLASS()
 class SOW_API ASOWCharacterEnemyBase : public ASOWCharacter, public IEnemyActionsInterface

@@ -159,6 +159,11 @@ void UTurretShop::CloseOriginShop()
 
 bool UTurretShop::TryShopRankUp()
 {
+	if (ShopRank == 6)
+	{
+		return false;
+	}
+
 	DA_SummonData->GetProbByShopRank(ShopRank);
 
 	TArray<int32> RankUpWeights = { DA_SummonData->GetProbByShopRank(ShopRank),

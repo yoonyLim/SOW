@@ -405,7 +405,7 @@ void ASOWCharacterEnemyBase::BroadcastEnemyDeath()
 {
 	int ShardAmount = FMath::Clamp(FMath::RandRange(ShardDropAmount - ShardDropAmountVariation, ShardDropAmount + ShardDropAmountVariation) , 0, ShardDropAmount + ShardDropAmountVariation);
 	
-	OnEnemyDeath.Broadcast(ShardAmount);
+	OnEnemyDeath.Broadcast(ShardAmount, GetClass());
 
 	/*USOWGameInstance* SOWGameInstance = Cast<USOWGameInstance>(GetWorld()->GetGameInstance());
 
