@@ -196,7 +196,7 @@ void UTurretSynergyManager::AddNewTurretDataForSynergy(ASOWCharacterTurretBase* 
 
 	if (!IsValid(SummonedTurret) || !SummonedTurret->GetTurretCombatComponent()) return;
 	if (!SynergyMonitor.Contains(ElementType)) {
-		UE_LOG(LogTemp, Error, TEXT("%s is not implemented synergy element."), *USOWBlueprintFunctionLibrary::EnumToFName<EElementalType>(ElementType).ToString());
+		UE_LOG(LogTemp, Error, TEXT("Add synergy / %s is not implemented synergy element."), *USOWBlueprintFunctionLibrary::EnumToFName<EElementalType>(ElementType).ToString());
 		return;
 	} 
 
@@ -258,7 +258,7 @@ void UTurretSynergyManager::RemoveTurratDataFromSynergy(ASOWCharacterTurretBase*
 
 	if (!IsValid(SummonedTurret) || !SummonedTurret->GetTurretCombatComponent()) return;
 	if (!SynergyMonitor.Contains(ElementType)) {
-		UE_LOG(LogTemp, Error, TEXT("%s is not implemented synergy element."), *USOWBlueprintFunctionLibrary::EnumToFName<EElementalType>(ElementType).ToString());
+		UE_LOG(LogTemp, Error, TEXT("Remove Synergy / %s is not implemented synergy element."), *USOWBlueprintFunctionLibrary::EnumToFName<EElementalType>(ElementType).ToString());
 		return;
 	}
 
