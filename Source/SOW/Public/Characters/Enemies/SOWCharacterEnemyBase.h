@@ -36,13 +36,19 @@ class SOW_API ASOWCharacterEnemyBase : public ASOWCharacter, public IEnemyAction
 	EEnemyTargetPriority TargetPriority;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widgets", meta = (AllowPrivateAccess = "true"))
-	UWidgetComponent* HealthBarWidget;
+	TObjectPtr<UWidgetComponent> HealthBarWidget;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI", meta = (AllowPrivateAccess = "true"))
-	USOWEnemyUIComponent* EnemyUIComponent; // added by pgh
+	TObjectPtr<USOWEnemyUIComponent> EnemyUIComponent; // added by pgh
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widgets", meta = (AllowPrivateAccess = "true"))
-	UWidgetComponent* SineDebuffWidget; // added by pgh
+	TObjectPtr<UWidgetComponent> SineDebuffWidget; // added by pgh
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sounds", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USoundBase> EnemyHitSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sounds", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USoundBase> EnemyDeathSound;
 
 	FVector2D HealthBarWidgetSize;
 

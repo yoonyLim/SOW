@@ -259,15 +259,18 @@ void ASOWCharacterEnemyBase::OnHealthChanged(const FOnAttributeChangeData& Data)
 			Cast<UEnemyHealthBarWidget>(HealthBarWidget->GetUserWidgetObject())->PlayFadeAnimation();
 	}
 
-	if (HitAnimation && NewHealth != MaxHealth)
+	if (NewHealth != MaxHealth && !bIsDead)
 	{
-		// OnHitMontageEnded.BindUObject(this, &ASuraCharacterEnemyBase::OnHitEnded);
-		
-		UAnimInstance* const EnemyAnimInstance = GetMesh()->GetAnimInstance();
-		EnemyAnimInstance->Montage_Play(HitAnimation);
+		if (EnemyHitSound)
+		{
+			UGameplayStatics::PlaySoundAtLocation(this, EnemyDeathSound, GetActorLocation());
+		}
 
-		// GetMesh()->GetAnimInstance()->Montage_SetBlendingOutDelegate(OnHitMontageEnded); // montage interrupted
-		// GetMesh()->GetAnimInstance()->Montage_SetEndDelegate(OnHitMontageEnded); // montage ended
+		if (HitAnimation)
+		{
+			UAnimInstance* const EnemyAnimInstance = GetMesh()->GetAnimInstance();
+			EnemyAnimInstance->Montage_Play(HitAnimation);
+		}
 	}
 }
 
@@ -404,8 +407,10 @@ void ASOWCharacterEnemyBase::Attack(const ASOWCharacter* TargetActor)
 void ASOWCharacterEnemyBase::BroadcastEnemyDeath()
 {
 	int ShardAmount = FMath::Clamp(FMath::RandRange(ShardDropAmount - ShardDropAmountVariation, ShardDropAmount + ShardDropAmountVariation) , 0, ShardDropAmount + ShardDropAmountVariation);
-	
 	OnEnemyDeath.Broadcast(ShardAmount, GetClass());
+
+	if (EnemyDeathSound)
+		UGameplayStatics::PlaySoundAtLocation(this, EnemyDeathSound, GetActorLocation());
 
 	/*USOWGameInstance* SOWGameInstance = Cast<USOWGameInstance>(GetWorld()->GetGameInstance());
 
