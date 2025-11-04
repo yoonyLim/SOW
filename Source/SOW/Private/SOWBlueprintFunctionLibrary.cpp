@@ -755,6 +755,29 @@ float USOWBlueprintFunctionLibrary::GetWorldTileSizeFromInstance(APlayerControll
     return GI->GetWorldTileSize();
 }
 
+void USOWBlueprintFunctionLibrary::AddLooseGameplayTagStack(AActor* Actor, FGameplayTag Tag, int32 Stack)
+{
+    if (!IsValid(Actor) || !Tag.IsValid() || Stack <= 0) return;
+
+    USOWAbilitySystemComponent* ASC = GetSOWAbilitySystemComponentFromActorInfo(Actor);
+
+    //FScopedPredictionWindow Prediction(ASC, ASC);
+
+    ASC->AddLooseGameplayTag(Tag, Stack);
+    
+}
+
+void USOWBlueprintFunctionLibrary::RemoveLooseGameplayTagStack(AActor* Actor, FGameplayTag Tag, int32 Stack)
+{
+    if (!IsValid(Actor) || !Tag.IsValid() || Stack <= 0) return;
+
+    USOWAbilitySystemComponent* ASC = GetSOWAbilitySystemComponentFromActorInfo(Actor);
+
+    //FScopedPredictionWindow Prediction(ASC, ASC);
+
+    ASC->RemoveLooseGameplayTag(Tag, Stack);
+}
+
 bool USOWBlueprintFunctionLibrary::IsMouseOverUI(APlayerController* PC, const TSubclassOf<USOWWidgetBase>& TargetWidget)
 {
     if (!FSlateApplication::IsInitialized())

@@ -501,9 +501,11 @@ TArray<AActor*> USOWTurretCombatComponent::GetAllAttackTarget()
 		AActor* CurrentTarget = GetSingleAttackTargetOnList(BaseActorList);
 		if (!IsValid(CurrentTarget)) break;
 
-		//if (!GetStealthCheck(CurrentTarget)) {
-		FinalTargetList.AddUnique(CurrentTarget);
-		//}
+		if (CurrentTarget == CachedOwnerCharacter) continue;
+
+		if (!GetStealthCheck(CurrentTarget)) {
+			FinalTargetList.AddUnique(CurrentTarget);
+		}
 
 		BaseActorList.Remove(CurrentTarget);
 	}

@@ -88,6 +88,12 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Tile")
 	static float GetWorldTileSizeFromInstance(APlayerController* PlayerController);
 
+	UFUNCTION(BlueprintCallable, Category = "Gameplay")
+	static void AddLooseGameplayTagStack(AActor* Actor, FGameplayTag Tag, int32 Stack);
+
+	UFUNCTION(BlueprintCallable, Category = "Gameplay")
+	static void RemoveLooseGameplayTagStack(AActor* Actor, FGameplayTag Tag, int32 Stack);
+
 	UFUNCTION(BlueprintCallable, Category = "Input")
 	static bool IsMouseOverUI(APlayerController* PC, const TSubclassOf<USOWWidgetBase>& TargetWidget);
 };
