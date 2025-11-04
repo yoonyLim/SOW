@@ -89,6 +89,7 @@ namespace SOWGameplayTags
 
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Ember, "Turret.Status.Buff.Ember");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Ignition, "Turret.Status.Buff.Ignition");
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Inferno, "Turret.Status.Buff.Inferno");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Glare, "Turret.Status.Buff.Glare");
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Status_Buff_Impatience, "Turret.Status.Buff.Impatience");
 

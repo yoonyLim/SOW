@@ -41,6 +41,10 @@ protected:
 
 	float ZPosWhenTargetInvalid = 0.f;
 	
+
+
+	UFUNCTION(BlueprintCallable, Category = "Projectile")
+	AActor* GetTargetActor() const { return TargetActor; }
 private:
 	bool CheckOutOfRange();
 	
