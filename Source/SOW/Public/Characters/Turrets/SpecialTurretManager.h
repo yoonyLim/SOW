@@ -17,9 +17,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSynergyTurretDelegate, EGlacioSt
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSynergyTurretCountChangedDelegate, int, SynergyCount);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTurretSacrificedStatus, ASOWCharacterTurretBase*, InTurret, float, NewAttack);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTurretSacrificedStatus, FString, InTurret, float, NewAttack);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTurretSacrificedDead, ASOWCharacterTurretBase*, InTurret);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTurretSacrificedDead, FString, InTurret);
 /**
  * 
  */
