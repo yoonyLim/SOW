@@ -194,7 +194,7 @@ void UTurretShop::UpdateSummonProbText()
 	TXT_CommonProb->SetText(CommonPercentText);
 
 	int32 RareValue = DA_SummonData->GetProbByRarity(ShopRank, ERarity::Rare);
-	FText RarePercentText = FText::FromString(FString::Printf(TEXT("%d%%"), CommonValue));
+	FText RarePercentText = FText::FromString(FString::Printf(TEXT("%d%%"), RareValue));
 	TXT_RareProb->SetText(RarePercentText);
 
 	int32 EpicValue = DA_SummonData->GetProbByRarity(ShopRank, ERarity::Epic);
