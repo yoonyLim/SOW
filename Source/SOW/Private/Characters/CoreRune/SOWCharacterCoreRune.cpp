@@ -133,6 +133,19 @@ void ASOWCharacterCoreRune::OnHealthChanged(const FOnAttributeChangeData &Data)
 	const float NewHealth = Data.NewValue;
 	const float MaxHealth = (ASCAttributes ? ASCAttributes->GetMaxHealthBase() : 1.f);
 
+	if (NewHealth != MaxHealth && !bIsDead)
+	{
+		if (RuneHitSound)
+		{
+			UGameplayStatics::PlaySoundAtLocation(this, RuneHitSound, GetActorLocation());
+		}
+
+		if (HitCameraShake)
+		{
+			GetWorld()->GetFirstPlayerController()->ClientStartCameraShake(HitCameraShake);
+		}
+	}
+	
 	// 체력바 갱신 (EnemyBase의 UpdateHealthBarValue 로직과 동일, )
 	UpdateHealthBarValue(NewHealth, MaxHealth);
 
@@ -162,6 +175,7 @@ void ASOWCharacterCoreRune::OnHealthChanged(const FOnAttributeChangeData &Data)
 	// 체력이 0 이하면 코어 파괴 처리
 	if (NewHealth <= 0.f)
 	{
+		bIsDead = true;
 		HandleCoreDestroyed();
 	}
 }

@@ -16,6 +16,14 @@ class SOW_API ASOWCharacterCoreRune : public ASOWCharacter
 {
 	GENERATED_BODY()
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sounds", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USoundBase> RuneHitSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera Shake", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UCameraShakeBase> HitCameraShake;
+	
+	bool bIsDead = false;
+
 public:
 	ASOWCharacterCoreRune();
 
