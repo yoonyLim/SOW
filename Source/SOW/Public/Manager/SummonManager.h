@@ -122,6 +122,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FSummonData RNGOriginTurret();
 
+	UFUNCTION(BlueprintCallable)
+	bool TurretSummonOnCertainTile(FSummonData TurretData, AActor* Tile);
+
 private:
 	void InitTurretArray();
 
