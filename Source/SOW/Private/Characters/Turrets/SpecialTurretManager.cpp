@@ -31,6 +31,7 @@ void USpecialTurretManager::Initialize(TSubclassOf<ASOWCharacterTurretSpecialBas
     OnSynergyChanged.AddDynamic(this, &USpecialTurretManager::ProcessGlacio);
 
     OnTurretSacrificedStatus.AddDynamic(this, &USpecialTurretManager::AnnounceSacrificedTurretData);
+    OnTurretSacrificedDead.AddDynamic(this, &USpecialTurretManager::AnnounceSacrificedTurretDead);
 }
 
 void USpecialTurretManager::SummonGlacio()
