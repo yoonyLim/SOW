@@ -215,6 +215,8 @@ namespace SOWGameplayTags {
 
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_SetByCaller_ChillSlow);
 
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_SetByCaller_TakeSacrificedStatus);
+
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Data_RestoreMovement);
 
 	/* Data Tags */

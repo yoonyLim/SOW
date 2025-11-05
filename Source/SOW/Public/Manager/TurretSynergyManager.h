@@ -40,7 +40,10 @@ protected:
 	ASynergyUpdateAnnouncer* SynergyUpdateAnnouncer;
 
 	UFUNCTION(BlueprintCallable)
-	void RequestToUpdateGlacioAffectedStat(ASOWCharacterTurretBase* SummonedTurret, bool OnAdd);
+	void RequestToUpdateGlacioAffectedStat(ASOWCharacterTurretBase* TargetTurret, bool OnAdd);
+
+	UFUNCTION(BlueprintCallable)
+	void RequestToUpdateGlacioAffectedStatConstant(ASOWCharacterTurretBase* TargetTurret, bool OnAdd, float Value);
 private:
 
 	TMap<EElementalType, TArray<ASOWCharacterTurretBase*>> SynergyMonitor;

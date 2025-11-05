@@ -115,6 +115,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, meta = (DisplayName = "Bind On Target Dead"))
 	void BP_BindOnTargetDead(AActor* Target);
 
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, meta = (DisplayName = "Bind On Attack Power Changed"))
+	void BP_CallOnAttackPowerChanged(AActor* Target, float AttackBase);
+
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Switch Detectable Range"))
 	void BP_SwitchDetectableRange(bool On);
 
@@ -167,6 +170,8 @@ private:
 	void OnDetectionRangeChanged(const FOnAttributeChangeData& Data);
 
 	void OnWidgetAttributeChanged(const FOnAttributeChangeData& Data);
+
+	void OnAttackPowerChanged(const FOnAttributeChangeData& Data);
 	
 
 
