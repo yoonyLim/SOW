@@ -45,6 +45,34 @@ void UTurretSynergyManager::RequestToUpdateGlacioAffectedStat(ASOWCharacterTurre
 	
 }
 
+void UTurretSynergyManager::RequestToUpdateGlacioAffectedStatConstant(ASOWCharacterTurretBase* TargetTurret, bool OnAdd, float Value)
+{
+	if (!IsValid(TargetTurret)) return;
+
+	if (OnAdd) {
+		if (GlacioTurretManager->OnTurretSummoned.IsBound()) {
+			GlacioTurretManager->OnTurretSummoned.Broadcast(
+				TargetTurret->GetTurretCombatComponent()->GetAffectStatType(),
+				Value);
+		}
+
+		InsertAffectStatInBuffer(
+			TargetTurret->GetTurretCombatComponent()->GetAffectStatType(),
+			Value);
+	}
+	else {
+		if (GlacioTurretManager->OnTurretDead.IsBound()) {
+			GlacioTurretManager->OnTurretDead.Broadcast(
+				TargetTurret->GetTurretCombatComponent()->GetAffectStatType(),
+				-Value);
+		}
+
+		InsertAffectStatInBuffer(
+			TargetTurret->GetTurretCombatComponent()->GetAffectStatType(),
+			-Value);
+	}
+}
+
 bool UTurretSynergyManager::CheckRarityCondition(const TMap<ETurretRarity, int> Monitor, const FSynergyCondition& SynergyContidion)
 {
 	// �ó��� ��� ������ Ȯ���մϴ�. ���� ���� �� �ó��� �±��� �߰�, ������ �����Ǹ� ������ �� ���Ű� �����˴ϴ�.

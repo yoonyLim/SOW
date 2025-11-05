@@ -94,6 +94,10 @@ void ASOWCharacterTurretBase::PossessedBy(AController* NewController)
 			.AddUObject(this, &ASOWCharacterTurretBase::OnWidgetAttributeChanged);
 
 		ASC->GetGameplayAttributeValueChangeDelegate(
+			AttributeSet->GetAttackPowerBaseAttribute())
+			.AddUObject(this, &ASOWCharacterTurretBase::OnAttackPowerChanged);
+
+		ASC->GetGameplayAttributeValueChangeDelegate(
 			AttributeSet->GetAdditionalDamageRatioAttribute())
 			.AddUObject(this, &ASOWCharacterTurretBase::OnAdditionalDamageRatioChanged);
 
@@ -183,6 +187,11 @@ void ASOWCharacterTurretBase::OnWidgetAttributeChanged(const FOnAttributeChangeD
 		// For AttackSpeed
 		TurretUIComponent->OnSpeedChanged.Broadcast(GetWidgetAttributeChangeDelegate(AttributeSet->AttackSpeedBase, BaseAtts.AttackSpeedBaseValue, 0));
 	}
+}
+
+void ASOWCharacterTurretBase::OnAttackPowerChanged(const FOnAttributeChangeData& Data)
+{
+	BP_CallOnAttackPowerChanged(this, AttributeSet->AttackPowerBase.GetBaseValue());
 }
 
 void ASOWCharacterTurretBase::BP_SwitchDetectableRange(bool On)
