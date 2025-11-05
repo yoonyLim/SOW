@@ -61,9 +61,8 @@ bool USOWBlueprintFunctionLibrary::NativeDoesActorHasTag(AActor* InActor, FGamep
         return false;
     }
 
-  
 
-    if (!IsValid(InActor) || InActor->IsPendingKillPending())
+    if (InActor->IsPendingKillPending())
         return false;
 
     if (!UKismetSystemLibrary::DoesImplementInterface(InActor, USOWCharacterTypeInterface::StaticClass()))
@@ -104,7 +103,10 @@ bool USOWBlueprintFunctionLibrary::DoesActorHasTag(AActor* InActor, FGameplayTag
     //}
 
     //return NativeDoesActorHasTag(InActor, InActorTag);
-    if (!IsValid(InActor) || InActor->IsPendingKillPending() || !InActorTag.IsValid())
+    if (!IsValid(InActor) || !InActorTag.IsValid())
+        return false;
+
+    if (InActor->IsPendingKillPending())
         return false;
 
     if (!UKismetSystemLibrary::DoesImplementInterface(InActor, USOWCharacterTypeInterface::StaticClass()))
@@ -639,7 +641,7 @@ TArray<AActor*> USOWBlueprintFunctionLibrary::GetActorsOnTiles(TArray<ATileBase*
         TArray<AActor*> OverlappedActors;
 
         FVector TileCenter = tile->GetActorLocation(); 
-        float HalfExtent = (GetWorldTileSizeFromInstance(UGameplayStatics::GetPlayerController(tile->GetWorld(), 0)) / 2.f) - 10.f;
+        float HalfExtent = (GetWorldTileSizeFromInstance(UGameplayStatics::GetPlayerController(tile->GetWorld(), 0)) / 2.f) - 25.f;
         float Height = 400.f;                          
         FCollisionShape BoxShape = FCollisionShape::MakeBox(FVector(HalfExtent, HalfExtent, Height));
 
@@ -753,6 +755,29 @@ float USOWBlueprintFunctionLibrary::GetWorldTileSizeFromInstance(APlayerControll
     if (!GI) return 0.f;
 
     return GI->GetWorldTileSize();
+}
+
+void USOWBlueprintFunctionLibrary::AddLooseGameplayTagStack(AActor* Actor, FGameplayTag Tag, int32 Stack)
+{
+    if (!IsValid(Actor) || !Tag.IsValid() || Stack <= 0) return;
+
+    USOWAbilitySystemComponent* ASC = GetSOWAbilitySystemComponentFromActorInfo(Actor);
+
+    //FScopedPredictionWindow Prediction(ASC, ASC);
+
+    ASC->AddLooseGameplayTag(Tag, Stack);
+    
+}
+
+void USOWBlueprintFunctionLibrary::RemoveLooseGameplayTagStack(AActor* Actor, FGameplayTag Tag, int32 Stack)
+{
+    if (!IsValid(Actor) || !Tag.IsValid() || Stack <= 0) return;
+
+    USOWAbilitySystemComponent* ASC = GetSOWAbilitySystemComponentFromActorInfo(Actor);
+
+    //FScopedPredictionWindow Prediction(ASC, ASC);
+
+    ASC->RemoveLooseGameplayTag(Tag, Stack);
 }
 
 bool USOWBlueprintFunctionLibrary::IsMouseOverUI(APlayerController* PC, const TSubclassOf<USOWWidgetBase>& TargetWidget)

@@ -49,6 +49,8 @@ void USOWTurretCombatComponent::BeginPlay()
 
 float USOWTurretCombatComponent::GetAttackCooldownTimeFromOwner() const
 {
+	bool bIsFixedCooldown = !(AbilityTagToActivation == SOWGameplayTags::Turret_Ability_Attack);
+
 	float CooldownBase = CachedOwnerCharacter->GetAttackCooldownTime();
 
 	if (HasIndependantCooltime) {
@@ -59,11 +61,15 @@ float USOWTurretCombatComponent::GetAttackCooldownTimeFromOwner() const
 		CooldownBase += ProjectileLivingTime;
 	}
 
+	if (bIsFixedCooldown) {
+		CooldownBase = 3.f;
+	}
+
 	if (!bTargetFound) {
 		CooldownBase = 0.25f;
 	}
 
-	return CooldownBase;
+	return CooldownBase < 0.2f ? 0.2f: CooldownBase;
 }
 
 void USOWTurretCombatComponent::ClearTargetDetectionAsDead()
@@ -292,11 +298,11 @@ void USOWTurretCombatComponent::PauseTurretFunction()
 
 void USOWTurretCombatComponent::RefreshTurretFunction()
 {
-	bool bIsFixedCooldown = (AbilityTagToActivation == SOWGameplayTags::Turret_Ability_Attack);
+	//bool bIsFixedCooldown = (AbilityTagToActivation == SOWGameplayTags::Turret_Ability_Attack);
 
 	FindAttackTargetFromAllTargetAvailable();
 
-	const float NewCooldownTime = bIsFixedCooldown ? GetAttackCooldownTimeFromOwner() : 3.f;
+	const float NewCooldownTime = GetAttackCooldownTimeFromOwner();
 
 	if (M_CachedCooldownTime != NewCooldownTime)
 	{
@@ -501,9 +507,11 @@ TArray<AActor*> USOWTurretCombatComponent::GetAllAttackTarget()
 		AActor* CurrentTarget = GetSingleAttackTargetOnList(BaseActorList);
 		if (!IsValid(CurrentTarget)) break;
 
-		//if (!GetStealthCheck(CurrentTarget)) {
-		FinalTargetList.AddUnique(CurrentTarget);
-		//}
+		if (CurrentTarget == CachedOwnerCharacter) continue;
+
+		if (!GetStealthCheck(CurrentTarget)) {
+			FinalTargetList.AddUnique(CurrentTarget);
+		}
 
 		BaseActorList.Remove(CurrentTarget);
 	}
