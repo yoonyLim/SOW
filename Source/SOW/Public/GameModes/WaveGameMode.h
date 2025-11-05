@@ -78,9 +78,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Turrets")
 	int32 CheckSpawnedTurretNum();
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "Alert")
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Alert")
 	void AlertNotEnoughCurrency();
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "Alert")
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Alert")
 	void AlertMaxTurrets();
 };
