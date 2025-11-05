@@ -226,15 +226,7 @@ void UTurretSynergyManager::AddNewTurretDataForSynergy(ASOWCharacterTurretBase* 
 	// Glacio�� �ִٸ� ��� �ݿ�, ���ٸ� ���ۿ� �����ϴ� �뵵�Դϴ�.
 	if (ElementType == EElementalType::Ice) {
 		GlacioTurretManager->OnSynergyChanged.Broadcast(SynergyTurretCount);
-		//if (GlacioTurretManager->OnTurretSummoned.IsBound()) {
-		//	GlacioTurretManager->OnTurretSummoned.Broadcast(
-		//		SummonedTurret->GetTurretCombatComponent()->GetAffectStatType(),
-		//		SummonedTurret->GetTurretCombatComponent()->GetAffectStatValue());
-		//}
-		//// Glacio가 있든 없든 강화 스텟은 버퍼에 저장
-		//InsertAffectStatInBuffer(
-		//	SummonedTurret->GetTurretCombatComponent()->GetAffectStatType(),
-		//	SummonedTurret->GetTurretCombatComponent()->GetAffectStatValue());
+
 		RequestToUpdateGlacioAffectedStat(SummonedTurret, true);
 		
 
@@ -249,6 +241,12 @@ void UTurretSynergyManager::AddNewTurretDataForSynergy(ASOWCharacterTurretBase* 
 		}
 	}
 	AnnounceSynergyUpdate(ElementType);
+
+	UE_LOG(LogTemp, Warning, TEXT("Add Synergy Result"));
+	UE_LOG(LogTemp, Warning, TEXT("------ Composer ------"));
+	for (FName name : GetSynergyConfigurationTurrets(ElementType)) {
+		UE_LOG(LogTemp, Warning, TEXT(": %s"), *name.ToString());
+	}
 	
 }
 
@@ -307,6 +305,12 @@ void UTurretSynergyManager::RemoveTurratDataFromSynergy(ASOWCharacterTurretBase*
 		}
 	}
 	AnnounceSynergyUpdate(ElementType);
+
+	UE_LOG(LogTemp, Warning, TEXT("Remove Synergy Result"));
+	UE_LOG(LogTemp, Warning, TEXT("------ Composer ------"));
+	for (FName name : GetSynergyConfigurationTurrets(ElementType)) {
+		UE_LOG(LogTemp, Warning, TEXT(": %s"), *name.ToString());
+	}
 	
 }
 
