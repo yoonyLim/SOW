@@ -13,6 +13,11 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSynergyTurretDeathDelegate, EGla
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPropertyConditionChecked, bool, HasChecked);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTurretSacrificedStatusAnnounced, ASOWCharacterTurretBase*, InTurret, float, NewAttack);
+
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTurretSacrificedDeadAnnounced, ASOWCharacterTurretBase*, InTurret);
+
 /**
  * 
  */
@@ -33,5 +38,11 @@ public:
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FPropertyConditionChecked OnBetaConditionCheck;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnTurretSacrificedStatusAnnounced OnTurretSacrificedStatusAnnounced;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnTurretSacrificedDeadAnnounced OnTurretSacrificedDeadAnnounced;
 	
 };

@@ -193,6 +193,8 @@ namespace SOWGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_RestoreMovement, "Shared.SetByCaller.RestoreMovement");
 
 	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_ChillSlow, "Shared.SetByCaller.ChillSlow");
+
+	UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_TakeSacrificedStatus, "Shared.SetByCaller.TakeSacrificedStatus");
 	
 
 	UE_DEFINE_GAMEPLAY_TAG(World_Event_WaveStart, "World.Event.WaveStart");
