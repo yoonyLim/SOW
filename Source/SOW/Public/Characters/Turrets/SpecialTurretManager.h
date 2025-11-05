@@ -16,6 +16,10 @@ class ASOWCharacterTurretBase;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSynergyTurretDelegate, EGlacioStatType, StatType, float, value);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSynergyTurretCountChangedDelegate, int, SynergyCount);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTurretSacrificedStatus, FString, InTurret, float, NewAttack);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTurretSacrificedDead, FString, InTurret);
 /**
  * 
  */
@@ -44,6 +48,12 @@ public:
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnSynergyTurretCountChangedDelegate OnSynergyChanged;
 
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnTurretSacrificedStatus OnTurretSacrificedStatus;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnTurretSacrificedDead OnTurretSacrificedDead;
+
 	ASOWCharacterTurretBase* GetGlacio();
 protected:
 	// �۶�ÿ� �ͷ� ������ ���� Ŭ���� �����Դϴ�.
@@ -58,6 +68,12 @@ protected:
 	// �۶�ÿ� ���� �� ���� ó���� ���� �ݹ��Լ��Դϴ�. OnSynergyChanged�� ���ε��Ǿ� �ֽ��ϴ�.
 	UFUNCTION()
 	void ProcessGlacio(int SynergyCount);
+
+	/*UFUNCTION()
+	void AnnounceSacrificedTurretData(ASOWCharacterTurretBase* InTurret, float NewAttack);
+
+	UFUNCTION()
+	void AnnounceSacrificedTurretDead(ASOWCharacterTurretBase* InTurret);*/
 
 	UFUNCTION(BlueprintCallable)
 	void RequestToApplyPropertyCondition(FGameplayTag ConditionTag);
