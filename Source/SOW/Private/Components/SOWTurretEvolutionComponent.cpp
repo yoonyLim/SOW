@@ -56,9 +56,18 @@ void USOWTurretEvolutionComponent::GetPropertyResourceString(FString& OutCurrenc
 	float PriceValue = FoundCurve_Price->Eval(EvolutionPropertyLevel + 1);
 	float PercentValue = FoundCurve_Percent->Eval(EvolutionPropertyLevel + 1);
 
-	OutCurrency = FString::FromInt(PriceValue);
-	OutPercentage = TEXT("강화 확률") " : " + FString::FromInt(PercentValue) + "%";
+	if (PercentValue != 0) {
+		OutCurrency = FString::FromInt(PriceValue);
+		OutPercentage = TEXT("강화 확률") " : " + FString::FromInt(PercentValue) + "%";
+	}
+	else {
+		OutCurrency = "-";
+		OutPercentage = TEXT("강화 불가");
+	}
+
+
 }
+	
 
 void USOWTurretEvolutionComponent::GetStatusResourceString(FString& OutCurrency, FString& OutPercentage)
 {
@@ -221,6 +230,77 @@ void USOWTurretEvolutionComponent::TryEvolution(EEvolutionType Type)
 	//UE_LOG(LogTemp, Wa, TEXT("Evolution Successed"));
 }
 
+void USOWTurretEvolutionComponent::ForceEvolution(EEvolutionType Type)
+{
+	// 일반적으로 사용하지 않는 함수입니다.
+	// Glocio 전용으로 표기를 목적으로 생성된 함수입니다.
+
+	USOWAbilitySystemComponent* ASC = CachedOwnerCharacter->GetSOWAbilitySystemComponent();
+	if (!ASC) return;
+	FGameplayEffectContextHandle CH;
+	FGameplayEffectSpecHandle ESH;
+
+	switch (Type)
+	{
+		// A,B의 경우 커브 테이블 값이 1부터 시작하므로 미리 증가시킨 뒤 수행
+	case EEvolutionType::EVO_ALPHA:
+		ESH = ASC->MakeOutgoingSpec(AlphaData, ++EvolutionStatusLevel, CH);
+		ASC->ApplyGameplayEffectSpecToSelf(*ESH.Data.Get());
+
+		if (OnAlphaEvolutionSucceed.IsBound())
+			OnAlphaEvolutionSucceed.Broadcast(true);
+
+		CurrencySpentForStat = 0;
+		break;
+	case EEvolutionType::EVO_BETA:
+		ESH = ASC->MakeOutgoingSpec(BetaData, ++EvolutionStatusLevel, CH);
+		ASC->ApplyGameplayEffectSpecToSelf(*ESH.Data.Get());
+
+		if (OnBetaEvolutionSucceed.IsBound())
+			OnBetaEvolutionSucceed.Broadcast(true);
+
+		CurrencySpentForStat = 0;
+		break;
+	case EEvolutionType::EVO_PROP:
+		// P의 경우 배열 인덱스가 0부터 시작하므로 받은 뒤 증가
+		if (UDA_TurretEvolutionData* Data = PropertyData[EvolutionPropertyLevel].EvolutionDataAsset.LoadSynchronous()) {
+			Data->GiveToAbilitySystemComponent(ASC);
+
+			if (OnPropEvolutionSucceed.IsBound())
+				OnPropEvolutionSucceed.Broadcast(true);
+
+			CurrencySpentForProp = 0;
+			EvolutionPropertyLevel++;
+		}
+		break;
+	default:
+		UE_LOG(LogTemp, Error, TEXT("Invalid Evolution Type"));
+		break;
+	}
+}
+
+void USOWTurretEvolutionComponent::RollbackForceEvolution(EEvolutionType Type)
+{
+	// 일반적으로 사용하지 않는 함수입니다.
+	// Glocio 전용으로 표기를 목적으로 생성된 함수입니다.
+
+	USOWAbilitySystemComponent* ASC = CachedOwnerCharacter->GetSOWAbilitySystemComponent();
+	if (!ASC) return;
+
+	switch (Type)
+	{
+		case EEvolutionType::EVO_PROP:
+			if (OnPropEvolutionSucceed.IsBound())
+				OnPropEvolutionSucceed.Broadcast(true);
+
+			EvolutionPropertyLevel--;
+			break;
+		default:
+			UE_LOG(LogTemp, Error, TEXT("Invalid Evolution Type"));
+			break;
+	}
+}
+
 bool USOWTurretEvolutionComponent::CheckResourceAndProb(EEvolutionType Type)
 {
 
@@ -235,6 +315,8 @@ bool USOWTurretEvolutionComponent::CheckResourceAndProb(EEvolutionType Type)
 
 		float PriceValue = FoundCurve_Price->Eval(EvolutionPropertyLevel + 1);
 		float PercentValue = FoundCurve_Percent->Eval(EvolutionPropertyLevel + 1);
+
+		if (PercentValue == 0) return false;
 
 		if (!USOWBlueprintFunctionLibrary::QueryForCurrencyCountSufficient(this, FGameplayTag::RequestGameplayTag("Shared.Element.Nature"), PriceValue)) {
 			UE_LOG(LogTemp, Error, TEXT("PriceValue Condition Failed"));

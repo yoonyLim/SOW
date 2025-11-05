@@ -49,7 +49,7 @@ void USOWTurretCombatComponent::BeginPlay()
 
 float USOWTurretCombatComponent::GetAttackCooldownTimeFromOwner() const
 {
-	bool bIsFixedCooldown = (AbilityTagToActivation == SOWGameplayTags::Turret_Ability_Attack);
+	bool bIsFixedCooldown = !(AbilityTagToActivation == SOWGameplayTags::Turret_Ability_Attack);
 
 	float CooldownBase = CachedOwnerCharacter->GetAttackCooldownTime();
 
@@ -69,7 +69,7 @@ float USOWTurretCombatComponent::GetAttackCooldownTimeFromOwner() const
 		CooldownBase = 0.25f;
 	}
 
-	return CooldownBase < 0.2f ? 0.2: CooldownBase;
+	return CooldownBase < 0.2f ? 0.2f: CooldownBase;
 }
 
 void USOWTurretCombatComponent::ClearTargetDetectionAsDead()
