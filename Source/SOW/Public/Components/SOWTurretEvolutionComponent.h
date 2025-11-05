@@ -97,6 +97,12 @@ private:
 	UFUNCTION()
 	void TryEvolution(EEvolutionType Type);
 
+	UFUNCTION(BlueprintCallable)
+	void ForceEvolution(EEvolutionType Type);
+
+	UFUNCTION(BlueprintCallable)
+	void RollbackForceEvolution(EEvolutionType Type);
+
 	bool CheckResourceAndProb(EEvolutionType Type);
 
 	void MakeAndSendEvolutionLog();
