@@ -30,8 +30,8 @@ void USpecialTurretManager::Initialize(TSubclassOf<ASOWCharacterTurretSpecialBas
 
     OnSynergyChanged.AddDynamic(this, &USpecialTurretManager::ProcessGlacio);
 
-    OnTurretSacrificedStatus.AddDynamic(this, &USpecialTurretManager::AnnounceSacrificedTurretData);
-    OnTurretSacrificedDead.AddDynamic(this, &USpecialTurretManager::AnnounceSacrificedTurretDead);
+    //OnTurretSacrificedStatus.AddDynamic(this, &USpecialTurretManager::AnnounceSacrificedTurretData);
+   // OnTurretSacrificedDead.AddDynamic(this, &USpecialTurretManager::AnnounceSacrificedTurretDead);
 }
 
 void USpecialTurretManager::SummonGlacio()
@@ -122,23 +122,23 @@ void USpecialTurretManager::ProcessGlacio(int SynergyCount)
 
 }
 
-void USpecialTurretManager::AnnounceSacrificedTurretData(ASOWCharacterTurretBase* InTurret, float NewAttack)
-{
-    if (!IsValid(InTurret)) { return; }
-
-    if (IsValid(SummonedGlacio)) {
-        SummonedGlacio->OnTurretSacrificedStatusAnnounced.Broadcast(InTurret, NewAttack);
-    }
-}
-
-void USpecialTurretManager::AnnounceSacrificedTurretDead(ASOWCharacterTurretBase* InTurret)
-{
-    if (!IsValid(InTurret)) { return; }
-
-    if (IsValid(SummonedGlacio)) {
-        SummonedGlacio->OnTurretSacrificedDeadAnnounced.Broadcast(InTurret);
-    }
-}
+//void USpecialTurretManager::AnnounceSacrificedTurretData(ASOWCharacterTurretBase* InTurret, float NewAttack)
+//{
+//    if (!IsValid(InTurret)) { return; }
+//
+//    if (IsValid(SummonedGlacio)) {
+//        SummonedGlacio->OnTurretSacrificedStatusAnnounced.Broadcast(InTurret, NewAttack);
+//    }
+//}
+//
+//void USpecialTurretManager::AnnounceSacrificedTurretDead(ASOWCharacterTurretBase* InTurret)
+//{
+//    if (!IsValid(InTurret)) { return; }
+//
+//    if (IsValid(SummonedGlacio)) {
+//        SummonedGlacio->OnTurretSacrificedDeadAnnounced.Broadcast(InTurret);
+//    }
+//}
 
 void USpecialTurretManager::RequestToApplyPropertyCondition(FGameplayTag ConditionTag)
 {

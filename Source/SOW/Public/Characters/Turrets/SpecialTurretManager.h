@@ -69,11 +69,11 @@ protected:
 	UFUNCTION()
 	void ProcessGlacio(int SynergyCount);
 
-	UFUNCTION()
+	/*UFUNCTION()
 	void AnnounceSacrificedTurretData(ASOWCharacterTurretBase* InTurret, float NewAttack);
 
 	UFUNCTION()
-	void AnnounceSacrificedTurretDead(ASOWCharacterTurretBase* InTurret);
+	void AnnounceSacrificedTurretDead(ASOWCharacterTurretBase* InTurret);*/
 
 	UFUNCTION(BlueprintCallable)
 	void RequestToApplyPropertyCondition(FGameplayTag ConditionTag);
