@@ -163,3 +163,58 @@ bool USummonManager::TurretSummon(FSummonData TurretData)
 	return false;
 }
 
+bool USummonManager::TurretSummonOnCertainTile(FSummonData TurretData, AActor* Tile)
+{
+	FSummonData TurretToSummon = TurretData;
+
+	ASOWPlayerController* SOWPC = Cast<ASOWPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	ATileBase* TargetTile = Cast<ATileBase>(Tile);
+
+	SOWPC->GetTileMap();
+
+	if (TargetTile->TileState == ETileSummonState::Available)
+	{
+		FVector SpawnLoc = TargetTile->GetActorLocation();
+		SpawnLoc.Z += 5.f;
+
+		FRotator SpawnRotator(0.f, 180.f, 0.f);
+
+		FActorSpawnParameters Params;
+		Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+		Params.Owner = SOWPC;
+		Params.Instigator = SOWPC->GetPawn();
+
+		ASOWCharacterTurretBase* NewTurret = GetWorld()->SpawnActor<ASOWCharacterTurretBase>(TurretToSummon.TurretClass, SpawnLoc, SpawnRotator, Params);
+
+
+		// added by pgh
+		// possess AIController to Summoning Turret
+		if (NewTurret)
+		{
+			// AIController�� �����ϰ� ����
+			if (!NewTurret->GetController())
+			{
+				AAIController* AIController = GetWorld()->SpawnActor<AAIController>(
+					AAIController::StaticClass(),
+					SpawnLoc,
+					SpawnRotator
+				);
+
+				if (AIController)
+				{
+					AIController->Possess(NewTurret);
+				}
+			}
+		}
+			// end possessing code
+
+		TargetTile->TileState = ETileSummonState::Occupied;
+
+		OnSummonTurret.Broadcast(TurretToSummon);
+
+		return true;
+	}
+
+	return false;
+}
+

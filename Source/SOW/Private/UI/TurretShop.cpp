@@ -134,17 +134,17 @@ void UTurretShop::RNGTurret()
 
 void UTurretShop::OpenOriginShop()
 {
-	for (UTurretShopBox* ShopBox : ShopBoxes)
-	{
-		ShopBox->SetVisibility(ESlateVisibility::Collapsed);
-	}
+	//for (UTurretShopBox* ShopBox : ShopBoxes)
+	//{
+	//	ShopBox->SetVisibility(ESlateVisibility::Collapsed);
+	//}
 
-	FSummonData TurretData = SM->RNGOriginTurret();
-	ShopBox5->InitWidget(TurretData);
+	//FSummonData TurretData = SM->RNGOriginTurret();
+	//ShopBox5->InitWidget(TurretData);
 
-	ShopBox5->SetVisibility(ESlateVisibility::Visible);
+	//ShopBox5->SetVisibility(ESlateVisibility::Visible);
 
-	TXT_RerollCost->SetText(FText::FromString("-"));
+	//TXT_RerollCost->SetText(FText::FromString("-"));
 }
 
 void UTurretShop::CloseOriginShop()
