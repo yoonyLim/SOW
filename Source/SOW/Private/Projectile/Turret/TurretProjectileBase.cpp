@@ -61,7 +61,7 @@ void ATurretProjectileBase::Tick(float DeltaTime) {
 void ATurretProjectileBase::FaceToTargetActor() {
 	if (!HasMovement) return;
 
-	if (bHitDone || !IsValid(TargetActor) || USOWBlueprintFunctionLibrary::DoesActorHasTag(TargetActor, SOWGameplayTags::Shared_Status_Dead)) {
+	if (bHitDone || !IsValid(TargetActor) || TargetActor->IsPendingKillPending() || USOWBlueprintFunctionLibrary::DoesActorHasTag(TargetActor, SOWGameplayTags::Shared_Status_Dead)) {
 		
 		SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, ZPosWhenTargetInvalid));
 		ProjectileMoveComp->Velocity = FVector(ProjectileMoveComp->Velocity.X, ProjectileMoveComp->Velocity.Y, 0.f);

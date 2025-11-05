@@ -61,9 +61,8 @@ bool USOWBlueprintFunctionLibrary::NativeDoesActorHasTag(AActor* InActor, FGamep
         return false;
     }
 
-  
 
-    if (!IsValid(InActor) || InActor->IsPendingKillPending())
+    if (InActor->IsPendingKillPending())
         return false;
 
     if (!UKismetSystemLibrary::DoesImplementInterface(InActor, USOWCharacterTypeInterface::StaticClass()))
@@ -104,7 +103,10 @@ bool USOWBlueprintFunctionLibrary::DoesActorHasTag(AActor* InActor, FGameplayTag
     //}
 
     //return NativeDoesActorHasTag(InActor, InActorTag);
-    if (!IsValid(InActor) || InActor->IsPendingKillPending() || !InActorTag.IsValid())
+    if (!IsValid(InActor) || !InActorTag.IsValid())
+        return false;
+
+    if (InActor->IsPendingKillPending())
         return false;
 
     if (!UKismetSystemLibrary::DoesImplementInterface(InActor, USOWCharacterTypeInterface::StaticClass()))
@@ -639,7 +641,7 @@ TArray<AActor*> USOWBlueprintFunctionLibrary::GetActorsOnTiles(TArray<ATileBase*
         TArray<AActor*> OverlappedActors;
 
         FVector TileCenter = tile->GetActorLocation(); 
-        float HalfExtent = (GetWorldTileSizeFromInstance(UGameplayStatics::GetPlayerController(tile->GetWorld(), 0)) / 2.f) - 10.f;
+        float HalfExtent = (GetWorldTileSizeFromInstance(UGameplayStatics::GetPlayerController(tile->GetWorld(), 0)) / 2.f) - 25.f;
         float Height = 400.f;                          
         FCollisionShape BoxShape = FCollisionShape::MakeBox(FVector(HalfExtent, HalfExtent, Height));
 
