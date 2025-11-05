@@ -142,8 +142,25 @@ void ASOWCharacterCoreRune::OnHealthChanged(const FOnAttributeChangeData &Data)
 
 		if (HitCameraShake)
 		{
-			GetWorld()->GetFirstPlayerController()->ClientStartCameraShake(HitCameraShake);
+			// UE_LOG(LogTemp, Error, TEXT("Camera Shake"));
+
+			if (APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0))
+			{
+				if (APlayerCameraManager* CameraManager = PlayerController->PlayerCameraManager)
+				{
+					// UE_LOG(LogTemp, Error, TEXT("Camera Shake"));
+					CameraManager->StartCameraShake(HitCameraShake);
+				}
+				/*else
+				{
+					UE_LOG(LogTemp, Error, TEXT("no Camera Shake"));
+				}*/
+			}
 		}
+		/*else
+		{
+			UE_LOG(LogTemp, Error, TEXT("No Camera Shake"));
+		}*/
 	}
 	
 	// 체력바 갱신 (EnemyBase의 UpdateHealthBarValue 로직과 동일, )
