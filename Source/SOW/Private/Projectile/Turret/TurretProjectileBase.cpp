@@ -121,7 +121,7 @@ void ATurretProjectileBase::OnCollisionHit(UPrimitiveComponent* OverlappedCompon
 
 	OverlappedActors.AddUnique(OtherActor);
 
-	ZPosWhenTargetInvalid = OtherActor->GetActorLocation().Z;
+	ZPosWhenTargetInvalid = OtherActor->GetActorLocation().Z + 100.f;
 
 	// Apply Damage or Process After Effect like Gradual reinforcement
 	//bHitDone = true;

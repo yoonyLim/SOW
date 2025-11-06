@@ -96,6 +96,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Input")
 	static bool IsMouseOverUI(APlayerController* PC, const TSubclassOf<USOWWidgetBase>& TargetWidget);
+
+	UFUNCTION(BlueprintCallable, Category = "Niagara")
+	static void DeactivateFXImmediately(class UNiagaraComponent* NC);
 };
 
 template <typename T>

@@ -22,6 +22,7 @@
 //#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Widget/SOWWidgetBase.h"
 #include "Slate/SObjectWidget.h"
+#include "NiagaraComponent.h"
 
 #include "Framework/Application/SlateApplication.h"
 
@@ -817,6 +818,11 @@ bool USOWBlueprintFunctionLibrary::IsMouseOverUI(APlayerController* PC, const TS
     }
 
     return false;
+}
+
+void USOWBlueprintFunctionLibrary::DeactivateFXImmediately(UNiagaraComponent* NC)
+{
+    NC->DeactivateImmediate();
 }
 
 
