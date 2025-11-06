@@ -20,11 +20,6 @@
 void UTurretShopBox::NativeConstruct()
 {
 	Super::NativeConstruct();
-
-	if (BTN_Summon)
-	{
-		BTN_Summon->OnClicked.AddDynamic(this, &UTurretShopBox::TrySummonTurret);
-	}
 }
 
 void UTurretShopBox::InitWidget(FSummonData Turret)
