@@ -183,23 +183,10 @@ void ASOWCharacterEnemyBase::BeginPlay()
 	// To initialize Game Ability Attribute
 	//AbilitySystemComponent->AddLooseGameplayTag(SOWGameplayTags::Enemy_Ability_Initialize);
 
-	float NewHealth = GetSOWAttibuteSet()->GetMaxHealthBase();
-	float MaxHealth = GetSOWAttibuteSet()->GetMaxHealthBase();
-
-	UpdateHealthBarValue(NewHealth, MaxHealth);
+	UpdateHealthBarValue(GetSOWAttibuteSet()->GetMaxHealthBase(), GetSOWAttibuteSet()->GetMaxHealthBase());
 
 	// Set Incoming Route when spawned
 	GetEnemyIncomingRouteComponent()->SetIncomingRoute(FindClosestIncomingRoute());
-
-	// Ranged Attack
-	/*if (AbilitySystemComponent)
-	{
-		static const TSubclassOf<UGameplayAbility> RangedAttackAbilityClass = UGA_Enemy_RangedAttack::StaticClass();
-		FGameplayAbilitySpec AbilitySpec(RangedAttackAbilityClass, 1);
-		AbilitySystemComponent->GiveAbility(AbilitySpec);
-
-		UE_LOG(LogTemp, Warning, TEXT("[EnemyBase] RangedAttack Ability Granted"));
-	}*/
 
 	if (AuraEffect)
 	{

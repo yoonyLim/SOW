@@ -82,6 +82,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Event Dispatcher")
 	FOnEnemyDeath OnEnemyDeath;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shard")
+	TSubclassOf<AActor> Shard;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
 	bool bShouldKeepHealthbarOn = true;
 
