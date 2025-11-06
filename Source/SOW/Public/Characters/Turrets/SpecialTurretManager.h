@@ -17,9 +17,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSynergyTurretDelegate, EGlacioSt
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSynergyTurretCountChangedDelegate, int, SynergyCount);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTurretSacrificedStatus, FString, InTurret, float, NewAttack);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTurretSacrificedStatus, float, NewAttack);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTurretSacrificedDead, FString, InTurret);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTurretSacrificedDead, float, InValue);
 /**
  * 
  */
@@ -65,6 +65,7 @@ protected:
 	TMap<FGameplayTag, int> AlphaPropertyCondition;
 	TMap<FGameplayTag, int> BetaPropertyCondition;
 
+	TMap<FString, float> SacrificedStatusMonitor;
 	// �۶�ÿ� ���� �� ���� ó���� ���� �ݹ��Լ��Դϴ�. OnSynergyChanged�� ���ε��Ǿ� �ֽ��ϴ�.
 	UFUNCTION()
 	void ProcessGlacio(int SynergyCount);
@@ -80,4 +81,13 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void RequestToRemovePropertyCondition(FGameplayTag ConditionTag);
+
+	UFUNCTION(BlueprintCallable)
+	void RequestToApplySacrificedStatus(FString TurretName, float GenValue);
+
+	UFUNCTION(BlueprintCallable)
+	void RequestToRemoveSacrificedStatus(FString TurretName);
+
+	UFUNCTION(BlueprintCallable)
+	TArray<float> RetrieveSacrificedStatusSaved();
 };

@@ -196,3 +196,36 @@ void USpecialTurretManager::RequestToRemovePropertyCondition(FGameplayTag Condit
 
     else { return; }
 }
+
+void USpecialTurretManager::RequestToApplySacrificedStatus(FString TurretName, float GenValue)
+{
+
+    if (SacrificedStatusMonitor.Contains(TurretName)) {
+        float InValue = SacrificedStatusMonitor[TurretName];
+        float TrueValue = GenValue - InValue;
+
+        SacrificedStatusMonitor.Add(TurretName, GenValue);
+        OnTurretSacrificedStatus.Broadcast(TrueValue);
+    }
+    else {
+        SacrificedStatusMonitor.Add(TurretName, GenValue);
+        OnTurretSacrificedStatus.Broadcast(GenValue);
+    }
+    
+}
+
+void USpecialTurretManager::RequestToRemoveSacrificedStatus(FString TurretName)
+{
+    if (!SacrificedStatusMonitor.Contains(TurretName)) return;
+    float InValue = SacrificedStatusMonitor[TurretName];
+
+    SacrificedStatusMonitor.Remove(TurretName);
+    OnTurretSacrificedDead.Broadcast(-InValue);
+}
+
+TArray<float> USpecialTurretManager::RetrieveSacrificedStatusSaved()
+{
+    TArray<float> OutValues;
+    SacrificedStatusMonitor.GenerateValueArray(OutValues);
+    return OutValues;
+}
