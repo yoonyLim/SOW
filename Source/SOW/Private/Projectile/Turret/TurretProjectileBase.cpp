@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Projectile/Turret/TurretProjectileBase.h"
@@ -44,46 +44,77 @@ void ATurretProjectileBase::Tick(float DeltaTime) {
 		if (CheckOutOfRange()) {
 			BP_DestroyProjectile();
 		}
-
 		FaceToTargetActor();
-		//FaceToTargetActor();
-
-		/*if (bHitOnce && (!IsValid(TargetActor) || (Cast<ASOWCharacter>(TargetActor) && USOWBlueprintFunctionLibrary::DoesActorHasTag(TargetActor, SOWGameplayTags::Shared_Status_Dead)))) {
-			BP_DestroyProjectile();
-		}
-		else { 
-			
-		}*/
-		
 	}
 }
 
 void ATurretProjectileBase::FaceToTargetActor() {
 	if (!HasMovement) return;
 
-	if (bHitDone || !IsValid(TargetActor) || TargetActor->IsPendingKillPending() || USOWBlueprintFunctionLibrary::DoesActorHasTag(TargetActor, SOWGameplayTags::Shared_Status_Dead)) {
-		
-		SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, ZPosWhenTargetInvalid));
-		ProjectileMoveComp->Velocity = FVector(ProjectileMoveComp->Velocity.X, ProjectileMoveComp->Velocity.Y, 0.f);
+	if (!TargetActor) return;
+
+	//if (bHitDone || !IsValid(TargetActor) || TargetActor->IsPendingKillPending()) {
+	//	
+	//	SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, ZPosWhenTargetInvalid));
+	//	ProjectileMoveComp->Velocity = FVector(ProjectileMoveComp->Velocity.X, ProjectileMoveComp->Velocity.Y, 0.f);
+
+	//	TargetActor = nullptr;
+	//	return;
+	//} 
+
+	//if (USOWBlueprintFunctionLibrary::DoesActorHasTag(TargetActor, SOWGameplayTags::Shared_Status_Dead)) {
+	//	SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, ZPosWhenTargetInvalid));
+	//	ProjectileMoveComp->Velocity = FVector(ProjectileMoveComp->Velocity.X, ProjectileMoveComp->Velocity.Y, 0.f);
+
+	//	TargetActor = nullptr;
+	//	return;
+	//}
+
+	//if (!TargetActor) return;
+
+	//bool bValidTarget = TargetActor->Implements<USOWCharacterTypeInterface>();
+	//if (!bValidTarget) return;
+
+	////bool bTargetAlive = !USOWBlueprintFunctionLibrary::DoesActorHasTag(TargetActor, SOWGameplayTags::Shared_Status_Dead);
+
+	//FVector DirVector = (TargetActor->GetActorLocation() - GetActorLocation()).GetSafeNormal();
+
+	//ProjectileMoveComp->Velocity = DirVector * ProjectileMoveComp->InitialSpeed;
+	//SetActorRotation(DirVector.Rotation());
+
+	if (bHitDone || !IsValid(TargetActor) || TargetActor->IsPendingKillPending() ||
+		USOWBlueprintFunctionLibrary::DoesActorHasTag(TargetActor, SOWGameplayTags::Shared_Status_Dead))
+	{
+		FVector CurrentLoc = GetActorLocation();
+
+		// Z 위치 고정
+		SetActorLocation(FVector(CurrentLoc.X, CurrentLoc.Y, ZPosWhenTargetInvalid));
+
+		// 이전 속도를 기반으로 수평 벡터만 유지
+		FVector PrevVelocity = ProjectileMoveComp->Velocity;
+		PrevVelocity.Z = 0.f; // Z 하강 방지
+		ProjectileMoveComp->Velocity = PrevVelocity.GetSafeNormal() * ProjectileMoveComp->InitialSpeed;
+
+		// 마지막 회전 방향도 수평으로 보정
+		FRotator FlatRot = PrevVelocity.GetSafeNormal2D().Rotation();
+		SetActorRotation(FlatRot);
+
+		// 더 이상 타겟 추적 안 함
+		TargetActor = nullptr;
 		return;
-	} 
+	}
 
-	bool bValidTarget = TargetActor->Implements<USOWCharacterTypeInterface>();
-	if (!bValidTarget) return;
-
-	//bool bTargetAlive = !USOWBlueprintFunctionLibrary::DoesActorHasTag(TargetActor, SOWGameplayTags::Shared_Status_Dead);
 
 	FVector DirVector = (TargetActor->GetActorLocation() - GetActorLocation()).GetSafeNormal();
-
 	ProjectileMoveComp->Velocity = DirVector * ProjectileMoveComp->InitialSpeed;
 	SetActorRotation(DirVector.Rotation());
+}
 
-	/*if (bTargetAlive) {
-		
-	}
-	else {
-		
-	}*/
+void ATurretProjectileBase::InitProjectileProperties(FTransform InTransform, ETurretTargetSelectionPolicy InPolicy, FGameplayEffectSpecHandle InHandle, bool InMovement, float InSpeed, float InDuration, float InScale, AActor* InTargetActor)
+{
+	Super::InitProjectileProperties(InTransform, InPolicy, InHandle, InMovement, InSpeed, InDuration, InScale, InTargetActor);
+
+	ZPosWhenTargetInvalid = InTargetActor->GetActorLocation().Z + 50.f;
 }
 
 bool ATurretProjectileBase::CheckOutOfRange()
@@ -92,7 +123,7 @@ bool ATurretProjectileBase::CheckOutOfRange()
 	if (!GI || !IsValid(CachedInstigator.Get())) return false;
 
 	float range = CachedInstigator->GetDetectionRangeRadius();
-	float criticValue = (range + 0.5f) * GI->GetWorldTileSize(); // Tile Size : 116 -> Hard Coding / �� ���� ����
+	float criticValue = (range + 0.5f) * GI->GetWorldTileSize(); // Tile Size : 116 -> Hard Coding / 한 변의 길이
 	
 	FVector VLeft = FVector::LeftVector;
 	FVector VForward = FVector::ForwardVector;
@@ -120,8 +151,6 @@ void ATurretProjectileBase::OnCollisionHit(UPrimitiveComponent* OverlappedCompon
 	if (CachedInstigator.Get() == OtherActor || OverlappedActors.Contains(OtherActor)) return;
 
 	OverlappedActors.AddUnique(OtherActor);
-
-	ZPosWhenTargetInvalid = OtherActor->GetActorLocation().Z + 100.f;
 
 	// Apply Damage or Process After Effect like Gradual reinforcement
 	//bHitDone = true;
