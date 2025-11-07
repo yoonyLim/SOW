@@ -88,7 +88,9 @@ bool USOWTurretCombatComponent::GetStealthCheck(AActor* Target) const
 	bool CanDetectStealth = USOWBlueprintFunctionLibrary::DoesActorHasTag(CachedOwnerCharacter, SOWGameplayTags::Turret_Status_Buff_Detector);
 	bool HasDetected = USOWBlueprintFunctionLibrary::DoesActorHasTag(Target, SOWGameplayTags::Enemy_Status_Debuff_Detected);
 
-	return HasStealth && !(CanDetectStealth || HasDetected);
+	bool CanBeDetected = (!HasStealth) || (HasStealth && CanDetectStealth) || (HasStealth && HasDetected);
+
+	return !CanBeDetected;
 }
 
 
@@ -415,7 +417,7 @@ AActor* USOWTurretCombatComponent::GetSingleAttackTargetOnList(const TArray<AAct
 		//UE_LOG(LogTemp, Warning, TEXT("HighHealth / Target : %s"), *FinalTarget->GetActorNameOrLabel());
 		break;
 	case ETurretTargetSelectionPriority::LowHealth:
-		CriticValue = 10000.0f;
+		CriticValue = 10000000.0f;
 
 		for (AActor* ATarget : InTargetList) {
 			if (!IsValid(ATarget)) continue;
@@ -508,6 +510,8 @@ TArray<AActor*> USOWTurretCombatComponent::GetAllAttackTarget()
 		if (!IsValid(CurrentTarget)) break;
 
 		if (CurrentTarget == CachedOwnerCharacter) continue;
+
+		if (USOWBlueprintFunctionLibrary::DoesActorHasTag(CurrentTarget, SOWGameplayTags::Shared_Status_Dead)) continue;
 
 		if (!GetStealthCheck(CurrentTarget)) {
 			FinalTargetList.AddUnique(CurrentTarget);

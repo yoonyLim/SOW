@@ -11,12 +11,17 @@
 
 struct FAttributeCapturesPercentageDamage {
 	DECLARE_ATTRIBUTE_CAPTUREDEF(MaxHealthBase);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(AttackPowerBase);
+
+
 	DECLARE_ATTRIBUTE_CAPTUREDEF(DefensePowerBase);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(CurrentHealth);
 
 
 	FAttributeCapturesPercentageDamage() {
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, MaxHealthBase, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, AttackPowerBase, Source, false);
+
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, DefensePowerBase, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(USOWAttributeSet, CurrentHealth, Target, false);
 	}
@@ -32,6 +37,7 @@ static const FAttributeCapturesPercentageDamage& GetCapturedPropertiesPercentage
 UGEEC_CalculatePercentageDamage::UGEEC_CalculatePercentageDamage()
 {
 	RelevantAttributesToCapture.Add(GetCapturedPropertiesPercentageDamage().MaxHealthBaseDef);
+	RelevantAttributesToCapture.Add(GetCapturedPropertiesPercentageDamage().AttackPowerBaseDef);
 	RelevantAttributesToCapture.Add(GetCapturedPropertiesPercentageDamage().DefensePowerBaseDef);
 	RelevantAttributesToCapture.Add(GetCapturedPropertiesPercentageDamage().CurrentHealthDef);
 
@@ -53,6 +59,13 @@ void UGEEC_CalculatePercentageDamage::Execute_Implementation(const FGameplayEffe
 		TargetMaxHealth
 	);
 
+	float SourceAttack = 0.f;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
+		GetCapturedPropertiesPercentageDamage().AttackPowerBaseDef,
+		EvalParams,
+		SourceAttack
+	);
+
 
 	// Base Defense Power
 	float L_DefensePower = 0.f;
@@ -68,6 +81,9 @@ void UGEEC_CalculatePercentageDamage::Execute_Implementation(const FGameplayEffe
 	// Calculate Final Damage
 	float L_FinalDamage = TargetMaxHealth * Percentage - FMath::Log2(2 + L_DefensePower);
 	L_FinalDamage = FMath::Floor(L_FinalDamage) < 1.f ? 1.f : FMath::Floor(L_FinalDamage);
+
+	// 퍼템의 상한은 공격자의 공격력의 500%를 넘을 수 없도록 변경
+	L_FinalDamage = L_FinalDamage > 5 * SourceAttack ? 5 * SourceAttack : L_FinalDamage;
 
 	// Send HitReact Event To Target
 	AActor* Target = ExecutionParams.GetTargetAbilitySystemComponent()->GetAvatarActor();
