@@ -353,6 +353,8 @@ void ASOWCharacterEnemyBase::OnBeginOverlap(UPrimitiveComponent* OverlappedComp,
 		// UE_LOG(LogTemp, Warning, TEXT("Rune Overlapped"))
 
 		ShardDropAmount = 0;
+
+		HealthBarWidget->SetHiddenInGame(true);
 		
 		FGameplayEffectContextHandle EffectContext = USOWBlueprintFunctionLibrary::NativeGetSOWAbilitySystemComponentFromActorInfo(this)->MakeEffectContext();
 		EffectContext.AddSourceObject(this);
