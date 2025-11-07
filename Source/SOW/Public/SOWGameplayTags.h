@@ -34,6 +34,7 @@ namespace SOWGameplayTags {
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Buff_Stealth);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Buff_RangedResistance);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Buff_MeleeResistance);
+	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Buff_Invincible);
 
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Debuff_Taunted);
 	SOW_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Enemy_Status_Debuff_Slow);
