@@ -214,6 +214,8 @@ USOWEnemyUIComponent* ASOWCharacterEnemyBase::GetEnemyUIComponent() const
 
 void ASOWCharacterEnemyBase::OnHealthChanged(const FOnAttributeChangeData& Data)
 {
+	if (bIsDead) return;
+	
 	if (GetWorldTimerManager().IsTimerActive(HideHealthBarHandle))
 		GetWorldTimerManager().ClearTimer(HideHealthBarHandle);
 
@@ -233,6 +235,7 @@ void ASOWCharacterEnemyBase::OnHealthChanged(const FOnAttributeChangeData& Data)
 	if (NewHealth <= 0 && !bIsDead)
 	{
 		BroadcastEnemyDeath();
+		HealthBarWidget->SetHiddenInGame(true);
 		bIsDead = true;
 	}
 
@@ -281,7 +284,7 @@ AEnemyIncomingRoute* ASOWCharacterEnemyBase::FindClosestIncomingRoute() const
 
 	if (!TileSpawner)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Enemy '%s': ATileSpawner not found in the world! Cannot find routes."), *GetName());
+		// UE_LOG(LogTemp, Error, TEXT("Enemy '%s': ATileSpawner not found in the world! Cannot find routes."), *GetName());
 		return nullptr;
 	}
 
@@ -290,7 +293,7 @@ AEnemyIncomingRoute* ASOWCharacterEnemyBase::FindClosestIncomingRoute() const
 
 	if (AvailableRoutes.Num() == 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Enemy '%s': No incoming routes registered by ATileSpawner."), *GetName());
+		// UE_LOG(LogTemp, Warning, TEXT("Enemy '%s': No incoming routes registered by ATileSpawner."), *GetName());
 		return nullptr;
 	}
 
@@ -318,11 +321,11 @@ AEnemyIncomingRoute* ASOWCharacterEnemyBase::FindClosestIncomingRoute() const
 		}
 	}
 
-	if (ClosestRoute)
+	/*if (ClosestRoute)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Enemy '%s' chose closest route: '%s' (Squared Distance: %f)"), 
 			*GetName(), *ClosestRoute->GetName(), MinSquaredDistance);
-	}
+	}*/
 
 	return ClosestRoute;
 }
@@ -393,8 +396,8 @@ void ASOWCharacterEnemyBase::Attack(const ASOWCharacter* TargetActor)
 
 void ASOWCharacterEnemyBase::BroadcastEnemyDeath()
 {
-	int ShardAmount = FMath::Clamp(FMath::RandRange(ShardDropAmount - ShardDropAmountVariation, ShardDropAmount + ShardDropAmountVariation) , 0, ShardDropAmount + ShardDropAmountVariation);
-	OnEnemyDeath.Broadcast(ShardAmount, GetClass());
+	// int ShardAmount = FMath::Clamp(FMath::RandRange(ShardDropAmount - ShardDropAmountVariation, ShardDropAmount + ShardDropAmountVariation) , 0, ShardDropAmount + ShardDropAmountVariation);
+	OnEnemyDeath.Broadcast(ShardDropAmount, GetClass());
 
 	if (EnemyDeathSound)
 		UGameplayStatics::PlaySoundAtLocation(this, EnemyDeathSound, GetActorLocation());
