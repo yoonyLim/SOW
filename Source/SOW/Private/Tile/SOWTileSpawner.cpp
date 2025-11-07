@@ -139,10 +139,10 @@ void ASOWTileSpawner::BeginPlay()
 			Volume->GetRootComponent()->SetWorldScale3D(Extent);
 	}
 
-	if (UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld()))
+	/*if (UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld()))
 	{
 		NavSys->Build();
-	}
+	}*/
 
 	USOWGameInstance* GI = Cast<USOWGameInstance>(GetGameInstance());
 	GI->SetWorldTileSize(TileWidth);

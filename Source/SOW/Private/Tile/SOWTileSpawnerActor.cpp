@@ -114,7 +114,7 @@ void ATileSpawner::BeginPlay()
 		2000.0f
 	);
 
-	ANavMeshBoundsVolume* Volume = nullptr;
+	/*ANavMeshBoundsVolume* Volume = nullptr;
 	for (TActorIterator<ANavMeshBoundsVolume> It(GetWorld()); It; ++It)
 	{
 		Volume = *It;
@@ -139,7 +139,7 @@ void ATileSpawner::BeginPlay()
 	if (UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld()))
 	{
 		NavSys->Build();
-	}
+	}*/
 
 	USOWGameInstance* GI = Cast<USOWGameInstance>(GetGameInstance());
 	GI->SetWorldTileSize(TileWidth);

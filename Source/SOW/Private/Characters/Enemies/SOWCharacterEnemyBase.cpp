@@ -183,23 +183,10 @@ void ASOWCharacterEnemyBase::BeginPlay()
 	// To initialize Game Ability Attribute
 	//AbilitySystemComponent->AddLooseGameplayTag(SOWGameplayTags::Enemy_Ability_Initialize);
 
-	float NewHealth = GetSOWAttibuteSet()->GetMaxHealthBase();
-	float MaxHealth = GetSOWAttibuteSet()->GetMaxHealthBase();
-
-	UpdateHealthBarValue(NewHealth, MaxHealth);
+	UpdateHealthBarValue(GetSOWAttibuteSet()->GetMaxHealthBase(), GetSOWAttibuteSet()->GetMaxHealthBase());
 
 	// Set Incoming Route when spawned
 	GetEnemyIncomingRouteComponent()->SetIncomingRoute(FindClosestIncomingRoute());
-
-	// Ranged Attack
-	/*if (AbilitySystemComponent)
-	{
-		static const TSubclassOf<UGameplayAbility> RangedAttackAbilityClass = UGA_Enemy_RangedAttack::StaticClass();
-		FGameplayAbilitySpec AbilitySpec(RangedAttackAbilityClass, 1);
-		AbilitySystemComponent->GiveAbility(AbilitySpec);
-
-		UE_LOG(LogTemp, Warning, TEXT("[EnemyBase] RangedAttack Ability Granted"));
-	}*/
 
 	if (AuraEffect)
 	{
@@ -227,6 +214,8 @@ USOWEnemyUIComponent* ASOWCharacterEnemyBase::GetEnemyUIComponent() const
 
 void ASOWCharacterEnemyBase::OnHealthChanged(const FOnAttributeChangeData& Data)
 {
+	if (bIsDead) return;
+	
 	if (GetWorldTimerManager().IsTimerActive(HideHealthBarHandle))
 		GetWorldTimerManager().ClearTimer(HideHealthBarHandle);
 
@@ -246,6 +235,7 @@ void ASOWCharacterEnemyBase::OnHealthChanged(const FOnAttributeChangeData& Data)
 	if (NewHealth <= 0 && !bIsDead)
 	{
 		BroadcastEnemyDeath();
+		HealthBarWidget->SetHiddenInGame(true);
 		bIsDead = true;
 	}
 
@@ -294,7 +284,7 @@ AEnemyIncomingRoute* ASOWCharacterEnemyBase::FindClosestIncomingRoute() const
 
 	if (!TileSpawner)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Enemy '%s': ATileSpawner not found in the world! Cannot find routes."), *GetName());
+		// UE_LOG(LogTemp, Error, TEXT("Enemy '%s': ATileSpawner not found in the world! Cannot find routes."), *GetName());
 		return nullptr;
 	}
 
@@ -303,7 +293,7 @@ AEnemyIncomingRoute* ASOWCharacterEnemyBase::FindClosestIncomingRoute() const
 
 	if (AvailableRoutes.Num() == 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Enemy '%s': No incoming routes registered by ATileSpawner."), *GetName());
+		// UE_LOG(LogTemp, Warning, TEXT("Enemy '%s': No incoming routes registered by ATileSpawner."), *GetName());
 		return nullptr;
 	}
 
@@ -331,11 +321,11 @@ AEnemyIncomingRoute* ASOWCharacterEnemyBase::FindClosestIncomingRoute() const
 		}
 	}
 
-	if (ClosestRoute)
+	/*if (ClosestRoute)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Enemy '%s' chose closest route: '%s' (Squared Distance: %f)"), 
 			*GetName(), *ClosestRoute->GetName(), MinSquaredDistance);
-	}
+	}*/
 
 	return ClosestRoute;
 }
@@ -363,6 +353,8 @@ void ASOWCharacterEnemyBase::OnBeginOverlap(UPrimitiveComponent* OverlappedComp,
 		// UE_LOG(LogTemp, Warning, TEXT("Rune Overlapped"))
 
 		ShardDropAmount = 0;
+
+		HealthBarWidget->SetHiddenInGame(true);
 		
 		FGameplayEffectContextHandle EffectContext = USOWBlueprintFunctionLibrary::NativeGetSOWAbilitySystemComponentFromActorInfo(this)->MakeEffectContext();
 		EffectContext.AddSourceObject(this);
@@ -406,8 +398,8 @@ void ASOWCharacterEnemyBase::Attack(const ASOWCharacter* TargetActor)
 
 void ASOWCharacterEnemyBase::BroadcastEnemyDeath()
 {
-	int ShardAmount = FMath::Clamp(FMath::RandRange(ShardDropAmount - ShardDropAmountVariation, ShardDropAmount + ShardDropAmountVariation) , 0, ShardDropAmount + ShardDropAmountVariation);
-	OnEnemyDeath.Broadcast(ShardAmount, GetClass());
+	// int ShardAmount = FMath::Clamp(FMath::RandRange(ShardDropAmount - ShardDropAmountVariation, ShardDropAmount + ShardDropAmountVariation) , 0, ShardDropAmount + ShardDropAmountVariation);
+	OnEnemyDeath.Broadcast(ShardDropAmount, GetClass());
 
 	if (EnemyDeathSound)
 		UGameplayStatics::PlaySoundAtLocation(this, EnemyDeathSound, GetActorLocation());
