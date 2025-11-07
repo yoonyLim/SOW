@@ -88,7 +88,9 @@ bool USOWTurretCombatComponent::GetStealthCheck(AActor* Target) const
 	bool CanDetectStealth = USOWBlueprintFunctionLibrary::DoesActorHasTag(CachedOwnerCharacter, SOWGameplayTags::Turret_Status_Buff_Detector);
 	bool HasDetected = USOWBlueprintFunctionLibrary::DoesActorHasTag(Target, SOWGameplayTags::Enemy_Status_Debuff_Detected);
 
-	return HasStealth && !(CanDetectStealth || HasDetected);
+	bool CanBeDetected = (!HasStealth) || (HasStealth && CanDetectStealth) || (HasStealth && HasDetected);
+
+	return !CanBeDetected;
 }
 
 
