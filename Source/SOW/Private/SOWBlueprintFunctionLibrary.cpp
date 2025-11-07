@@ -686,7 +686,7 @@ TArray<AActor*> USOWBlueprintFunctionLibrary::GetTurretsOnTiles(TArray<ATileBase
         TArray<AActor*> OverlappedActors;
 
         FVector TileCenter = tile->GetActorLocation();
-        float HalfExtent = 125.f;
+        float HalfExtent = (GetWorldTileSizeFromInstance(UGameplayStatics::GetPlayerController(tile->GetWorld(), 0)) / 2.f) - 25.f;
         float Height = 800.f;
         FCollisionShape BoxShape = FCollisionShape::MakeBox(FVector(HalfExtent, HalfExtent, Height));
 
@@ -725,9 +725,11 @@ TArray<AActor*> USOWBlueprintFunctionLibrary::GetTurretsOnTiles(TArray<ATileBase
             for (auto& Result : Overlaps)
             {
                 AActor* HitActor = Result.GetActor();
-                if (IsValid(HitActor))
+                ASOWCharacterTurretBase* InTurret = Cast<ASOWCharacterTurretBase>(HitActor);
+
+                if (InTurret && IsValid(InTurret))
                 {
-                    OnTileActors.AddUnique(HitActor);
+                    OnTileActors.AddUnique(InTurret);
                 }
 
 
