@@ -10,6 +10,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Engine/DataTable.h"
 #include "Engine/CurveTable.h"
+#include "AbilitySystemBlueprintLibrary.h"
 
 // Sets default values for this component's properties
 USOWTurretEvolutionComponent::USOWTurretEvolutionComponent()
@@ -227,6 +228,8 @@ void USOWTurretEvolutionComponent::TryEvolution(EEvolutionType Type)
 		UE_LOG(LogTemp, Error, TEXT("Invalid Evolution Type"));
 		break;
 	}
+
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(CachedOwnerCharacter, SOWGameplayTags::Turret_Event_EvolutionSuccessed, FGameplayEventData());
 	//UE_LOG(LogTemp, Wa, TEXT("Evolution Successed"));
 }
 
@@ -277,6 +280,8 @@ void USOWTurretEvolutionComponent::ForceEvolution(EEvolutionType Type)
 		UE_LOG(LogTemp, Error, TEXT("Invalid Evolution Type"));
 		break;
 	}
+
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(CachedOwnerCharacter, SOWGameplayTags::Turret_Event_EvolutionSuccessed, FGameplayEventData());
 }
 
 void USOWTurretEvolutionComponent::RollbackForceEvolution(EEvolutionType Type)

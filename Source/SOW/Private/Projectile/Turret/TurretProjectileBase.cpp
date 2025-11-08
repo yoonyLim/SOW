@@ -132,8 +132,9 @@ bool ATurretProjectileBase::CheckOutOfRange()
 
 	float LeftProj = FMath::Abs(FVector::DotProduct(VLeft, PosVector));
 	float ForwardProj = FMath::Abs(FVector::DotProduct(VForward, PosVector));
+	float HeightProj = FMath::Abs(FVector::DotProduct(FVector(0,0,1.f), PosVector));
 
-	return (LeftProj >= criticValue) || (ForwardProj >= criticValue);
+	return (LeftProj >= criticValue) || (ForwardProj >= criticValue) || (HeightProj >= criticValue);
 
 }
 

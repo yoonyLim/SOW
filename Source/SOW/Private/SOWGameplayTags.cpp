@@ -133,6 +133,9 @@ namespace SOWGameplayTags
 
 	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_AffectStatUp, "Turret.Event.AffectStatUp");
 
+	UE_DEFINE_GAMEPLAY_TAG(Turret_Event_EvolutionSuccessed, "Turret.Event.EvolutionSuccessed");
+
+
 
 	UE_DEFINE_GAMEPLAY_TAG(Rune_SetByCaller_HealBySynergy, "Rune.SetByCaller.HealBySynergy");
 
