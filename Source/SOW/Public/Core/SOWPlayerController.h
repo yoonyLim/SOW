@@ -40,6 +40,9 @@ public:
 
     TArray<AActor*> GetTileMap() { return L_Tiles; }
 
+    UFUNCTION(BlueprintImplementableEvent)
+    void BP_ProcessRightMouseClick();
+
 protected:
     ASOWPlayerController();
 
