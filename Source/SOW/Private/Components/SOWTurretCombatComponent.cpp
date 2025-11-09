@@ -361,7 +361,9 @@ bool USOWTurretCombatComponent::FindAttackTargetFromAllTargetAvailable()
 		return (bTargetFound = false);
 	}
 	
-
+	if (L_DetectableActors.Num() <= 0) {
+		return (bTargetFound = false);
+	}
 	//UE_LOG(LogTemp, Warning, TEXT("%s : Detected Target Count : %s"), *CachedOwnerCharacter->GetActorNameOrLabel(), *FString::FromInt(L_DetectableActors.Num()));
 
 	for (AActor* CurrentTarget : L_DetectableActors) {
