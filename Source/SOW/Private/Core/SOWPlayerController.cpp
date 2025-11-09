@@ -13,6 +13,7 @@
 
 #include "SOWBlueprintFunctionLibrary.h"
 
+
 ASOWPlayerController::ASOWPlayerController()
 {
     static ConstructorHelpers::FObjectFinder<UDataTable> DT_Turrets(TEXT("DataTable'/Game/01Blueprints/DataTable/Turrets/DT_TurretSummonData.DT_TurretSummonData'"));
@@ -32,6 +33,7 @@ void ASOWPlayerController::BeginPlay()
 void ASOWPlayerController::SetupInputComponent()
 {
     Super::SetupInputComponent();
+    InputComponent->BindKey(EKeys::RightMouseButton, IE_Pressed, this, &ASOWPlayerController::BP_ProcessRightMouseClick);
     //InputComponent->BindKey(EKeys::LeftMouseButton, IE_Pressed, this, &ASOWPlayerController::ConfirmTurretPlacement);
 }
 

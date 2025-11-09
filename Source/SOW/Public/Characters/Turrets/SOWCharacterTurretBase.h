@@ -118,6 +118,13 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, meta = (DisplayName = "Bind On Attack Power Changed"))
 	void BP_CallOnAttackPowerChanged(AActor* Target, float AttackBase);
 
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, meta = (DisplayName = "Switch Overlay Material"))
+	void BP_SwitchOverlayMaterial(bool SwitchOn);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, meta = (DisplayName = "Fix Overlay Material"))
+	void BP_FixOverlayMaterial(bool FixOn);
+
+
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Switch Detectable Range"))
 	void BP_SwitchDetectableRange(bool On);
 
