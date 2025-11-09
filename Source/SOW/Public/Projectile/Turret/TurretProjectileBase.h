@@ -37,10 +37,13 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Projectile")
 	void ClearHitActors();
 
+	UFUNCTION(BlueprintCallable, Category = "Projectile")
+	void ClearFacedTarget();
+
 	void FaceToTargetActor();
 
 	float ZPosWhenTargetInvalid = 0.f;
-	
+
 	virtual void InitProjectileProperties(FTransform InTransform, ETurretTargetSelectionPolicy InPolicy, FGameplayEffectSpecHandle InHandle, bool InMovement, float InSpeed, float InDuration, float InScale, AActor* InTargetActor) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Projectile")

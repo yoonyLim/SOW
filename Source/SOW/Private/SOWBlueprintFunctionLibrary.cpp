@@ -8,6 +8,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "Characters/Turrets/SOWCharacterTurretBase.h"
+#include "Characters/Enemies/SOWCharacterEnemyBase.h"
 #include "AbilitySystem/SOWAbilitySystemComponent.h"
 #include "AIController.h"
 #include "SOWGameInstance.h"
@@ -66,13 +67,12 @@ bool USOWBlueprintFunctionLibrary::NativeDoesActorHasTag(AActor* InActor, FGamep
     if (InActor->IsPendingKillPending())
         return false;
 
-    if (!UKismetSystemLibrary::DoesImplementInterface(InActor, USOWCharacterTypeInterface::StaticClass()))
-        return false;
-
     USOWAbilitySystemComponent* ASC = NativeGetSOWAbilitySystemComponentFromActorInfo(InActor);
+    checkf(ASC, TEXT("Invalid Actor Has Entered"));
     if (!ASC)
     {
-        // UE_LOG(LogTemp, Warning, TEXT("NativeDoesActorHasTag: No ASC for %s"), *InActor->GetName());
+
+        UE_LOG(LogTemp, Warning, TEXT("NativeDoesActorHasTag: No ASC for %s"), *InActor->GetName());
         return false;
     }
 
@@ -81,37 +81,14 @@ bool USOWBlueprintFunctionLibrary::NativeDoesActorHasTag(AActor* InActor, FGamep
 
 bool USOWBlueprintFunctionLibrary::DoesActorHasTag(AActor* InActor, FGameplayTag InActorTag)
 {
-    //// ✅ 반드시 IsValid 사용해야 함
-    //if (!IsValid(InActor))
-    //{
-    //    //UE_LOG(LogTemp, Warning, TEXT("DoesActorHasTag: Invalid Actor pointer (possibly destroyed)."));
-    //    return false;
-    //}
-
-    //// ✅ UClass 접근 전에도 반드시 유효성 체크
-    //UClass* ActorClass = InActor->GetClass();
-    //if (ActorClass == nullptr)
-    //{
-    //   // UE_LOG(LogTemp, Warning, TEXT("DoesActorHasTag: Invalid ActorClass for %s"), *InActor->GetName());
-    //    return false;
-    //}
-
-    //// ✅ 안전한 방식으로 인터페이스 확인
-    //if (!ActorClass->ImplementsInterface(USOWCharacterTypeInterface::StaticClass()))
-    //{
-    //    //UE_LOG(LogTemp, VeryVerbose, TEXT("%s does not implement SOWCharacterTypeInterface"), *InActor->GetName());
-    //    return false;
-    //}
-
-    //return NativeDoesActorHasTag(InActor, InActorTag);
+   
     if (!IsValid(InActor) || !InActorTag.IsValid())
         return false;
 
     if (InActor->IsPendingKillPending())
         return false;
 
-    if (!UKismetSystemLibrary::DoesImplementInterface(InActor, USOWCharacterTypeInterface::StaticClass()))
-        return false;
+    if (!Cast<ASOWCharacter>(InActor)) return false;
 
     return NativeDoesActorHasTag(InActor, InActorTag);
 }
@@ -587,51 +564,6 @@ TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAsStraightFromCenterLoc
     return SelectedTiles;
 }
 
-//TArray<ATileBase*> USOWBlueprintFunctionLibrary::GetTilesAsStraightFromCenterLocation(APlayerController* PlayerController, FVector CenterPosition, const int32 N, const float TileSize, bool bRot)
-//{
-//    USOWGameInstance* GI = Cast<USOWGameInstance>(PlayerController->GetWorld()->GetGameInstance());
-//    float WorldTileSize = GI->GetWorldTileSize();
-//
-//    TArray<ATileBase*> SelectedTiles;
-//
-//    float SideLength = WorldTileSize;
-//   // float SideLength = TileSize;
-//
-//    FCollisionQueryParams Params;
-//    Params.bReturnPhysicalMaterial = false;
-//
-//    FVector CriticVector = FVector(WorldTileSize, 0, 0) + (bRot ? 1 : -1) * FVector(0, WorldTileSize, 0);
-//    //FVector CriticVector = FVector(TileSize, 0, 0) + (bRot ? 1 : -1) * FVector(0, TileSize, 0);
-//
-//    for (int32 X = 0; X <= N / 2; X++)
-//    {
-//        FVector StartRight = CenterPosition + FVector(0, 0, 500.f) + X * CriticVector - (N % 2 == 0 ? CriticVector/2 : FVector::ZeroVector);
-//        FVector EndRight = CenterPosition + FVector(0, 0, -500.f) + X * CriticVector - (N % 2 == 0 ? CriticVector/2 : FVector::ZeroVector);
-//
-//        FHitResult TileHit;
-//
-//        if (PlayerController->GetWorld()->LineTraceSingleByChannel(TileHit, EndRight, StartRight, ECC_GameTraceChannel1, Params))
-//        {
-//            if (TileHit.GetActor() && !SelectedTiles.Contains(TileHit.GetActor()))
-//            {
-//                SelectedTiles.AddUnique(Cast<ATileBase>(TileHit.GetActor()));
-//            }
-//        }
-//
-//        FVector StartLeft = CenterPosition + FVector(0, 0, 500.f) - X * CriticVector + (N % 2 == 0 ? CriticVector/2 : FVector::ZeroVector);
-//        FVector EndLeft = CenterPosition + FVector(0, 0, -500.f) - X * CriticVector + (N % 2 == 0 ? CriticVector/2 : FVector::ZeroVector);
-//
-//        if (PlayerController->GetWorld()->LineTraceSingleByChannel(TileHit, EndLeft, StartLeft, ECC_GameTraceChannel1, Params))
-//        {
-//            if (TileHit.GetActor() && !SelectedTiles.Contains(TileHit.GetActor()))
-//            {
-//                SelectedTiles.AddUnique(Cast<ATileBase>(TileHit.GetActor()));
-//            }
-//        }
-//    }
-//    return SelectedTiles;
-//}
-
 TArray<AActor*> USOWBlueprintFunctionLibrary::GetActorsOnTiles(TArray<ATileBase*> Tiles)
 {
     TArray<AActor*> OnTileActors;
@@ -664,9 +596,12 @@ TArray<AActor*> USOWBlueprintFunctionLibrary::GetActorsOnTiles(TArray<ATileBase*
             for (auto& Result : Overlaps)
             {
                 AActor* HitActor = Result.GetActor();
-                if (IsValid(HitActor))
+                ASOWCharacterEnemyBase* Enemy = Cast< ASOWCharacterEnemyBase>(HitActor);
+
+                if (IsValid(Enemy))
                 {
-                    OnTileActors.AddUnique(HitActor);
+                    if(!DoesActorHasTag(Enemy, SOWGameplayTags::Shared_Status_Dead))
+                        OnTileActors.AddUnique(Enemy);
                 }
 
                 

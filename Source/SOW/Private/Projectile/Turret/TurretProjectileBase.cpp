@@ -51,56 +51,12 @@ void ATurretProjectileBase::Tick(float DeltaTime) {
 void ATurretProjectileBase::FaceToTargetActor() {
 	if (!HasMovement) return;
 
-	if (!TargetActor) return;
+	if (!TargetActor || !IsValid(TargetActor) || TargetActor->IsPendingKillPending()) return;
 
-	//if (bHitDone || !IsValid(TargetActor) || TargetActor->IsPendingKillPending()) {
-	//	
-	//	SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, ZPosWhenTargetInvalid));
-	//	ProjectileMoveComp->Velocity = FVector(ProjectileMoveComp->Velocity.X, ProjectileMoveComp->Velocity.Y, 0.f);
 
-	//	TargetActor = nullptr;
-	//	return;
-	//} 
-
-	//if (USOWBlueprintFunctionLibrary::DoesActorHasTag(TargetActor, SOWGameplayTags::Shared_Status_Dead)) {
-	//	SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, ZPosWhenTargetInvalid));
-	//	ProjectileMoveComp->Velocity = FVector(ProjectileMoveComp->Velocity.X, ProjectileMoveComp->Velocity.Y, 0.f);
-
-	//	TargetActor = nullptr;
-	//	return;
-	//}
-
-	//if (!TargetActor) return;
-
-	//bool bValidTarget = TargetActor->Implements<USOWCharacterTypeInterface>();
-	//if (!bValidTarget) return;
-
-	////bool bTargetAlive = !USOWBlueprintFunctionLibrary::DoesActorHasTag(TargetActor, SOWGameplayTags::Shared_Status_Dead);
-
-	//FVector DirVector = (TargetActor->GetActorLocation() - GetActorLocation()).GetSafeNormal();
-
-	//ProjectileMoveComp->Velocity = DirVector * ProjectileMoveComp->InitialSpeed;
-	//SetActorRotation(DirVector.Rotation());
-
-	if (bHitDone || !IsValid(TargetActor) || TargetActor->IsPendingKillPending() ||
-		USOWBlueprintFunctionLibrary::DoesActorHasTag(TargetActor, SOWGameplayTags::Shared_Status_Dead))
+	if (bHitDone || USOWBlueprintFunctionLibrary::DoesActorHasTag(TargetActor, SOWGameplayTags::Shared_Status_Dead))
 	{
-		FVector CurrentLoc = GetActorLocation();
-
-		// Z 위치 고정
-		SetActorLocation(FVector(CurrentLoc.X, CurrentLoc.Y, ZPosWhenTargetInvalid));
-
-		// 이전 속도를 기반으로 수평 벡터만 유지
-		FVector PrevVelocity = ProjectileMoveComp->Velocity;
-		PrevVelocity.Z = 0.f; // Z 하강 방지
-		ProjectileMoveComp->Velocity = PrevVelocity.GetSafeNormal() * ProjectileMoveComp->InitialSpeed;
-
-		// 마지막 회전 방향도 수평으로 보정
-		FRotator FlatRot = PrevVelocity.GetSafeNormal2D().Rotation();
-		SetActorRotation(FlatRot);
-
-		// 더 이상 타겟 추적 안 함
-		TargetActor = nullptr;
+		ClearFacedTarget();
 		return;
 	}
 
@@ -183,6 +139,27 @@ void ATurretProjectileBase::SetHitDone(bool bHit)
 void ATurretProjectileBase::ClearHitActors()
 {
 	OverlappedActors.Empty();
+}
+
+void ATurretProjectileBase::ClearFacedTarget()
+{
+	FVector CurrentLoc = GetActorLocation();
+
+	// Z 위치 고정
+	SetActorLocation(FVector(CurrentLoc.X, CurrentLoc.Y, ZPosWhenTargetInvalid));
+
+	// 이전 속도를 기반으로 수평 벡터만 유지
+	FVector PrevVelocity = ProjectileMoveComp->Velocity;
+	PrevVelocity.Z = 0.f; // Z 하강 방지
+	ProjectileMoveComp->Velocity = PrevVelocity.GetSafeNormal() * ProjectileMoveComp->InitialSpeed;
+
+	// 마지막 회전 방향도 수평으로 보정
+	FRotator FlatRot = PrevVelocity.GetSafeNormal2D().Rotation();
+	SetActorRotation(FlatRot);
+
+	// 더 이상 타겟 추적 안 함
+	TargetActor = nullptr;
+	return;
 }
 
 
