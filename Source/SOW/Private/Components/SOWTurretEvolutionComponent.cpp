@@ -195,22 +195,26 @@ void USOWTurretEvolutionComponent::TryEvolution(EEvolutionType Type)
 	{
 		// A,B의 경우 커브 테이블 값이 1부터 시작하므로 미리 증가시킨 뒤 수행
 	case EEvolutionType::EVO_ALPHA:
-		ESH = ASC->MakeOutgoingSpec(AlphaData, ++EvolutionStatusLevel, CH);
+	case EEvolutionType::EVO_BETA:
+		EvolutionStatusLevel++;
+		ESH = ASC->MakeOutgoingSpec(AlphaData, EvolutionStatusLevel, CH);
+		//ESH = ASC->MakeOutgoingSpec(AlphaData, ++EvolutionStatusLevel, CH);
 		ASC->ApplyGameplayEffectSpecToSelf(*ESH.Data.Get());
 
 		if(OnAlphaEvolutionSucceed.IsBound())
 			OnAlphaEvolutionSucceed.Broadcast(true);
 
-		CurrencySpentForStat = 0;
-		break;
-	case EEvolutionType::EVO_BETA:
-		ESH = ASC->MakeOutgoingSpec(BetaData, ++EvolutionStatusLevel, CH);
+		//CurrencySpentForStat = 0;
+		//break;
+	//case EEvolutionType::EVO_BETA:
+		ESH = ASC->MakeOutgoingSpec(BetaData, EvolutionStatusLevel, CH);
+		//ESH = ASC->MakeOutgoingSpec(BetaData, ++EvolutionStatusLevel, CH);
 		ASC->ApplyGameplayEffectSpecToSelf(*ESH.Data.Get());
 
 		if (OnBetaEvolutionSucceed.IsBound())
 			OnBetaEvolutionSucceed.Broadcast(true);
 
-		CurrencySpentForStat = 0;
+		//CurrencySpentForStat = 0;
 		break;
 	case EEvolutionType::EVO_PROP:
 		// P의 경우 배열 인덱스가 0부터 시작하므로 받은 뒤 증가
@@ -373,6 +377,12 @@ bool USOWTurretEvolutionComponent::CheckResourceAndProb(EEvolutionType Type)
 
 void USOWTurretEvolutionComponent::MakeAndSendEvolutionLog()
 {
+}
+
+void USOWTurretEvolutionComponent::GetEvolutionLevel(int32& CurrentLevel, int32& MaxLevel)
+{
+	CurrentLevel = EvolutionStatusLevel;
+	MaxLevel = StatusMaxLevel;
 }
 
 

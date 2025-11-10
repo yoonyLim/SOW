@@ -25,6 +25,11 @@ void AWaveGameMode::AddCurrency(int32 AddedCurrency)
 	// 기존 브로드캐스트 유지
 	OnOneTimeCurrencyChanged.Broadcast(Currency);
 
+	USOWLogFunctionLibrary::LogCurrencyToCSV(
+		"System",
+		0,
+		AddedCurrency
+	);
 	// 로깅 (타입이 명확하지 않으므로 None/Unknown 등 중립 타입 사용)
 	/*if (CurrencyLogger)
 	{
@@ -37,6 +42,20 @@ void AWaveGameMode::AddCurrency(int32 AddedCurrency)
 			FName(TEXT("WaveGameMode.AddCurrency")),
 			Context);
 	}*/
+}
+
+void AWaveGameMode::AddCurrencyByTurret(int32 AddedCurrency, FString TurretName)
+{
+	Currency += AddedCurrency;
+
+	// 기존 브로드캐스트 유지
+	OnOneTimeCurrencyChanged.Broadcast(Currency);
+
+	USOWLogFunctionLibrary::LogCurrencyToCSV(
+		TurretName,
+		0,
+		AddedCurrency
+	);
 }
 
 bool AWaveGameMode::CanSpawnTurret()

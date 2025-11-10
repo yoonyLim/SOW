@@ -89,7 +89,41 @@ void USOWLogFunctionLibrary::LogDamageToCSV(
 	);
 
 	FFileHelper::SaveStringToFile(Line, *FileName, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), FILEWRITE_Append);
-};
+}
+void USOWLogFunctionLibrary::LogCurrencyToCSV(const FString& CurrencyGenerator, int32 Stage, int32 Currency)
+{
+	FString SessionID = GetCurrentSessionID();
+
+	FString SaveDir = FPaths::ProjectSavedDir() / TEXT("CurrencyLogs");
+	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
+	if (!PlatformFile.DirectoryExists(*SaveDir))
+	{
+		PlatformFile.CreateDirectory(*SaveDir);
+	}
+
+	FString FileName = SaveDir / FString::Printf(TEXT("Session_%s.csv"), *SessionID);
+
+	// ù ���� �� ��� �߰�
+	if (!PlatformFile.FileExists(*FileName))
+	{
+		FString Header = TEXT("SessionID,Timestamp,Stage,Currency,Generator\n");
+		FFileHelper::SaveStringToFile(Header, *FileName);
+	}
+
+	FString Timestamp = FDateTime::Now().ToString(TEXT("%H:%M:%S.%s"));
+
+
+	FString Line = FString::Printf(
+		TEXT("%s,%s,%d,%d,%s\n"),
+		*SessionID,
+		*Timestamp,
+		Stage,
+		Currency,
+		*CurrencyGenerator
+	);
+
+	FFileHelper::SaveStringToFile(Line, *FileName, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), FILEWRITE_Append);
+}
 
 void USOWLogFunctionLibrary::WaveInitialize()
 {
