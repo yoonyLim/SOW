@@ -106,4 +106,7 @@ private:
 	bool CheckResourceAndProb(EEvolutionType Type);
 
 	void MakeAndSendEvolutionLog();
+
+	UFUNCTION(BlueprintCallable)
+	void GetEvolutionLevel(int32& CurrentLevel, int32& MaxLevel);
 };

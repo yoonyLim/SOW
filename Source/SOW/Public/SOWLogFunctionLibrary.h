@@ -48,6 +48,13 @@ public:
 		AActor* DamagedActor = nullptr
 		);
 
+	UFUNCTION(BlueprintCallable, Category = "SOW|Log|CSV", meta = (WorldContext = "WorldContextObject"))
+	static void LogCurrencyToCSV(
+		const FString& CurrencyGenerator,
+		int32 Stage = 0,
+		int32 Currency = 0
+	);
+
 
 private:
 

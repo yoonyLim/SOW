@@ -61,6 +61,9 @@ public:
 	void AddCurrency(int32 AddedCurrency);
 
 	UFUNCTION(BlueprintCallable, Category = "Currency")
+	void AddCurrencyByTurret(int32 AddedCurrency, FString TurretName);
+
+	UFUNCTION(BlueprintCallable, Category = "Currency")
 	int32 GetCurrency() const { return Currency; };
 
 	UFUNCTION(BlueprintCallable, Category = "Turrets")
