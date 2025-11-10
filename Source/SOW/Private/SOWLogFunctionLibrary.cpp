@@ -58,7 +58,7 @@ void USOWLogFunctionLibrary::LogDamageToCSV(
 		PlatformFile.CreateDirectory(*SaveDir);
 	}
 
-	FString FileName = SaveDir / FString::Printf(TEXT("Session_%s.csv"), *SessionID);
+	FString FileName = SaveDir / FString::Printf(TEXT("Session_Damage_%s.csv"), *SessionID);
 
 	// ù ���� �� ��� �߰�
 	if (!PlatformFile.FileExists(*FileName))
@@ -101,7 +101,7 @@ void USOWLogFunctionLibrary::LogCurrencyToCSV(const FString& CurrencyGenerator, 
 		PlatformFile.CreateDirectory(*SaveDir);
 	}
 
-	FString FileName = SaveDir / FString::Printf(TEXT("Session_%s.csv"), *SessionID);
+	FString FileName = SaveDir / FString::Printf(TEXT("Session_Currency_%s.csv"), *SessionID);
 
 	// ù ���� �� ��� �߰�
 	if (!PlatformFile.FileExists(*FileName))
