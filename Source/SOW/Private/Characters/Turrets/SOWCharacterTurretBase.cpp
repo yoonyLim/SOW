@@ -23,6 +23,8 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameModes/WaveGameMode.h"
+#include "SOWGameInstance.h"
+#include "Manager/SummonManager.h"
 
 #include "SOWEnumTypes.h"
 #include "SOWStructTypes.h"
@@ -469,6 +471,12 @@ void ASOWCharacterTurretBase::SellTurret(float Price)
 
 	AWaveGameMode* GM = Cast<AWaveGameMode>(UGameplayStatics::GetGameMode(this));
 	if (GM) GM->SellTurret(Price);
+
+	USOWGameInstance* GI = Cast<USOWGameInstance>(GetGameInstance());
+	USummonManager* SM = GI->GetSummonManager();
+
+	SM->BroadcastSellTurret(GetClass());
+
 	//USOWBlueprintFunctionLibrary::RequestToGenerateOnTimeCurrency(this, FGameplayTag::RequestGameplayTag("Shared.Element.Nature"), Price);
 }
 

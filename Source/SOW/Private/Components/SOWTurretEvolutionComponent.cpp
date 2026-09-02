@@ -40,6 +40,26 @@ void USOWTurretEvolutionComponent::GetPropertyDescriptString(FString& OutString)
 	
 }
 
+void USOWTurretEvolutionComponent::GetPropertyResourceStringByPropertyLevel(int32 PropertyLevel, FString& OutCurrency, FString& OutPercentage)
+{
+	if (!PropertyResourceData) return;
+
+	FRealCurve* FoundCurve_Price = PropertyResourceData->FindCurve("Currency", TEXT(""));
+	FRealCurve* FoundCurve_Percent = PropertyResourceData->FindCurve("Prob", TEXT(""));
+
+	float PriceValue = FoundCurve_Price->Eval(PropertyLevel + 1);
+	float PercentValue = FoundCurve_Percent->Eval(PropertyLevel + 1);
+
+	if (PercentValue != 0) {
+		OutCurrency = FString::FromInt(PriceValue);
+		OutPercentage = TEXT("강화 확률") " : " + FString::FromInt(PercentValue) + "%";
+	}
+	else {
+		OutCurrency = "-";
+		OutPercentage = TEXT("강화 불가");
+	}
+}
+
 void USOWTurretEvolutionComponent::GetPropertyResourceString(FString& OutCurrency, FString& OutPercentage)
 {
 	//checkf(PropertyResourceData, TEXT("PropertyResourceData not Assigned. Please check DataAsset"));

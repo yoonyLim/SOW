@@ -88,6 +88,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Tile")
 	static float GetWorldTileSizeFromInstance(APlayerController* PlayerController);
 
+	UFUNCTION(BlueprintPure, Category = "Tile")
+	static FVector GetCoreRunePosition(APlayerController* PlayerController);
+
 	UFUNCTION(BlueprintCallable, Category = "Gameplay")
 	static void AddLooseGameplayTagStack(AActor* Actor, FGameplayTag Tag, int32 Stack);
 
@@ -99,6 +102,18 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Niagara")
 	static void DeactivateFXImmediately(class UNiagaraComponent* NC);
+
+	UFUNCTION(BlueprintCallable, Category = "String")
+	static FString ReplaceIndexedPlaceholders(const FString& TemplateString, const TArray<float>& Values);
+
+	UFUNCTION(BlueprintCallable, Category = "Delegate")
+	static void CallTurretPlacedDelegate(APlayerController* PlayerController);
+
+	UFUNCTION(BlueprintCallable, Category = "Delegate")
+	static void CallTurretReplacedDelegate(APlayerController* PlayerController);
+
+	UFUNCTION(BlueprintCallable, Category = "Delegate")
+	static void CallTurretClickedDelegate(APlayerController* PlayerController);
 };
 
 template <typename T>

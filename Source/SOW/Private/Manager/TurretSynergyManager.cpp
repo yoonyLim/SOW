@@ -15,6 +15,33 @@
 
 
 
+void UTurretSynergyManager::RefreshSynergyManager()
+{
+	SynergyMonitor.Empty();
+	// �ó����� �ο��޴� �ͷ��� �Ӽ��� �°� ����͸��ϴ� �����̳�
+	SynergyMonitor.Add(EElementalType::Nature);
+	SynergyMonitor.Add(EElementalType::Electro);
+	SynergyMonitor.Add(EElementalType::Ice);
+	SynergyMonitor.Add(EElementalType::Flame);
+
+	SynergyRarityMonitor.Empty();
+	// �ó����� ��� ������ Ȯ���ϱ� ���� �����̳�
+	SynergyRarityMonitor.Add(EElementalType::Nature);
+	SynergyRarityMonitor.Add(EElementalType::Electro);
+	SynergyRarityMonitor.Add(EElementalType::Ice);
+	SynergyRarityMonitor.Add(EElementalType::Flame);
+
+	SynergyTypeMonitor.Empty();
+	// �ó����� Ȱ��ȭ ��Ű�� �ִ� �ͷ� ������ ���� �����̳�
+	SynergyTypeMonitor.Add(EElementalType::Nature);
+	SynergyTypeMonitor.Add(EElementalType::Electro);
+	SynergyTypeMonitor.Add(EElementalType::Ice);
+	SynergyTypeMonitor.Add(EElementalType::Flame);
+
+	GenerateSynergyUpdateAnnouncer();
+
+}
+
 void UTurretSynergyManager::RequestToUpdateGlacioAffectedStat(ASOWCharacterTurretBase* TargetTurret, bool OnAdd)
 {
 	if (!IsValid(TargetTurret)) return;
@@ -95,7 +122,7 @@ void UTurretSynergyManager::UpdateSynergyTagContainer(ASOWCharacterTurretBase* I
 	FName TurretName = InTurret->GetTurretName();
 
 	if (!SynergyRarityMonitor.Contains(ElementType)) {
-		UE_LOG(LogTemp, Error, TEXT("%s is not implemented synergy element."), *USOWBlueprintFunctionLibrary::EnumToFName<EElementalType>(ElementType).ToString());
+		UE_LOG(LogTemp, Error, TEXT("UpdateSynergyTagContainer / %s is not implemented synergy element."), *USOWBlueprintFunctionLibrary::EnumToFName<EElementalType>(ElementType).ToString());
 		return;
 	}
 
@@ -129,7 +156,7 @@ void UTurretSynergyManager::UpdateSynergyTagContainer(ASOWCharacterTurretBase* I
 void UTurretSynergyManager::UpdateTurretTypeContainer(ASOWCharacterTurretBase* InTurret, EElementalType ElementType, bool bAdd)
 {
 	if (!SynergyTypeMonitor.Contains(ElementType)) {
-		UE_LOG(LogTemp, Error, TEXT("%s is not implemented synergy element."), *USOWBlueprintFunctionLibrary::EnumToFName<EElementalType>(ElementType).ToString());
+		UE_LOG(LogTemp, Error, TEXT("UpdateTurretTypeContainer/ %s is not implemented synergy element."), *USOWBlueprintFunctionLibrary::EnumToFName<EElementalType>(ElementType).ToString());
 		return;
 	}
 
@@ -175,8 +202,8 @@ void UTurretSynergyManager::GrantSynergyTagToMonitoringTurrets(ASOWCharacter* Tu
 		if (USOWBlueprintFunctionLibrary::DoesActorHasTag(Turret, InTag)) continue;
 		if (!CheckRarityCondition(SynergyRarityMonitor[ElementType], InCondition)) continue;
 
-		USOWAbilitySystemComponent* TurretASC = USOWBlueprintFunctionLibrary::GetSOWAbilitySystemComponentFromActorInfo(Turret);
-		TurretASC->AddLooseGameplayTag(InTag);
+		if(USOWAbilitySystemComponent* TurretASC = USOWBlueprintFunctionLibrary::GetSOWAbilitySystemComponentFromActorInfo(Turret))
+			TurretASC->AddLooseGameplayTag(InTag);
 	}
 }
 
@@ -195,15 +222,15 @@ void UTurretSynergyManager::RemoveSynergyTagFromMonitoringTurrets(ASOWCharacter*
 		if (!USOWBlueprintFunctionLibrary::DoesActorHasTag(Turret, InTag)) { i++; continue; }
 		if (CheckRarityCondition(SynergyRarityMonitor[ElementType], InCondition)) { i++; continue; }
 
-		USOWAbilitySystemComponent* TurretASC = USOWBlueprintFunctionLibrary::GetSOWAbilitySystemComponentFromActorInfo(Turret);
-		TurretASC->RemoveLooseGameplayTag(InTag);
+		if(USOWAbilitySystemComponent* TurretASC = USOWBlueprintFunctionLibrary::GetSOWAbilitySystemComponentFromActorInfo(Turret))
+			TurretASC->RemoveLooseGameplayTag(InTag);
 		i++;
 	}
 
 	// ������ �ó��� �±״� �ݵ�� �����ؾ� �ϹǷ� �������� ����
 	if (i < SynergyTagItems.Num() && SynergyTagItems[i].SynergyTag.IsValid()) {
-		USOWAbilitySystemComponent* TurretASC = USOWBlueprintFunctionLibrary::GetSOWAbilitySystemComponentFromActorInfo(Turret);
-		TurretASC->RemoveLooseGameplayTag(SynergyTagItems[i].SynergyTag);
+		if (USOWAbilitySystemComponent* TurretASC = USOWBlueprintFunctionLibrary::GetSOWAbilitySystemComponentFromActorInfo(Turret))
+			TurretASC->RemoveLooseGameplayTag(SynergyTagItems[i].SynergyTag);
 	}
 }
 
@@ -228,7 +255,7 @@ void UTurretSynergyManager::AddNewTurretDataForSynergy(ASOWCharacterTurretBase* 
 		return;
 	} 
 
-	TArray<ASOWCharacterTurretBase*>& MonitoringTurrets = SynergyMonitor[ElementType];
+	TArray<TWeakObjectPtr<ASOWCharacterTurretBase>>& MonitoringTurrets = SynergyMonitor[ElementType];
 	MonitoringTurrets.AddUnique(SummonedTurret);
 
 	
@@ -246,8 +273,8 @@ void UTurretSynergyManager::AddNewTurretDataForSynergy(ASOWCharacterTurretBase* 
 	const TArray<FTurretSynergyTagItem> SynergyTagItems = SynergyDataRow->SynergyTagItems;
 
 
-	for (ASOWCharacterTurretBase* Turret : MonitoringTurrets) {
-		GrantSynergyTagToMonitoringTurrets(Turret, SynergyTurretCount, SynergyTagItems, ElementType);
+	for (TWeakObjectPtr<ASOWCharacterTurretBase> Turret : MonitoringTurrets) {
+		GrantSynergyTagToMonitoringTurrets(Turret.Get(), SynergyTurretCount, SynergyTagItems, ElementType);
 	}
 
 	// Glacio ���� �ڵ�
@@ -288,7 +315,7 @@ void UTurretSynergyManager::RemoveTurratDataFromSynergy(ASOWCharacterTurretBase*
 		return;
 	}
 
-	TArray<ASOWCharacterTurretBase*>& MonitoringTurrets = SynergyMonitor[ElementType];
+	TArray<TWeakObjectPtr<ASOWCharacterTurretBase>>& MonitoringTurrets = SynergyMonitor[ElementType];
 	
 	UpdateSynergyTagContainer(SummonedTurret, ElementType, false);
 	UpdateTurretTypeContainer(SummonedTurret, ElementType, false);
@@ -303,8 +330,8 @@ void UTurretSynergyManager::RemoveTurratDataFromSynergy(ASOWCharacterTurretBase*
 	const TArray<FTurretSynergyTagItem> SynergyTagItems = SynergyDataRow->SynergyTagItems;
 
 
-	for (ASOWCharacterTurretBase* Turret : MonitoringTurrets) {
-		RemoveSynergyTagFromMonitoringTurrets(Turret, SynergyTurretCount, SynergyTagItems, ElementType);
+	for (TWeakObjectPtr<ASOWCharacterTurretBase> Turret : MonitoringTurrets) {
+		RemoveSynergyTagFromMonitoringTurrets(Turret.Get(), SynergyTurretCount, SynergyTagItems, ElementType);
 	}
 
 	// Glacio ���� �ڵ�
@@ -312,15 +339,6 @@ void UTurretSynergyManager::RemoveTurratDataFromSynergy(ASOWCharacterTurretBase*
 	if (ElementType == EElementalType::Ice) {
 		GlacioTurretManager->OnSynergyChanged.Broadcast(SynergyTurretCount);
 
-		/*if (GlacioTurretManager->OnTurretDead.IsBound()) {
-			GlacioTurretManager->OnTurretDead.Broadcast(
-				SummonedTurret->GetTurretCombatComponent()->GetAffectStatType(),
-				-SummonedTurret->GetTurretCombatComponent()->GetAffectStatValue());
-		}
-
-		InsertAffectStatInBuffer(
-			SummonedTurret->GetTurretCombatComponent()->GetAffectStatType(),
-			-SummonedTurret->GetTurretCombatComponent()->GetAffectStatValue());*/
 		RequestToUpdateGlacioAffectedStat(SummonedTurret, false);
 
 		if (ASOWCharacterTurretBase* Glacio = GetGlacioInstance()) {
@@ -350,7 +368,7 @@ int UTurretSynergyManager::GetActiveSynergyCount(EElementalType ElementType)
 	int SynergyCount = 0;
 
 	if (!SynergyTypeMonitor.Contains(ElementType)) {
-		UE_LOG(LogTemp, Error, TEXT("%s is not implemented synergy element."), *USOWBlueprintFunctionLibrary::EnumToFName<EElementalType>(ElementType).ToString());
+		UE_LOG(LogTemp, Error, TEXT("GetActiveSynergyCount / %s is not implemented synergy element."), *USOWBlueprintFunctionLibrary::EnumToFName<EElementalType>(ElementType).ToString());
 		return -1;
 	}
 
@@ -404,28 +422,38 @@ void UTurretSynergyManager::SendRuneReference(ASOWCharacterCoreRune* InRune)
 }
 
 
+
 void UTurretSynergyManager::Initialize(UDataTable* InSynergyDataTable, TSubclassOf<ASOWCharacterTurretSpecialBase> GlacioTurret) {
 
+	UE_LOG(LogTemp, Warning, TEXT("Synergy Manager is Initialized"));
+	SynergyTagData = InSynergyDataTable;
+
+
+	SynergyMonitor.Empty();
 	// �ó����� �ο��޴� �ͷ��� �Ӽ��� �°� ����͸��ϴ� �����̳�
 	SynergyMonitor.Add(EElementalType::Nature);
 	SynergyMonitor.Add(EElementalType::Electro);
 	SynergyMonitor.Add(EElementalType::Ice);
 	SynergyMonitor.Add(EElementalType::Flame);
 
+	SynergyRarityMonitor.Empty();
 	// �ó����� ��� ������ Ȯ���ϱ� ���� �����̳�
 	SynergyRarityMonitor.Add(EElementalType::Nature);
 	SynergyRarityMonitor.Add(EElementalType::Electro);
 	SynergyRarityMonitor.Add(EElementalType::Ice);
 	SynergyRarityMonitor.Add(EElementalType::Flame);
-
+	
+	SynergyTypeMonitor.Empty();
 	// �ó����� Ȱ��ȭ ��Ű�� �ִ� �ͷ� ������ ���� �����̳�
 	SynergyTypeMonitor.Add(EElementalType::Nature);
 	SynergyTypeMonitor.Add(EElementalType::Electro);
 	SynergyTypeMonitor.Add(EElementalType::Ice);
 	SynergyTypeMonitor.Add(EElementalType::Flame);
+
+
 	
 	GenerateSynergyUpdateAnnouncer();
-	SynergyTagData = InSynergyDataTable;
+	
 
 	GlacioTurretManager = NewObject<USpecialTurretManager>(this);
 	if (GlacioTurretManager)

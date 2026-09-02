@@ -100,9 +100,9 @@ public:
 	ETileSummonState TileState;
 
 	///  added by pgh
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void ShowRange();
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void HideRange();
 	///  added by pgh
 

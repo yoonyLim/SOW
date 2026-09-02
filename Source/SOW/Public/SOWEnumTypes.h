@@ -33,7 +33,9 @@ enum class ETurretRarity : uint8 {
 	Common,
 	Uncommon,
 	Rare,
-	Epic
+	Epic,
+	Legendary,
+	Origin
 };
 
 
@@ -81,7 +83,7 @@ enum class ETurretName : uint8 {
 	Golem			UMETA(DisplayName = "Golem"),
 	Mushroom		UMETA(DisplayName = "Mushroom"),
 	Owl				UMETA(DisplayName = "Owl"),
-	Spider			UMETA(DisplayName = "Spider"),
+	Magician		UMETA(DisplayName = "Magician"),
 
 	// Electro
 	DesertBat		UMETA(DisplayName = "DesertBat"),

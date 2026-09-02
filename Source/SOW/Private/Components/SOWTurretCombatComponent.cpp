@@ -49,9 +49,16 @@ void USOWTurretCombatComponent::BeginPlay()
 
 float USOWTurretCombatComponent::GetAttackCooldownTimeFromOwner() const
 {
-	bool bIsFixedCooldown = !(AbilityTagToActivation == SOWGameplayTags::Turret_Ability_Attack);
+	bool bIsFixedCooldown = (AbilityTagToActivation == SOWGameplayTags::Turret_Ability_Buff);
 
 	float CooldownBase = CachedOwnerCharacter->GetAttackCooldownTime();
+
+	if (!bTargetFound) {
+		if (AbilityTagToActivation != SOWGameplayTags::Turret_Ability_Continue) {
+			CooldownBase = 0.5f;
+		}
+		return CooldownBase;
+	}
 
 	if (HasIndependantCooltime) {
 		CooldownBase = IndependantCooltime;
@@ -65,9 +72,7 @@ float USOWTurretCombatComponent::GetAttackCooldownTimeFromOwner() const
 		CooldownBase = 3.f;
 	}
 
-	if (!bTargetFound) {
-		CooldownBase = 0.25f;
-	}
+	
 
 	return CooldownBase < 0.2f ? 0.2f: CooldownBase;
 }
@@ -119,7 +124,10 @@ void USOWTurretCombatComponent::InitTurretProperties(const FTurretPropertyData& 
 	TargetSelectCount = Data.TargetSelectCount;
 
 	TurretDescriptor = Data.TurretDescriptor;
-	TurretDescriptor.ReplaceInline(TEXT("\\n"), TEXT("\n"));
+	for (FString& str : TurretDescriptor) {
+		str.ReplaceInline(TEXT("\\n"), TEXT("\n"));
+	}
+	
 
 
 

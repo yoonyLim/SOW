@@ -5,6 +5,9 @@
 #include "Sound/SoundBase.h"
 #include "Components/AudioComponent.h"
 #include "SoundManager.generated.h"
+
+class ASoundActor;
+
 /**
  * 
  */
@@ -42,10 +45,13 @@ private:
 	UAudioComponent* BGMComponent;
 
 	UPROPERTY()
+	ASoundActor* SoundActor = nullptr;
+
+	UPROPERTY()
 	UWorld* CachedWorld;
 
 	float BGMVolume = 100.0f;
 	float SFXVolume = 100.0f;
 
-
+	void EnsureSoundActor();
 };

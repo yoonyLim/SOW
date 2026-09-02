@@ -60,6 +60,7 @@ void USOWGameInstance::Init()
     if (TurretSynergyManager)
     {
         TurretSynergyManager->Initialize(SynergyDataTable, GlacioInstance);
+        UE_LOG(LogTemp, Error, TEXT("Synergy Manager Has Initialized"));
     }
 
     SoundManager = NewObject<USoundManager>(this);
@@ -68,6 +69,8 @@ void USOWGameInstance::Init()
     {
         SoundManager = USoundManager::Get(this);
     }
+
+    UE_LOG(LogTemp, Error, TEXT("SOWInstance Has Initialized"));
  }
 
 void USOWGameInstance::SummonTurret(FName TurretType)
@@ -137,6 +140,11 @@ void USOWGameInstance::SummonTurret(FName TurretType)
     }
 }
 
+void USOWGameInstance::BP_SummonTurret(FName TurretName)
+{
+    SummonTurret(TurretName);
+}
+
 void USOWGameInstance::GetResource(float Count)
 {
    // USOWBlueprintFunctionLibrary::RequestToGenerateOnTimeCurrency(GetWorld(), FGameplayTag::RequestGameplayTag("Shared.Element.Nature"), Count);
@@ -155,10 +163,26 @@ float USOWGameInstance::GetWorldTileSize() const
     return WorldTileSize;
 }
 
+void USOWGameInstance::BindTest()
+{
+    UE_LOG(LogTemp, Error, TEXT("Instance Delegate has called"));
+}
+
 void USOWGameInstance::OnStart()
 {
     Super::OnStart();
+    
+    OnTurretPlaced.AddDynamic(this, &USOWGameInstance::BindTest);
+    OnTurretClicked.AddDynamic(this, &USOWGameInstance::BindTest);
+    OnTurretReplacing.AddDynamic(this, &USOWGameInstance::BindTest);
 
+//#if WITH_EDITOR
+//    if (!TurretSynergyManager)
+//    {
+//        TurretSynergyManager = NewObject<UTurretSynergyManager>(this);
+//        TurretSynergyManager->Initialize(SynergyDataTable, GlacioInstance);
+//    }
+//#endif
     /*auto* Manager = USoundManager::Get(this);
     if (StartBGM)
     {

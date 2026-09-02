@@ -23,6 +23,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChanged, FWidgetDescAtt,
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTurretSelled);
 
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTurretDescriptorRefresh);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAdditionalDamageRatioChangedDelegate, float, RatioValue);
 
 /**
@@ -63,6 +66,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnTurretSelled OnSelled;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnTurretDescriptorRefresh OnTurretDescriptorRefresh;
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnAdditionalDamageRatioChangedDelegate OnAdditionalDamageRatioChange;

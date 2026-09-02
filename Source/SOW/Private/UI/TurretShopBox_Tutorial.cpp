@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "UI/TurretShop.h"
+#include "UI/TurretShopBox_Tutorial.h"
 
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
@@ -19,7 +19,7 @@
 #include "Engine/Engine.h"
 #include "Engine/World.h"
 
-void UTurretShop::NativeConstruct()
+void UTurretShopBox_Tutorial::NativeConstruct()
 {
 	Super::NativeConstruct();
 
@@ -35,9 +35,9 @@ void UTurretShop::NativeConstruct()
 		ShopBox->OnBuyTurret.AddDynamic(this, &UTurretShop::RenewShopRank);
 	}*/
 
-	WGM->OnOneTimeCurrencyChanged.AddDynamic(this, &UTurretShop::UpdateCurrency);
+	WGM->OnOneTimeCurrencyChanged.AddDynamic(this, &UTurretShopBox_Tutorial::UpdateCurrency);
 
-	BTN_Reload->OnClicked.AddDynamic(this, &UTurretShop::ReLoadTurret);
+	BTN_Reload->OnClicked.AddDynamic(this, &UTurretShopBox_Tutorial::ReLoadTurret);
 
 	ShopBox5->SetVisibility(ESlateVisibility::Collapsed);
 
@@ -45,10 +45,35 @@ void UTurretShop::NativeConstruct()
 	UpdateCurrency(WGM->GetCurrency());
 	UpdateSummonProbText();
 	UpdateReloadCost();
-	ReLoadTurret();
+	SetTurretByStep(ShopStep++);
 }
 
-void UTurretShop::UpdateReloadCost()
+void UTurretShopBox_Tutorial::SetTurretByStep(int32 step)
+{
+	if (step % 3 == 1)
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			ShopBoxes[i]->InitWidget(FirstTurretCombination[i]);
+		}
+	}
+	else if (step % 3 == 2)
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			ShopBoxes[i]->InitWidget(SecondTurretCombination[i]);
+		}
+	}
+	else if (step % 3 == 0)
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			ShopBoxes[i]->InitWidget(ThirdTurretCombination[i]);
+		}
+	}
+}
+
+void UTurretShopBox_Tutorial::UpdateReloadCost()
 {
 	int32 Value = DA_SummonData->GetReloadCostByShopRank(ShopRank);
 	FText CostText = FText::FromString(FString::Printf(TEXT("- %d"), Value));
@@ -56,12 +81,12 @@ void UTurretShop::UpdateReloadCost()
 	TXT_RerollCost->SetText(CostText);
 }
 
-void UTurretShop::UpdateCurrency(int32 Currency)
+void UTurretShopBox_Tutorial::UpdateCurrency(int32 Currency)
 {
 	TXT_CurrentCurrency->SetText(FText::AsNumber(Currency));
 }
 
-void UTurretShop::RenewShopRank()
+void UTurretShopBox_Tutorial::RenewShopRank()
 {
 	if (bActivateOriginShop)
 	{
@@ -71,12 +96,12 @@ void UTurretShop::RenewShopRank()
 	bTryShopRankUp = false;
 }
 
-bool UTurretShop::CheckGold(int Cost)
+bool UTurretShopBox_Tutorial::CheckGold(int Cost)
 {
 	return WGM->GetCurrency() < Cost;
 }
 
-void UTurretShop::ReLoadTurret()
+void UTurretShopBox_Tutorial::ReLoadTurret()
 {
 	if (bActivateOriginShop) return;
 
@@ -84,40 +109,13 @@ void UTurretShop::ReLoadTurret()
 
 	WGM->AddCurrency(-(DA_SummonData->GetReloadCostByShopRank(ShopRank)));
 
-	if (ShopRank < 6)
-	{
-		if (bTryShopRankUp)
-		{
-			TryShopRankUp();
-			RNGTurret();
-		}
-		else
-		{
-			bTryShopRankUp = true;
-			RNGTurret();
-		}
-	}
-	else if (ShopRank == 6)
-	{
-		/*if (bTryShopRankUp)
-		{
-			OpenOriginShop();
-			bActivateOriginShop = true;
-		}
-		else
-		{
-			CloseOriginShop();
-			bTryShopRankUp = true;
-			RNGTurret();
-		}*/
-		RNGTurret();
-	}
+	SetTurretByStep(ShopStep++);
 
 	UpdateSummonProbText();
 	UpdateReloadCost();
 }
 
-void UTurretShop::RNGTurret()
+void UTurretShopBox_Tutorial::RNGTurret()
 {
 	TArray<int32> TurretRarityWeights = { DA_SummonData->GetProbByRarity(ShopRank, ERarity::Common),
 							DA_SummonData->GetProbByRarity(ShopRank, ERarity::Rare),
@@ -133,7 +131,7 @@ void UTurretShop::RNGTurret()
 	}
 }
 
-void UTurretShop::OpenOriginShop()
+void UTurretShopBox_Tutorial::OpenOriginShop()
 {
 	//for (UTurretShopBox* ShopBox : ShopBoxes)
 	//{
@@ -148,7 +146,7 @@ void UTurretShop::OpenOriginShop()
 	//TXT_RerollCost->SetText(FText::FromString("-"));
 }
 
-void UTurretShop::CloseOriginShop()
+void UTurretShopBox_Tutorial::CloseOriginShop()
 {
 	for (UTurretShopBox* ShopBox : ShopBoxes)
 	{
@@ -158,7 +156,7 @@ void UTurretShop::CloseOriginShop()
 	ShopBox5->SetVisibility(ESlateVisibility::Collapsed);
 }
 
-bool UTurretShop::TryShopRankUp()
+bool UTurretShopBox_Tutorial::TryShopRankUp()
 {
 	if (ShopRank == 6)
 	{
@@ -183,12 +181,12 @@ bool UTurretShop::TryShopRankUp()
 	return false;
 }
 
-void UTurretShop::SuccessToRankUp()
+void UTurretShopBox_Tutorial::SuccessToRankUp()
 {
 	ShopRank += 1;
 }
 
-void UTurretShop::UpdateSummonProbText()
+void UTurretShopBox_Tutorial::UpdateSummonProbText()
 {
 	int32 CommonValue = DA_SummonData->GetProbByRarity(ShopRank, ERarity::Common);
 	FText CommonPercentText = FText::FromString(FString::Printf(TEXT("%d%%"), CommonValue));
@@ -212,14 +210,14 @@ void UTurretShop::UpdateSummonProbText()
 }
 
 /* Console */
-static FAutoConsoleCommand Cmd_OpenOriginShop(
-	TEXT("OpenOriginShop"),
-	TEXT("Set OriginShop Condition and Run OpenOriginShop"),
+static FAutoConsoleCommand Cmd_OpenOriginShopTutorial(
+	TEXT("OpenOriginShopTutorial"),
+	TEXT("Set OriginShop Condition and Run OpenOriginShopTutorial"),
 	FConsoleCommandDelegate::CreateStatic([]()
 		{
-			for (TObjectIterator<UTurretShop> It; It; ++It)
+			for (TObjectIterator<UTurretShopBox_Tutorial> It; It; ++It)
 			{
-				UTurretShop* Shop = *It;
+				UTurretShopBox_Tutorial* Shop = *It;
 				if (IsValid(Shop))
 				{
 					Shop->ShopRank = 6;

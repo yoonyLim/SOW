@@ -82,6 +82,7 @@ public:
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSummonTurret, const FSummonData&, TurretToSummon);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDespawnTurret, TSubclassOf<ASOWCharacterTurretBase>, TurretToDespawn);
 
 UCLASS()
 class SOW_API USummonManager : public UObject
@@ -110,6 +111,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Delegate")
 	FOnSummonTurret OnSummonTurret;
 
+	UPROPERTY(BlueprintAssignable, Category = "Delegate")
+	FOnDespawnTurret TurretToDespawn;
+
 public:
 	void Initialize();
 
@@ -124,6 +128,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool TurretSummonOnCertainTile(FSummonData TurretData, AActor* Tile);
+
+	UFUNCTION(BlueprintCallable)
+	void BroadcastSellTurret(TSubclassOf<ASOWCharacterTurretBase> TurretType);
 
 private:
 	void InitTurretArray();

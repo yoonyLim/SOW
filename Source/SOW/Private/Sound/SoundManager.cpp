@@ -1,5 +1,7 @@
 #include "Sound/SoundManager.h"
+#include "EngineUtils.h"
 #include "Kismet/GameplayStatics.h"
+#include "Sound/SoundActor.h"
 
 USoundManager* USoundManager::Instance = nullptr;
 
@@ -8,43 +10,32 @@ USoundManager* USoundManager::Get(UObject* WorldContext)
 	if (!Instance || !IsValid(Instance))
 	{
 		Instance = NewObject<USoundManager>();
-		Instance->AddToRoot();
+		Instance->AddToRoot(); // GC 방지
 	}
 
-	UWorld* World = WorldContext ? WorldContext->GetWorld() : nullptr;
-	if (World)
+	if (WorldContext)
 	{
-		// 매번 유효한 월드로 갱신
-		if (Instance->CachedWorld != World)
+		if (UWorld* World = WorldContext->GetWorld())
 		{
-			Instance->CachedWorld = World;
-
-			// 월드가 바뀌면 BGMComponent 재생성
-			if (Instance->BGMComponent)
+			if (Instance->CachedWorld != World || !IsValid(Instance->SoundActor))
 			{
-				Instance->BGMComponent->DestroyComponent();
-				Instance->BGMComponent = nullptr;
-			}
-
-			Instance->BGMComponent = NewObject<UAudioComponent>(World);
-			if (Instance->BGMComponent)
-			{
-				Instance->BGMComponent->RegisterComponent();
-				Instance->BGMComponent->bAutoActivate = false;
+				Instance->Init(World);
 			}
 		}
 	}
 
 	return Instance;
 }
+
 void USoundManager::Init(UWorld* World)
 {
-	CachedWorld = World;
+	if (!World) return;
 
-	// BGM용 오디오 컴포넌트 초기화
-	BGMComponent = NewObject<UAudioComponent>(World);
-	BGMComponent->RegisterComponent();
-	BGMComponent->bAutoActivate = false;
+	CachedWorld = World;
+	SoundActor = nullptr;
+	BGMComponent = nullptr;
+
+	EnsureSoundActor();
 }
 
 void USoundManager::PlayBGM(USoundBase* BGM, float FadeTime)
@@ -86,3 +77,43 @@ void USoundManager::SetSFXVolume(float Volume)
 {
 	SFXVolume = Volume;
 }
+
+
+void USoundManager::EnsureSoundActor()
+{
+	if (!CachedWorld) return;
+
+	for (TActorIterator<ASoundActor> It(CachedWorld); It; ++It)
+	{
+		SoundActor = *It;
+		break;
+	}
+
+	if (!IsValid(SoundActor))
+	{
+		FActorSpawnParameters Params;
+		Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		Params.Name = TEXT("AudioManagerActor");
+
+		SoundActor = CachedWorld->SpawnActor<ASoundActor>(
+			ASoundActor::StaticClass(),
+			FVector::ZeroVector,
+			FRotator::ZeroRotator,
+			Params
+		);
+	}
+
+	if (IsValid(SoundActor))
+	{
+		BGMComponent = SoundActor->BGMComponent;
+		if (BGMComponent)
+		{
+			BGMComponent->SetVolumeMultiplier(BGMVolume);
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("USoundManager: Failed to spawn/find AudioManagerActor"));
+	}
+}
+

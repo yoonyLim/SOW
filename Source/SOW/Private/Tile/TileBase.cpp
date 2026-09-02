@@ -123,22 +123,22 @@ void ATileBase::ApplyVisualTransform()
 	MeshComponent->SetRelativeRotation(FRotator(0.f, VisualYawDeg, 0.f));
 }
 
-void ATileBase::ShowRange()
-{
-	checkf(OverlayMID, TEXT("OverlayMID not assigned"));
-	checkf(OverlayPlane, TEXT("OverlayPlane not assigned"));
-	//if (!IsValid(OverlayMID) || !IsValid(OverlayPlane)) return;
-
-	OverlayMID->SetScalarParameterValue(TEXT("CanPlace"), bCanPlace ? 1.f : 0.f);
-	OverlayPlane->SetVisibility(true);
-}
-
-void ATileBase::HideRange()
-{
-	checkf(OverlayMID, TEXT("OverlayMID not assigned"));
-	checkf(OverlayPlane, TEXT("OverlayPlane not assigned"));
-	OverlayPlane->SetVisibility(false);
-}
+//void ATileBase::ShowRange()
+//{
+//	checkf(OverlayMID, TEXT("OverlayMID not assigned"));
+//	checkf(OverlayPlane, TEXT("OverlayPlane not assigned"));
+//	//if (!IsValid(OverlayMID) || !IsValid(OverlayPlane)) return;
+//
+//	OverlayMID->SetScalarParameterValue(TEXT("CanPlace"), bCanPlace ? 1.f : 0.f);
+//	OverlayPlane->SetVisibility(true);
+//}
+//
+//void ATileBase::HideRange()
+//{
+//	checkf(OverlayMID, TEXT("OverlayMID not assigned"));
+//	checkf(OverlayPlane, TEXT("OverlayPlane not assigned"));
+//	OverlayPlane->SetVisibility(false);
+//}
 
 void ATileBase::BeginPlay()
 {
