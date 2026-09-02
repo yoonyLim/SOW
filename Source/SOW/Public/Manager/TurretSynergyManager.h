@@ -40,13 +40,16 @@ protected:
 	ASynergyUpdateAnnouncer* SynergyUpdateAnnouncer;
 
 	UFUNCTION(BlueprintCallable)
+	void RefreshSynergyManager();
+
+	UFUNCTION(BlueprintCallable)
 	void RequestToUpdateGlacioAffectedStat(ASOWCharacterTurretBase* TargetTurret, bool OnAdd);
 
 	UFUNCTION(BlueprintCallable)
 	void RequestToUpdateGlacioAffectedStatConstant(ASOWCharacterTurretBase* TargetTurret, bool OnAdd, float Value);
 private:
 
-	TMap<EElementalType, TArray<ASOWCharacterTurretBase*>> SynergyMonitor;
+	TMap<EElementalType, TArray<TWeakObjectPtr<ASOWCharacterTurretBase>>> SynergyMonitor;
 	TMap <EElementalType, TMap<ETurretRarity, int>> SynergyRarityMonitor;
 
 	TMap<EElementalType, FGameplayTagContainer> SynergyTagContainer;
@@ -103,7 +106,10 @@ public :
 
 	void SendRuneReference(ASOWCharacterCoreRune* InRune);
 
+	//UFUNCTION(BlueprintCallable, category = "Turret|Synergy|Instance")
 	ASOWCharacterTurretBase* GetGlacioInstance() const;
+
+	//UFUNCTION(BlueprintCallable, category = "Turret|Synergy|Instance")
 	ASOWCharacterCoreRune* GetCoreRuneInstance() const;
 
 	

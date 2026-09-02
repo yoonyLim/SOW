@@ -246,6 +246,7 @@ namespace SOWSynergyTags {
 	UE_DEFINE_GAMEPLAY_TAG(Synergy_Nature_V, "Synergy.Nature.V");
 	UE_DEFINE_GAMEPLAY_TAG(Synergy_Nature_VI, "Synergy.Nature.VI");
 	UE_DEFINE_GAMEPLAY_TAG(Synergy_Nature_VII, "Synergy.Nature.VII");
+	UE_DEFINE_GAMEPLAY_TAG(Synergy_Nature_VIII, "Synergy.Nature.VIII");
 
 	UE_DEFINE_GAMEPLAY_TAG(Synergy_Electro_I, "Synergy.Electro.I");
 	UE_DEFINE_GAMEPLAY_TAG(Synergy_Electro_II, "Synergy.Electro.II");

@@ -54,6 +54,9 @@ public:
 	void GetPropertyResourceString(FString& OutCurrency, FString& OutPercentage);
 
 	UFUNCTION(BlueprintCallable, Category = "Turret|Evolution")
+	void GetPropertyResourceStringByPropertyLevel(int32 PropertyLevel, FString& OutCurrency, FString& OutPercentage);
+
+	UFUNCTION(BlueprintCallable, Category = "Turret|Evolution")
 	void GetStatusResourceString(FString& OutCurrency, FString& OutPercentage);
 
 	UFUNCTION(BlueprintCallable, Category = "Turret|Evolution")

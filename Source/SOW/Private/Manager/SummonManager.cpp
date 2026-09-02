@@ -218,3 +218,8 @@ bool USummonManager::TurretSummonOnCertainTile(FSummonData TurretData, AActor* T
 	return false;
 }
 
+void USummonManager::BroadcastSellTurret(TSubclassOf<ASOWCharacterTurretBase> TurretType)
+{
+	TurretToDespawn.Broadcast(TurretType);
+}
+

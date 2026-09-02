@@ -9,6 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Characters/Turrets/SOWCharacterTurretBase.h"
 #include "Characters/Enemies/SOWCharacterEnemyBase.h"
+#include "Characters/CoreRune/SOWCharacterCoreRune.h"
 #include "AbilitySystem/SOWAbilitySystemComponent.h"
 #include "AIController.h"
 #include "SOWGameInstance.h"
@@ -24,6 +25,7 @@
 #include "Widget/SOWWidgetBase.h"
 #include "Slate/SObjectWidget.h"
 #include "NiagaraComponent.h"
+#include "Manager/TurretSynergyManager.h"
 
 #include "Framework/Application/SlateApplication.h"
 
@@ -39,6 +41,9 @@ USOWAbilitySystemComponent* USOWBlueprintFunctionLibrary::NativeGetSOWAbilitySys
         return nullptr;
     }
 
+
+    if (!Cast<ASOWCharacter>(InActor)) return nullptr;
+
     USOWAbilitySystemComponent* ASC =
         Cast<USOWAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(InActor));
 
@@ -52,6 +57,9 @@ USOWAbilitySystemComponent* USOWBlueprintFunctionLibrary::GetSOWAbilitySystemCom
         //UE_LOG(LogTemp, Warning, TEXT("GetSOWAbilitySystemComponentFromActorInfo: Invalid Actor"));
         return nullptr;
     }
+
+    if (!Cast<ASOWCharacter>(InActor)) return nullptr;
+
     return NativeGetSOWAbilitySystemComponentFromActorInfo(InActor);
 }
 
@@ -695,6 +703,18 @@ float USOWBlueprintFunctionLibrary::GetWorldTileSizeFromInstance(APlayerControll
     return GI->GetWorldTileSize();
 }
 
+FVector USOWBlueprintFunctionLibrary::GetCoreRunePosition(APlayerController* PlayerController)
+{
+    USOWGameInstance* GI = Cast<USOWGameInstance>(PlayerController->GetWorld()->GetGameInstance());
+    if(!GI) return FVector();
+    
+    AActor* CoreRune = GI->GetTurretSynergyManager()->GetCoreRuneInstance();
+    if(!IsValid(CoreRune)) return FVector();
+
+
+    return CoreRune->GetActorLocation();
+}
+
 void USOWBlueprintFunctionLibrary::AddLooseGameplayTagStack(AActor* Actor, FGameplayTag Tag, int32 Stack)
 {
     if (!IsValid(Actor) || !Tag.IsValid() || Stack <= 0) return;
@@ -760,6 +780,53 @@ bool USOWBlueprintFunctionLibrary::IsMouseOverUI(APlayerController* PC, const TS
 void USOWBlueprintFunctionLibrary::DeactivateFXImmediately(UNiagaraComponent* NC)
 {
     NC->DeactivateImmediate();
+}
+
+FString USOWBlueprintFunctionLibrary::ReplaceIndexedPlaceholders(const FString& TemplateString, const TArray<float>& Values)
+{
+    FString Result = TemplateString;
+
+    // [0], [1], [2] ... 형식으로 치환
+    for (int32 i = 0; i < Values.Num(); ++i)
+    {
+        FString Placeholder = FString::Printf(TEXT("[%d]"), i);
+        Result = Result.Replace(*Placeholder, *FString::FromInt(Values[i]), ESearchCase::IgnoreCase);
+    }
+
+    return Result;
+}
+
+void USOWBlueprintFunctionLibrary::CallTurretPlacedDelegate(APlayerController* PlayerController)
+{
+    USOWGameInstance* GI = Cast<USOWGameInstance>(PlayerController->GetWorld()->GetGameInstance());
+    if (!GI) {
+        UE_LOG(LogTemp, Error, TEXT("Instance No Initialized yet."));
+        return;
+    }
+
+    GI->OnTurretPlaced.Broadcast();
+}
+
+void USOWBlueprintFunctionLibrary::CallTurretReplacedDelegate(APlayerController* PlayerController)
+{
+    USOWGameInstance* GI = Cast<USOWGameInstance>(PlayerController->GetWorld()->GetGameInstance());
+    if (!GI) {
+        UE_LOG(LogTemp, Error, TEXT("Instance No Initialized yet."));
+        return;
+    }
+
+    GI->OnTurretReplacing.Broadcast();
+}
+
+void USOWBlueprintFunctionLibrary::CallTurretClickedDelegate(APlayerController* PlayerController)
+{
+    USOWGameInstance* GI = Cast<USOWGameInstance>(PlayerController->GetWorld()->GetGameInstance());
+    if (!GI) {
+        UE_LOG(LogTemp, Error, TEXT("Instance No Initialized yet."));
+        return;
+    }
+
+    GI->OnTurretClicked.Broadcast();
 }
 
 

@@ -253,7 +253,7 @@ void ASOWCharacterEnemyBase::OnHealthChanged(const FOnAttributeChangeData& Data)
 	{
 		if (EnemyHitSound)
 		{
-			UGameplayStatics::PlaySoundAtLocation(this, EnemyDeathSound, GetActorLocation());
+			UGameplayStatics::PlaySoundAtLocation(this, EnemyHitSound, GetActorLocation());
 		}
 
 		if (HitAnimation)

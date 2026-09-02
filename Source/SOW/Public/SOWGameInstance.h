@@ -17,7 +17,7 @@ class UDataTable;
 class UTurretSynergyManager;
 class ASOWCharacterTurretSpecialBase;
 
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTurretAccessed);
 /**
  * 
  */
@@ -27,7 +27,7 @@ class SOW_API USOWGameInstance : public UGameInstance
     GENERATED_BODY()
     
 public:
-
+  
     UPROPERTY(BlueprintReadOnly)
     TObjectPtr<UUSkillManager> SkillManager;
 
@@ -55,6 +55,14 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Synergy")
     TSubclassOf<ASOWCharacterTurretSpecialBase> GlacioInstance;
 
+    UPROPERTY(BlueprintCallable, BlueprintAssignable)
+    FOnTurretAccessed OnTurretPlaced;
+
+    UPROPERTY(BlueprintCallable, BlueprintAssignable)
+    FOnTurretAccessed OnTurretClicked;
+
+    UPROPERTY(BlueprintCallable, BlueprintAssignable)
+    FOnTurretAccessed OnTurretReplacing;
 
 public:
     virtual void Init() override;
@@ -82,6 +90,9 @@ public:
     UFUNCTION(Exec)
     void SummonTurret(FName TurretName);
 
+    UFUNCTION(BlueprintCallable, meta =(DisplayName = "Summon Turret By Name"))
+    void BP_SummonTurret(FName TurretName);
+
     UFUNCTION(Exec)
     void GetResource(float Count);
 
@@ -92,9 +103,10 @@ public:
     
     UPROPERTY(EditAnywhere, Category = "Sound")
     USoundBase* StartBGM; 
-
-
 private:
 
     float WorldTileSize;
+
+    UFUNCTION()
+    void BindTest();
 };

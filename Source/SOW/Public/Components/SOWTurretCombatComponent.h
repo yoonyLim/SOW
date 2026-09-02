@@ -85,10 +85,13 @@ public:
 	float GetProjectileLivingTime() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Turret|Property")
-	FString GetTurretDescriptor() const{ 
-			
-			return TurretDescriptor;
+	FString GetTurretDescriptor(int idx = 0) const{ 
+		if (TurretDescriptor.Num() <= 0) return "";
+
+			return TurretDescriptor[idx];
 	} 
+
+	
 
 
 
@@ -192,7 +195,7 @@ protected:
 	float AffectStatValue;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Turret|Properties")
-	FString TurretDescriptor;
+	TArray<FString> TurretDescriptor;
 #pragma endregion
 
 	

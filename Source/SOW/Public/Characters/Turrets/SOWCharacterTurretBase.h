@@ -125,6 +125,14 @@ public:
 	void BP_FixOverlayMaterial(bool FixOn);
 
 
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable,Category = "Turret|Property")
+	int GetTurretDescriptorLevel();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Turret|Property")
+	TArray<float> GetDescribableTurretPropertyValues();
+
+
+
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Switch Detectable Range"))
 	void BP_SwitchDetectableRange(bool On);
 
